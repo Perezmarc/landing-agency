@@ -19,7 +19,7 @@
     "@forge/seo": "*",
     "@forge/tokens": "*",
     "@forge/ui": "*",
-    "astro": "^5.5.0",
+    "astro": "^7.3.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
