@@ -1,0 +1,71 @@
+---
+/* The footer, including the language switcher.
+ *
+ * THE LANGUAGE SWITCHER LINKS THE SAME PAGE, not the homepage. Someone reading
+ * the contact page in English who switches to Spanish wants the Spanish
+ * contact page; dumping them on `/es` is the kind of small betrayal that makes
+ * people stop using the switcher. `alternates()` already knows every language
+ * this page exists in, so the list is exactly right and never links a 404.
+ */
+import forge from '@forge/manifest'
+import { useTranslations, HTML_LANG } from '@forge/i18n'
+import { routePath, alternates } from '@forge/seo/routes'
+
+const { locale, current } = Astro.props
+const t = useTranslations(locale)
+
+const year = new Date().getUTCFullYear()
+const since = forge.brand.legal.since
+const years = since === year ? String(year) : `${since}–${year}`
+
+const link = (key) => ({ href: routePath(key, locale), label: t(`nav.${key}`) })
+const legalLink = (key) => ({ href: routePath(key, locale), label: t(`footer.${key}`) })
+
+const languages = alternates(current)
+  .filter(alt => alt.locale !== 'x-default' && alt.locale !== locale)
+
+const socials = Object.entries(forge.brand.social).filter(([, handle]) => handle)
+---
+<footer class="mk-footer">
+  <div class="mk-wrap">
+    <div class="mk-footer-grid">
+      <div class="mk-footer-col">
+        <a class="mk-brand" href={routePath('home', locale)}>{forge.brand.name}</a>
+        <p class="mk-footer-blurb">{t('footer.blurb')}</p>
+      </div>
+
+      <div class="mk-footer-col">
+        <strong>{t('footer.company')}</strong>
+        <a href={link('blog').href}>{link('blog').label}</a>
+        <a href={link('contact').href}>{link('contact').label}</a>
+        <a href={forge.brand.bookingUrl}>{t('nav.bookCall')}</a>
+        {socials.map(([network, handle]) => (
+          <a href={handle} rel="me noopener">{network}</a>
+        ))}
+      </div>
+
+      <div class="mk-footer-col">
+        <strong>{t('footer.legal')}</strong>
+        <a href={legalLink('privacy').href}>{legalLink('privacy').label}</a>
+        <a href={legalLink('terms').href}>{legalLink('terms').label}</a>
+      </div>
+
+      {languages.length > 0 && (
+        <div class="mk-footer-col">
+          <strong>{t('footer.language')}</strong>
+          {languages.map(alt => (
+            <a href={alt.path} hreflang={alt.locale} lang={HTML_LANG[alt.locale] ?? alt.locale}>
+              {alt.locale.toUpperCase()}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <div class="mk-footer-bar">
+      <span>{t('footer.copyright', { years, entity: forge.brand.legal.entity })}</span>
+      <div class="mk-footer-bar-spacer"></div>
+      <a href={`mailto:${forge.brand.email.support}`}>{forge.brand.email.support}</a>
+    </div>
+  </div>
+</footer>

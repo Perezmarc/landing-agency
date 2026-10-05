@@ -1,0 +1,15 @@
+{
+  "name": "Agency",
+  "short_name": "Agency",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "theme_color": "#14151c",
+  "background_color": "#f7f7f8",
+  "display": "standalone",
+  "start_url": "/"
+}

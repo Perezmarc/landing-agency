@@ -1,0 +1,19 @@
+{
+  "name": "@forge/manifest",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./forge.config.js"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@forge/config": "*"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.8",
+    "@forge/i18n": "*"
+  }
+}

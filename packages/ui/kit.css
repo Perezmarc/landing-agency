@@ -1,0 +1,355 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   UI KIT — the look for the shared components in src/components/. One file,
+   one section per component, so there is exactly one place to look when a
+   control needs a variant.
+
+   The React component owns markup, class names, ref forwarding and behaviour;
+   this file owns the material. A shared className alone is NOT the kit: two
+   <input class="ui-input"> written in different files are still duplicated UI.
+   Route every field through <TextInput> and every button through <Button>.
+
+   Buttons live in button.css (large enough to warrant its own file).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════ CARD ═══════════
+   Paper lifted off the page: a one-step shadow plus an inset top highlight and
+   crisp ring, rather than a flat hairline box. */
+.ui-card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-1), var(--card-ring);
+}
+.ui-card-h {
+  padding: 15px 18px;
+  border-bottom: 1px solid var(--line-2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ui-card-title { font-size: 13px; font-weight: 600; letter-spacing: -0.005em; }
+.ui-card-sub   { font-size: 12px; color: var(--mute); }
+/* Header actions sit hard right, whatever the title's length. */
+.ui-card-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+.ui-card-body  { padding: 16px 18px; }
+
+/* ═══════════ TEXT INPUT ═══════════
+   The one text-field look, applied app-wide through <TextInput>. Recessed: a
+   faint inner shadow so fields read as wells, the counterpart to the cards'
+   raised paper. */
+.ui-input {
+  height: 34px;
+  padding: 0 11px;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  box-shadow: inset 0 1px 2px rgba(16, 16, 24, 0.045);
+  transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+}
+.ui-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: inset 0 1px 2px rgba(16, 16, 24, 0.04), var(--focus-ring);
+}
+.ui-input::placeholder { color: var(--mute-2); }
+.ui-input:disabled { opacity: 0.6; cursor: default; }
+/* Large variant — sign-in and other single-focus screens. */
+.ui-input--lg { height: 44px; padding: 0 14px; border-radius: var(--r-md); font-size: 14px; }
+/* Error state. */
+.ui-input--error { border-color: var(--bad); }
+.ui-input--error:focus {
+  border-color: var(--bad);
+  box-shadow: inset 0 1px 2px rgba(16, 16, 24, 0.04),
+              0 0 0 3px color-mix(in srgb, var(--bad) 25%, transparent);
+}
+textarea.ui-input { height: auto; min-height: 84px; padding: 9px 11px; line-height: 1.5; resize: vertical; }
+
+/* ═══════════ SELECT ═══════════ */
+.ui-select {
+  height: 34px;
+  padding: 0 30px 0 10px;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  /* The arrow is drawn here so every select matches regardless of platform. */
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+                    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 16px) 15px, calc(100% - 11px) 15px;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  -webkit-appearance: none;
+          appearance: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: inset 0 1px 2px rgba(16, 16, 24, 0.045);
+  transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+}
+.ui-select:focus { outline: none; border-color: var(--accent); box-shadow: var(--focus-ring); }
+.ui-select--error { border-color: var(--bad); }
+.ui-select:disabled { opacity: 0.6; cursor: default; }
+
+/* ═══════════ FIELD — label + control + hint/error ═══════════ */
+.ui-field { display: flex; flex-direction: column; gap: 6px; }
+.ui-field > label { font-size: 11.5px; color: var(--mute); font-weight: 500; }
+.ui-field-hint  { font-size: 11.5px; color: var(--mute); font-weight: 400; }
+.ui-field-error { font-size: 11.5px; color: var(--bad-ink); margin-top: 2px; }
+/* Two-up row that collapses to one column once the columns get too narrow. */
+.ui-field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+/* Controls that size to their content sit at the start of the field rather
+   than stretching across the whole column. */
+.ui-field > .seg-ctrl { align-self: flex-start; max-width: 100%; }
+
+/* ═══════════ ICON BUTTON ═══════════
+   The compact square button used in dense rows (reorder, delete). For
+   toolbar-height icon buttons use <Button size="iconCompact"> instead. */
+.ui-icon-btn {
+  width: 26px; height: 26px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  background: var(--surface);
+  color: var(--mute);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.ui-icon-btn.small { width: 22px; height: 22px; }
+.ui-icon-btn:hover { background: var(--surface-2); color: var(--ink); }
+.ui-icon-btn.danger:hover { border-color: var(--bad); color: var(--bad-ink); background: var(--bad-soft); }
+.ui-icon-btn:disabled { opacity: 0.5; cursor: default; }
+
+/* ═══════════ CHIP ═══════════ */
+.ui-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  font-size: 11.5px;
+  color: var(--ink-2);
+  font-weight: 450;
+  white-space: nowrap;
+}
+.ui-chip.good   { background: var(--good-soft);   color: var(--good-ink);   border-color: transparent; }
+.ui-chip.warn   { background: var(--warn-soft);   color: var(--warn-ink);   border-color: transparent; }
+.ui-chip.bad    { background: var(--bad-soft);    color: var(--bad-ink);    border-color: transparent; }
+.ui-chip.accent { background: var(--accent-soft); color: var(--accent-ink); border-color: transparent; }
+.ui-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: 0 0 auto; }
+
+/* ═══════════ KBD ═══════════ */
+.ui-kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  font-size: 10.5px;
+  color: var(--mute);
+  font-family: var(--font-mono);
+}
+
+/* ═══════════ SEGMENTED CONTROL ═══════════
+   A sliding pill over a recessed track. The pill's width/position are measured
+   in JS (see SegmentedControl.jsx) and applied as inline transform/width —
+   the one place inline style is correct, because the values are computed. */
+.seg-ctrl {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  background: var(--line-2);
+  border-radius: var(--r-md);
+  padding: 3px;
+}
+.seg-pill {
+  position: absolute;
+  top: 3px; bottom: 3px; left: 0;
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: 0 1px 4px rgba(16, 16, 24, 0.12), 0 0.5px 1px rgba(16, 16, 24, 0.08);
+  transition: transform var(--dur) cubic-bezier(0.4, 0, 0.2, 1),
+              width     var(--dur) cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+.seg-tab {
+  position: relative; z-index: 1;
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 5px 12px;
+  font-size: 12px; font-weight: 500; font-family: inherit;
+  color: var(--mute);
+  background: none; border: none; border-radius: var(--r-sm);
+  cursor: pointer; white-space: nowrap;
+  transition: color 0.15s;
+  user-select: none;
+}
+.seg-tab:hover { color: var(--ink-2); }
+.seg-tab.seg-tab-active { color: var(--ink); font-weight: 600; }
+.seg-tab-icon { display: flex; align-items: center; }
+.seg-tab svg, .seg-tab .ico { width: 14px; height: 14px; }
+.seg-ctrl.is-disabled { opacity: 0.55; pointer-events: none; }
+
+/* ═══════════ SWITCH ═══════════ */
+.ui-switch {
+  flex: 0 0 auto;
+  width: 38px; height: 22px;
+  border-radius: var(--r-pill);
+  border: 0; padding: 0;
+  background: var(--line);
+  cursor: pointer; position: relative;
+  transition: background 0.15s var(--ease-out);
+}
+.ui-switch--sm { width: 32px; height: 18px; }
+.ui-switch-knob {
+  position: absolute; top: 2px; left: 2px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(16, 16, 24, 0.18);
+  transition: transform 0.15s var(--ease-out);
+}
+.ui-switch--sm .ui-switch-knob { width: 14px; height: 14px; }
+.ui-switch.on { background: var(--good); }
+.ui-switch.on .ui-switch-knob { transform: translateX(16px); }
+.ui-switch--sm.on .ui-switch-knob { transform: translateX(14px); }
+.ui-switch:disabled { opacity: 0.6; cursor: default; }
+
+/* ═══════════ SKELETON ═══════════
+   One shimmer primitive that any component composes into its own loading
+   placeholder, so loading states live NEXT TO the component instead of in a
+   hand-maintained, page-shaped scaffold that drifts from the real UI. */
+:root {
+  --sk-fill:        rgba(0, 0, 0, 0.065);      /* neutral placeholder fill        */
+  --sk-fill-strong: rgba(0, 0, 0, 0.085);      /* denser fill (icons, thumbnails) */
+  --sk-fill-ink:    rgba(0, 0, 0, 0.82);       /* solid — mimics a primary button */
+  --sk-fill-night:  rgba(255, 255, 255, 0.10); /* legible on dark panels          */
+  --sk-sheen:       rgba(255, 255, 255, 0.62); /* the sweeping light beam         */
+  --sk-dur:         1.1s;
+}
+.sk {
+  display: block;
+  width: var(--sk-w, 100%);
+  height: var(--sk-h, 12px);
+  border-radius: var(--sk-r, 6px);
+  background: var(--sk-fill);
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+.sk--strong { background: var(--sk-fill-strong); }
+.sk--ink    { background: var(--sk-fill-ink); }
+.sk--night  { background: var(--sk-fill-night); }
+.sk--circle { border-radius: 50%; }
+.sk--pill   { border-radius: var(--r-pill); }
+.sk--grow   { flex: 1 1 auto; }
+.sk::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent 0%, var(--sk-sheen) 50%, transparent 100%);
+  animation: sk-sweep var(--sk-dur) cubic-bezier(.4, 0, .2, 1) infinite;
+}
+@keyframes sk-sweep { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(100%); } }
+/* A solid ink block reads as a filled control, not a loading blank — no sheen. */
+.sk--ink::after { display: none; }
+.sk-stack { display: flex; flex-direction: column; gap: var(--sk-gap, 8px); }
+.sk-row   { display: flex; align-items: center; gap: var(--sk-gap, 10px); }
+.sk-text  { display: flex; flex-direction: column; gap: var(--sk-line-gap, 8px); width: 100%; }
+/* Live-region wrapper that doesn't join the layout — lets <SkeletonGroup>
+   announce a loading region while its rows stay flex/grid children of the real
+   container they stand in for. */
+.sk-contents { display: contents; }
+.sk-panel { display: flex; flex-direction: column; gap: 14px; padding: 20px; }
+
+/* ═══════════ MODAL ═══════════ */
+.ui-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(16, 16, 24, 0.42);
+  backdrop-filter: blur(2px);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  animation: ui-modal-in 0.16s var(--ease-out);
+}
+.ui-modal {
+  width: 100%;
+  max-width: 480px;
+  max-height: min(84vh, 720px);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-3), var(--card-ring);
+  animation: ui-modal-rise 0.2s var(--ease-out);
+}
+.ui-modal--lg { max-width: 720px; }
+.ui-modal:focus { outline: none; }
+.ui-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 18px;
+  border-bottom: 1px solid var(--line-2);
+}
+.ui-modal-title { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; flex: 1; min-width: 0; }
+.ui-modal-close {
+  display: grid; place-items: center;
+  width: 28px; height: 28px;
+  border-radius: var(--r-xs);
+  color: var(--mute);
+  flex: 0 0 auto;
+}
+.ui-modal-close:hover { background: var(--surface-2); color: var(--ink); }
+.ui-modal-body { padding: 18px; overflow-y: auto; flex: 1; min-height: 0; }
+.ui-modal-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 13px 18px;
+  border-top: 1px solid var(--line-2);
+}
+@keyframes ui-modal-in   { from { opacity: 0; } }
+@keyframes ui-modal-rise { from { opacity: 0; transform: translateY(8px) scale(0.99); } }
+
+/* ═══════════ TOAST ═══════════
+   Bottom-centred. Anchored on `bottom` only — a fixed element with BOTH top and
+   bottom set and height:auto stretches to span the viewport. */
+.ui-toast {
+  position: fixed;
+  bottom: 24px; top: auto;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  z-index: 300;
+  padding: 10px 18px;
+  border-radius: var(--r-pill);
+  background: var(--ink);
+  color: var(--surface);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--elev-3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
+  white-space: nowrap;
+}
+.ui-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.ui-toast--err { background: var(--bad-ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sk::after { animation: none; }
+  .ui-modal, .ui-modal-overlay { animation: none; }
+}

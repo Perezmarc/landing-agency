@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Placeholder favicon — matches src/components/BrandMark.jsx. Replace both
+       together when you add real artwork. -->
+  <rect width="32" height="32" rx="8" fill="#14151c"/>
+  <g stroke="#f3f3f5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 22 L16 9.5 L22 22" stroke-width="2.4"/>
+    <path d="M12.6 18.4 h6.8" stroke-width="2.4"/>
+  </g>
+</svg>

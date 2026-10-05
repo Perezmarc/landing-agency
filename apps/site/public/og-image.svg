@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1c1e28"/>
+      <stop offset="100%" stop-color="#14151c"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="18%" cy="0%" r="80%">
+      <stop offset="0%" stop-color="#4c5bd4" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#4c5bd4" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <g transform="translate(88, 96)" stroke="#f3f3f5" fill="none">
+    <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke-width="2.4"/>
+    <path d="M13 33 L24 14 L35 33" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M17 26 h14" stroke-width="3.2" stroke-linecap="round"/>
+  </g>
+  <text x="152" y="130" fill="#f3f3f5" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+        font-size="30" font-weight="600" letter-spacing="-0.5">Agency</text>
+
+  <text x="88" y="330" fill="#f3f3f5"
+        font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+        font-size="68" font-weight="600" letter-spacing="-2.4">Custom AI agents for business operations</text>
+
+  <text x="88" y="548" fill="#8e8e9c" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+        font-size="26" font-weight="500">example.com</text>
+</svg>

@@ -1,0 +1,75 @@
+---
+/* One article.
+ *
+ * The hreflang pairs come from `translationOf`: an article that exists in both
+ * languages links its counterpart, and one that exists in a single language
+ * emits no alternates at all. Declaring an alternate that 404s is worse than
+ * declaring none.
+ */
+import Base from '../layouts/Base.astro'
+import { getCollection, render } from 'astro:content'
+import forge from '@forge/manifest'
+import { useTranslations, INTL_LOCALE } from '@forge/i18n'
+import { articleMeta } from '@forge/seo/meta'
+import { blogPostPath, routePath } from '@forge/seo/routes'
+
+const { locale, entry } = Astro.props
+const t = useTranslations(locale)
+const { Content } = await render(entry)
+
+const slug = entry.id.split('/').pop()
+
+/* Which languages this article exists in. The default-locale slug is the join
+   key: a translation names it in `translationOf`, and the original is found by
+   its own slug. */
+const key = entry.data.translationOf ?? slug
+const siblings = await getCollection('blog', ({ data, id }) => {
+  const otherSlug = id.split('/').pop()
+  return (data.translationOf ?? otherSlug) === key
+})
+const alternates = siblings.map((sibling) => {
+  const siblingLocale = sibling.id.split('/')[0]
+  const path = blogPostPath(sibling.id.split('/').pop(), siblingLocale)
+  return { locale: siblingLocale, path, href: forge.absoluteUrl(path) }
+})
+if (alternates.length > 1) {
+  const fallback = alternates.find(alt => alt.locale === forge.locales.default)
+  if (fallback) alternates.push({ ...fallback, locale: 'x-default' })
+}
+
+const meta = articleMeta(
+  {
+    path: blogPostPath(slug, locale),
+    title: entry.data.title,
+    excerpt: entry.data.excerpt,
+    published: entry.data.published.toISOString(),
+    updated: entry.data.updated?.toISOString(),
+    author: entry.data.author,
+    alternates,
+  },
+  locale,
+  { locales: siblings.map(sibling => sibling.id.split('/')[0]) },
+)
+
+const format = new Intl.DateTimeFormat(INTL_LOCALE[locale] ?? 'en-US', {
+  year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC',
+})
+---
+<Base meta={meta} locale={locale} current="blog">
+  <article class="mk-section">
+    <div class="mk-wrap">
+      <p class="mk-page-meta"><a href={routePath('blog', locale)}>← {t('blog.backToBlog')}</a></p>
+      <h1 class="mk-h2">{entry.data.title}</h1>
+      <p class="mk-page-meta">
+        <time datetime={entry.data.published.toISOString()}>
+          {t('blog.publishedOn', { date: format.format(entry.data.published) })}
+        </time>
+        {entry.data.author && <> · {t('blog.by', { author: entry.data.author })}</>}
+      </p>
+
+      <div class="mk-prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+</Base>

@@ -1,0 +1,23 @@
+{
+  "name": "agency",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@10.9.7",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @forge/site",
+    "build": "turbo run build",
+    "preview": "npm run preview --workspace @forge/site",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e",
+    "typecheck": "turbo run typecheck",
+    "gen:og": "npm run gen:og --workspace @forge/site"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4"
+  }
+}

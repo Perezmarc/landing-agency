@@ -1,0 +1,183 @@
+---
+/* The landing page.
+ *
+ * Section order is the conversion argument: hero (what we do, for whom) →
+ * problem (the work people do between systems) → how an engagement works →
+ * outcomes → where agents start → how they sit on your systems → FAQ
+ * (objections) → final CTA. Every CTA books a call.
+ *
+ * Cut a section you cannot fill honestly. There are no case studies, logos,
+ * testimonials or numbers here because none exist yet; add them when a real
+ * client result does. Fake proof has a way of surviving into a real launch.
+ *
+ * Every string comes from @forge/i18n. Nothing on this page is written here.
+ *
+ * ONE FILE, EVERY LANGUAGE. `src/pages/index.astro`, `src/pages/es/index.astro`
+ * and `src/pages/it/index.astro` are three-line wrappers around this, so the
+ * markup exists once and Astro still does its own file-based routing.
+ */
+import Base from '../layouts/Base.astro'
+import { Button, Ico } from '@forge/ui'
+import forge from '@forge/manifest'
+import { useTranslations, useList } from '@forge/i18n'
+import { pageMeta } from '@forge/seo/meta'
+
+const { locale } = Astro.props
+const t = useTranslations(locale)
+const list = useList(locale)
+const steps = list('home.steps')
+const outcomes = list('home.outcomes')
+const areas = list('home.areas')
+const systems = list('home.systems')
+const faqs = list('home.faqs')
+
+// The FAQ nodes are built from the SAME list the page renders. Emitting FAQ
+// markup for questions a visitor cannot see is a search policy violation, and
+// two lists drift within a release or two.
+const meta = pageMeta('home', locale, { faqs })
+
+// The headline carries its own line break as a \n, and `.mk-headline` is
+// `white-space: pre-line`, so each language breaks where it reads best. A <br>
+// in the markup would force English's break on every translation.
+const headline = t('home.heading')
+---
+<Base meta={meta} locale={locale} current="home">
+  <section class="mk-hero">
+    <div class="mk-wrap mk-hero-inner">
+      <span class="mk-eyebrow">{t('home.eyebrow')}</span>
+      <h1 class="mk-headline">{headline}</h1>
+      <p class="mk-hero-lead">{t('home.lead')}</p>
+      <div class="mk-hero-actions">
+        <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill glare
+                iconRightName="arrowRight">
+          {t('home.ctaPrimary')}
+        </Button>
+        <Button as="a" href="#how" variant="glass" size="lg" pill onDark>
+          {t('home.ctaSecondary')}
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <section class="mk-section">
+    <div class="mk-wrap">
+      <div class="mk-section-head">
+        <h2 class="mk-h2">{t('home.problemHeading')}</h2>
+        <p class="mk-lead">{t('home.problemLead')}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mk-section mk-section-tint" id="how">
+    <div class="mk-wrap">
+      <div class="mk-section-head">
+        <h2 class="mk-h2">{t('home.stepsHeading')}</h2>
+        <p class="mk-lead">{t('home.stepsLead')}</p>
+      </div>
+
+      <ol class="mk-feature-grid mk-steps">
+        {steps.map((step, i) => (
+          <li class="mk-feature-card">
+            <span class="mk-step-num" aria-hidden="true">{i + 1}</span>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="mk-section">
+    <div class="mk-wrap">
+      <div class="mk-section-head">
+        <h2 class="mk-h2">{t('home.outcomesHeading')}</h2>
+      </div>
+
+      <div class="mk-feature-grid">
+        {outcomes.map((outcome) => (
+          <article class="mk-feature-card">
+            <Ico name="check" size={18} />
+            <h3>{outcome.title}</h3>
+            <p>{outcome.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="mk-section mk-section-tint">
+    <div class="mk-wrap">
+      <div class="mk-section-head">
+        <h2 class="mk-h2">{t('home.areasHeading')}</h2>
+        <p class="mk-lead">{t('home.areasLead')}</p>
+      </div>
+
+      <div class="mk-feature-grid">
+        {areas.map((area) => (
+          <article class="mk-feature-card">
+            <h3>{area.title}</h3>
+            <p>{area.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="mk-section">
+    <div class="mk-wrap">
+      <div class="mk-section-head">
+        <h2 class="mk-h2">{t('home.systemsHeading')}</h2>
+        <p class="mk-lead">{t('home.systemsLead')}</p>
+      </div>
+
+      <div class="mk-feature-grid">
+        {systems.map((point) => (
+          <article class="mk-feature-card">
+            <Ico name="check" size={18} />
+            <h3>{point.title}</h3>
+            <p>{point.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="mk-section mk-section-tint" id="faq">
+    <div class="mk-wrap">
+      <div class="mk-section-head">
+        <span class="mk-eyebrow">{t('home.faqEyebrow')}</span>
+        <h2 class="mk-h2">{t('home.faqHeading')}</h2>
+      </div>
+
+      {/* A <details> accordion: open state is the element's own, so it works
+          with no JavaScript, with the keyboard, and with find-in-page. */}
+      <div class="mk-faq">
+        {faqs.map((faq) => (
+          <details class="mk-faq-item">
+            <summary class="mk-faq-q">
+              {faq.q}
+              <Ico name="plus" size={18} className="mk-faq-icon" />
+            </summary>
+            <div class="mk-faq-a">{faq.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="mk-final">
+    <div class="mk-wrap">
+      <h2>{t('home.ctaHeading')}</h2>
+      <p>{t('home.ctaLead')}</p>
+      <div class="mk-final-actions">
+        <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill
+                iconRightName="arrowRight">
+          {t('home.ctaButton')}
+        </Button>
+        <Button as="a" href={`mailto:${forge.brand.email.support}`} variant="glass" size="lg" pill onDark>
+          {forge.brand.email.support}
+        </Button>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,197 @@
+{
+  "nav": {
+    "blog": "Blog",
+    "contact": "Contact",
+    "bookCall": "Book a call",
+    "openMenu": "Open menu",
+    "skipToContent": "Skip to content"
+  },
+  "footer": {
+    "blurb": "We design, build and run custom AI agents for finance, revenue and operations teams.",
+    "company": "Company",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "copyright": "© {{years}} {{entity}}",
+    "language": "Language"
+  },
+  "home": {
+    "eyebrow": "AI agents for business operations",
+    "heading": "Hand whole workflows to AI agents built for your business",
+    "lead": "We design, build and run custom AI agents that take over the repetitive coordination in your finance, revenue and operations teams. They work inside the tools you already use and go live in weeks.",
+    "ctaPrimary": "Book a discovery call",
+    "ctaSecondary": "See how it works",
+    "problemHeading": "Your team is still the glue between your systems",
+    "problemLead": "Invoices get matched by hand, deals wait on approvals, and the Monday report gets rebuilt from five exports. Most automation tools take over one step and leave people to move the work between all the others. We look at the whole workflow and give it to agents that carry each case from the first input to the final update.",
+    "stepsHeading": "How an engagement works",
+    "stepsLead": "Your team explains how the work gets done today. We handle the design, the build and the running of the agents.",
+    "steps": [
+      {
+        "title": "Opportunity audit",
+        "body": "We map your workflows and find where agents remove the most manual work and waiting. You get a prioritised list with the effort each one takes."
+      },
+      {
+        "title": "Workflow design",
+        "body": "We redesign the process around agents: what they decide, what they hand to a person, and which of your systems and rules they work with."
+      },
+      {
+        "title": "Production deployment",
+        "body": "Agents go live inside your existing tools, using the permissions your team already has. Your data stays where it is."
+      },
+      {
+        "title": "Ongoing improvement",
+        "body": "We review every run, tighten the decision rules and give agents more of the workflow as they prove reliable."
+      }
+    ],
+    "outcomesHeading": "What changes for your team",
+    "outcomes": [
+      {
+        "title": "Less manual coordination",
+        "body": "Agents chase approvals, match records and update systems, so your people spend their day on the decisions that need them."
+      },
+      {
+        "title": "Work that keeps moving",
+        "body": "Agents pick up each case as it arrives, at any hour, instead of leaving it in someone's queue until Monday."
+      },
+      {
+        "title": "Room to grow with the team you have",
+        "body": "Handle more volume without hiring at the same pace, and save new roles for work a person should do."
+      }
+    ],
+    "areasHeading": "Where agents take over first",
+    "areasLead": "We start where work is repetitive, follows clear rules and is spread across several tools.",
+    "areas": [
+      {
+        "title": "Finance operations",
+        "body": "Accounts payable and receivable, reconciliation, month-end close and cash forecasting."
+      },
+      {
+        "title": "Revenue operations",
+        "body": "CRM data quality, deal approvals, pipeline reporting and commission checks."
+      },
+      {
+        "title": "Procurement",
+        "body": "Vendor onboarding, purchase approvals, contract tracking and supplier follow-ups."
+      },
+      {
+        "title": "Compliance and risk",
+        "body": "Regulatory tracking, audit evidence, policy monitoring and control testing."
+      },
+      {
+        "title": "Customer operations",
+        "body": "Ticket triage, order exceptions, account updates and escalation routing."
+      },
+      {
+        "title": "Logistics",
+        "body": "Shipment exceptions, demand signals, supplier scorecards and inventory alerts."
+      }
+    ],
+    "systemsHeading": "Built on the systems you already run",
+    "systemsLead": "You keep your ERP, your CRM and your helpdesk. Agents connect to them and work by your rules.",
+    "systems": [
+      {
+        "title": "Connected to your stack",
+        "body": "Agents work through the APIs of your ERP, CRM, helpdesk, databases and data platforms."
+      },
+      {
+        "title": "Access you control",
+        "body": "Agents act only with the permissions you grant and follow your existing security policies."
+      },
+      {
+        "title": "A record of every action",
+        "body": "Every decision and change is logged, so your team and your auditors can see what happened and why."
+      }
+    ],
+    "faqEyebrow": "FAQ",
+    "faqHeading": "Questions we hear on first calls",
+    "faqs": [
+      {
+        "q": "What happens on the discovery call?",
+        "a": "It is a working session. We go through how your team handles its workflows today, where the time goes, and which processes are good candidates for agents. You leave with a short list of opportunities and a rough timeline, whether or not we work together."
+      },
+      {
+        "q": "How long until the first agent is live?",
+        "a": "Most first deployments take 6 to 12 weeks from discovery to production. The range depends on how complex the workflow is and how many systems it touches."
+      },
+      {
+        "q": "What can the agents actually do?",
+        "a": "They read and update your systems, analyse data, apply your business rules, route approvals, prepare reports and coordinate work across tools. When a case needs a person, they hand it over with the context attached."
+      },
+      {
+        "q": "Do the agents work with the tools we already have?",
+        "a": "Yes. They connect through APIs to ERPs, CRMs, helpdesks, databases and data platforms, so you keep the systems your team knows."
+      },
+      {
+        "q": "How much of our team's time will it take?",
+        "a": "Plan for around 20 hours across the whole project, mostly explaining how the work is done today and reviewing the design with us. We do the building and the deployment."
+      },
+      {
+        "q": "How do you handle security and data?",
+        "a": "Agents run inside your existing permissions and security policies, and every action is logged and auditable. We can work under your data processing agreement."
+      },
+      {
+        "q": "Can the agents follow our own rules?",
+        "a": "Yes. Each deployment is designed around your workflows, your systems and your operating rules, and you approve the design before anything goes live."
+      },
+      {
+        "q": "How does pricing work?",
+        "a": "It depends on the complexity of the workflow, the systems involved and the scope of the deployment. After the discovery call we send you a written proposal."
+      }
+    ],
+    "ctaHeading": "See where AI agents fit in your company",
+    "ctaLead": "Book a call with our team. We will look at your workflows together and show you where agents can make the biggest difference first.",
+    "ctaButton": "Book a discovery call"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "heading": "Talk to us",
+    "lead": "The quickest way to start is a discovery call. For anything else, write to the address that fits and we will reply.",
+    "projectsLabel": "New projects",
+    "projectsNote": "Book a discovery call or ask about working with us.",
+    "generalLabel": "General",
+    "generalNote": "Questions about how we work, partnerships or anything else.",
+    "privacyLabel": "Privacy",
+    "privacyNote": "Data access, correction and deletion requests."
+  },
+  "blog": {
+    "eyebrow": "Blog",
+    "heading": "Notes on putting AI agents to work",
+    "lead": "How we design, deploy and run AI agents in real operations, and what we learn along the way.",
+    "empty": "No articles yet. The first ones are on their way.",
+    "backToBlog": "All articles",
+    "publishedOn": "Published {{date}}",
+    "by": "by {{author}}"
+  },
+  "legal": {
+    "effective": "Effective {{date}}",
+    "notAdvice": "This is a template, not legal advice. Have it reviewed before you rely on it."
+  },
+  "notFound": {
+    "heading": "This page doesn't exist",
+    "lead": "The link may be out of date, or the page may have moved.",
+    "home": "Go to the homepage",
+    "blog": "Read the blog"
+  },
+  "seo": {
+    "home": {
+      "title": "{{name}} | Custom AI agents for business operations",
+      "description": "We design, build and run custom AI agents that take over repetitive work in finance, revenue and operations, inside the tools you already use."
+    },
+    "blog": {
+      "title": "Blog: AI agents in real operations | {{name}}",
+      "description": "How the {{name}} team designs, deploys and runs AI agents in real business operations, and what we learn along the way."
+    },
+    "contact": {
+      "title": "Contact | {{name}}",
+      "description": "Book a discovery call with {{name}} or write to us about AI agents for your finance, revenue and operations teams."
+    },
+    "privacy": {
+      "title": "Privacy Policy | {{name}}",
+      "description": "What personal data {{name}} collects through this website, why, how long it is kept, and how to have it deleted."
+    },
+    "terms": {
+      "title": "Terms of Use | {{name}}",
+      "description": "The terms that govern your use of the {{name}} website, in plain language."
+    }
+  }
+}

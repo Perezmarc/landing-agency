@@ -1,0 +1,30 @@
+{
+  "name": "@forge/site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "vitest run --passWithNoTests",
+    "test:e2e": "playwright test",
+    "typecheck": "astro check --minimumSeverity error",
+    "gen:og": "node scripts/gen-og-image.mjs"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.2.0",
+    "@forge/i18n": "*",
+    "@forge/manifest": "*",
+    "@forge/seo": "*",
+    "@forge/tokens": "*",
+    "@forge/ui": "*",
+    "astro": "^5.5.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.x",
+    "vitest": "^4.1.8"
+  }
+}

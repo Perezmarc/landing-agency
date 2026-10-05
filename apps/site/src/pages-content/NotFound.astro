@@ -1,0 +1,30 @@
+---
+/* 404.
+ *
+ * Noindex, follow: a 404 that says "index" is a soft-404 waiting to be
+ * indexed, and "follow" still lets a crawler leave through the links below.
+ */
+import Base from '../layouts/Base.astro'
+import { Button } from '@forge/ui'
+import { useTranslations } from '@forge/i18n'
+import { noindexMeta } from '@forge/seo/meta'
+import { routePath } from '@forge/seo/routes'
+
+const { locale } = Astro.props
+const t = useTranslations(locale)
+const meta = noindexMeta(t('notFound.heading'), t('notFound.lead'), locale)
+---
+<Base meta={meta} locale={locale} current={null}>
+  <section class="mk-section">
+    <div class="mk-wrap">
+      <div class="mk-section-head">
+        <h1 class="mk-h2">{t('notFound.heading')}</h1>
+        <p class="mk-lead">{t('notFound.lead')}</p>
+      </div>
+      <div class="mk-final-actions">
+        <Button as="a" href={routePath('home', locale)} variant="dark" pill>{t('notFound.home')}</Button>
+        <Button as="a" href={routePath('blog', locale)} variant="secondary" pill>{t('notFound.blog')}</Button>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,65 @@
+---
+/* The site header.
+ *
+ * Every destination comes from the route table, so a link cannot point at a
+ * path that does not exist, and the Spanish header links Spanish URLs without
+ * anybody maintaining a second list.
+ *
+ * The mobile menu is a <details> element: it opens, closes, traps nothing,
+ * works with the keyboard and needs no JavaScript at all. A marketing header
+ * is the last place worth shipping a hydration boundary for.
+ */
+import forge from '@forge/manifest'
+import { useTranslations } from '@forge/i18n'
+import { routePath } from '@forge/seo/routes'
+import { Button } from '@forge/ui'
+
+const { locale, current } = Astro.props
+const t = useTranslations(locale)
+
+// No module markers here: the filter below already drops any link whose route
+// is not in the table, so removing the blog route removes the blog link.
+const links = ['blog', 'contact']
+  .map(key => ({ key, href: routePath(key, locale), label: t(`nav.${key}`) }))
+  .filter(link => link.href)
+---
+<header class="mk-header">
+  <div class="mk-header-inner">
+    <a class="mk-brand" href={routePath('home', locale)}>
+      <svg class="mk-logo" viewBox="0 0 32 32" width="26" height="26" fill="none" aria-hidden="true">
+        <rect x="1.25" y="1.25" width="29.5" height="29.5" rx="8.75" stroke="currentColor" stroke-width="1.6" />
+        <path d="M10 21.5 16 9l6 12.5" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M12.6 18h6.8" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" />
+      </svg>
+      {forge.brand.name}
+    </a>
+
+    <nav class="mk-nav" aria-label={forge.brand.name}>
+      {links.map(link => (
+        <a href={link.href} aria-current={current === link.key ? 'page' : undefined}>{link.label}</a>
+      ))}
+    </nav>
+
+    <div class="mk-header-spacer"></div>
+
+    <div class="mk-header-actions">
+      {/* The real kit Button, rendered to static HTML: Astro runs React at
+          BUILD time, so this ships no JavaScript at all unless a client:
+          directive asks for it. Hand-writing the classes instead would fork
+          the kit's markup for no saving. */}
+      <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="compact" pill>{t('nav.bookCall')}</Button>
+    </div>
+
+    <details class="mk-burger">
+      <summary aria-label={t('nav.openMenu')}>
+        <span class="mk-burger-bar"></span>
+        <span class="mk-burger-bar"></span>
+      </summary>
+      <div class="mk-mobile-menu">
+        {links.map(link => <a href={link.href}>{link.label}</a>)}
+        <a href={forge.brand.bookingUrl}>{t('nav.bookCall')}</a>
+      </div>
+    </details>
+  </div>
+</header>
+<div class="mk-header-offset"></div>

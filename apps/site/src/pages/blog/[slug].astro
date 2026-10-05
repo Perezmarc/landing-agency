@@ -1,0 +1,15 @@
+---
+import { getCollection } from 'astro:content'
+import BlogPost from '../../pages-content/BlogPost.astro'
+
+/* One page per English article. Drafts are built in dev so you can read what
+   you are writing, and left out of a production build entirely. */
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ id, data }) =>
+    id.startsWith('en/') && (import.meta.env.DEV || !data.draft))
+  return posts.map(entry => ({ params: { slug: entry.id.split('/').pop() }, props: { entry } }))
+}
+
+const { entry } = Astro.props
+---
+<BlogPost locale="en" entry={entry} />

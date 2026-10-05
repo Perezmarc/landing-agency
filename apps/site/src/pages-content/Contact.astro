@@ -1,0 +1,48 @@
+---
+/* Contact. Addresses come from the manifest, which derives them from the
+ * domain — so this page cannot be the one that still lists the old one. */
+import Base from '../layouts/Base.astro'
+import { Button } from '@forge/ui'
+import forge from '@forge/manifest'
+import { useTranslations } from '@forge/i18n'
+import { pageMeta } from '@forge/seo/meta'
+
+const { locale } = Astro.props
+const t = useTranslations(locale)
+const meta = pageMeta('contact', locale)
+
+const rows = [
+  { email: forge.brand.email.sales,   label: t('contact.projectsLabel'), note: t('contact.projectsNote') },
+  { email: forge.brand.email.support, label: t('contact.generalLabel'),  note: t('contact.generalNote') },
+  { email: forge.brand.email.privacy, label: t('contact.privacyLabel'),  note: t('contact.privacyNote') },
+]
+
+const legalLine = [forge.brand.legal.entity, forge.brand.legal.jurisdiction].filter(Boolean).join(' · ')
+---
+<Base meta={meta} locale={locale} current="contact">
+  <section class="mk-section">
+    <div class="mk-wrap">
+      <div class="mk-section-head">
+        <span class="mk-eyebrow">{t('contact.eyebrow')}</span>
+        <h1 class="mk-h2">{t('contact.heading')}</h1>
+        <p class="mk-lead">{t('contact.lead')}</p>
+      </div>
+
+      <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill iconRightName="arrowRight">
+        {t('nav.bookCall')}
+      </Button>
+
+      <div class="mk-feature-grid">
+        {rows.map(row => (
+          <article class="mk-feature-card">
+            <h3>{row.label}</h3>
+            <p>{row.note}</p>
+            <p><a href={`mailto:${row.email}`}>{row.email}</a></p>
+          </article>
+        ))}
+      </div>
+
+      <p class="mk-page-meta">{legalLine}</p>
+    </div>
+  </section>
+</Base>

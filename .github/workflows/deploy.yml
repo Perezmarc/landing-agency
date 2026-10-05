@@ -1,0 +1,66 @@
+name: Deploy
+
+# Production deploy pipeline, in order: tests → site.
+#
+# ── OFF UNTIL YOU TURN IT ON ────────────────────────────────────────────────
+# Every job below is gated on the repository variable DEPLOY_ENABLED being
+# "true" (Settings → Secrets and variables → Actions → Variables). Without it
+# this whole workflow is skipped — no failed deploy on every merge, and no
+# red X on main. Set it once the Vercel project and the secrets below exist.
+# Pull requests are unaffected either way — ci.yml runs on every PR on its own.
+#
+#   test — the full suite via the reusable ci.yml workflow. The deploy job
+#          requires it, so a regression on main blocks production.
+#   site — builds and deploys the static site to Vercel.
+#
+# Required secrets (Settings → Secrets and variables → Actions, "Production"):
+#   VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never run two production deploys at once; don't cancel an in-flight one.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+# A read-only repo token is enough — these jobs only deploy outward.
+permissions:
+  contents: read
+
+jobs:
+  # The deploy gate. Reuses ci.yml, the same workflow that runs on every PR, so
+  # the checks on main are identical to the checks on the PR that produced it.
+  test:
+    if: ${{ vars.DEPLOY_ENABLED == 'true' }}
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  site:
+    needs: [test]
+    if: ${{ vars.DEPLOY_ENABLED == 'true' && needs.test.result == 'success' }}
+    runs-on: ubuntu-latest
+    # Secrets live in the "Production" GitHub Environment, so the job must
+    # declare it to read them. This also lets you attach protection rules.
+    environment: Production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # The script scopes VERCEL_TOKEN to the `pull` and `deploy` steps only —
+      # the `build`, which runs every third-party module's build-time code,
+      # never sees it.
+      - name: Deploy the site (production)
+        run: bash scripts/deploy-frontend.sh
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

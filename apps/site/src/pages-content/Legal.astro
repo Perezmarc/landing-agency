@@ -1,0 +1,52 @@
+---
+/* A legal page, rendered from markdown.
+ *
+ * WHY MARKDOWN AND NOT TRANSLATION KEYS: this is prose, not UI chrome. A
+ * privacy policy in a JSON catalog is a wall of escaped strings nobody will
+ * read, let alone have reviewed by a lawyer. Each language gets its own file
+ * under src/content/legal/, and the route table decides where it is served.
+ */
+import Base from '../layouts/Base.astro'
+import forge from '@forge/manifest'
+import { getEntry, render } from 'astro:content'
+import { useTranslations, INTL_LOCALE } from '@forge/i18n'
+import { pageMeta } from '@forge/seo/meta'
+
+const { locale, doc, routeKey } = Astro.props
+const t = useTranslations(locale)
+const meta = pageMeta(routeKey, locale)
+
+const entry = await getEntry('legal', `${locale}/${doc}`)
+if (!entry) throw new Error(`Missing legal document: ${locale}/${doc}.md`)
+const { Content } = await render(entry)
+
+// Privacy questions go to the privacy address, everything else to legal.
+const contactEmail = routeKey === 'privacy' ? forge.brand.email.privacy : forge.brand.email.legal
+
+const effective = new Intl.DateTimeFormat(INTL_LOCALE[locale] ?? 'en-US', {
+  year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC',
+}).format(entry.data.effective)
+---
+<Base meta={meta} locale={locale} current={routeKey}>
+  <section class="mk-section">
+    <div class="mk-wrap">
+      <h1 class="mk-h2">{entry.data.title}</h1>
+      <p class="mk-page-meta">{t('legal.effective', { date: effective })}</p>
+      <p class="mk-page-meta">{t('legal.notAdvice')}</p>
+
+      <div class="mk-prose">
+        <Content />
+
+        {/* The contact block is rendered from the manifest rather than written
+            into the markdown, so renaming the company or the domain moves it.
+            The prose above deliberately says "we" and never names the product
+            for the same reason. */}
+        <h2>{t('contact.heading')}</h2>
+        <p>
+          {[forge.brand.legal.entity, forge.brand.legal.jurisdiction].filter(Boolean).join(', ')}.<br />
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>

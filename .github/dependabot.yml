@@ -1,0 +1,32 @@
+version: 2
+updates:
+  # npm — grouped so a routine week is ONE reviewable PR instead of fifteen.
+  # Ungrouped dependabot output is how teams learn to ignore dependabot, and
+  # then miss the security update in the noise.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # Security updates stay ungrouped and get their own PR — see below.
+      dev-dependencies:
+        dependency-type: development
+        update-types: [minor, patch]
+      production-minor-patch:
+        dependency-type: production
+        update-types: [minor, patch]
+    ignore:
+      # Pinned deliberately: the Playwright package version must match the
+      # browser build provisioned in CI and in the dev sandbox. Bump it by hand
+      # and verify `npx playwright test` still runs. See CLAUDE.md.
+      - dependency-name: '@playwright/test'
+        update-types: [version-update:semver-major, version-update:semver-minor]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ['*']

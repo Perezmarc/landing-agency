@@ -1,0 +1,116 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — the single source of truth for colour, shape, elevation,
+   motion and type. Everything else in the codebase references these; no
+   component or page CSS hardcodes a hex, an oklch, a radius or a duration.
+
+   ONE SCOPE, ON PURPOSE. Every token lives on :root, so the same name works on
+   every page and in every component. (Design systems that scope a parallel
+   set to one wrapper — `--x-ink` inside it, `--ink` outside — spend the rest
+   of their life debugging which scope a component landed in. Don't introduce
+   that.)
+
+   RE-THEMING: change the values in the "Palette" block below and the whole
+   product follows — buttons, cards, inputs, every page. See
+   styles/themes/warm-linen.css for a complete worked example (a warm linen +
+   amber theme) you can copy over this block wholesale.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ═══════════ PALETTE — the part you change when re-branding ═══════════ */
+
+  /* Surfaces, back to front. --bg is the page, --surface is a card on it,
+     --surface-2 is a recessed/inset area (rail, table header, empty state). */
+  --bg:          #f7f7f8;
+  --surface:     #ffffff;
+  --surface-2:   #fafafb;
+
+  /* Ink, strongest to faintest. --ink is body text, --ink-2 is a shade softer
+     for dense UI, --mute is secondary copy, --mute-2 is labels and placeholders. */
+  --ink:         #16161a;
+  --ink-2:       #26262c;
+  --mute:        #6e6e78;
+  --mute-2:      #9a9aa4;
+
+  /* Hairlines. --line separates, --line-2 is the quieter internal divider. */
+  --line:        #e4e4e8;
+  --line-2:      #eeeef1;
+
+  /* Accent — the one brand colour. Used for links, focus rings, the active
+     nav tick, badges. Deliberately a neutral indigo placeholder: swap it. */
+  --accent:      oklch(0.55 0.16 265);
+  --accent-ink:  oklch(0.40 0.14 265);
+  --accent-soft: oklch(0.95 0.03 265);
+  --accent-line: oklch(0.86 0.07 265);
+
+  /* Semantic families. Each is: base (solid/strong) · soft (fill) ·
+     ink (text on the soft fill) · line (border on the soft fill). */
+  --good:        oklch(0.62 0.16 155);
+  --good-soft:   oklch(0.95 0.04 155);
+  --good-ink:    oklch(0.42 0.13 155);
+  --good-line:   oklch(0.85 0.09 155);
+
+  --warn:        oklch(0.78 0.16 85);
+  --warn-soft:   oklch(0.96 0.05 85);
+  --warn-ink:    oklch(0.46 0.12 80);
+  --warn-line:   oklch(0.86 0.10 85);
+
+  --bad:         oklch(0.62 0.19 25);
+  --bad-soft:    oklch(0.96 0.03 25);
+  --bad-ink:     oklch(0.50 0.18 25);
+  --bad-line:    oklch(0.85 0.08 25);
+
+  --info-soft:   oklch(0.95 0.04 235);
+  --info-ink:    oklch(0.44 0.11 235);
+
+  /* Marketing surfaces — the dark register the landing hero and final CTA sit
+     on. Kept separate from the app palette so a dark hero doesn't force the
+     whole product dark. */
+  --mk-dark:        #14151c;
+  --mk-dark-2:      #1c1e28;
+  --mk-light:       #f3f3f5;
+  --mk-light-dim:   rgba(243, 243, 245, 0.66);
+  --mk-light-faint: rgba(243, 243, 245, 0.38);
+  --mk-glass:       rgba(20, 21, 28, 0.46);
+  --mk-glass-line:  rgba(255, 255, 255, 0.14);
+
+  /* ═══════════ SCALE — shape, elevation, motion ═══════════ */
+
+  /* Radii. Components reference the step, never a raw px, so the product has
+     one shape rhythm instead of a hand-picked radius per rule. */
+  --r-xs:   6px;    /* tight: kbd hints, tiny pills          */
+  --r-sm:   9px;    /* controls: buttons, inputs, menu rows  */
+  --r-md:  12px;    /* nested panels, list rows, popovers    */
+  --r-lg:  16px;    /* cards, banners                        */
+  --r-xl:  20px;    /* hero / feature surfaces               */
+  --r-pill: 999px;
+
+  /* Elevation — three confident steps plus an inset "card" recipe. The ring
+     (top highlight + hairline) is what makes a flat surface read as a physical
+     card; pair it with --elev-1. */
+  --elev-1: 0 1px 2px rgba(16, 16, 24, 0.05), 0 1px 3px rgba(16, 16, 24, 0.04);
+  --elev-2: 0 2px 5px rgba(16, 16, 24, 0.06), 0 3px 10px rgba(16, 16, 24, 0.05);
+  --elev-3: 0 4px 10px rgba(16, 16, 24, 0.07), 0 18px 44px rgba(16, 16, 24, 0.11);
+  --card-ring: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px var(--line);
+
+  /* Motion — one ramp, so micro-interactions don't each invent a duration. */
+  --dur-fast: 0.12s;
+  --dur:      0.2s;
+  --dur-slow: 0.34s;
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:    cubic-bezier(0.22, 0.61, 0.2, 1);
+
+  /* ═══════════ TYPE ═══════════
+     System stacks by default: nothing to download, identical in CI and
+     offline, and fast on first paint. To use a web font, add its <link> to
+     index.html and change the stack here — every heading and control follows,
+     because nothing else names a font family. */
+  --font-body:    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: var(--font-body);
+  --font-mono:    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Focus ring — one recipe, used by every interactive element. */
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
+}

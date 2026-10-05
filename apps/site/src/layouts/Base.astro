@@ -1,0 +1,39 @@
+---
+/* The one layout. Head, header, main, footer — every public page is this plus
+ * a body.
+ *
+ * Stylesheet order matters, and it is the same order the app uses: tokens, the
+ * kit's document defaults, the kit's material, the buttons, then this site's
+ * own marketing sheet. The kit ships classNames and no CSS-in-JS, so importing
+ * its stylesheets is part of using its markup — a page that renders `.ui-btn`
+ * without them renders an unstyled link.
+ */
+import '@forge/tokens/tokens.css'
+import '@forge/ui/base.css'
+import '@forge/ui/kit.css'
+import '@forge/ui/button.css'
+import '../styles/marketing.css'
+
+import Seo from '../components/Seo.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+import { useTranslations } from '@forge/i18n'
+
+const { meta, locale, current } = Astro.props
+const t = useTranslations(locale)
+---
+<!DOCTYPE html>
+<html lang={meta.lang}>
+  <head>
+    <Seo meta={meta} />
+  </head>
+  <body>
+    {/* The first thing keyboard focus reaches, before the header's links. */}
+    <a class="skip-link" href="#main">{t('nav.skipToContent')}</a>
+    <Nav locale={locale} current={current} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer locale={locale} current={current} />
+  </body>
+</html>

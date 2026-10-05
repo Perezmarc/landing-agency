@@ -1,0 +1,13 @@
+---
+import { getCollection } from 'astro:content'
+import BlogPost from '../../../pages-content/BlogPost.astro'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ id, data }) =>
+    id.startsWith('it/') && (import.meta.env.DEV || !data.draft))
+  return posts.map(entry => ({ params: { slug: entry.id.split('/').pop() }, props: { entry } }))
+}
+
+const { entry } = Astro.props
+---
+<BlogPost locale="it" entry={entry} />

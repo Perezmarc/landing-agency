@@ -1,0 +1,48 @@
+{
+  "$comment": [
+    "The site, on the apex domain. Static files only.",
+    "",
+    "Set this Vercel project's Root Directory to apps/site.",
+    "",
+    "`git.deploymentEnabled.main = false` disables Vercel's own git deploy for",
+    "main so .github/workflows/deploy.yml, which gates on the test suite, is",
+    "the only path to production. PR previews are unaffected."
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  },
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "$comment": "No connect-src for a backend, because this site has none. It loads its own scripts and styles and nothing else.",
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; connect-src 'self'"
+        }
+      ]
+    },
+    {
+      "$comment": "Hashed asset filenames are immutable, so they can be cached forever. The HTML above them must not be, or a deploy is invisible until a cache expires.",
+      "source": "/_astro/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "$comment": [
+    "Configuration for /design-sync, which publishes this UI kit to an external",
+    "design canvas so designs are built from the real components.",
+    "",
+    "SET projectId BEFORE FIRST USE \u2014 it is issued when you create the project",
+    "in the design tool. Everything else already points at the right files.",
+    "",
+    "Not using a design canvas? Delete this directory and design-system/."
+  ],
+  "projectId": "",
+  "pkg": "webapp-factory",
+  "globalName": "AppDS",
+  "shape": "package",
+  "entry": "design-system/ds-entry.js",
+  "srcDir": "packages/ui/src",
+  "tsconfig": "packages/config/tsconfig.json",
+  "buildCmd": "node design-system/build-ds-css.mjs",
+  "cssEntry": "design-system/ds-styles.css",
+  "readmeHeader": ".design-sync/conventions.md",
+  "docsDir": "design-system/ds-docs",
+  "guidelinesGlob": [],
+  "componentSrcMap": {
+    "Button": "packages/ui/src/Button.jsx",
+    "TextInput": "packages/ui/src/TextInput.jsx",
+    "Select": "packages/ui/src/Select.jsx",
+    "Switch": "packages/ui/src/Switch.jsx",
+    "SegmentedControl": "packages/ui/src/SegmentedControl.jsx",
+    "Card": "packages/ui/src/Card.jsx",
+    "Chip": "packages/ui/src/Chip.jsx",
+    "Modal": "packages/ui/src/Modal.jsx",
+    "Skeleton": "packages/ui/src/Skeleton.jsx"
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "nav": {
+    "blog": "Blog",
+    "contact": "Contatti",
+    "bookCall": "Prenota una call",
+    "openMenu": "Apri il menu",
+    "skipToContent": "Vai al contenuto"
+  },
+  "footer": {
+    "blurb": "Progettiamo, sviluppiamo e gestiamo agenti AI su misura per i team di finanza, vendite e operations.",
+    "company": "Azienda",
+    "legal": "Note legali",
+    "privacy": "Informativa sulla privacy",
+    "terms": "Termini di utilizzo",
+    "copyright": "© {{years}} {{entity}}",
+    "language": "Lingua"
+  },
+  "home": {
+    "eyebrow": "Agenti AI per le operations aziendali",
+    "heading": "Affida interi processi ad agenti AI costruiti per la tua azienda",
+    "lead": "Progettiamo, sviluppiamo e gestiamo agenti AI su misura che si fanno carico del lavoro ripetitivo di coordinamento nei tuoi team di finanza, vendite e operations. Lavorano dentro gli strumenti che usi già e sono operativi in poche settimane.",
+    "ctaPrimary": "Prenota una call conoscitiva",
+    "ctaSecondary": "Scopri come lavoriamo",
+    "problemHeading": "Il tuo team fa ancora da collante tra i tuoi sistemi",
+    "problemLead": "Le fatture si riconciliano a mano, le trattative aspettano le approvazioni e il report del lunedì si ricostruisce da cinque export diversi. La maggior parte degli strumenti di automazione copre un singolo passaggio e lascia alle persone il compito di spostare il lavoro tra tutti gli altri. Noi guardiamo il processo nella sua interezza e lo affidiamo ad agenti che portano ogni pratica dal primo input all'ultimo aggiornamento.",
+    "stepsHeading": "Come funziona un progetto",
+    "stepsLead": "Il tuo team ci spiega come si svolge oggi il lavoro. Noi ci occupiamo della progettazione, dello sviluppo e della gestione degli agenti.",
+    "steps": [
+      {
+        "title": "Analisi delle opportunità",
+        "body": "Mappiamo i tuoi processi e individuiamo dove gli agenti eliminano più lavoro manuale e più attese. Ricevi un elenco di priorità con l'impegno richiesto da ciascuna."
+      },
+      {
+        "title": "Progettazione del processo",
+        "body": "Ridisegniamo il processo attorno agli agenti: cosa decidono, cosa passano a una persona e con quali sistemi e regole aziendali lavorano."
+      },
+      {
+        "title": "Messa in produzione",
+        "body": "Gli agenti entrano in funzione dentro i tuoi strumenti attuali, con i permessi che il tuo team ha già. I tuoi dati restano dove sono."
+      },
+      {
+        "title": "Miglioramento continuo",
+        "body": "Analizziamo ogni esecuzione, affiniamo le regole decisionali e affidiamo agli agenti parti sempre più ampie del processo man mano che si dimostrano affidabili."
+      }
+    ],
+    "outcomesHeading": "Cosa cambia per il tuo team",
+    "outcomes": [
+      {
+        "title": "Meno coordinamento manuale",
+        "body": "Gli agenti sollecitano le approvazioni, riconciliano i dati e aggiornano i sistemi, così le tue persone dedicano la giornata alle decisioni che richiedono loro."
+      },
+      {
+        "title": "Un lavoro che non si ferma",
+        "body": "Gli agenti prendono in carico ogni pratica appena arriva, a qualsiasi ora, invece di lasciarla nella coda di qualcuno fino a lunedì."
+      },
+      {
+        "title": "Spazio per crescere con il team che hai",
+        "body": "Gestisci più volumi senza assumere allo stesso ritmo e riserva i nuovi ruoli al lavoro che deve fare una persona."
+      }
+    ],
+    "areasHeading": "Dove partono gli agenti",
+    "areasLead": "Partiamo dove il lavoro è ripetitivo, segue regole chiare ed è distribuito su più strumenti.",
+    "areas": [
+      {
+        "title": "Finanza",
+        "body": "Contabilità fornitori e clienti, riconciliazioni, chiusura mensile e previsioni di cassa."
+      },
+      {
+        "title": "Revenue operations",
+        "body": "Qualità dei dati nel CRM, approvazione delle trattative, report sulla pipeline e verifica delle provvigioni."
+      },
+      {
+        "title": "Acquisti",
+        "body": "Qualifica dei fornitori, approvazione degli ordini, monitoraggio dei contratti e solleciti ai fornitori."
+      },
+      {
+        "title": "Compliance e rischi",
+        "body": "Monitoraggio normativo, evidenze per gli audit, controllo delle policy e test dei controlli."
+      },
+      {
+        "title": "Customer operations",
+        "body": "Smistamento dei ticket, anomalie sugli ordini, aggiornamenti degli account e gestione delle escalation."
+      },
+      {
+        "title": "Logistica",
+        "body": "Anomalie sulle spedizioni, segnali di domanda, valutazione dei fornitori e allerte di magazzino."
+      }
+    ],
+    "systemsHeading": "Sui sistemi che usi già",
+    "systemsLead": "Tieni il tuo ERP, il tuo CRM e il tuo helpdesk. Gli agenti si collegano a questi sistemi e lavorano secondo le tue regole.",
+    "systems": [
+      {
+        "title": "Collegati ai tuoi strumenti",
+        "body": "Gli agenti lavorano tramite le API del tuo ERP, del CRM, dell'helpdesk, dei database e delle piattaforme dati."
+      },
+      {
+        "title": "Accessi sotto il tuo controllo",
+        "body": "Gli agenti agiscono solo con i permessi che concedi tu e rispettano le tue policy di sicurezza."
+      },
+      {
+        "title": "Una traccia di ogni azione",
+        "body": "Ogni decisione e ogni modifica vengono registrate, così il tuo team e i tuoi revisori possono vedere cosa è successo e perché."
+      }
+    ],
+    "faqEyebrow": "Domande frequenti",
+    "faqHeading": "Le domande che ci fanno alla prima call",
+    "faqs": [
+      {
+        "q": "Cosa succede durante la call conoscitiva?",
+        "a": "È una sessione di lavoro. Vediamo insieme come il tuo team gestisce oggi i suoi processi, dove si perde tempo e quali processi sono buoni candidati per gli agenti. Ne esci con un breve elenco di opportunità e una tempistica indicativa, che si lavori insieme o no."
+      },
+      {
+        "q": "Quanto tempo serve per mettere in funzione il primo agente?",
+        "a": "La maggior parte dei primi progetti richiede da 6 a 12 settimane dall'analisi alla produzione. I tempi dipendono dalla complessità del processo e da quanti sistemi coinvolge."
+      },
+      {
+        "q": "Cosa possono fare concretamente gli agenti?",
+        "a": "Leggono e aggiornano i tuoi sistemi, analizzano dati, applicano le tue regole di business, gestiscono le approvazioni, preparano report e coordinano il lavoro tra strumenti diversi. Quando una pratica richiede una persona, gliela passano con tutto il contesto."
+      },
+      {
+        "q": "Gli agenti funzionano con gli strumenti che abbiamo già?",
+        "a": "Sì. Si collegano tramite API a ERP, CRM, helpdesk, database e piattaforme dati, quindi mantieni i sistemi che il tuo team conosce."
+      },
+      {
+        "q": "Quanto tempo richiederà al nostro team?",
+        "a": "Conta circa 20 ore sull'intero progetto, soprattutto per spiegarci come si lavora oggi e rivedere con noi la progettazione. Lo sviluppo e la messa in produzione sono a carico nostro."
+      },
+      {
+        "q": "Come gestite la sicurezza e i dati?",
+        "a": "Gli agenti operano all'interno dei permessi e delle policy di sicurezza che hai già, e ogni azione viene registrata ed è verificabile. Possiamo lavorare nell'ambito del tuo accordo sul trattamento dei dati."
+      },
+      {
+        "q": "Gli agenti possono seguire le nostre regole?",
+        "a": "Sì. Ogni progetto è costruito attorno ai tuoi processi, ai tuoi sistemi e alle tue regole operative, e approvi tu la progettazione prima che qualcosa vada in produzione."
+      },
+      {
+        "q": "Come funzionano i prezzi?",
+        "a": "Dipendono dalla complessità del processo, dai sistemi coinvolti e dall'ampiezza del progetto. Dopo la call conoscitiva ti inviamo una proposta scritta."
+      }
+    ],
+    "ctaHeading": "Scopri dove gli agenti AI possono aiutare la tua azienda",
+    "ctaLead": "Prenota una call con il nostro team. Analizzeremo insieme i tuoi processi e ti mostreremo dove gli agenti possono fare più differenza fin da subito.",
+    "ctaButton": "Prenota una call conoscitiva"
+  },
+  "contact": {
+    "eyebrow": "Contatti",
+    "heading": "Parliamone",
+    "lead": "Il modo più rapido per iniziare è una call conoscitiva. Per tutto il resto, scrivi all'indirizzo più adatto e ti risponderemo.",
+    "projectsLabel": "Nuovi progetti",
+    "projectsNote": "Prenota una call conoscitiva o chiedici come lavorare insieme.",
+    "generalLabel": "Informazioni generali",
+    "generalNote": "Domande su come lavoriamo, collaborazioni o qualsiasi altra cosa.",
+    "privacyLabel": "Privacy",
+    "privacyNote": "Richieste di accesso, rettifica e cancellazione dei dati."
+  },
+  "blog": {
+    "eyebrow": "Blog",
+    "heading": "Appunti sugli agenti AI al lavoro",
+    "lead": "Come progettiamo, mettiamo in produzione e gestiamo agenti AI nelle operations reali, e cosa impariamo strada facendo.",
+    "empty": "Ancora nessun articolo. I primi sono in arrivo.",
+    "backToBlog": "Tutti gli articoli",
+    "publishedOn": "Pubblicato il {{date}}",
+    "by": "di {{author}}"
+  },
+  "legal": {
+    "effective": "In vigore dal {{date}}",
+    "notAdvice": "Questo è un modello, non una consulenza legale. Fallo verificare prima di farvi affidamento."
+  },
+  "notFound": {
+    "heading": "Questa pagina non esiste",
+    "lead": "Il link potrebbe essere obsoleto, oppure la pagina è stata spostata.",
+    "home": "Vai alla home",
+    "blog": "Leggi il blog"
+  },
+  "seo": {
+    "home": {
+      "title": "{{name}} | Agenti AI su misura per le operations aziendali",
+      "description": "Progettiamo, sviluppiamo e gestiamo agenti AI su misura che si occupano del lavoro ripetitivo di finanza, vendite e operations, dentro i tuoi strumenti."
+    },
+    "blog": {
+      "title": "Blog: agenti AI nelle operations reali | {{name}}",
+      "description": "Come il team di {{name}} progetta, mette in produzione e gestisce agenti AI nelle operations reali, e cosa impara strada facendo."
+    },
+    "contact": {
+      "title": "Contatti | {{name}}",
+      "description": "Prenota una call conoscitiva con {{name}} o scrivici per parlare di agenti AI per i tuoi team di finanza, vendite e operations."
+    },
+    "privacy": {
+      "title": "Informativa sulla privacy | {{name}}",
+      "description": "Quali dati personali raccoglie {{name}} tramite questo sito, perché, per quanto tempo li conserva e come chiederne la cancellazione."
+    },
+    "terms": {
+      "title": "Termini di utilizzo | {{name}}",
+      "description": "Le condizioni che regolano l'uso del sito di {{name}}, in un linguaggio chiaro."
+    }
+  }
+}

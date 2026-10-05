@@ -1,0 +1,299 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   BUTTON — the look for the shared UI-kit button. <Button>
+   (src/components/Button.jsx) owns markup and behaviour; this file owns the
+   material for the family classes:
+
+     .btn-wrap → .btn (+ variant + size) → .btn-text
+               + .btn-shadow
+
+   TWO SHAPE REGISTERS ON ONE COMPONENT
+     • DEFAULT is the design-system control radius (--r-sm, 9px) — a squared
+       rounded-rect. This is the in-app / product shape, matching inputs.
+     • The marketing pages opt into the full pill with the `pill` prop
+       (<Button pill>). Same component, one attribute.
+
+   THE VARIANTS ARE A ROLE VOCABULARY, not a colour picker. One material per
+   level of hierarchy, so "primary" looks identical everywhere it appears:
+     cta       — the premium conversion action (hero, upgrade). Accent-lit.
+     dark      — the in-app PRIMARY (Save / Create / Send).
+     secondary — the default toolbar button: surface + hairline ring.
+     ghost     — text-only until hover.
+     danger    — destructive.
+     white     — solid white, for dark surfaces.
+     glass     — the lightweight secondary pill; adapts on dark via .is-on-dark.
+     plain     — bare element, no chrome (handled in the component).
+
+   Every colour here is a token. Re-theming tokens.css re-themes the buttons.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Scaffolding ── */
+.btn-wrap {
+  position: relative;
+  display: inline-flex;
+  border-radius: var(--r-sm);
+  isolation: isolate;
+  flex: 0 0 auto;
+}
+/* Full-width. NOTE: `block` makes the WRAP width:100%. Inside a flex ROW next
+   to `flex: 1` siblings it eats the row and crushes them — use it only when
+   the button is on its own line (stacked column, card CTA, mobile layout). */
+.btn-wrap--block { display: flex; width: 100%; }
+
+.btn {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  font: inherit;
+  -webkit-appearance: none;
+          appearance: none;
+  transition: transform var(--dur-slow) var(--ease-spring);
+}
+.btn:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.btn:disabled, .btn[aria-disabled="true"] { cursor: not-allowed; opacity: .5; }
+
+.btn-text {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+/* Keep icons sane — an inline svg with only a viewBox would otherwise balloon. */
+.btn-text svg, .btn-text .ico { width: 16px; height: 16px; flex: 0 0 auto; }
+
+/* ── Sizes — padding lives on the text span (the family's pattern) ── */
+.btn-text--default { padding: 9px 18px; font-size: 14px; }
+.btn-text--sm      { padding: 6px 14px; font-size: 13px; }
+.btn-text--lg      { padding: 13px 26px; font-size: 15.5px; gap: 9px; }
+.btn-text--lg svg, .btn-text--lg .ico { width: 18px; height: 18px; }
+/* compact — the app toolbar button: 32px tall, 13px label. */
+.btn-text--compact { padding: 8px 13px; font-size: 13px; gap: 7px; }
+.btn-text--compact svg, .btn-text--compact .ico { width: 14px; height: 14px; }
+.btn--icon .btn-text--icon { padding: 0; width: 40px; height: 40px; justify-content: center; }
+.btn--icon .btn-text--icon svg, .btn--icon .btn-text--icon .ico { width: 18px; height: 18px; }
+/* iconCompact — 32px square icon button, matches .ui-icon-btn. */
+.btn--iconCompact .btn-text--iconCompact { padding: 0; width: 32px; height: 32px; justify-content: center; }
+.btn--iconCompact .btn-text--iconCompact svg, .btn--iconCompact .btn-text--iconCompact .ico { width: 15px; height: 15px; }
+
+/* Compact sizes are the app "instrument" register: squared radius and a subtle
+   1px lift on hover rather than the springy scale, so dense toolbars stay calm. */
+.btn--compact, .btn--iconCompact { border-radius: var(--r-sm); }
+.btn-wrap:hover .btn--compact,
+.btn-wrap:hover .btn--iconCompact { transform: translateY(-1px); }
+.btn-wrap:active .btn--compact,
+.btn-wrap:active .btn--iconCompact { transform: translateY(0) scale(0.975); transition-duration: var(--dur-fast); }
+
+/* PILL — the marketing register (<Button pill>). Set on the element, the wrap
+   AND the cast shadow so all three agree. After the compact rules so it wins
+   if both are (unusually) present. */
+.btn--pill,
+.btn-wrap:has(.btn--pill),
+.btn-wrap:has(.btn--pill) .btn-shadow { border-radius: var(--r-pill); }
+
+/* ── The floating cast (behind the button; intensifies on hover) ──
+   A whisper of contact shadow at rest, so buttons read as pressed onto the
+   surface rather than hovering above it. */
+.btn-shadow {
+  position: absolute;
+  inset: 2px;
+  z-index: 0;
+  border-radius: var(--r-sm);
+  box-shadow: 0 1px 2px rgba(16, 16, 24, 0.10);
+  transition: box-shadow .3s var(--ease-out);
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-wrap:hover .btn-shadow {
+    box-shadow: 0 2px 6px rgba(16, 16, 24, 0.10), 0 1px 2px rgba(16, 16, 24, 0.06);
+  }
+}
+
+/* ════════ WHITE — solid white, dark ink (for dark surfaces) ════════ */
+.btn--white {
+  --btn-sheen: rgba(16, 16, 24, 0.06);
+  background: #fff;
+  color: var(--ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(16, 16, 24, 0.10),
+    inset 0 -2px 5px rgba(16, 16, 24, 0.05);
+  transition: transform var(--dur-slow) var(--ease-spring), box-shadow .3s ease;
+}
+
+/* ════════ DARK — the in-app primary ════════
+   Crisp solid ink: a single hairline top-light plus a 1px rim. No deep bottom
+   gloss (that inner shadow reads as a plasticky puff). */
+.btn--dark {
+  --btn-sheen: rgba(255, 255, 255, 0.2);
+  background: var(--ink);
+  color: var(--surface);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  transition: transform var(--dur-slow) var(--ease-spring), box-shadow .3s ease, filter .2s ease;
+}
+.btn--dark::before {
+  content: ""; position: absolute; inset: 0;
+  border-radius: inherit; z-index: 0; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 55%);
+}
+.btn-wrap:hover .btn--dark { filter: brightness(1.09); }
+
+/* ════════ SECONDARY — the default toolbar button ════════ */
+.btn--secondary {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow:
+    var(--elev-1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 0 0 1px var(--line);
+  transition: transform var(--dur-slow) var(--ease-spring), box-shadow .3s ease;
+}
+.btn-wrap:hover .btn--secondary {
+  box-shadow:
+    var(--elev-2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 0 0 1px var(--mute-2);
+}
+
+/* ════════ GHOST — no material at rest ════════ */
+.btn--ghost {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: none;
+}
+.btn-wrap:hover .btn--ghost { background: color-mix(in srgb, var(--ink) 5%, transparent); box-shadow: none; }
+/* Ghost has no resting cast; keep the floating shadow layer invisible. */
+.btn-wrap:has(.btn--ghost) .btn-shadow { box-shadow: none; }
+
+/* ════════ DANGER — destructive ════════ */
+.btn--danger {
+  background: var(--bad-soft);
+  color: var(--bad-ink);
+  box-shadow:
+    var(--elev-1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 0 0 1px var(--bad-line);
+  transition: transform var(--dur-slow) var(--ease-spring), box-shadow .3s ease;
+}
+.btn-wrap:hover .btn--danger {
+  background: color-mix(in srgb, var(--bad) 6%, var(--bad-soft));
+  box-shadow:
+    var(--elev-2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 0 1px var(--bad);
+}
+
+/* ════════ CTA — the premium conversion action ════════
+   A dark body lit by the accent: a thin accent top-hairline and a warm
+   underglow cast, so the brand colour appears as light rather than as a flat
+   fill. Reads the same on a dark hero and on the light product shell. */
+.btn--cta {
+  --btn-sheen: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: var(--mk-dark);
+  color: var(--mk-light);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 50%, transparent),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 1px 4px rgba(8, 8, 12, 0.35),
+    0 4px 12px color-mix(in srgb, var(--accent) 22%, transparent);
+  transition: transform var(--dur-slow) var(--ease-spring), box-shadow .3s ease, filter .2s ease;
+}
+.btn--cta::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: 0; pointer-events: none;
+  background: radial-gradient(130% 150% at 50% -20%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 60%);
+}
+.btn-wrap:hover .btn--cta {
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 66%, transparent),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 2px 5px rgba(8, 8, 12, 0.38),
+    0 6px 16px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+/* The CTA carries its own lit cast — silence the neutral contact-shadow layer. */
+.btn-wrap:has(.btn--cta) .btn-shadow { box-shadow: none; }
+
+/* ════════ GLASS — the lightweight secondary ════════
+   A clean surface pill on light; a white hairline "editorial" outline on dark
+   (see .is-on-dark below). This is the component's default variant. */
+.btn--glass {
+  --btn-sheen: rgba(255, 255, 255, 0.5);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 0 1px var(--line);
+  transition: transform var(--dur-slow) var(--ease-spring), box-shadow .3s ease, background .3s ease;
+}
+.btn-wrap:hover .btn--glass {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 0 0 1px var(--mute-2);
+}
+
+/* ════════ GLARE — periodic sheen sweep ════════
+   OPT-IN (<Button glare>) and reserved for the primary conversion CTA. On every
+   button it reads as noise; on one button it reads as emphasis. */
+.btn--glare::after {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  border-radius: inherit; pointer-events: none;
+  background-image: linear-gradient(100deg, transparent 38%, var(--btn-sheen, rgba(255, 255, 255, 0.5)) 50%, transparent 62%);
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: btn-shimmer 5.5s var(--ease-out) infinite;
+}
+@keyframes btn-shimmer {
+  0%   { background-position: 190% 0; }
+  55%  { background-position: -70% 0; }
+  100% { background-position: -70% 0; }
+}
+.btn-wrap:hover .btn--glare::after { animation-duration: 1.8s; }
+
+/* ── Hover / press ──
+   A calm rise, not a scale-up: enlarge-on-hover is what reads as inflated. The
+   spring easing still gives it a tactile settle. */
+@media (hover: hover) and (pointer: fine) {
+  .btn-wrap:hover .btn { transform: translateY(-1.5px); }
+}
+.btn-wrap:active .btn { transform: translateY(0) scale(.97); transition-duration: var(--dur-fast); }
+
+/* ── Dark surfaces (.is-on-dark) ──
+   Glass becomes a clean white hairline-outline pill; its contact shadow is
+   dropped so nothing smears a halo into the dark. The solid pills get a softer,
+   darker cast instead. */
+.btn-wrap.is-on-dark .btn--glass {
+  background: transparent;
+  color: var(--mk-light);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+.btn-wrap.is-on-dark:hover .btn--glass {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.85);
+}
+.btn-wrap.is-on-dark:has(.btn--glass) .btn-shadow { box-shadow: none; }
+.btn-wrap.is-on-dark:has(.btn--white, .btn--dark) .btn-shadow {
+  box-shadow: 0 2px 9px rgba(0, 0, 0, 0.2);
+}
+.btn-wrap.is-on-dark:has(.btn--white, .btn--dark):hover .btn-shadow {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.24);
+}
+/* On dark, the in-app primary would disappear into the background — flip it. */
+.btn-wrap.is-on-dark .btn--dark { background: var(--mk-light); color: var(--mk-dark); }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+  .btn--glare::after { animation: none; }
+}

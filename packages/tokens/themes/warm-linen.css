@@ -1,0 +1,84 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   EXAMPLE THEME — "warm linen & amber"
+
+   A complete worked re-theme, here to show what changing the brand actually
+   takes: only the Palette block from tokens.css. Nothing structural — no
+   radii, no elevation curve, no motion, no component CSS. If a re-theme ever
+   needs you to touch a component stylesheet, that component is hardcoding a
+   colour it should be reading from a token.
+
+   TO USE IT
+     import './styles/themes/warm-linen.css'   ← after tokens.css in main.jsx
+
+   TO BUILD YOUR OWN
+     Copy this file, rename it, change the values. The comments below flag the
+     three decisions that make a palette hang together.
+
+   NOT A DARK MODE. This overrides the same :root variables rather than living
+   under a [data-theme] selector, because a factory shouldn't guess at your
+   theming strategy. For a runtime-switchable theme, wrap the block below in
+   `:root[data-theme="warm"]` and set that attribute on <html>.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* DECISION 1 — the surfaces carry the warmth. A tinted background is what
+     makes a palette read as "a brand" rather than "default grey": the page is
+     linen, cards stay pure white so they lift off it. */
+  --bg:          #f6f5f0;
+  --surface:     #ffffff;
+  --surface-2:   #fbfaf6;
+
+  /* DECISION 2 — the ink is tinted to match. Neutral-grey text on a warm
+     background is the tell of a half-finished theme; these greys carry the
+     same yellow-brown bias as the surfaces. */
+  --ink:         #1a1814;
+  --ink-2:       #2c2823;
+  --mute:        #75706a;
+  --mute-2:      #a09a92;
+  --line:        #e7e3da;
+  --line-2:      #efece5;
+
+  /* DECISION 3 — the accent is golden hour, and every semantic family is
+     nudged toward the same warmth so nothing reads as a stock UI colour
+     dropped in. */
+  --accent:      oklch(0.66 0.14 65);
+  --accent-ink:  oklch(0.38 0.10 65);
+  --accent-soft: oklch(0.93 0.04 75);
+  --accent-line: oklch(0.85 0.08 70);
+
+  --good:        oklch(0.62 0.195 150);
+  --good-soft:   oklch(0.94 0.05 150);
+  --good-ink:    oklch(0.34 0.15 150);
+  --good-line:   oklch(0.84 0.10 150);
+
+  --warn:        oklch(0.78 0.195 90);
+  --warn-soft:   oklch(0.96 0.04 90);
+  --warn-ink:    oklch(0.42 0.135 80);
+  --warn-line:   oklch(0.85 0.10 90);
+
+  --bad:         oklch(0.70 0.16 25);
+  --bad-soft:    oklch(0.97 0.03 25);
+  --bad-ink:     oklch(0.50 0.16 25);
+  --bad-line:    oklch(0.84 0.08 25);
+
+  --info-soft:   oklch(0.94 0.05 220);
+  --info-ink:    oklch(0.40 0.10 220);
+
+  /* Marketing register — midnight sky, so the light linen product and the dark
+     hero read as two times of day in one brand rather than two brands. */
+  --mk-dark:        #0b0d1a;
+  --mk-dark-2:      #11142a;
+  --mk-light:       #f2f1ec;
+  --mk-light-dim:   rgba(242, 241, 236, 0.66);
+  --mk-light-faint: rgba(242, 241, 236, 0.38);
+  --mk-glass:       rgba(13, 16, 32, 0.46);
+  --mk-glass-line:  rgba(255, 255, 255, 0.14);
+
+  /* Elevation re-tinted: shadows cast in the linen's own brown rather than
+     neutral black, so panels read as paper lifted off the page. This is the
+     one place a theme legitimately touches a scale token — the shadow COLOUR
+     is palette, the shadow GEOMETRY (offsets, blur, the three steps) is not. */
+  --elev-1: 0 1px 2px rgba(48, 34, 14, 0.05), 0 1px 3px rgba(48, 34, 14, 0.04);
+  --elev-2: 0 2px 5px rgba(48, 34, 14, 0.06), 0 3px 10px rgba(48, 34, 14, 0.05);
+  --elev-3: 0 4px 10px rgba(48, 34, 14, 0.07), 0 18px 44px rgba(48, 34, 14, 0.11);
+}

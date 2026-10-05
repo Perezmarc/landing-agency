@@ -1,0 +1,52 @@
+---
+/* Everything a crawler reads, from one object.
+ *
+ * The title appears three times in a correct <head> — in <title>, in og:title
+ * and in the WebPage node — and they drift the first time someone edits one.
+ * Here they are one string used three times, assembled by @forge/seo.
+ *
+ * WHY THE JSON-LD IS INLINE AND NOT INJECTED: the consumers that care — search
+ * crawlers, answer engines, rich-result parsers — read the raw HTTP response.
+ * This is a static build, so what is written here IS the response.
+ */
+import forge from '@forge/manifest'
+
+const { meta } = Astro.props
+---
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<title>{meta.title}</title>
+<meta name="description" content={meta.description} />
+<meta name="robots" content={meta.robots} />
+{meta.canonical && <link rel="canonical" href={meta.canonical} />}
+
+{/* One per language the page is published in, plus x-default. A page with a
+    single language emits none: declaring an alternate that 404s is worse than
+    declaring nothing. */}
+{meta.alternates.map((alt) => (
+  <link rel="alternate" hreflang={alt.locale} href={alt.href} />
+))}
+
+<meta property="og:type" content={meta.type ?? 'website'} />
+<meta property="og:site_name" content={forge.brand.name} />
+<meta property="og:title" content={meta.title} />
+<meta property="og:description" content={meta.description} />
+{meta.canonical && <meta property="og:url" content={meta.canonical} />}
+<meta property="og:locale" content={meta.ogLocale} />
+<meta property="og:image" content={meta.image} />
+<meta property="og:image:width" content={String(meta.imageWidth)} />
+<meta property="og:image:height" content={String(meta.imageHeight)} />
+<meta property="og:image:alt" content={meta.imageAlt} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={meta.title} />
+<meta name="twitter:description" content={meta.description} />
+<meta name="twitter:image" content={meta.image} />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="manifest" href="/site.webmanifest" />
+
+{meta.jsonLd && (
+  <script type="application/ld+json" set:html={JSON.stringify(meta.jsonLd)} />
+)}

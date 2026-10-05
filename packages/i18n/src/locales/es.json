@@ -1,0 +1,197 @@
+{
+  "nav": {
+    "blog": "Blog",
+    "contact": "Contacto",
+    "bookCall": "Reserva una llamada",
+    "openMenu": "Abrir el menú",
+    "skipToContent": "Ir al contenido"
+  },
+  "footer": {
+    "blurb": "Diseñamos, construimos y operamos agentes de IA a medida para equipos de finanzas, ventas y operaciones.",
+    "company": "Empresa",
+    "legal": "Legal",
+    "privacy": "Política de privacidad",
+    "terms": "Términos de uso",
+    "copyright": "© {{years}} {{entity}}",
+    "language": "Idioma"
+  },
+  "home": {
+    "eyebrow": "Agentes de IA para las operaciones de tu empresa",
+    "heading": "Delega procesos enteros en agentes de IA hechos para tu empresa",
+    "lead": "Diseñamos, construimos y operamos agentes de IA a medida que se encargan del trabajo repetitivo de coordinación en tus equipos de finanzas, ventas y operaciones. Trabajan dentro de las herramientas que ya usas y entran en producción en semanas.",
+    "ctaPrimary": "Reserva una llamada de diagnóstico",
+    "ctaSecondary": "Cómo trabajamos",
+    "problemHeading": "Tu equipo sigue siendo el pegamento entre tus sistemas",
+    "problemLead": "Las facturas se cuadran a mano, las operaciones esperan aprobaciones y el informe del lunes se rehace a partir de cinco exportaciones. La mayoría de las herramientas de automatización se ocupan de un paso y dejan que las personas muevan el trabajo entre todos los demás. Nosotros miramos el proceso completo y se lo damos a agentes que llevan cada caso desde la primera entrada hasta la última actualización.",
+    "stepsHeading": "Cómo es un proyecto con nosotros",
+    "stepsLead": "Tu equipo nos explica cómo se hace hoy el trabajo. Nosotros nos ocupamos del diseño, la construcción y la operación de los agentes.",
+    "steps": [
+      {
+        "title": "Auditoría de oportunidades",
+        "body": "Analizamos tus procesos y detectamos dónde los agentes eliminan más trabajo manual y más esperas. Recibes una lista priorizada con el esfuerzo que requiere cada uno."
+      },
+      {
+        "title": "Diseño del proceso",
+        "body": "Rediseñamos el proceso en torno a los agentes: qué deciden, qué pasan a una persona y con qué sistemas y reglas de tu empresa trabajan."
+      },
+      {
+        "title": "Puesta en producción",
+        "body": "Los agentes se ponen en marcha dentro de tus herramientas actuales, con los permisos que tu equipo ya tiene. Tus datos se quedan donde están."
+      },
+      {
+        "title": "Mejora continua",
+        "body": "Revisamos cada ejecución, ajustamos las reglas de decisión y damos a los agentes más partes del proceso a medida que demuestran ser fiables."
+      }
+    ],
+    "outcomesHeading": "Qué cambia para tu equipo",
+    "outcomes": [
+      {
+        "title": "Menos coordinación manual",
+        "body": "Los agentes persiguen aprobaciones, cuadran registros y actualizan sistemas, y tu gente dedica el día a las decisiones que la necesitan."
+      },
+      {
+        "title": "Un trabajo que no se detiene",
+        "body": "Los agentes atienden cada caso en cuanto llega, a cualquier hora, en lugar de dejarlo en la cola de alguien hasta el lunes."
+      },
+      {
+        "title": "Margen para crecer con el equipo que tienes",
+        "body": "Asume más volumen sin contratar al mismo ritmo y reserva los nuevos puestos para el trabajo que debe hacer una persona."
+      }
+    ],
+    "areasHeading": "Dónde empiezan los agentes",
+    "areasLead": "Empezamos donde el trabajo es repetitivo, sigue reglas claras y está repartido entre varias herramientas.",
+    "areas": [
+      {
+        "title": "Finanzas",
+        "body": "Cuentas a pagar y a cobrar, conciliaciones, cierre mensual y previsión de tesorería."
+      },
+      {
+        "title": "Operaciones de ventas",
+        "body": "Calidad de los datos del CRM, aprobación de operaciones, informes de pipeline y control de comisiones."
+      },
+      {
+        "title": "Compras",
+        "body": "Alta de proveedores, aprobación de pedidos, seguimiento de contratos y comunicación con proveedores."
+      },
+      {
+        "title": "Cumplimiento y riesgos",
+        "body": "Seguimiento normativo, evidencias para auditorías, vigilancia de políticas y pruebas de controles."
+      },
+      {
+        "title": "Atención al cliente",
+        "body": "Clasificación de tickets, incidencias en pedidos, cambios en cuentas y gestión de escalados."
+      },
+      {
+        "title": "Logística",
+        "body": "Incidencias en envíos, señales de demanda, evaluación de proveedores y alertas de inventario."
+      }
+    ],
+    "systemsHeading": "Sobre los sistemas que ya utilizas",
+    "systemsLead": "Mantienes tu ERP, tu CRM y tu herramienta de soporte. Los agentes se conectan a ellos y trabajan según tus reglas.",
+    "systems": [
+      {
+        "title": "Conectados a tus herramientas",
+        "body": "Los agentes trabajan a través de las API de tu ERP, tu CRM, tu herramienta de soporte, tus bases de datos y tus plataformas de datos."
+      },
+      {
+        "title": "Accesos bajo tu control",
+        "body": "Los agentes actúan solo con los permisos que tú les concedes y respetan tus políticas de seguridad."
+      },
+      {
+        "title": "Un registro de cada acción",
+        "body": "Cada decisión y cada cambio quedan registrados, para que tu equipo y tus auditores vean qué pasó y por qué."
+      }
+    ],
+    "faqEyebrow": "Preguntas frecuentes",
+    "faqHeading": "Lo que nos preguntan en la primera llamada",
+    "faqs": [
+      {
+        "q": "¿Qué pasa en la llamada de diagnóstico?",
+        "a": "Es una sesión de trabajo. Repasamos cómo gestiona hoy tu equipo sus procesos, dónde se va el tiempo y qué procesos son buenos candidatos para los agentes. Sales con una lista corta de oportunidades y un calendario aproximado, trabajemos juntos o no."
+      },
+      {
+        "q": "¿Cuánto se tarda en poner en marcha el primer agente?",
+        "a": "La mayoría de los primeros despliegues llevan entre 6 y 12 semanas desde el diagnóstico hasta producción. El plazo depende de la complejidad del proceso y de cuántos sistemas toca."
+      },
+      {
+        "q": "¿Qué pueden hacer exactamente los agentes?",
+        "a": "Leen y actualizan tus sistemas, analizan datos, aplican tus reglas de negocio, gestionan aprobaciones, preparan informes y coordinan el trabajo entre herramientas. Cuando un caso necesita a una persona, se lo pasan con todo el contexto."
+      },
+      {
+        "q": "¿Funcionan los agentes con las herramientas que ya tenemos?",
+        "a": "Sí. Se conectan mediante API a ERP, CRM, herramientas de soporte, bases de datos y plataformas de datos, así que mantienes los sistemas que tu equipo ya conoce."
+      },
+      {
+        "q": "¿Cuánto tiempo le llevará a nuestro equipo?",
+        "a": "Cuenta con unas 20 horas en todo el proyecto, sobre todo para explicarnos cómo se trabaja hoy y revisar el diseño con nosotros. La construcción y el despliegue corren de nuestra cuenta."
+      },
+      {
+        "q": "¿Cómo tratáis la seguridad y los datos?",
+        "a": "Los agentes funcionan dentro de tus permisos y políticas de seguridad actuales, y cada acción queda registrada y es auditable. Podemos trabajar bajo tu acuerdo de tratamiento de datos."
+      },
+      {
+        "q": "¿Pueden los agentes seguir nuestras propias reglas?",
+        "a": "Sí. Cada despliegue se diseña en torno a tus procesos, tus sistemas y tus reglas de funcionamiento, y tú apruebas el diseño antes de que nada entre en producción."
+      },
+      {
+        "q": "¿Cómo funcionan los precios?",
+        "a": "Dependen de la complejidad del proceso, los sistemas implicados y el alcance del despliegue. Después de la llamada de diagnóstico te enviamos una propuesta por escrito."
+      }
+    ],
+    "ctaHeading": "Descubre dónde encajan los agentes de IA en tu empresa",
+    "ctaLead": "Reserva una llamada con nuestro equipo. Revisaremos juntos tus procesos y te mostraremos dónde pueden marcar más diferencia los agentes desde el principio.",
+    "ctaButton": "Reserva una llamada de diagnóstico"
+  },
+  "contact": {
+    "eyebrow": "Contacto",
+    "heading": "Habla con nosotros",
+    "lead": "La forma más rápida de empezar es una llamada de diagnóstico. Para cualquier otra cosa, escribe a la dirección que corresponda y te responderemos.",
+    "projectsLabel": "Nuevos proyectos",
+    "projectsNote": "Reserva una llamada de diagnóstico o pregúntanos cómo trabajar con nosotros.",
+    "generalLabel": "General",
+    "generalNote": "Dudas sobre cómo trabajamos, colaboraciones o cualquier otra cosa.",
+    "privacyLabel": "Privacidad",
+    "privacyNote": "Acceso, corrección y borrado de datos."
+  },
+  "blog": {
+    "eyebrow": "Blog",
+    "heading": "Notas sobre agentes de IA en el trabajo real",
+    "lead": "Cómo diseñamos, desplegamos y operamos agentes de IA en operaciones reales, y lo que aprendemos por el camino.",
+    "empty": "Todavía no hay artículos. Los primeros están en camino.",
+    "backToBlog": "Todos los artículos",
+    "publishedOn": "Publicado el {{date}}",
+    "by": "por {{author}}"
+  },
+  "legal": {
+    "effective": "En vigor desde el {{date}}",
+    "notAdvice": "Esto es una plantilla, no asesoramiento legal. Haz que la revisen antes de confiar en ella."
+  },
+  "notFound": {
+    "heading": "Esta página no existe",
+    "lead": "Puede que el enlace esté anticuado o que la página haya cambiado de sitio.",
+    "home": "Ir a la portada",
+    "blog": "Leer el blog"
+  },
+  "seo": {
+    "home": {
+      "title": "{{name}} | Agentes de IA a medida para las operaciones de tu empresa",
+      "description": "Diseñamos, construimos y operamos agentes de IA a medida que asumen el trabajo repetitivo de finanzas, ventas y operaciones, dentro de tus herramientas."
+    },
+    "blog": {
+      "title": "Blog: agentes de IA en operaciones reales | {{name}}",
+      "description": "Cómo el equipo de {{name}} diseña, despliega y opera agentes de IA en operaciones reales, y lo que aprende por el camino."
+    },
+    "contact": {
+      "title": "Contacto | {{name}}",
+      "description": "Reserva una llamada de diagnóstico con {{name}} o escríbenos sobre agentes de IA para tus equipos de finanzas, ventas y operaciones."
+    },
+    "privacy": {
+      "title": "Política de privacidad | {{name}}",
+      "description": "Qué datos personales recoge {{name}} a través de esta web, para qué, cuánto tiempo se conservan y cómo pedir que se borren."
+    },
+    "terms": {
+      "title": "Términos de uso | {{name}}",
+      "description": "Las condiciones que rigen el uso de la web de {{name}}, en lenguaje claro."
+    }
+  }
+}

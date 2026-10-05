@@ -1,0 +1,370 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MARKETING — the public website: nav, hero, card grids, FAQ, final CTA,
+   footer, plus the legal and blog surfaces. Prefixed `mk-`.
+
+   Big type, generous vertical rhythm, a dark hero, pill buttons, all on the
+   shared tokens.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════ LAYOUT PRIMITIVES ═══════════ */
+.mk-wrap { width: min(1160px, 100% - 40px); margin-inline: auto; }
+.mk-section { padding: 96px 0; }
+.mk-section-tint { background: var(--surface-2); }
+.mk-eyebrow {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: var(--accent-ink);
+}
+.mk-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-top: 12px;
+}
+.mk-lead {
+  font-size: clamp(15px, 1.5vw, 17px);
+  color: var(--mute);
+  line-height: 1.6;
+  max-width: 58ch;
+  margin-top: 14px;
+}
+.mk-section-head { max-width: 62ch; margin-bottom: 48px; }
+
+/* ═══════════ HEADER ═══════════ */
+.mk-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 60;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  transition: background var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out), backdrop-filter var(--dur);
+  border-bottom: 1px solid transparent;
+}
+/* Over the dark hero: transparent, light ink. Once scrolled past it: a solid
+   surface bar. `is-over-hero` is toggled from JS on scroll. */
+.mk-header.is-over-hero { color: var(--mk-light); }
+.mk-header:not(.is-over-hero) {
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom-color: var(--line);
+}
+.mk-header-inner { display: flex; align-items: center; gap: 28px; width: min(1160px, 100% - 40px); margin-inline: auto; }
+.mk-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px; letter-spacing: -0.015em; }
+.mk-nav { display: flex; align-items: center; gap: 26px; margin-left: 12px; }
+.mk-nav a {
+  font-size: 14px;
+  font-weight: 450;
+  opacity: 0.78;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.mk-nav a:hover { opacity: 1; }
+.mk-header-spacer { flex: 1; }
+.mk-header-actions { display: flex; align-items: center; gap: 10px; }
+
+/* Mobile menu */
+.mk-burger { display: none; width: 36px; height: 36px; place-items: center; border-radius: var(--r-sm); }
+.mk-burger-bar {
+  display: block;
+  width: 17px; height: 1.5px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform var(--dur) var(--ease-out), opacity var(--dur-fast);
+}
+.mk-burger-bar + .mk-burger-bar { margin-top: 4px; }
+/* The burger is a <details>: hide the browser's own disclosure triangle. */
+.mk-burger summary { list-style: none; cursor: pointer; }
+.mk-burger summary::-webkit-details-marker { display: none; }
+.mk-burger.is-open .mk-burger-bar:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+.mk-burger.is-open .mk-burger-bar:nth-child(2) { opacity: 0; }
+.mk-burger.is-open .mk-burger-bar:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+.mk-mobile-menu {
+  position: fixed;
+  top: 68px; left: 0; right: 0;
+  z-index: 59;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  box-shadow: var(--elev-2);
+  padding: 14px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mk-mobile-menu a { padding: 11px 4px; font-size: 15px; font-weight: 500; border-bottom: 1px solid var(--line-2); }
+.mk-mobile-menu a:last-of-type { border-bottom: 0; }
+
+/* Flow space under the fixed header for pages with no overlay hero. */
+.mk-header-offset { height: 68px; }
+
+/* ═══════════ HERO ═══════════ */
+.mk-hero {
+  position: relative;
+  background: var(--mk-dark);
+  color: var(--mk-light);
+  padding: 168px 0 112px;
+  overflow: hidden;
+  isolation: isolate;
+}
+/* The hero's light. Two soft accent washes over the dark ground — cheap,
+   theme-driven, and it degrades to a flat dark panel if colours are swapped. */
+.mk-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 90% 70% at 20% 0%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 65%),
+    radial-gradient(ellipse 70% 60% at 95% 100%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%),
+    linear-gradient(to bottom, var(--mk-dark-2), var(--mk-dark));
+}
+.mk-hero-inner { max-width: 46rem; }
+.mk-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 6.5vw, 66px);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.03;
+}
+/* Headline line breaks are COPY. `pre-line` means a \n in the translated
+   string breaks the line, so each language picks its own break point — a <br>
+   in the markup would force English's break on every translation. */
+.mk-headline { white-space: pre-line; }
+
+.mk-hero-lead {
+  font-size: clamp(16px, 1.8vw, 19px);
+  color: var(--mk-light-dim);
+  line-height: 1.6;
+  max-width: 52ch;
+  margin-top: 22px;
+}
+.mk-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+.mk-hero-note { font-size: 12.5px; color: var(--mk-light-faint); margin-top: 18px; }
+
+/* Entrance choreography — copy rises line by line, then the panel. */
+@media (prefers-reduced-motion: no-preference) {
+  .mk-hero-inner > * { opacity: 0; animation: mk-rise 0.8s var(--ease-out) forwards; }
+  .mk-hero-inner > *:nth-child(1) { animation-delay: 0.05s; }
+  .mk-hero-inner > *:nth-child(2) { animation-delay: 0.13s; }
+  .mk-hero-inner > *:nth-child(3) { animation-delay: 0.21s; }
+  .mk-hero-inner > *:nth-child(4) { animation-delay: 0.29s; }
+  .mk-hero-inner > *:nth-child(5) { animation-delay: 0.37s; }
+}
+@keyframes mk-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ═══════════ FEATURE GRID ═══════════
+   A card per capability, in one grid rather than alternating full-width rows.
+   The row layout it replaces carried a screenshot slot per feature; a base
+   repository has no screenshots to put in one, and an empty framed window on
+   every row reads worse than a tidy grid of claims. */
+.mk-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 44px;
+}
+.mk-feature-card {
+  padding: 26px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.mk-feature-card svg { width: 18px; height: 18px; color: var(--good); }
+/* The steps are an ordered list, numbered by the badge below. */
+.mk-steps { list-style: none; padding: 0; }
+/* The step number on "How an engagement works" — the order is the content. */
+.mk-step-num {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.mk-feature-card h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-top: 14px;
+}
+.mk-feature-card p {
+  font-size: 14.5px;
+  color: var(--mute);
+  line-height: 1.65;
+  margin-top: 10px;
+}
+
+/* ═══════════ FAQ ═══════════ */
+.mk-faq { display: flex; flex-direction: column; max-width: 78ch; }
+.mk-faq-item { border-top: 1px solid var(--line); }
+.mk-faq-item:last-child { border-bottom: 1px solid var(--line); }
+.mk-faq-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 4px;
+  text-align: left;
+  font-size: 16.5px;
+  font-weight: 550;
+  letter-spacing: -0.015em;
+}
+.mk-faq-icon {
+  margin-left: auto;
+  flex: 0 0 auto;
+  width: 18px; height: 18px;
+  color: var(--mute-2);
+  transition: transform var(--dur) var(--ease-out);
+}
+/* The accordion is a <details>, so `open` is the element's own state rather
+   than a class some JavaScript keeps in step with it. `list-style: none` (plus
+   the WebKit pseudo-element) removes the platform disclosure triangle without
+   removing the semantics or the keyboard behaviour. */
+.mk-faq-q { list-style: none; cursor: pointer; }
+.mk-faq-q::-webkit-details-marker { display: none; }
+.mk-faq-item[open] .mk-faq-icon { transform: rotate(45deg); }
+.mk-faq-a { padding: 0 4px 24px; font-size: 15px; color: var(--mute); line-height: 1.7; max-width: 68ch; }
+.mk-faq-a a { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ═══════════ FINAL CTA ═══════════ */
+.mk-final {
+  background: var(--mk-dark);
+  color: var(--mk-light);
+  padding: 104px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.mk-final::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(ellipse 70% 90% at 50% 110%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 62%);
+}
+.mk-final h2 {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4.6vw, 48px);
+  font-weight: 600;
+  letter-spacing: -0.032em;
+  line-height: 1.07;
+}
+.mk-final p { font-size: 16.5px; color: var(--mk-light-dim); margin: 18px auto 0; max-width: 46ch; line-height: 1.6; }
+.mk-final-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+
+/* ═══════════ FOOTER ═══════════ */
+.mk-footer { background: var(--surface-2); border-top: 1px solid var(--line); padding: 64px 0 32px; }
+.mk-footer-grid {
+  display: grid;
+  grid-template-columns: 1.6fr repeat(3, minmax(0, 1fr));
+  gap: 40px;
+}
+.mk-footer-blurb { font-size: 13.5px; color: var(--mute); line-height: 1.65; max-width: 34ch; margin-top: 14px; }
+.mk-footer-col h4 {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mute-2);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.mk-footer-col a { display: block; font-size: 14px; color: var(--ink-2); padding: 5px 0; }
+.mk-footer-col a:hover { color: var(--accent-ink); }
+.mk-footer-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--mute-2);
+}
+.mk-footer-bar-spacer { flex: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mk-hero-inner > * { opacity: 1; animation: none; }
+}
+
+/* ═══════════ LEGAL / PROSE ═══════════
+   Also used by blog posts. One prose recipe, not two. */
+.mk-prose { max-width: 72ch; }
+.mk-prose h1 {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4.2vw, 42px);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.mk-prose h2 { font-size: 24px; letter-spacing: -0.022em; margin: 44px 0 14px; }
+.mk-prose h3 { font-size: 18px; letter-spacing: -0.015em; margin: 32px 0 10px; }
+.mk-prose p, .mk-prose li { font-size: 15.5px; line-height: 1.75; color: var(--ink-2); }
+.mk-prose p { margin-bottom: 16px; }
+.mk-prose ul, .mk-prose ol { margin: 0 0 18px 22px; display: flex; flex-direction: column; gap: 8px; }
+.mk-prose a { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
+.mk-prose code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--surface-2);
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+.mk-prose pre {
+  background: var(--mk-dark);
+  color: var(--mk-light);
+  border-radius: var(--r-md);
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin-bottom: 18px;
+}
+.mk-prose pre code { background: none; border: 0; padding: 0; color: inherit; font-size: 13px; }
+.mk-prose blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 18px;
+  margin: 0 0 18px;
+  color: var(--mute);
+  font-style: italic;
+}
+.mk-prose img { border-radius: var(--r-md); margin: 8px 0 20px; }
+.mk-prose hr { border: 0; border-top: 1px solid var(--line); margin: 36px 0; }
+.mk-page-meta { font-size: 13px; color: var(--mute-2); margin-top: 14px; }
+
+/* ═══════════ BLOG INDEX ═══════════ */
+.mk-post-list { display: flex; flex-direction: column; gap: 4px; max-width: 76ch; }
+.mk-post-row {
+  display: block;
+  padding: 24px 4px;
+  border-top: 1px solid var(--line);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.mk-post-list .mk-post-row:last-child { border-bottom: 1px solid var(--line); }
+.mk-post-row:hover { background: var(--surface-2); }
+.mk-post-title { font-family: var(--font-display); font-size: 21px; font-weight: 600; letter-spacing: -0.022em; line-height: 1.2; }
+.mk-post-excerpt { font-size: 14.5px; color: var(--mute); line-height: 1.65; margin-top: 8px; max-width: 62ch; }
+.mk-post-meta { font-size: 12.5px; color: var(--mute-2); margin-top: 10px; }
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media (max-width: 900px) {
+  .mk-section { padding: 72px 0; }
+  .mk-footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+@media (max-width: 720px) {
+  .mk-nav, .mk-header-actions { display: none; }
+  .mk-burger { display: grid; }
+  .mk-hero { padding: 132px 0 84px; }
+  .mk-footer-grid { grid-template-columns: 1fr; }
+  /* Hero CTAs stack — full width comes from the column, NOT from <Button block>
+     (a block button inside a flex row crushes its siblings). */
+  .mk-hero-actions, .mk-final-actions { flex-direction: column; align-items: stretch; }
+}

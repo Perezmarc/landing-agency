@@ -1,0 +1,23 @@
+{
+  "name": "@forge/seo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./routes": "./src/routes.js",
+    "./meta": "./src/meta.js",
+    "./schema": "./src/schema.js",
+    "./sitemap": "./src/sitemap.js"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@forge/i18n": "*",
+    "@forge/manifest": "*"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.8"
+  }
+}

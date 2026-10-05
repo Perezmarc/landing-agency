@@ -1,0 +1,106 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   BASE — document defaults, typography and the handful of utilities that are
+   genuinely global. Everything here reads from tokens.css.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Anchor jumps (e.g. /#faq) glide instead of teleporting. */
+  scroll-behavior: smooth;
+  /* Fixed headers would otherwise cover the target of an anchor jump. */
+  scroll-padding-top: 88px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Horizontal-overflow protection belongs on the page content, NOT on <body> or
+   <html>: `overflow-x: hidden` on either kills `position: sticky` for every
+   descendant, which silently breaks sticky headers and table headers. */
+main { overflow-x: clip; }
+
+img, svg, video, canvas { display: block; max-width: 100%; }
+img, video { height: auto; }
+
+a { color: inherit; text-decoration: none; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; cursor: pointer; }
+
+/* ── Focus ──
+   One visible focus treatment across the whole product. Never remove it
+   without replacing it: keyboard users navigate by this ring. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* ── Headings ──
+   The display face and the tight tracking are what make headings read as
+   designed rather than defaulted. Sizes are set per surface (marketing, app),
+   so only the shared characteristics live here. */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+/* ── Utilities ──
+   Kept to the few that earn their keep globally. Anything layout-specific
+   belongs in the stylesheet for that surface. */
+.mono { font-family: var(--font-mono); font-feature-settings: "tnum" 1; }
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* Visually hidden but available to screen readers — the accessible name for
+   icon-only controls and the label on a loading region. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Prerendered hero (scripts/prerender.mjs bakes an <h1> + lead inside #root so
+   crawlers that don't run JavaScript get real content). React replaces it on
+   mount, so this styling is only ever seen by a crawler or during the few
+   frames before hydration — keep it legible, don't invest in it. */
+.ssg-hero {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 120px 24px;
+}
+.ssg-hero h1 { font-size: clamp(32px, 5vw, 52px); }
+.ssg-hero p  { font-size: 17px; color: var(--mute); margin-top: 16px; line-height: 1.6; }
+
+/* Skip link — first focusable element on the page, hidden until focused. */
+.skip-link {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translate(-50%, -120%);
+  z-index: 200;
+  padding: 10px 18px;
+  background: var(--ink);
+  color: var(--surface);
+  border-radius: 0 0 var(--r-sm) var(--r-sm);
+  font-size: 13px;
+  font-weight: 500;
+  transition: transform var(--dur) var(--ease-out);
+}
+.skip-link:focus-visible { transform: translate(-50%, 0); }

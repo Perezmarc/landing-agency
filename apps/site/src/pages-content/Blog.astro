@@ -1,0 +1,57 @@
+---
+/* The article index.
+ *
+ * Articles are files (src/content/blog/<locale>/*.md), so this list is built
+ * at build time from the filesystem and there is no query, no loading state
+ * and no empty-because-the-backend-is-down. An article that does not exist as
+ * a file does not exist.
+ */
+import Base from '../layouts/Base.astro'
+import { getCollection } from 'astro:content'
+import { useTranslations, INTL_LOCALE } from '@forge/i18n'
+import { pageMeta } from '@forge/seo/meta'
+import { blogPostPath } from '@forge/seo/routes'
+
+const { locale } = Astro.props
+const t = useTranslations(locale)
+const meta = pageMeta('blog', locale)
+
+// A draft is built locally but never listed or built for production, so
+// "unpublished" is the absence of a page rather than a hidden one.
+const posts = (await getCollection('blog', ({ id, data }) =>
+  id.startsWith(`${locale}/`) && (import.meta.env.DEV || !data.draft),
+)).sort((a, b) => b.data.published - a.data.published)
+
+const format = new Intl.DateTimeFormat(INTL_LOCALE[locale] ?? 'en-US', {
+  year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC',
+})
+---
+<Base meta={meta} locale={locale} current="blog">
+  <section class="mk-section">
+    <div class="mk-wrap">
+      <div class="mk-section-head">
+        <span class="mk-eyebrow">{t('blog.eyebrow')}</span>
+        <h1 class="mk-h2">{t('blog.heading')}</h1>
+        <p class="mk-lead">{t('blog.lead')}</p>
+      </div>
+
+      {posts.length === 0 ? (
+        <p class="mk-lead">{t('blog.empty')}</p>
+      ) : (
+        <div class="mk-post-list">
+          {posts.map((post) => (
+            <a class="mk-post-row" href={blogPostPath(post.id.split('/').pop(), locale)}>
+              <span class="mk-post-title">{post.data.title}</span>
+              <span class="mk-post-excerpt">{post.data.excerpt}</span>
+              <span class="mk-post-meta">
+                <time datetime={post.data.published.toISOString()}>
+                  {format.format(post.data.published)}
+                </time>
+              </span>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</Base>
