@@ -22,7 +22,7 @@ type a name, domain or address anywhere but the manifest.
 | `apps/site/…` | the site (Astro, static, no backend) |
 | `packages/…` | what it is built from: `config`, `manifest`, `i18n`, `seo`, `tokens`, `ui` |
 | `.agents/product-marketing.md` | positioning, audience, objections — the brief every copy change starts from |
-| `.claude/skills/` | the marketingskills library (copywriting, cro, seo-audit, …) |
+| `.claude/skills/` | the marketingskills library (copywriting, cro, seo-audit, …) and `design-taste-frontend` |
 
 ---
 
@@ -123,6 +123,17 @@ Every command runs from the repository root; `npm test` is `turbo run test`.
 The site is static HTML. Astro renders the kit's React components at build
 time, so they ship no JavaScript unless a `client:` directive asks for it — and
 the e2e suite fails if the landing page ships any.
+
+### Design taste — `.claude/skills/design-taste-frontend`
+
+Vendored from [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill)
+(MIT). Load it for visual design work: layout, typography, colour, motion,
+redesigns. It is written for a generic React/Tailwind stack, so **this file
+wins wherever they disagree**: build with `@forge/ui` and the token
+stylesheets, never Tailwind, Next.js or a third-party design system; no
+placeholder photography (picsum or otherwise) or sample content without asking,
+per the mock-data rule; and no client-side animation library on a page that
+must ship zero JavaScript. Take its judgement, not its stack.
 
 ### Always use the UI kit (`@forge/ui`) — hard rule
 
