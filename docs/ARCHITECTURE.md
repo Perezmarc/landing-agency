@@ -8,12 +8,24 @@ The decisions that shape this repository, and why. Short on purpose.
 canonical URL, `hreflang` pairs, Open Graph tags and structured data already in
 it. The consumers that matter — crawlers, AI answer engines, rich-result
 parsers — read the raw HTTP response, so nothing they need is injected later.
-The landing page ships zero JavaScript; its only `<script>` is the JSON-LD
-block, and the e2e suite fails if that changes.
+Every page but the landing page ships no JavaScript. The landing page ships
+one module, `apps/site/src/motion/`, as a hashed file: the hero crash, the
+stream down the page, the calendar animation. The server HTML is already the
+final state, so with JavaScript off (or blocked) the page reads complete. The
+e2e suite checks the script count per page, the 30 KB budget, and runs the
+homepage under the production CSP.
 
 There is no backend. "Book a call" is a link (`brand.bookingUrl` in the
 manifest), which is why the site's Content-Security-Policy has no `connect-src`
 beyond itself.
+
+## Media is built offline, and only its outputs are committed
+
+The landing page's video, posters and stream strip come from
+`scripts/media/build-media.mjs`, which grades generated clips to pure white,
+loops and encodes them, and measures where the stream enters and leaves each
+one (`streams.json`). It is not part of the build: a deploy never depends on a
+generation service or on ffmpeg. See `docs/LANDING-DESIGN.md`.
 
 ## Everything brand-shaped is in one manifest
 

@@ -1,7 +1,7 @@
 # Product Marketing Context
 
-**Document version:** v1
-**Last updated:** 2026-10-05
+**Document version:** v2
+**Last updated:** 2026-10-11
 
 > Auto-drafted from the founder's brief ("an AI consulting agency, almost exactly
 > like varickagents.com") before the agency had a name, customers or proof.
@@ -9,7 +9,7 @@
 
 ## Product Overview
 **One-liner:** We design, build and run custom AI agents that take over whole back-office workflows, inside the tools a company already uses.
-**What it does:** We audit a company's operations, pick the workflows where agents remove the most manual coordination, redesign those workflows around agents, deploy them in production on the existing stack, and keep improving them afterwards.
+**What it does:** We find how a process really runs (interviews, the systems' logs, and everything else: SOPs, spreadsheets, email, chat), set a baseline, then sort every step in order: delete it, write plain code for it, give it to an agent, or keep it with a person. Agents prepare the work inside the existing tools and stop at decisions; a person makes the call. We measure the same baseline again after launch, then move to the next process.
 **Product category:** AI implementation / AI automation consultancy ("AI agents for operations").
 **Product type:** Service (done-for-you implementation, plus ongoing optimisation).
 **Business model:** Per-engagement proposal priced on workflow complexity, systems involved and deployment scope; ongoing optimisation after launch. [NEED: retainer vs. fixed fee, typical engagement size]
@@ -54,19 +54,22 @@
 
 ## Differentiation
 **Key differentiators:**
-- Whole-workflow redesign around agents rather than single-task automation
-- Runs on the client's existing systems and permissions
-- Production in weeks; the client's team gives context, we build and run
-**How we do it differently:** Four stages: opportunity audit → workflow design → production deployment → ongoing improvement.
-**Why that's better:** Results show up in the workflow the team already runs, without a migration.
+- Process first: we map the real process (rework loops, chasing, waiting) before choosing any technology. "The waiting is the process. The work is minutes."
+- Delete before you automate: every step is sorted in order (delete → plain code → agent → person). Most teams start with the model.
+- The agent prepares, a person decides. Agents stop at decisions.
+- A baseline before building and the same measures after. One process, one owner.
+- Runs on the client's existing systems and permissions.
+**How we do it differently:** Four stages: map the real process → set the baseline → sort and build → measure and expand.
+**Why that's better:** The documented process is not the real one; automating the documented version automates the wrong thing.
 **Why customers choose us:** [NEED: from first customers]
 
 ## Objections
 | Objection | Response |
 |-----------|----------|
 | "Is it secure?" | Agents act within existing permissions and security policies; every action is logged and auditable. |
-| "We don't have time for a big project." | Around 20 hours of the client team's time across the project, mostly explaining today's process. |
-| "How long until we see anything?" | First deployments typically take 6 to 12 weeks from discovery to production. |
+| "We don't have time for a big project." | Most of the team's time is interviews at the start, then short design reviews; we build and run. [NEED: a real figure for client time, from first engagements. v1's "around 20 hours" looked borrowed from the reference site and was removed from the page.] |
+| "How long until we see anything?" | A timeline is agreed once the process is mapped; the baseline is set before building. [NEED: real time-to-production from first engagements. v1's "6 to 12 weeks" looked borrowed and was removed from the page.] |
+| "How do you know it worked?" | We measure volume, cycle time, waiting time and exceptions before building, and the same things after. |
 | "What does it cost?" | Proposal after the discovery call, based on workflow complexity, systems and scope. |
 
 **Anti-persona:** Companies wanting an off-the-shelf chatbot, a one-off prompt workshop, or with no repeatable processes yet.
@@ -80,14 +83,16 @@
 ## Customer Language
 **How they describe the problem:** [NEED: verbatim from discovery calls]
 **How they describe us:** [NEED: verbatim]
-**Words to use:** workflow, agents, your systems, your team, live in production, every action logged
+**Words to use:** the real process, waiting time, delete before you automate, the agent prepares and a person decides, baseline, your systems, every action logged
 **Words to avoid:** transform, revolutionise, unlock, seamless, AI-native, game-changer, invented metrics
 **Glossary:**
 | Term | Meaning |
 |------|---------|
 | Agent | An AI system that reads, decides and acts in the client's tools within set rules and permissions |
-| Discovery call | First working session to find candidate workflows |
-| Opportunity audit | Structured review that prioritises workflows for agents |
+| Discovery call | First working session: map one process as it really runs |
+| The real process | How work actually moves (loops, chasing, waiting), as opposed to the documented one |
+| The four buckets | Delete · Plain code · An agent · A person, in that order |
+| Baseline | Volume, cycle time, waiting time and exceptions, measured before building |
 
 ## Brand Voice
 **Tone:** Professional, calm, direct.
@@ -96,6 +101,7 @@
 
 ## Proof Points
 **Metrics:** [NEED: none yet. Do not publish numbers until a client result exists]
+**Illustrations on the page (not proof):** "A day, before and after" (six team days) and "Supplier invoices, step by step" are labelled illustrations of the method, with no totals, hours or results. Replace or support them with real ones when a client result exists.
 **Customers:** [NEED]
 **Testimonials:** [NEED]
 **Value themes:**
@@ -112,4 +118,5 @@
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v2 (2026-10-11): Positioning becomes process-first (map the real process, delete before you automate, agent prepares / person decides, baseline before and after), adopting the ideas of Varick's talk "Don't apply AI" (learn.varickagents.com/dont-apply-ai) without its clients, examples or figures. v1's "20 hours" and "6 to 12 weeks" marked [NEED]. The homepage calendar and invoice walkthrough recorded as illustrations.
 - v1 (2026-10-05) — Initial context, auto-drafted from the founder's brief and the reference site.

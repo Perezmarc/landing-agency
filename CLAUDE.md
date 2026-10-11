@@ -97,6 +97,7 @@ remove or weaken that gate.
 | Layer | Framework | Where | Run with |
 |---|---|---|---|
 | Packages and UI kit | Vitest (+ Testing Library in `packages/ui`) | colocated `*.test.js(x)` | `npm test` |
+| The site's logic (motion, day data, media contract, CSP) | Vitest (node) | `apps/site/src/**/*.test.js` | `npm test` |
 | The site | Playwright against the real static build | `apps/site/e2e/*.spec.js` | `npm run test:e2e` |
 
 Every command runs from the repository root; `npm test` is `turbo run test`.
@@ -121,8 +122,27 @@ Every command runs from the repository root; `npm test` is `turbo run test`.
 ## UI rules
 
 The site is static HTML. Astro renders the kit's React components at build
-time, so they ship no JavaScript unless a `client:` directive asks for it — and
-the e2e suite fails if the landing page ships any.
+time, so they ship no JavaScript; never add a `client:` directive.
+
+### JavaScript: one module, home only
+
+The landing page has motion (the hero crash, the stream, the calendar), and
+all of it lives in ONE vanilla ES module, `apps/site/src/motion/`, loaded by a
+single bare `<script>` in `Home.astro`. Blog, contact and legal ship none. The
+e2e suite enforces both, and the CSP (`script-src 'self'`) blocks anything else.
+
+- **The CSS default is the final, no-JS state.** The HTML must read and look
+  finished with JavaScript off (the AFTER poster, a still stream, the calendar
+  after). JS only adds motion on top, through data attributes and classes.
+- **Never** `client:*`, `is:inline`, `define:vars`, inline `on*` handlers or
+  `javascript:` URLs. Pass data through `data-*` attributes and imported JSON.
+- **No user-facing strings in JS.** Everything readable is in the HTML.
+- **Respect the tiers** (`motion/tier.js`): reduced motion, Save-Data and weak
+  devices get less, never a broken page. Heavy code (WebGL) loads with
+  `import()` only where it runs.
+- **Budget:** 30 KB gzip for every script the homepage loads (checked in e2e).
+- No framework, no animation library (GSAP and friends): the browser's own
+  Web Animations, CSS and WebGL2.
 
 ### Design taste — `.claude/skills/design-taste-frontend`
 
@@ -132,8 +152,8 @@ redesigns. It is written for a generic React/Tailwind stack, so **this file
 wins wherever they disagree**: build with `@forge/ui` and the token
 stylesheets, never Tailwind, Next.js or a third-party design system; no
 placeholder photography (picsum or otherwise) or sample content without asking,
-per the mock-data rule; and no client-side animation library on a page that
-must ship zero JavaScript. Take its judgement, not its stack.
+per the mock-data rule; and no client-side animation library (motion is the
+one vanilla module, see below). Take its judgement, not its stack.
 
 ### Always use the UI kit (`@forge/ui`) — hard rule
 
@@ -266,6 +286,13 @@ JSX or CSS:
   drops a `{{placeholder}}`, changes a list's length, or leaves a sentence over
   40 characters identical to English. Lists (`home.steps`, `home.faqs`, …)
   render by index, so every language keeps the same length.
+- **Landing media.** The hero clips, posters, the stream rail, the moments
+  and the stones are built offline by `scripts/media/build-media.mjs` from the
+  sources in `scripts/media/sources.json`, and only the encoded outputs are
+  committed (`apps/site/src/media/`, imported so they are hashed). Generating
+  new sources costs Higgsfield credits: **the owner approves the total before
+  any generation.** `docs/LANDING-DESIGN.md` has the art direction and the
+  pipeline's rules; `streams.test.js` holds every clip to the stream geometry.
 - **Blog.** Markdown files under `apps/site/src/content/blog/<locale>/`,
   typed by `content.config.js`. See `docs/BLOG.md`. Don't write articles
   without being asked.

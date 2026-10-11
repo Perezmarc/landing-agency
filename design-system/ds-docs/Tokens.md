@@ -22,7 +22,10 @@ matter.
 | Lines | `--line` · `--line-2` | separators · quieter internal dividers |
 | Accent | `--accent` · `--accent-soft` · `--accent-ink` · `--accent-line` | the one brand colour: links, focus, the active nav tick |
 | Status | `--good` · `--warn` · `--bad` | each with `-soft` (fill), `-ink` (text on that fill), `-line` (border) |
-| Marketing | `--mk-dark` · `--mk-light` · `--mk-light-dim` | the dark register the hero and final CTA sit on |
+| Dark pair | `--mk-dark` · `--mk-light` | near-black buttons and code blocks, and the light ink on them |
+| Glass | `--glass-bg` · `--glass-bg-solid` · `--glass-line` · `--glass-blur` | frosted cards (the AFTER calendar); `-solid` is the no-blur fallback |
+| Calendar | `--blk-work` · `--blk-line` · `--hatch-ink` · `--hatch` | the day calendar's work, chase and waiting blocks |
+| Landing motion | `--dur-burst` · `--dur-wipe` · `--dur-pour` · `--dur-reveal` · `--dur-calendar` · `--ease-burst` · `--flow-period` | the hero crash, the wipe, the stream's pour and loop, reveals, the calendar |
 
 The status families come as a set of four for a reason: a status pill needs a
 fill, text that passes contrast **on that fill**, and a border. Picking a
