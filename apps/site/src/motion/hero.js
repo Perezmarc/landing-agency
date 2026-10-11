@@ -1,37 +1,40 @@
 /* The hero: constant rain, then the crash.
 
-   Two independent clocks. TIME drives the water: both clips loop at normal
-   speed forever. SCROLL only fires one trigger (hero-state.js) and scrolls the
+   Two independent clocks. TIME drives the water: the BEFORE and AFTER clips
+   loop at normal speed forever, and the crash is a clip that plays once at
+   normal speed. SCROLL only fires one trigger (hero-state.js) and scrolls the
    page; it never scrubs a video.
 
-   Layers (marketing.css): AFTER poster + AFTER video, then the BEFORE layer
-   (poster + video) that a radial wipe opens from the crystal, then the burst
-   canvas. The server HTML is the AFTER state; this module boots into the state
-   for the current scroll position and animates from there. */
+   Layers (marketing.css), bottom to top: the AFTER poster and loop, the
+   transition clip (the raw rock shatters and the polished crystal is left with
+   one stream), then the BEFORE layer (poster and loop). The transition's first
+   frame is the BEFORE rock and its last is the AFTER crystal, so each swap is
+   invisible. The server HTML is the AFTER state; this module boots into the
+   state for the current scroll position and plays from there. */
 
 import { next, settledState } from './hero-state.js'
-import { boxRect } from './geometry.js'
 
 const PORTRAIT = '(max-aspect-ratio: 1/1)'
-const ms = name => parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name)) || 0
+const POUR_AT = 0.4      // the stream forms about 40% into the transition
+const FADE_MS = 400      // BEFORE fading back in; the poster-only crash
 
-function makeVideo(sources, className) {
+function makeVideo(sources, className, loop = true) {
   const v = document.createElement('video')
   v.className = `mk-hero-layer mk-hero-video ${className}`
-  Object.assign(v, { muted: true, loop: true, playsInline: true, disablePictureInPicture: true, disableRemotePlayback: true, preload: 'auto' })
+  Object.assign(v, { muted: true, loop, playsInline: true, disablePictureInPicture: true, disableRemotePlayback: true, preload: 'auto' })
   v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true'); v.tabIndex = -1
   for (const [type, src] of [['video/webm; codecs="av01.0.05M.08"', sources.webm], ['video/mp4', sources.mp4]]) {
     const s = document.createElement('source'); s.src = src; s.type = type; v.append(s)
   }
-  // Fade in only once a frame is on screen; if play() is refused (iOS Low
-  // Power Mode, in-app webviews), stay on the posters.
+  // Show a clip only once a frame is decoded; if play() is refused (iOS Low
+  // Power Mode, in-app webviews), the posters stay.
   const ready = () => v.classList.add('is-ready')
   if ('requestVideoFrameCallback' in v) v.requestVideoFrameCallback(ready)
   else v.addEventListener('loadeddata', ready, { once: true })
   return v
 }
 
-/** @param {HTMLElement} hero @param {{ media: boolean, particles: number, dpr: number }} tier */
+/** @param {HTMLElement} hero @param {{ motion: boolean, media: boolean }} tier */
 export function initHero(hero, tier) {
   const data = JSON.parse(hero.dataset.media)
   const media = hero.querySelector('.mk-hero-media')
@@ -40,9 +43,8 @@ export function initHero(hero, tier) {
   const portrait = matchMedia(PORTRAIT)
   const pinned = () => window.innerHeight * 0.5
 
-  let state = settledState(window.scrollY)
-  if (location.hash) state = 'after'
-  let videos = null, burst = null, timers = []
+  let state = location.hash ? 'after' : settledState(window.scrollY)
+  let videos = null, timers = [], visible = true
 
   const setState = (s) => { state = s; hero.dataset.heroState = s }
   const later = (fn, delay) => timers.push(setTimeout(fn, delay))
@@ -56,66 +58,74 @@ export function initHero(hero, tier) {
   function loadVideos() {
     if (!tier.media || videos) return
     const r = portrait.matches ? 'p' : 'l'
-    const before = makeVideo(data.before[r], 'mk-hero-video--before')
-    const after = makeVideo(data.after[r], 'mk-hero-video--after')
-    beforeLayer.append(before)
-    media.querySelector('.mk-hero-poster--after').after(after)
-    videos = { before, after }
-    play(state === 'after' ? after : before)
+    videos = {
+      before: makeVideo(data.before[r], 'mk-hero-video--before'),
+      transition: makeVideo(data.transition[r], 'mk-hero-transition', false),
+      after: makeVideo(data.after[r], 'mk-hero-video--after'),
+    }
+    beforeLayer.append(videos.before)
+    media.querySelector('.mk-hero-poster--after').after(videos.after, videos.transition)
+    videos.transition.addEventListener('ended', finishCrash)
+    play(state === 'after' ? videos.after : videos.before)
   }
   function play(v) {
-    v?.play().catch(() => { v.remove(); if (videos) videos[v === videos.before ? 'before' : 'after'] = null })
+    v?.play().catch(() => {
+      v.remove()
+      if (videos) for (const k of Object.keys(videos)) if (videos[k] === v) videos[k] = null
+    })
   }
-  function pauseAll() { videos?.before?.pause(); videos?.after?.pause() }
+  function pauseAll() { if (videos) Object.values(videos).forEach(v => v?.pause()) }
+  const canCrash = () => videos?.transition?.classList.contains('is-ready')
+
+  /* ── the crash, and the way back ── */
+  function crash() {
+    clearTimers()
+    if (canCrash()) {
+      const t = videos.transition
+      t.currentTime = 0
+      hero.classList.add('is-transitioning')
+      play(t)
+      videos.before?.pause()
+      videos.after?.pause()
+      const ms = (t.duration || data.duration) * 1000
+      later(pour, ms * POUR_AT)
+      // The AFTER loop starts just before the transition ends, under it.
+      later(() => { if (videos.after) { videos.after.currentTime = 0; play(videos.after) } }, Math.max(0, ms - 250))
+      later(finishCrash, ms + 500)      // in case `ended` never fires
+    } else {
+      // No clip: the BEFORE poster fades away (marketing.css), the stream pours.
+      later(pour, FADE_MS / 2)
+      later(() => apply(next(state, { type: 'done' })), FADE_MS)
+    }
+  }
+  function pour() {
+    rail?.classList.add('is-pouring'); dry(false)
+    later(() => rail?.classList.remove('is-pouring'), 900)
+  }
+  function finishCrash() {
+    if (state !== 'crashing') return
+    hero.classList.remove('is-transitioning')
+    videos?.transition?.pause()
+    apply(next(state, { type: 'done' }))
+  }
+  function back() {
+    clearTimers()
+    hero.classList.remove('is-transitioning')
+    videos?.transition?.pause()
+    dry(true)
+    if (videos?.before) { videos.before.currentTime = 0; play(videos.before) }
+    later(() => { videos?.after?.pause(); apply(next(state, { type: 'done' })) }, FADE_MS)
+  }
   function resync() {
-    clearTimers(); burst?.stop()
-    hero.classList.remove('is-wiping'); rail?.classList.remove('is-pouring')
+    clearTimers()
+    hero.classList.remove('is-transitioning'); rail?.classList.remove('is-pouring')
     setState(settledState(window.scrollY)); dry(state !== 'after')
     pauseAll()
     if (visible) play(state === 'after' ? videos?.after : videos?.before)
   }
-
-  /* ── the burst (only on tiers with particles) ── */
-  async function loadBurst() {
-    if (!tier.particles || burst) return
-    try {
-      const { createBurst } = await import('./burst.js')
-      const canvas = document.createElement('canvas')
-      canvas.className = 'mk-hero-layer mk-hero-canvas'; canvas.hidden = true; canvas.setAttribute('aria-hidden', 'true')
-      media.parentElement.insertBefore(canvas, media.nextSibling)
-      burst = await createBurst({ canvas, image: data.crystal[portrait.matches ? 'p' : 'l'], particles: tier.particles, dpr: tier.dpr })
-    } catch { burst = null }
-  }
-  function sizeBurst() {
-    if (!burst) return
-    const stage = hero.querySelector('.mk-hero-stage').getBoundingClientRect()
-    const frac = data.burst[portrait.matches ? 'p' : 'l']
-    burst.size(stage, boxRect(stage.width, stage.height, frac))
-  }
-
-  /* ── the crash, and its reversal ── */
-  function crash() {
-    clearTimers()
-    videos?.before?.pause()
-    sizeBurst()
-    burst?.play(() => {})
-    later(() => play(videos?.after), 120)
-    hero.classList.add('is-wiping')
-    later(() => { rail?.classList.add('is-pouring'); dry(false) }, 600)
-    later(() => { rail?.classList.remove('is-pouring'); apply(next(state, { type: 'done' })) }, ms('--dur-burst'))
-  }
-  function reverse() {
-    clearTimers()
-    hero.classList.add('is-wiping')
-    dry(true)
-    sizeBurst()
-    burst?.reverse(() => {})
-    later(() => { play(videos?.before); videos?.after?.pause() }, 450)
-    later(() => apply(next(state, { type: 'done' })), 900)
-  }
   function apply({ state: s, effect }) {
     if (effect === 'crash') { setState(s); crash() }
-    else if (effect === 'reverse') { setState(s); reverse() }
+    else if (effect === 'reverse') { setState(s); back() }
     else if (effect === 'snap') { setState(s); resync() }
     else if (s !== state) setState(s)
   }
@@ -130,17 +140,16 @@ export function initHero(hero, tier) {
   addEventListener('hashchange', () => apply(next(state, { type: 'snap', y: window.scrollY })))
 
   /* ── lifecycle: pause when hidden or off screen, resync when back ── */
-  let visible = true
   new IntersectionObserver(([e]) => {
     visible = e.isIntersecting
-    if (!visible) pauseAll(); else play(state === 'after' || state === 'crashing' ? videos?.after : videos?.before)
+    if (!visible) pauseAll()
+    else if (state === 'after') play(videos?.after)
+    else if (state === 'before') play(videos?.before)
   }).observe(hero)
   document.addEventListener('visibilitychange', () => document.hidden ? pauseAll() : resync())
   addEventListener('pagehide', pauseAll)
   addEventListener('pageshow', (e) => { if (e.persisted) resync() })
-  addEventListener('resize', sizeBurst)
 
   // Media only after the page has loaded, so it never competes with the poster.
-  const start = () => { loadVideos(); (window.requestIdleCallback || setTimeout)(loadBurst) }
-  if (document.readyState === 'complete') start(); else addEventListener('load', start, { once: true })
+  if (document.readyState === 'complete') loadVideos(); else addEventListener('load', loadVideos, { once: true })
 }

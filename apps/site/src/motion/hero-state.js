@@ -5,10 +5,10 @@
        └──done── reassembling ◀──back to REST (≤ 4px)──────┘
 
    Scroll never scrubs anything: it only decides which way the one-shot
-   animation runs. A reversal mid-burst runs back from where it is
-   (`reverse` from crashing), it does not restart. Jumps that skip the pinned
-   stretch (a fling, a hash link, a restored scroll position) snap straight to
-   the end state with no burst. */
+   one-shot runs. Going back mid-crash fades back to BEFORE (`reverse` from
+   crashing); a new trigger crashes again from the start. Jumps that skip the
+   pinned stretch (a fling, a hash link, a restored scroll position) snap
+   straight to the end state with no crash. */
 
 export const TRIGGER = 24
 export const REST = 4

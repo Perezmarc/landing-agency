@@ -24,12 +24,12 @@ describe('the hero state machine', () => {
     expect(next('reassembling', { type: 'done' })).toEqual({ state: 'before', effect: null })
   })
 
-  it('runs a reversal mid-burst back from where it is, and a re-trigger forward again', () => {
+  it('goes back mid-crash, and crashes again on a new trigger', () => {
     expect(next('crashing', scroll(0))).toEqual({ state: 'reassembling', effect: 'reverse' })
     expect(next('reassembling', scroll(100))).toEqual({ state: 'crashing', effect: 'crash' })
   })
 
-  it('snaps straight to after, with no burst, when a jump skips the pinned stretch', () => {
+  it('snaps straight to after, with no crash, when a jump skips the pinned stretch', () => {
     expect(next('before', scroll(2000))).toEqual({ state: 'after', effect: 'snap' })
     expect(next('before', { type: 'snap', y: 900 })).toEqual({ state: 'after', effect: 'snap' })
     expect(next('after', { type: 'snap', y: 0 })).toEqual({ state: 'before', effect: 'snap' })

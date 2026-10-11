@@ -138,11 +138,11 @@ e2e suite enforces both, and the CSP (`script-src 'self'`) blocks anything else.
   `javascript:` URLs. Pass data through `data-*` attributes and imported JSON.
 - **No user-facing strings in JS.** Everything readable is in the HTML.
 - **Respect the tiers** (`motion/tier.js`): reduced motion, Save-Data and weak
-  devices get less, never a broken page. Heavy code (WebGL) loads with
-  `import()` only where it runs.
+  devices get less, never a broken page. Anything heavy loads only on the
+  tiers that use it (the hero clips load after `load`, and only with media).
 - **Budget:** 30 KB gzip for every script the homepage loads (checked in e2e).
 - No framework, no animation library (GSAP and friends): the browser's own
-  Web Animations, CSS and WebGL2.
+  Web Animations, CSS and video.
 
 ### Design taste — `.claude/skills/design-taste-frontend`
 

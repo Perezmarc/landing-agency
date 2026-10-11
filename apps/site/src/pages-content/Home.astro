@@ -51,8 +51,10 @@ import pebbleWebm from '../media/pebble.webm?url'
 import pebbleMp4 from '../media/pebble.mp4?url'
 import endWebm from '../media/end.webm?url'
 import endMp4 from '../media/end.mp4?url'
-import crystalL from '../media/crystal-raw-16x9.webp?url'
-import crystalP from '../media/crystal-raw-9x16.webp?url'
+import transitionLWebm from '../media/hero-transition-16x9.webm?url'
+import transitionLMp4 from '../media/hero-transition-16x9.mp4?url'
+import transitionPWebm from '../media/hero-transition-9x16.webm?url'
+import transitionPMp4 from '../media/hero-transition-9x16.mp4?url'
 
 const stoneFiles = import.meta.glob('../media/stones/*.webp', { eager: true, import: 'default' })
 
@@ -88,8 +90,8 @@ const endImg = await avif(endPoster, [270, 540])
 const heroData = JSON.stringify({
   before: { l: { webm: beforeLWebm, mp4: beforeLMp4 }, p: { webm: beforePWebm, mp4: beforePMp4 } },
   after: { l: { webm: afterLWebm, mp4: afterLMp4 }, p: { webm: afterPWebm, mp4: afterPMp4 } },
-  crystal: { l: crystalL, p: crystalP },
-  burst: { l: streams.hero['16x9'].burst, p: streams.hero['9x16'].burst },
+  transition: { l: { webm: transitionLWebm, mp4: transitionLMp4 }, p: { webm: transitionPWebm, mp4: transitionPMp4 } },
+  duration: streams.hero['16x9'].transition,
 })
 
 const stone = async (name) => (await getImage({ src: stoneFiles[`../media/stones/${name}.webp`], format: 'webp', width: 160 })).src
@@ -107,10 +109,6 @@ const geometry = [
   `--rail-aspect: ${(streams.rail.h / streams.rail.w).toFixed(4)}`,
   `--rail-img: url(${railStrip.src})`,
   `--flow-period: ${streams.rail.period}s`,
-  ...['16x9', '9x16'].flatMap((r, i) => {
-    const b = streams.hero[r].burst, k = i ? 'p' : 'l'
-    return [`--wipe-x-${k}: ${((b.x + b.w / 2) * 100).toFixed(1)}%`, `--wipe-y-${k}: ${((b.y + b.h / 2) * 100).toFixed(1)}%`]
-  }),
 ].join('; ')
 const pebbleStream = `--moment-stream: ${streams.moments.pebble.entry.width}`
 const endStream = `--moment-stream: ${streams.moments.end.entry.width}`

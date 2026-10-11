@@ -46,30 +46,33 @@ the water natural.
 
 A 150svh section with a sticky 100svh stage. The layers, bottom to top:
 
-1. the AFTER poster and AFTER video (polished crystal, one stream);
-2. the BEFORE layer (raw crystal in the rain): poster and video;
-3. the burst canvas (only during the crash);
+1. the AFTER poster and AFTER loop (the polished crystal, one stream);
+2. the transition clip, which plays once;
+3. the BEFORE layer (the raw rock in the rain): poster and loop;
 4. the copy.
+
+The transition clip's first frame is the raw rock and its last frame is the
+polished crystal: the rock shatters, its fragments fly out, and the water
+gathers into one stream. Every swap between layers is therefore invisible.
 
 States (`motion/hero-state.js`): `before → crashing → after → reassembling`.
 
-- The first scroll past 24px crashes; only `scrollY ≤ 4` reassembles.
+- The first scroll past 24px crashes; only `scrollY ≤ 4` goes back.
 - A fling, a hash link or a restored scroll position snaps to the end state
-  with no burst.
-- A reversal mid-burst runs back from where it is.
+  with no crash.
 - The state is exposed as `data-hero-state`.
 
 The crash runs on this timeline:
 
 | Time | What happens |
 |---|---|
-| 0 ms | BEFORE pauses and the canvas takes over the crystal. |
-| 0–1400 ms | About 600–8000 particles fly out and fade. The count depends on the tier. |
-| 120 ms | AFTER starts playing. |
-| 150–600 ms | A radial wipe from the crystal's centre opens the BEFORE layer. |
-| 600–1300 ms | The rail's mask "pours" down into the page. |
+| 0 | BEFORE is cut and the transition clip plays from its first frame. |
+| about 40% in | The stream has formed, and the rail's mask "pours" down into the page. |
+| 250 ms before the end | The AFTER loop starts underneath. |
+| end | The transition fades out over the AFTER loop. |
 
-The reverse takes 900 ms.
+Going back fades the BEFORE layer in over `--dur-hero-fade` (400 ms). Devices
+that get no video crossfade the two posters instead.
 
 ## The stream rail
 
@@ -113,15 +116,17 @@ Rail x per breakpoint:
 | Case | What the visitor sees |
 |---|---|
 | No JS | The AFTER poster, a still stream, the final calendar. |
-| Reduced motion | Posters with a 300 ms crossfade instead of the crash, a still stream, no videos, no reveals. |
-| Save-Data, 2g or a weak device | Motion, but posters only: no video requests and no particles. |
-| No WebGL2 | Videos and the wipe, with no particles. |
+| Reduced motion | Posters with a crossfade instead of the crash, a still stream, no videos, no reveals. |
+| Save-Data, 2g or a weak device | Motion, but posters only: no video requests; the crash is a poster crossfade. |
 
 ## Media pipeline
 
 `scripts/media/build-media.mjs` runs offline. Its sources are listed by
 permanent URL in `scripts/media/sources.json`, and only the outputs are
 committed (`apps/site/src/media/`). It does the following:
+
+The hero clips are BEFORE (loop), the transition (once) and AFTER (loop), in
+16:9 and 9:16.
 
 1. **Grade to white.**
    - The void field is the per-pixel 90th percentile over all frames,
@@ -131,11 +136,12 @@ committed (`apps/site/src/media/`). It does the following:
    - Near-white is soft-snapped to pure white, and exposure is normalised per
      frame.
    - Hero clips keep half of the overhead light in the top of the frame.
-2. **Loop:** the last second is cross-faded into the first.
+2. **Loop:** the last second is cross-faded into the first. The transition is
+   not looped.
 3. **Encode** AV1 WebM and H.264 MP4: closed GOP, BT.709, `+faststart`, no
    audio.
-4. **Write** the posters (first frame), the rail strip, the burst cutouts, the
-   stones and `streams.json`.
+4. **Write** the loops' posters (first frame), the rail strip, the stones and
+   `streams.json`.
 
 `node scripts/media/build-media.mjs --check` reports sizes, decoded void luma
 and the loop-seam PSNR.
@@ -144,18 +150,28 @@ and the loop-seam PSNR.
 |---|---|---|
 | Void luma | ≥ 234 | 235 on every clip |
 | Loop-seam PSNR | ≥ 30 dB | 31–43 dB |
-| Desktop hero media before interaction | ≤ 2.5 MB | about 0.6 MB |
-| Mobile hero media before interaction | ≤ 1.2 MB | about 0.15 MB |
+| Desktop hero media (BEFORE, transition and AFTER, WebM) | ≤ 2.5 MB | about 1.05 MB |
+| Mobile hero media (WebM) | ≤ 1.2 MB | about 0.4 MB |
 
-**Sources and credits.** The stills and clips were generated on Higgsfield:
-four `flux_3_image` stills chosen in the design session, then Gemini Omni Flash
-1.1 image-to-video with the same still as both start and end frame. The prompt
-was "static locked-off camera, only the water moves". A clip is rejected if the
-crystal drifts or the camera moves.
+**Sources and credits.** Everything was generated on Higgsfield:
 
-The portrait hero frames were composed locally from the 16:9 stills (see
-`PORTRAIT` in the script) rather than outpainted: outpainting recomposed the
-scene.
+- **The BEFORE still:** a `flux_3_image` still chosen in the design session.
+- **The polished AFTER still:** a `flux_3_image` edit of the BEFORE still that
+  keeps the same silhouette, position and framing.
+- **The loops:** Gemini Omni Flash 1.1 image-to-video with the same still as
+  both start and end frame. The prompt was "static locked-off camera, only the
+  water moves".
+- **The transition:** Gemini Omni Flash 1.1 from the BEFORE still to the AFTER
+  still.
+
+A clip is rejected if the crystal drifts or the camera moves. Web outputs are
+1600 wide at most (720 on portrait); the generation stills are 2K, and nothing
+4K ships.
+
+The portrait BEFORE frame was composed locally from the 16:9 still. The
+portrait transition and AFTER are composed frame by frame from the landscape
+clips (`composePortrait` in the script). Outpainting was tried first and
+recomposed the scene.
 
 **Generating anything new costs credits, and the owner approves the total
 first.**

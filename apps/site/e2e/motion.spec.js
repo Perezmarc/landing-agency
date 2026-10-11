@@ -56,7 +56,7 @@ test.describe('motion, with the production CSP', () => {
     await page.goto(HOME, { waitUntil: 'load' })
     await expect.poll(() => heroState(page)).toBe('before')
     await page.evaluate(() => window.scrollTo(0, 100))
-    await expect.poll(() => heroState(page), { timeout: 4000 }).toBe('after')
+    await expect.poll(() => heroState(page), { timeout: 8000 }).toBe('after')
     await page.evaluate(() => window.scrollTo(0, 0))
     await expect.poll(() => heroState(page), { timeout: 4000 }).toBe('before')
   })
@@ -69,12 +69,11 @@ test.describe('motion, with the production CSP', () => {
 
 test.describe('reduced motion', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } })
-  test('no canvas, no video, no media requests', async ({ page }) => {
+  test('no video and no media requests', async ({ page }) => {
     const media = []
     page.on('request', r => { if (isMedia(r.url())) media.push(r.url()) })
     await page.goto(HOME, { waitUntil: 'load' })
     await page.mouse.wheel(0, 200); await page.waitForTimeout(1200)
-    await expect(page.locator('canvas')).toHaveCount(0)
     await expect(page.locator('video')).toHaveCount(0)
     expect(media).toEqual([])
   })

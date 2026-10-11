@@ -16,9 +16,11 @@ describe('streams.json', () => {
     expect(streams.rail.w).toBeGreaterThan(0)
     expect(streams.rail.h).toBeGreaterThan(0)
     for (const r of ['16x9', '9x16']) {
-      const { exit, burst } = streams.hero[r]
+      const { exit, transition } = streams.hero[r]
       expect(frac(exit.x) && frac(exit.width), r).toBe(true)
-      for (const k of ['x', 'y', 'w', 'h']) expect(frac(burst[k]), `${r} burst.${k}`).toBe(true)
+      // The crash plays once: a few seconds, not a loop.
+      expect(transition, `${r} transition seconds`).toBeGreaterThan(1)
+      expect(transition, `${r} transition seconds`).toBeLessThan(8)
     }
   })
 
@@ -38,10 +40,11 @@ describe('streams.json', () => {
   })
 
   it('references only files that exist', () => {
-    const files = ['rail-strip.webp', 'crystal-raw-16x9.webp', 'crystal-raw-9x16.webp']
+    const files = ['rail-strip.webp']
     for (const clip of ['hero-before-16x9', 'hero-after-16x9', 'hero-before-9x16', 'hero-after-9x16', 'pebble', 'end']) {
       files.push(`${clip}.webm`, `${clip}.mp4`, `${clip}.jpg`)
     }
+    for (const r of ['16x9', '9x16']) files.push(`hero-transition-${r}.webm`, `hero-transition-${r}.mp4`)
     for (let i = 1; i <= streams.stones.raw; i++) files.push(`stones/raw-${i}.webp`)
     for (let i = 1; i <= streams.stones.pebble; i++) files.push(`stones/pebble-${i}.webp`)
     files.forEach(f => expect(existsSync(here(f)), f).toBe(true))

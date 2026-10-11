@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { boxWidth, railX, boxRect } from './geometry.js'
+import { boxWidth, railX } from './geometry.js'
 
 describe('the stream geometry', () => {
   it('covers the stage with the 16:9 box on landscape and the 9:16 box on portrait', () => {
@@ -16,9 +16,5 @@ describe('the stream geometry', () => {
     expect(phone).toBeGreaterThan(0.76)
     expect(phone).toBeLessThan(0.9)
     expect(railX(768, 1024, 0.7604) / 768).toBeCloseTo(0.7604, 3)
-  })
-
-  it('maps a rect inside the media box to stage pixels', () => {
-    expect(boxRect(1440, 900, { x: 0.5, y: 0.5, w: 0.1, h: 0.1 })).toEqual({ x: 720, y: 450, w: 160, h: 90 })
   })
 })

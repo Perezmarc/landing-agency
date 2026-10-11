@@ -7,8 +7,7 @@
 
    What runs depends on the device (tier.js): reduced motion gets a still page
    with a soft poster crossfade in the hero; Save-Data and weak devices get the
-   motion but no video and no particles; WebGL2 is loaded with import() only
-   when the tier gets particles. */
+   motion but no video. */
 
 import { selectTier } from './tier.js'
 import { initHero } from './hero.js'
@@ -21,7 +20,6 @@ const tier = selectTier({
   reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
   saveData: Boolean(conn.saveData),
   effectiveType: conn.effectiveType,
-  webgl2: typeof WebGL2RenderingContext !== 'undefined',
   finePointer: matchMedia('(pointer: fine)').matches,
   cores: navigator.hardwareConcurrency || 4,
   memory: navigator.deviceMemory || 4,

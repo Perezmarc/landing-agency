@@ -164,9 +164,9 @@
      stream still leaves through the stage's bottom edge. */
   .mk-hero-media { aspect-ratio: 9 / 16; top: calc(50% + 12svh); }
 }
-/* Layers, bottom to top: posters (AFTER under BEFORE), videos (created by JS),
-   the burst canvas. With no JS the BEFORE poster is hidden: the server HTML
-   is the final state. */
+/* Layers, bottom to top: the AFTER poster and loop, the transition clip (the
+   crash, created by JS), then the BEFORE layer (poster and loop). With no JS
+   the BEFORE layer is transparent: the server HTML is the final state. */
 .mk-hero-layer {
   position: absolute;
   inset: 0;
@@ -174,32 +174,18 @@
   height: 100%;
 }
 .mk-hero-layer img { width: 100%; height: 100%; object-fit: cover; }
-.mk-hero-poster--before { visibility: hidden; }
-.mk-hero[data-hero-state="before"] .mk-hero-poster--before,
-.mk-hero[data-hero-state="crashing"] .mk-hero-poster--before,
-.mk-hero[data-hero-state="reassembling"] .mk-hero-poster--before { visibility: visible; }
 .mk-hero-video { opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); }
 .mk-hero-video.is-ready { opacity: 1; }
-/* The BEFORE layer is revealed away by a circular wipe from the crystal: its
-   mask's clear radius grows from 0 (fully shown) to past the corners. */
-@property --wipe {
-  syntax: '<percentage>';
-  inherits: true;
-  initial-value: 0%;
-}
-.mk-hero-before {
-  -webkit-mask-image: radial-gradient(circle at var(--wipe-x) var(--wipe-y), transparent var(--wipe), #000 calc(var(--wipe) + 6%));
-  mask-image: radial-gradient(circle at var(--wipe-x) var(--wipe-y), transparent var(--wipe), #000 calc(var(--wipe) + 6%));
-}
-/* The wipe opens from the crystal's centre (the burst box, from streams.json). */
-.mk-hero { --wipe-x: var(--wipe-x-l); --wipe-y: var(--wipe-y-l); }
-@media (max-aspect-ratio: 1/1) {
-  .mk-hero { --wipe-x: var(--wipe-x-p); --wipe-y: var(--wipe-y-p); }
-}
-.mk-hero[data-hero-state="after"], .mk-hero[data-hero-state="crashing"] { --wipe: 160%; }
-.mk-hero[data-hero-state="before"], .mk-hero[data-hero-state="reassembling"] { --wipe: 0%; }
-.mk-hero.is-wiping { transition: --wipe var(--dur-wipe) var(--ease-out) 150ms; }
-.mk-hero-canvas { z-index: 1; pointer-events: none; }
+/* BEFORE: shown at rest and while coming back; it fades in on the way back,
+   and fades out (posters only) or is cut by the transition on the way in. */
+.mk-hero-before { opacity: 0; transition: opacity var(--dur-hero-fade) var(--ease-out); }
+.mk-hero[data-hero-state="before"] .mk-hero-before,
+.mk-hero[data-hero-state="reassembling"] .mk-hero-before { opacity: 1; }
+/* The crash clip. Its first frame is the BEFORE rock, so the BEFORE layer is
+   cut at once; it is hidden again as the AFTER loop takes over under it. */
+.mk-hero-video.mk-hero-transition { opacity: 0; transition: opacity 250ms linear; }
+.mk-hero.is-transitioning .mk-hero-transition.is-ready { opacity: 1; transition: none; }
+.mk-hero.is-transitioning .mk-hero-before { opacity: 0; transition: none; }
 
 .mk-hero-copy {
   position: relative;
@@ -706,13 +692,10 @@
 }
 
 /* ═══════════ REDUCED MOTION ═══════════
-   A still stream, still stones, no reveals. motion/ also skips the burst,
-   the videos and the calendar animation. */
+   A still stream, still stones, no reveals. motion/ also skips the videos and
+   the calendar animation; the hero keeps its before/after story as the
+   posters' crossfade. */
 @media (prefers-reduced-motion: reduce) {
   .mk-rail::before, .mk-rail::after, .mk-stone { animation: none; }
   .mk-reveal-pending { opacity: 1; translate: none; }
-  /* The hero keeps its before/after story as a soft 300ms crossfade. */
-  .mk-hero-before { -webkit-mask-image: none; mask-image: none; opacity: 0; transition: opacity 300ms ease; }
-  .mk-hero[data-hero-state="before"] .mk-hero-before,
-  .mk-hero[data-hero-state="reassembling"] .mk-hero-before { opacity: 1; }
 }

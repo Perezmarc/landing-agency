@@ -25,7 +25,7 @@ matter.
 | Dark pair | `--mk-dark` · `--mk-light` | near-black buttons and code blocks, and the light ink on them |
 | Glass | `--glass-bg` · `--glass-bg-solid` · `--glass-line` · `--glass-blur` | frosted cards (the AFTER calendar); `-solid` is the no-blur fallback |
 | Calendar | `--blk-work` · `--blk-line` · `--hatch-ink` · `--hatch` | the day calendar's work, chase and waiting blocks |
-| Landing motion | `--dur-burst` · `--dur-wipe` · `--dur-pour` · `--dur-reveal` · `--dur-calendar` · `--ease-burst` · `--flow-period` | the hero crash, the wipe, the stream's pour and loop, reveals, the calendar |
+| Landing motion | `--dur-hero-fade` · `--dur-pour` · `--dur-reveal` · `--dur-calendar` · `--flow-period` | the hero's crossfades, the stream's pour and loop, reveals, the calendar |
 
 The status families come as a set of four for a reason: a status pill needs a
 fill, text that passes contrast **on that fill**, and a border. Picking a

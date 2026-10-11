@@ -10,10 +10,3 @@ export function boxWidth(viewW, viewH) {
 export function railX(viewW, viewH, exitX) {
   return viewW / 2 + (exitX - 0.5) * boxWidth(viewW, viewH)
 }
-
-/** A rect inside the media box (fractions) → page px inside the stage. */
-export function boxRect(viewW, viewH, frac) {
-  const w = boxWidth(viewW, viewH), h = viewW / viewH <= 1 ? w * 16 / 9 : w * 9 / 16
-  const left = (viewW - w) / 2, top = (viewH - h) / 2
-  return { x: left + frac.x * w, y: top + frac.y * h, w: frac.w * w, h: frac.h * h }
-}
