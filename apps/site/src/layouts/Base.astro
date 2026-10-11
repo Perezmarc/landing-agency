@@ -14,23 +14,31 @@ import '@forge/ui/kit.css'
 import '@forge/ui/button.css'
 import '../styles/marketing.css'
 
+// The 400 Latin face is on every page above the fold: preload it so the swap
+// from the fallback stack is rarely seen. Vite hashes it to the same URL the
+// @font-face rule in tokens.css resolves to.
+import interTight400 from '@forge/tokens/fonts/inter-tight-latin-400-normal.woff2?url'
+
 import Seo from '../components/Seo.astro'
 import Nav from '../components/Nav.astro'
 import Footer from '../components/Footer.astro'
 import { useTranslations } from '@forge/i18n'
 
-const { meta, locale, current } = Astro.props
+/* `overlay`: the page's first section sits under the fixed header (the home
+   hero), so the header's flow spacer is left out. */
+const { meta, locale, current, overlay = false } = Astro.props
 const t = useTranslations(locale)
 ---
 <!DOCTYPE html>
 <html lang={meta.lang}>
   <head>
+    <link rel="preload" href={interTight400} as="font" type="font/woff2" crossorigin />
     <Seo meta={meta} />
   </head>
   <body>
     {/* The first thing keyboard focus reaches, before the header's links. */}
     <a class="skip-link" href="#main">{t('nav.skipToContent')}</a>
-    <Nav locale={locale} current={current} />
+    <Nav locale={locale} current={current} overlay={overlay} />
     <main id="main">
       <slot />
     </main>

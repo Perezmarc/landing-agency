@@ -1,0 +1,412 @@
+#!/usr/bin/env node
+/* ═══════════════════════════════════════════════════════════════════════════
+   build-media — turns the generated clips and stills into the landing page's
+   web media. Offline and deliberate: it is NOT part of `npm run build`, and its
+   outputs are committed under apps/site/src/media/, so a deploy never depends
+   on a generation service or on ffmpeg.
+
+       node scripts/media/build-media.mjs            # everything
+       node scripts/media/build-media.mjs --check    # only the checks
+
+   Needs ffmpeg (libsvtav1, libx264) on PATH; sharp comes from the workspace.
+   Sources are listed in sources.json by permanent URL and cached in .cache/.
+   Generating NEW sources costs Higgsfield credits: the owner approves the
+   total first (see docs/LANDING-DESIGN.md).
+
+   What it does, per clip:
+     1. Grade to white. The void estimate is the per-pixel 90th percentile over
+        all frames (frame 0 would bake the rain in), low-passed and iterated
+        so objects drop out of it. Gain = 255 / field, applied only to the void
+        (object weight = smoothstep(|frame − field|, 8, 56), blurred), so the
+        crystal and the water keep their tones. Near-white is soft-snapped to
+        pure white; exposure is normalised per frame (generated video flickers).
+        Hero clips keep half of the soft overhead light in the top of the frame.
+     2. Loop. The last second is cross-faded into the first, then cut.
+     3. Encode AV1 WebM + H.264 MP4 (+faststart, BT.709, closed GOP, no audio),
+        and write the first frame as the poster source.
+   Then: the rail strip, the burst cutout, the stones, and streams.json (where
+   the stream enters and leaves each clip).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+import { spawn, spawnSync } from 'node:child_process'
+import { mkdirSync, existsSync, readFileSync, writeFileSync, statSync, createWriteStream, rmSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+const sharp = require('sharp')
+
+const HERE = dirname(fileURLToPath(import.meta.url))
+const ROOT = join(HERE, '..', '..')
+const CACHE = join(HERE, '.cache')
+const OUT = join(ROOT, 'apps', 'site', 'src', 'media')
+const SOURCES = JSON.parse(readFileSync(join(HERE, 'sources.json'), 'utf8'))
+
+const FPS = 24
+const LOOP_FADE = FPS            // one second
+const CHECK_ONLY = process.argv.includes('--check')
+
+/* The clips: output name, source key, output size, and whether it is a hero
+   (hero clips keep part of the overhead light). Hero landscape is encoded at
+   1600 wide: the media box is max(100vw, 177.78svh), 1600 on a 1440×900 screen. */
+const CLIPS = [
+  { name: 'hero-before-16x9', w: 1600, h: 900, hero: true },
+  { name: 'hero-after-16x9', w: 1600, h: 900, hero: true },
+  { name: 'hero-before-9x16', w: 720, h: 1280, hero: true },
+  { name: 'hero-after-9x16', w: 720, h: 1280, hero: true },
+  { name: 'pebble', w: 540, h: 960, hero: false },
+  { name: 'end', w: 540, h: 960, hero: false },
+]
+
+/* ── Portrait composition ────────────────────────────────────────────────────
+   The 9:16 hero frames were composed from the 16:9 stills, not outpainted: the
+   stream must leave at RX of the width (the portrait rail), with the crystal
+   about 44% of the width. The same transform places the burst cutout. */
+export const PORTRAIT = { W: 1080, H: 1920, RX: 0.76, EXIT: 0.6716, CRYSTAL: 0.39, CW: 0.44, CY: 0.62 }
+
+function portraitPlacement() {
+  const { W, H, RX, EXIT, CRYSTAL, CW, CY } = PORTRAIT
+  const sw = Math.round(CW * W / CRYSTAL)
+  const sh = Math.round(sw * 9 / 16)
+  return { sw, sh, left: Math.round(RX * W - EXIT * sw), top: Math.round(CY * H - 0.47 * sh) }
+}
+
+/* ── small helpers ───────────────────────────────────────────────────────── */
+
+/** Run a command; returns stdout and stderr together (ffmpeg reports on stderr). */
+function run(cmd, args) {
+  const r = spawnSync(cmd, args, { stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 2 ** 28 })
+  if (r.status !== 0) throw new Error(`${cmd} ${args.join(' ')}\n${r.stderr}`)
+  return r.stdout.toString() + r.stderr.toString()
+}
+
+async function fetchTo(url, path) {
+  if (existsSync(path)) return path
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`${url}: ${res.status}`)
+  writeFileSync(path, Buffer.from(await res.arrayBuffer()))
+  return path
+}
+
+const smoothstep = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t) }
+
+/** Separable box blur (3 passes ≈ gaussian) of a single-channel Float32Array. */
+function blur(src, w, h, r) {
+  if (r < 1) return src
+  let a = Float32Array.from(src), b = new Float32Array(src.length)
+  for (let pass = 0; pass < 3; pass++) {
+    for (let y = 0; y < h; y++) {           // horizontal
+      let acc = 0; const row = y * w
+      for (let x = -r; x <= r; x++) acc += a[row + Math.min(w - 1, Math.max(0, x))]
+      for (let x = 0; x < w; x++) {
+        b[row + x] = acc / (2 * r + 1)
+        acc += a[row + Math.min(w - 1, x + r + 1)] - a[row + Math.max(0, x - r)]
+      }
+    }
+    for (let x = 0; x < w; x++) {           // vertical
+      let acc = 0
+      for (let y = -r; y <= r; y++) acc += b[Math.min(h - 1, Math.max(0, y)) * w + x]
+      for (let y = 0; y < h; y++) {
+        a[y * w + x] = acc / (2 * r + 1)
+        acc += b[Math.min(h - 1, y + r + 1) * w + x] - b[Math.max(0, y - r) * w + x]
+      }
+    }
+  }
+  return a
+}
+
+/** Every frame of a clip as raw RGB at (w, h). */
+function decodeAll(path, w, h) {
+  const raw = spawnSync('ffmpeg', ['-v', 'error', '-i', path, '-vf', `scale=${w}:${h}:flags=area`, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], { maxBuffer: 2 ** 31 })
+  if (raw.status !== 0) throw new Error(raw.stderr.toString())
+  const size = w * h * 3, frames = []
+  for (let i = 0; i + size <= raw.stdout.length; i += size) frames.push(raw.stdout.subarray(i, i + size))
+  return frames
+}
+
+/* ── 1. the void field ──────────────────────────────────────────────────── */
+
+function voidField(frames, w, h) {
+  // Per-frame exposure: the median luma, normalised to the clip's median.
+  const luma = f => { const s = []; for (let i = 0; i < f.length; i += 3 * 17) s.push(0.2126 * f[i] + 0.7152 * f[i + 1] + 0.0722 * f[i + 2]); s.sort((a, b) => a - b); return s[s.length >> 1] }
+  const med = frames.map(luma)
+  const clipMed = [...med].sort((a, b) => a - b)[med.length >> 1]
+  const exposure = med.map(m => Math.min(1.06, Math.max(0.94, clipMed / m)))
+
+  // Per-pixel, per-channel 90th percentile over all frames.
+  const n = w * h, k = Math.floor(frames.length * 0.9), field = [new Float32Array(n), new Float32Array(n), new Float32Array(n)]
+  const col = new Float32Array(frames.length)
+  for (let c = 0; c < 3; c++) {
+    for (let p = 0; p < n; p++) {
+      for (let f = 0; f < frames.length; f++) col[f] = frames[f][p * 3 + c] * exposure[f]
+      col.sort(); field[c][p] = col[k]
+    }
+  }
+  // Low-pass (≈48px at full scale), then iterate: pixels that stand out from
+  // the smooth field are objects, so they are replaced and the field re-blurred.
+  const r = Math.max(2, Math.round(48 * w / 1920 / 2))
+  for (let c = 0; c < 3; c++) {
+    let smooth = blur(field[c], w, h, r)
+    for (let it = 0; it < 3; it++) {
+      const fixed = new Float32Array(n)
+      for (let p = 0; p < n; p++) fixed[p] = Math.abs(field[c][p] - smooth[p]) > 6 ? smooth[p] : field[c][p]
+      smooth = blur(fixed, w, h, r)
+    }
+    field[c] = smooth
+  }
+  return { field, exposure }
+}
+
+function upsample(src, sw, sh, w, h) {
+  const out = new Float32Array(w * h)
+  for (let y = 0; y < h; y++) {
+    const fy = Math.min(sh - 1.001, (y + 0.5) * sh / h - 0.5), y0 = Math.max(0, Math.floor(fy)), ty = Math.max(0, fy - y0)
+    for (let x = 0; x < w; x++) {
+      const fx = Math.min(sw - 1.001, (x + 0.5) * sw / w - 0.5), x0 = Math.max(0, Math.floor(fx)), tx = Math.max(0, fx - x0)
+      const i = y0 * sw + x0
+      out[y * w + x] = (src[i] * (1 - tx) + src[i + 1] * tx) * (1 - ty) + (src[i + sw] * (1 - tx) + src[i + sw + 1] * tx) * ty
+    }
+  }
+  return out
+}
+
+/* ── 2. grade one frame ─────────────────────────────────────────────────── */
+
+function gradeFrame(frame, w, h, gain, exposure, hero) {
+  const n = w * h, weight = new Float32Array(n)
+  for (let p = 0; p < n; p++) {
+    let dev = 0
+    for (let c = 0; c < 3; c++) dev = Math.max(dev, Math.abs(frame[p * 3 + c] * exposure - 255 / gain[c][p]))
+    weight[p] = smoothstep(8, 56, dev)
+  }
+  const wb = blur(weight, w, h, Math.max(1, Math.round(5 * w / 1920)))
+  const out = Buffer.alloc(n * 3)
+  for (let y = 0; y < h; y++) {
+    // Hero: keep half of the overhead light in the top 65% of the frame.
+    const keep = hero ? 0.5 * (1 - smoothstep(0.45, 0.65, y / h)) : 0
+    for (let x = 0; x < w; x++) {
+      const p = y * w + x, voidness = (1 - wb[p]) * (1 - keep)
+      let lo = 255
+      for (let c = 0; c < 3; c++) {
+        const v = frame[p * 3 + c] * exposure * (1 + (gain[c][p] - 1) * voidness)
+        out[p * 3 + c] = Math.min(255, Math.max(0, Math.round(v)))
+        lo = Math.min(lo, out[p * 3 + c])
+      }
+      // Soft-snap near-white to pure white (deviation 7–20 ramps).
+      const d = 255 - lo
+      if (d < 20) {
+        const t = d <= 7 ? 1 : 1 - (d - 7) / 13
+        for (let c = 0; c < 3; c++) out[p * 3 + c] = Math.round(out[p * 3 + c] + (255 - out[p * 3 + c]) * t)
+      }
+    }
+  }
+  return out
+}
+
+/* ── 3. grade + loop + encode a clip ────────────────────────────────────── */
+
+function encoder(args) {
+  const p = spawn('ffmpeg', ['-v', 'error', '-y', ...args], { stdio: ['pipe', 'inherit', 'inherit'] })
+  return { write: buf => new Promise(res => p.stdin.write(buf) ? res() : p.stdin.once('drain', res)), close: () => new Promise((res, rej) => { p.on('close', code => code ? rej(new Error(`ffmpeg ${code}`)) : res()); p.stdin.end() }) }
+}
+
+async function buildClip(clip, src) {
+  const { w, h } = clip
+  const lw = Math.round(w / 4), lh = Math.round(h / 4)
+  const { field: low, exposure } = voidField(decodeAll(src, lw, lh), lw, lh)
+  const gain = low.map(ch => { const up = upsample(ch, lw, lh, w, h); for (let i = 0; i < up.length; i++) up[i] = 255 / Math.max(120, up[i]); return up })
+
+  const frames = decodeAll(src, w, h)
+  const N = frames.length, L = LOOP_FADE
+  const graded = i => gradeFrame(frames[i], w, h, gain, exposure[Math.min(i, exposure.length - 1)], clip.hero)
+
+  // Lossless intermediate, then the two web encodes from it.
+  const mid = join(CACHE, `${clip.name}.graded.mkv`)
+  const enc = encoder(['-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', `${w}x${h}`, '-r', String(FPS), '-i', '-', '-c:v', 'libx264', '-qp', '0', '-preset', 'veryfast', '-pix_fmt', 'yuv444p', mid])
+  // Order: L … N−L−1, then the cross-fade of the last second into the first.
+  // That plays …, N−L−1, blend(N−L, 0) … blend(N−1, L−1), and wraps to L.
+  let first = null
+  for (let i = L; i < N - L; i++) {
+    const g = graded(i); if (!first) first = g
+    await enc.write(g)
+  }
+  for (let j = 0; j < L; j++) {
+    const a = graded(N - L + j), b = graded(j), t = (j + 0.5) / L, mix = Buffer.alloc(a.length)
+    for (let k = 0; k < a.length; k++) mix[k] = Math.round(a[k] * (1 - t) + b[k] * t)
+    await enc.write(mix)
+  }
+  await enc.close()
+
+  const color = ['-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709', '-color_range', 'tv']
+  const hero = clip.name.startsWith('hero')
+  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libsvtav1', '-crf', hero ? '40' : '42', '-preset', '5', '-g', String(FPS * 5), '-pix_fmt', 'yuv420p', ...color, join(OUT, `${clip.name}.webm`)])
+  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libx264', '-crf', hero ? '27' : '28', '-preset', 'slow', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
+    '-x264-params', `keyint=${FPS * 5}:open-gop=0`, '-movflags', '+faststart', ...color, join(OUT, `${clip.name}.mp4`)])
+  // The poster is the first frame the loop plays.
+  await sharp(first, { raw: { width: w, height: h, channels: 3 } }).jpeg({ quality: 90, mozjpeg: true }).toFile(join(OUT, `${clip.name}.jpg`))
+  rmSync(mid)
+  return { first, w, h }
+}
+
+/* ── stream measurement ─────────────────────────────────────────────────── */
+
+/** Where the stream crosses a row band: centre and width as fractions of w.
+    Clear water is darkest at its two refracting edges, so the whole span above
+    12% of the peak deviation is taken, bridging gaps up to ~12px. */
+export function measureRow(rgb, w, h, y0, rows) {
+  const col = new Float64Array(w)
+  for (let y = y0; y < y0 + rows; y++) for (let x = 0; x < w; x++) {
+    const i = (y * w + x) * 3
+    col[x] += (255 - (0.2126 * rgb[i] + 0.7152 * rgb[i + 1] + 0.0722 * rgb[i + 2])) / rows
+  }
+  const peak = Math.max(...col)
+  if (peak < 8) return null
+  const bridge = Math.round(12 * w / 1600)
+  let lo = -1, hi = -1, best = null
+  for (let x = 0; x <= w; x++) {
+    const on = x < w && col[x] > 0.12 * peak
+    if (on) { if (lo < 0 || x - hi > bridge) { if (lo >= 0) best = pick(best, lo, hi); lo = x } hi = x }
+  }
+  best = pick(best, lo, hi)
+  function pick(b, l, r) { if (l < 0) return b; const mass = col.slice(l, r + 1).reduce((s, v) => s + v, 0); return !b || mass > b.mass ? { l, r, mass } : b }
+  return { x: +(((best.l + best.r + 1) / 2) / w).toFixed(4), width: +((best.r - best.l + 1) / w).toFixed(4) }
+}
+
+/* ── rail strip ─────────────────────────────────────────────────────────── */
+
+async function railStrip(pebble, stream) {
+  // The plain stream above the pebble: the top 34% of the clip, centred on the
+  // stream, 8 stream-widths wide. Cross-fade top and bottom so it tiles, then
+  // key the white to alpha so it composites over the page.
+  const { first, w, h } = pebble
+  const cw = Math.round(stream.width * w * 8), cx = Math.round(stream.x * w - cw / 2)
+  const ch = Math.round(h * 0.34), T = Math.round(ch * 0.25), outH = ch - T
+  const out = Buffer.alloc(cw * outH * 4)
+  for (let y = 0; y < outH; y++) for (let x = 0; x < cw; x++) {
+    const t = y < T ? (y + 0.5) / T : 1
+    const a = ((y) * w + cx + x) * 3, b = ((y + outH) * w + cx + x) * 3
+    let lo = 255; const rgb = [0, 0, 0]
+    for (let c = 0; c < 3; c++) { rgb[c] = y < T ? first[b + c] * (1 - t) + first[a + c] * t : first[a + c]; lo = Math.min(lo, rgb[c]) }
+    const alpha = Math.min(1, (255 - lo) / 70), o = (y * cw + x) * 4
+    for (let c = 0; c < 3; c++) out[o + c] = alpha > 0.01 ? Math.max(0, Math.round(255 - (255 - rgb[c]) / alpha)) : 255
+    out[o + 3] = Math.round(alpha * 255)
+  }
+  await sharp(out, { raw: { width: cw, height: outH, channels: 4 } }).webp({ quality: 82, alphaQuality: 90 }).toFile(join(OUT, 'rail-strip.webp'))
+  return { w: cw, h: outH, streamWidth: +(stream.width * w / cw).toFixed(4) }
+}
+
+/* ── burst cutout ───────────────────────────────────────────────────────── */
+
+async function burstCutout(name, poster, alphaPng) {
+  // RGB from the graded poster, alpha from the background-removal cutout,
+  // cropped to the crystal; the crop box is kept so the canvas maps 1:1.
+  const { first, w, h } = poster
+  const { data: a } = await sharp(alphaPng).resize(w, h, { fit: 'fill' }).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  let x0 = w, y0 = h, x1 = 0, y1 = 0
+  for (let p = 0; p < w * h; p++) if (a[p * 4 + 3] > 24) { const x = p % w, y = (p / w) | 0; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y) }
+  const bw = x1 - x0 + 1, bh = y1 - y0 + 1, out = Buffer.alloc(bw * bh * 4)
+  for (let y = 0; y < bh; y++) for (let x = 0; x < bw; x++) {
+    const s = ((y + y0) * w + x + x0), o = (y * bw + x) * 4
+    for (let c = 0; c < 3; c++) out[o + c] = first[s * 3 + c]
+    out[o + 3] = a[s * 4 + 3]
+  }
+  await sharp(out, { raw: { width: bw, height: bh, channels: 4 } }).webp({ quality: 86, alphaQuality: 95 }).toFile(join(OUT, `${name}.webp`))
+  return { x: +(x0 / w).toFixed(4), y: +(y0 / h).toFixed(4), w: +(bw / w).toFixed(4), h: +(bh / h).toFixed(4) }
+}
+
+async function portraitAlpha(cutoutPath) {
+  // The cutout placed exactly as composePortrait placed the still.
+  const { W, H } = PORTRAIT, { sw, sh, left, top } = portraitPlacement()
+  const still = await sharp(cutoutPath).resize(sw, sh).png().toBuffer()
+  const vis = await sharp(still).extract({ left: Math.max(0, -left), top: 0, width: Math.min(sw, W - Math.max(0, left)), height: sh }).png().toBuffer()
+  return sharp({ create: { width: W, height: H, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite([{ input: vis, top, left: Math.max(0, left) }]).png().toBuffer()
+}
+
+/* ── stones ─────────────────────────────────────────────────────────────── */
+
+async function stones(sheet, prefix, keep) {
+  // Split a cutout sheet into one image per connected alpha blob, left to right.
+  const { data, info } = await sharp(sheet).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  const W = info.width, H = info.height, lab = new Int32Array(W * H), boxes = []
+  for (let i = 0; i < W * H; i++) {
+    if (data[i * 4 + 3] <= 24 || lab[i]) continue
+    const n = boxes.length + 1, st = [i], b = { x0: W, y0: H, x1: 0, y1: 0, a: 0 }; lab[i] = n
+    while (st.length) {
+      const p = st.pop(), x = p % W, y = (p / W) | 0; b.a++
+      b.x0 = Math.min(b.x0, x); b.x1 = Math.max(b.x1, x); b.y0 = Math.min(b.y0, y); b.y1 = Math.max(b.y1, y)
+      for (const q of [x > 0 ? p - 1 : -1, x < W - 1 ? p + 1 : -1, p - W, p + W]) if (q >= 0 && q < W * H && !lab[q] && data[q * 4 + 3] > 24) { lab[q] = n; st.push(q) }
+    }
+    boxes.push(b)
+  }
+  const kept = boxes.filter(b => b.a > 4000).sort((a, b) => a.x0 - b.x0).slice(0, keep)
+  for (const [i, b] of kept.entries()) {
+    const pad = 12, left = Math.max(0, b.x0 - pad), top = Math.max(0, b.y0 - pad)
+    await sharp(sheet).extract({ left, top, width: Math.min(W, b.x1 + pad) - left, height: Math.min(H, b.y1 + pad) - top })
+      .resize(320, 320, { fit: 'inside' }).webp({ quality: 80, alphaQuality: 90 }).toFile(join(OUT, 'stones', `${prefix}-${i + 1}.webp`))
+  }
+  return kept.length
+}
+
+/* ── checks ─────────────────────────────────────────────────────────────── */
+
+function checks() {
+  const report = []
+  for (const clip of CLIPS) {
+    const webm = join(OUT, `${clip.name}.webm`), mp4 = join(OUT, `${clip.name}.mp4`)
+    // Decoded void luma: signalstats' YHIGH (90th-percentile luma) of the first
+    // frame, which is mostly void. Limited range, so 235 is white; ≥ 234 passes.
+    const stats = run('ffmpeg', ['-v', 'info', '-i', mp4, '-vf', 'signalstats,metadata=print:key=lavfi.signalstats.YHIGH', '-frames:v', '1', '-f', 'null', '-'])
+    const yhigh = Number((stats.match(/YHIGH=(\d+)/) || [])[1])
+    // Loop seam: mean absolute difference between the last and first frames.
+    const seam = run('ffmpeg', ['-v', 'info', '-sseof', '-0.05', '-i', mp4, '-i', mp4, '-filter_complex', '[0:v]trim=end_frame=1[a];[1:v]trim=end_frame=1[b];[a][b]psnr', '-f', 'null', '-'])
+    const psnr = Number((seam.match(/average:([\d.]+|inf)/) || [])[1])
+    report.push({ clip: clip.name, webmKB: Math.round(statSync(webm).size / 1024), mp4KB: Math.round(statSync(mp4).size / 1024), voidLuma: yhigh, seamPSNR: psnr, ok: yhigh >= 234 && psnr >= 30 })
+  }
+  console.table(report)
+  return report
+}
+
+/* ── main ───────────────────────────────────────────────────────────────── */
+
+async function main() {
+  mkdirSync(CACHE, { recursive: true }); mkdirSync(join(OUT, 'stones'), { recursive: true })
+  if (CHECK_ONLY) { checks(); return }
+
+  const src = async (kind, key) => fetchTo(SOURCES.base + SOURCES[kind][key], join(CACHE, SOURCES[kind][key]))
+  const built = {}, streams = {}
+  for (const clip of CLIPS) {
+    console.log('·', clip.name)
+    built[clip.name] = await buildClip(clip, await src('clips', clip.name))
+    const { first, w, h } = built[clip.name]
+    const band = Math.max(2, Math.round(h * 0.01))
+    streams[clip.name] = { entry: measureRow(first, w, h, 0, band), exit: measureRow(first, w, h, h - band, band) }
+  }
+
+  const rail = await railStrip(built.pebble, streams.pebble.entry)
+  const cutout = await src('stills', 'before-cutout')
+  const burst = {
+    '16x9': await burstCutout('crystal-raw-16x9', built['hero-before-16x9'], cutout),
+    '9x16': await burstCutout('crystal-raw-9x16', built['hero-before-9x16'], await portraitAlpha(cutout)),
+  }
+  const raw = await stones(await src('stills', 'fragments-cutout'), 'raw', 7)
+  const pebbles = await stones(await src('stills', 'pebbles-cutout'), 'pebble', 4)
+
+  // Hero streams: only the AFTER clip has the stream that becomes the rail.
+  const doc = {
+    $comment: 'Written by scripts/media/build-media.mjs. Fractions of each clip\'s width/height. Do not edit by hand.',
+    rail: { ...rail, period: 2.4 },
+    hero: {
+      '16x9': { exit: streams['hero-after-16x9'].exit, burst: burst['16x9'] },
+      '9x16': { exit: streams['hero-after-9x16'].exit, burst: burst['9x16'] },
+    },
+    moments: { pebble: streams.pebble, end: { entry: streams.end.entry } },
+    stones: { raw, pebble: pebbles },
+  }
+  writeFileSync(join(OUT, 'streams.json'), JSON.stringify(doc, null, 2) + '\n')
+  console.log(JSON.stringify(doc, null, 2))
+  checks()
+}
+
+main().catch(err => { console.error(err); process.exit(1) })

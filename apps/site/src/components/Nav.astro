@@ -14,7 +14,9 @@ import { useTranslations } from '@forge/i18n'
 import { routePath } from '@forge/seo/routes'
 import { Button } from '@forge/ui'
 
-const { locale, current } = Astro.props
+/* `overlay`: the page opens with a section that sits under the fixed header
+   (the home hero), so no flow spacer is rendered. */
+const { locale, current, overlay = false } = Astro.props
 const t = useTranslations(locale)
 
 // No module markers here: the filter below already drops any link whose route
@@ -62,4 +64,4 @@ const links = ['blog', 'contact']
     </details>
   </div>
 </header>
-<div class="mk-header-offset"></div>
+{!overlay && <div class="mk-header-offset"></div>}

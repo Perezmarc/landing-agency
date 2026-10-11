@@ -4,7 +4,7 @@ category: Components
 
 # Form controls
 
-`TextInput`, `Select`, `Switch` and `SegmentedControl`. Every text field in the
+`TextInput`, `Select`, `Switch`, `SegmentedControl` and `Tabs`. Every text field in the
 product goes through `TextInput` — a shared className on a raw `<input>` is not
 enough, because two of them written in different files drift apart on the next
 change.
@@ -60,6 +60,29 @@ buttons.
   onChange={setInterval}
 />
 ```
+
+## Tabs
+
+For switching between panels on a static page, with no JavaScript. It is a
+native radio group in a `<fieldset>`, not an ARIA tablist: the legend names the
+group (visually hidden, since the page shows its own heading), each label names
+its radio, and arrow keys move the selection. CSS shows the checked item's
+panel; browsers without `:has()` show every panel. Up to eight items.
+
+```jsx
+<Tabs
+  name="area"
+  legend="Workflow area"
+  items={[
+    { value: 'finance', label: 'Finance', panel: <FinancePanel /> },
+    { value: 'revops', label: 'Revenue ops', panel: <RevOpsPanel /> },
+  ]}
+/>
+```
+
+Use `SegmentedControl` when the state lives in hydrated React (`value` +
+`onChange`); use `Tabs` when the page ships as static HTML. Script that needs
+to react to a switch listens for `change` on `[data-ui-tabs]`.
 
 ## Field layout
 

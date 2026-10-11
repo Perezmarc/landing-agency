@@ -17,73 +17,271 @@
   },
   "home": {
     "eyebrow": "Agenti AI per le operations aziendali",
-    "heading": "Affida interi processi ad agenti AI costruiti per la tua azienda",
-    "lead": "Progettiamo, sviluppiamo e gestiamo agenti AI su misura che si fanno carico del lavoro ripetitivo di coordinamento nei tuoi team di finanza, vendite e operations. Lavorano dentro gli strumenti che usi già e sono operativi in poche settimane.",
+    "headingLead": "Scopri come funziona davvero il lavoro.",
+    "heading": "Poi affida i passaggi ripetitivi ad agenti AI.",
+    "lead": "Mappiamo come il lavoro si muove davvero nel tuo team, eliminiamo i passaggi che non dovrebbero esistere e gestiamo agenti AI dentro gli strumenti che usi già. Le decisioni restano alle tue persone.",
     "ctaPrimary": "Prenota una call conoscitiva",
     "ctaSecondary": "Scopri come lavoriamo",
-    "problemHeading": "Il tuo team fa ancora da collante tra i tuoi sistemi",
-    "problemLead": "Le fatture si riconciliano a mano, le trattative aspettano le approvazioni e il report del lunedì si ricostruisce da cinque export diversi. La maggior parte degli strumenti di automazione copre un singolo passaggio e lascia alle persone il compito di spostare il lavoro tra tutti gli altri. Noi guardiamo il processo nella sua interezza e lo affidiamo ad agenti che portano ogni pratica dal primo input all'ultimo aggiornamento.",
+    "day": {
+      "headingLead": "Una giornata, prima e dopo.",
+      "heading": "Lo stesso lavoro, con la parte ripetitiva affidata a un agente.",
+      "lead": "Scegli un team. A sinistra c'è una giornata tipo di oggi. A destra c'è la stessa giornata quando un agente prepara il lavoro e una persona prende le decisioni.",
+      "teamLegend": "Scegli un team",
+      "beforeTitle": "Oggi",
+      "afterTitle": "Con un agente",
+      "personLane": "Tu",
+      "agentLane": "Agente",
+      "agentList": "Cosa ha preparato l'agente",
+      "kinds": {
+        "work": "Lavoro manuale",
+        "chase": "Solleciti",
+        "wait": "Attesa",
+        "decide": "Decisione"
+      },
+      "note": "Esempio illustrativo di una giornata tipo, non il risultato di un cliente.",
+      "teams": {
+        "finance": {
+          "name": "Finanza",
+          "role": "Responsabile contabilità fornitori",
+          "blocks": {
+            "b1": "Ridigitare le fatture arrivate nella casella condivisa",
+            "b2": "Sollecitare gli approvatori per gli ordini d'acquisto mancanti",
+            "b3": "Aspettare la risposta di un fornitore",
+            "b4": "Riconciliare le fatture con ordini e bolle di entrata",
+            "b5": "Correggere le incongruenze nell'anagrafica fornitori",
+            "b6": "Sollecitare di nuovo le approvazioni",
+            "b7": "Preparare il foglio di calcolo della distinta di pagamento",
+            "b8": "Rispondere alle email «dov'è il mio pagamento?»",
+            "d1": "Rivedere le eccezioni preparate dall'agente",
+            "d2": "Approvare la distinta di pagamento",
+            "d3": "Negoziare con un fornitore chiave le condizioni per il pagamento anticipato",
+            "d4": "Eliminare la causa dell'eccezione più frequente",
+            "d5": "Preparare la chiusura di fine mese",
+            "a1": "Legge la casella, estrae le fatture e le riconcilia",
+            "a2": "Sollecita gli ordini mancanti e registra le risposte",
+            "a3": "Prepara ogni eccezione con la relativa policy e lo storico",
+            "a4": "Prepara una bozza del file della distinta di pagamento"
+          }
+        },
+        "revenueOps": {
+          "name": "Revenue operations",
+          "role": "Responsabile revenue operations",
+          "blocks": {
+            "b1": "Unire gli account duplicati nel CRM",
+            "b2": "Sollecitare i commerciali per i campi mancanti delle trattative",
+            "b3": "Aspettare che la finanza approvi uno sconto",
+            "b4": "Ricostruire il report della pipeline da tre export",
+            "b5": "Sollecitare gli approvatori sulle richieste bloccate al deal desk",
+            "b6": "Verificare le provvigioni rispetto alle trattative chiuse",
+            "b7": "Aspettare che l'ufficio legale restituisca un contratto",
+            "b8": "Rispondere ai commerciali che chiedono perché una trattativa è ferma",
+            "d1": "Rivedere le trattative segnalate dall'agente",
+            "d2": "Decidere sulle richieste di sconto fuori standard",
+            "d3": "Affiancare un team commerciale sull'accuratezza delle previsioni",
+            "d4": "Correggere la regola di assegnazione che blocca la maggior parte delle trattative",
+            "d5": "Preparare la revisione trimestrale della pipeline",
+            "a1": "Unisce i duplicati e completa i campi mancanti nel CRM",
+            "a2": "Prepara ogni approvazione con lo storico della trattativa",
+            "a3": "Costruisce il report della pipeline ogni mattina",
+            "a4": "Controlla le provvigioni sulle trattative chiuse"
+          }
+        },
+        "procurement": {
+          "name": "Acquisti",
+          "role": "Specialista acquisti",
+          "blocks": {
+            "b1": "Ridigitare le richieste d'acquisto arrivate via email",
+            "b2": "Sollecitare i nuovi fornitori per i documenti fiscali e bancari",
+            "b3": "Aspettare l'approvazione del responsabile del budget",
+            "b4": "Verificare i documenti dei fornitori rispetto alla procedura di qualifica",
+            "b5": "Confrontare a mano tre preventivi di fornitori",
+            "b6": "Seguire le consegne in ritardo",
+            "b7": "Aspettare la conferma di un fornitore",
+            "b8": "Aggiornare il registro dei rinnovi contrattuali",
+            "d1": "Approvare i fornitori preparati dall'agente",
+            "d2": "Approvare gli acquisti sopra soglia",
+            "d3": "Negoziare le condizioni con un fornitore strategico",
+            "d4": "Decidere quali contratti rinnovare",
+            "d5": "Correggere il modulo di richiesta che genera più rilavorazioni",
+            "a1": "Trasforma le richieste via email in richieste d'acquisto",
+            "a2": "Raccoglie e verifica i documenti dei fornitori",
+            "a3": "Mette i preventivi uno accanto all'altro",
+            "a4": "Sollecita i fornitori sulle consegne e registra le risposte"
+          }
+        },
+        "compliance": {
+          "name": "Compliance",
+          "role": "Analista compliance",
+          "blocks": {
+            "b1": "Esaminare gli aggiornamenti normativi per individuare i cambiamenti rilevanti",
+            "b2": "Sollecitare i responsabili dei controlli per le evidenze di audit",
+            "b3": "Aspettare i log di accesso dall'IT",
+            "b4": "Raccogliere screenshot ed export per il fascicolo di audit",
+            "b5": "Verificare le note spese rispetto alla policy",
+            "b6": "Sollecitare i manager per le attestazioni sulle policy",
+            "b7": "Aspettare la risposta di una business unit",
+            "b8": "Aggiornare il foglio di calcolo dei controlli",
+            "d1": "Decidere quali cambiamenti normativi richiedono un intervento",
+            "d2": "Rivedere le eccezioni trovate dall'agente",
+            "d3": "Concordare un piano di rimedio con il responsabile di un controllo",
+            "d4": "Rispondere alle domande aperte del revisore",
+            "d5": "Preparare l'aggiornamento per il comitato rischi",
+            "a1": "Riassume gli aggiornamenti normativi per argomento",
+            "a2": "Richiede e archivia le evidenze di audit",
+            "a3": "Verifica ogni nota spese rispetto alla policy",
+            "a4": "Sollecita le attestazioni e registra le risposte"
+          }
+        },
+        "customerOps": {
+          "name": "Customer operations",
+          "role": "Responsabile customer operations",
+          "blocks": {
+            "b1": "Smistare ed etichettare i ticket arrivati di notte",
+            "b2": "Cercare gli ordini in tre sistemi diversi",
+            "b3": "Aspettare il magazzino per un pacco smarrito",
+            "b4": "Aggiornare a mano i dati degli account",
+            "b5": "Sollecitare gli altri team per avere risposte sulle escalation",
+            "b6": "Gestire le richieste di rimborso e sostituzione",
+            "b7": "Aspettare che la finanza approvi un rimborso",
+            "b8": "Copiare le note dei ticket nel report settimanale",
+            "d1": "Rivedere le escalation preparate dall'agente",
+            "d2": "Approvare i rimborsi fuori policy",
+            "d3": "Chiamare un cliente chiave per un problema ricorrente",
+            "d4": "Eliminare la causa del ticket più frequente",
+            "d5": "Affiancare il team sui casi difficili",
+            "a1": "Etichetta e smista ogni ticket",
+            "a2": "Raccoglie lo storico di ordini e account per ogni pratica",
+            "a3": "Applica gli aggiornamenti di routine agli account",
+            "a4": "Prepara una bozza del report settimanale"
+          }
+        },
+        "logistics": {
+          "name": "Logistica",
+          "role": "Coordinatore logistico",
+          "blocks": {
+            "b1": "Controllare i portali dei vettori per le spedizioni in ritardo",
+            "b2": "Sollecitare i vettori per le nuove date di consegna",
+            "b3": "Aspettare lo spedizioniere doganale",
+            "b4": "Ridigitare gli aggiornamenti di consegna nell'ERP",
+            "b5": "Avvisare il customer service degli ordini che arriveranno in ritardo",
+            "b6": "Sollecitare i fornitori per gli avvisi di spedizione",
+            "b7": "Aspettare la risposta di un fornitore",
+            "b8": "Preparare il foglio di calcolo per la valutazione dei fornitori",
+            "d1": "Decidere come recuperare le spedizioni in ritardo segnalate dall'agente",
+            "d2": "Approvare un trasporto urgente",
+            "d3": "Rivedere le prestazioni con un fornitore chiave",
+            "d4": "Correggere la fase di prenotazione che causa più ritardi",
+            "d5": "Pianificare la capacità della settimana prossima",
+            "a1": "Monitora ogni spedizione sui portali dei vettori",
+            "a2": "Sollecita vettori e fornitori e registra le risposte",
+            "a3": "Aggiorna l'ERP e avvisa il customer service",
+            "a4": "Prepara la valutazione dei fornitori"
+          }
+        }
+      }
+    },
+    "problemHeading": "Il tuo processo documentato non è il tuo processo.",
+    "problemLead": "Quello reale ha cicli di rilavorazione, persone che si rincorrono per avere risposte e lunghi tratti in cui una pratica resta semplicemente ferma. Una richiesta può restare in coda per giorni e richiedere solo pochi minuti di lavoro effettivo. Se automatizzi la versione documentata, automatizzi la cosa sbagliata.",
+    "problemKicker": "L'attesa è il processo. Il lavoro, pochi minuti.",
+    "discoveryHeading": "Come troviamo il processo reale",
+    "discoveryLead": "Guardiamo il lavoro da tre lati, perché ognuno mostra qualcosa che agli altri sfugge.",
+    "discovery": [
+      {
+        "title": "Interviste: il perché",
+        "body": "Parliamo con chi fa il lavoro: chi decide, su quali scorciatoie conta e quali soglie nessuno ha mai messo per iscritto."
+      },
+      {
+        "title": "I log dei tuoi sistemi: il cosa",
+        "body": "ERP, CRM e helpdesk registrano ogni pratica, così vediamo quante ne arrivano, quanto dura ogni passaggio, dove le pratiche restano ferme e quali tornano indietro."
+      },
+      {
+        "title": "Tutto il resto",
+        "body": "Procedure, fogli di calcolo, thread di email e chat contengono le eccezioni e le regole che i tuoi sistemi non hanno mai registrato."
+      }
+    ],
+    "bucketsHeading": "Smista ogni passaggio",
+    "bucketsLead": "In quest'ordine. La maggior parte dei team parte dal modello.",
+    "buckets": [
+      {
+        "title": "Eliminare",
+        "body": "Passaggi che esistono per un vecchio ripiego, un controllo doppio o un report che nessuno legge. Un passaggio eliminato non costa nulla."
+      },
+      {
+        "title": "Codice semplice",
+        "body": "Passaggi con regole fisse: copiare questo campo, inviare quel promemoria, far quadrare questi due importi. Un software tradizionale li esegue in modo affidabile ed economico."
+      },
+      {
+        "title": "Un agente",
+        "body": "Passaggi che richiedono lettura e giudizio entro limiti chiari, come un'email non strutturata, una fattura che non quadra o un documento mancante. L'agente prepara la pratica."
+      },
+      {
+        "title": "Una persona",
+        "body": "Decisioni con conseguenze: approvazioni, eccezioni e negoziazioni. L'agente le passa con il contesto allegato e decide una persona."
+      }
+    ],
+    "exampleHeading": "Fatture fornitori, passaggio per passaggio",
+    "exampleLead": "Come il metodo smista un tipico processo di contabilità fornitori.",
+    "exampleNote": "Esempio illustrativo del metodo, non un progetto per un cliente.",
+    "exampleSteps": [
+      {
+        "step": "Stampare ogni fattura per un fascicolo di approvazione cartaceo",
+        "bucket": "Eliminare"
+      },
+      {
+        "step": "Copiare la fattura in un secondo foglio di monitoraggio",
+        "bucket": "Eliminare"
+      },
+      {
+        "step": "Leggere le fatture PDF che arrivano nella casella condivisa",
+        "bucket": "Un agente"
+      },
+      {
+        "step": "Estrarre fornitore, importi e numero d'ordine",
+        "bucket": "Un agente"
+      },
+      {
+        "step": "Riconciliare la fattura con l'ordine e la bolla di entrata",
+        "bucket": "Codice semplice"
+      },
+      {
+        "step": "Capire perché la riconciliazione non è riuscita e raccogliere le evidenze",
+        "bucket": "Un agente"
+      },
+      {
+        "step": "Inviare un promemoria agli approvatori",
+        "bucket": "Codice semplice"
+      },
+      {
+        "step": "Approvare un'eccezione oltre la tolleranza",
+        "bucket": "Una persona"
+      },
+      {
+        "step": "Preparare il file della distinta di pagamento",
+        "bucket": "Codice semplice"
+      },
+      {
+        "step": "Approvare la distinta di pagamento",
+        "bucket": "Una persona"
+      }
+    ],
     "stepsHeading": "Come funziona un progetto",
-    "stepsLead": "Il tuo team ci spiega come si svolge oggi il lavoro. Noi ci occupiamo della progettazione, dello sviluppo e della gestione degli agenti.",
+    "stepsLead": "Tu ci dai accesso al lavoro e alle persone che lo svolgono. Noi ci occupiamo di mappatura, sviluppo e misurazione.",
     "steps": [
       {
-        "title": "Analisi delle opportunità",
-        "body": "Mappiamo i tuoi processi e individuiamo dove gli agenti eliminano più lavoro manuale e più attese. Ricevi un elenco di priorità con l'impegno richiesto da ciascuna."
+        "title": "Mappare il processo reale",
+        "body": "Interviste, log di sistema e documenti mostrano come si muove davvero il lavoro, compresi i cicli e le attese."
       },
       {
-        "title": "Progettazione del processo",
-        "body": "Ridisegniamo il processo attorno agli agenti: cosa decidono, cosa passano a una persona e con quali sistemi e regole aziendali lavorano."
+        "title": "Fissare il punto di partenza",
+        "body": "Prima di sviluppare qualsiasi cosa misuriamo volumi, tempi di ciclo, tempi di attesa ed eccezioni, così il risultato si può confrontare con la situazione di oggi."
       },
       {
-        "title": "Messa in produzione",
-        "body": "Gli agenti entrano in funzione dentro i tuoi strumenti attuali, con i permessi che il tuo team ha già. I tuoi dati restano dove sono."
+        "title": "Smistare e sviluppare",
+        "body": "Eliminiamo ciò che non dovrebbe esistere, scriviamo codice semplice per le regole fisse e sviluppiamo agenti per i passaggi che richiedono giudizio. Ogni processo ha un solo responsabile nel tuo team."
       },
       {
-        "title": "Miglioramento continuo",
-        "body": "Analizziamo ogni esecuzione, affiniamo le regole decisionali e affidiamo agli agenti parti sempre più ampie del processo man mano che si dimostrano affidabili."
-      }
-    ],
-    "outcomesHeading": "Cosa cambia per il tuo team",
-    "outcomes": [
-      {
-        "title": "Meno coordinamento manuale",
-        "body": "Gli agenti sollecitano le approvazioni, riconciliano i dati e aggiornano i sistemi, così le tue persone dedicano la giornata alle decisioni che richiedono loro."
-      },
-      {
-        "title": "Un lavoro che non si ferma",
-        "body": "Gli agenti prendono in carico ogni pratica appena arriva, a qualsiasi ora, invece di lasciarla nella coda di qualcuno fino a lunedì."
-      },
-      {
-        "title": "Spazio per crescere con il team che hai",
-        "body": "Gestisci più volumi senza assumere allo stesso ritmo e riserva i nuovi ruoli al lavoro che deve fare una persona."
-      }
-    ],
-    "areasHeading": "Dove partono gli agenti",
-    "areasLead": "Partiamo dove il lavoro è ripetitivo, segue regole chiare ed è distribuito su più strumenti.",
-    "areas": [
-      {
-        "title": "Finanza",
-        "body": "Contabilità fornitori e clienti, riconciliazioni, chiusura mensile e previsioni di cassa."
-      },
-      {
-        "title": "Revenue operations",
-        "body": "Qualità dei dati nel CRM, approvazione delle trattative, report sulla pipeline e verifica delle provvigioni."
-      },
-      {
-        "title": "Acquisti",
-        "body": "Qualifica dei fornitori, approvazione degli ordini, monitoraggio dei contratti e solleciti ai fornitori."
-      },
-      {
-        "title": "Compliance e rischi",
-        "body": "Monitoraggio normativo, evidenze per gli audit, controllo delle policy e test dei controlli."
-      },
-      {
-        "title": "Customer operations",
-        "body": "Smistamento dei ticket, anomalie sugli ordini, aggiornamenti degli account e gestione delle escalation."
-      },
-      {
-        "title": "Logistica",
-        "body": "Anomalie sulle spedizioni, segnali di domanda, valutazione dei fornitori e allerte di magazzino."
+        "title": "Misurare ed estendere",
+        "body": "Misuriamo di nuovo gli stessi numeri. Quando il processo regge, passiamo al successivo."
       }
     ],
     "systemsHeading": "Sui sistemi che usi già",
@@ -91,11 +289,11 @@
     "systems": [
       {
         "title": "Collegati ai tuoi strumenti",
-        "body": "Gli agenti lavorano tramite le API del tuo ERP, del CRM, dell'helpdesk, dei database e delle piattaforme dati."
+        "body": "Gli agenti lavorano tramite le API del tuo ERP, del CRM, dell'helpdesk e delle piattaforme dati, solo con i permessi che concedi tu."
       },
       {
-        "title": "Accessi sotto il tuo controllo",
-        "body": "Gli agenti agiscono solo con i permessi che concedi tu e rispettano le tue policy di sicurezza."
+        "title": "Decide una persona",
+        "body": "Gli agenti preparano ogni pratica e si fermano alla decisione. Approvazioni ed eccezioni vanno alla persona che ne è responsabile."
       },
       {
         "title": "Una traccia di ogni azione",
@@ -107,15 +305,15 @@
     "faqs": [
       {
         "q": "Cosa succede durante la call conoscitiva?",
-        "a": "È una sessione di lavoro. Vediamo insieme come il tuo team gestisce oggi i suoi processi, dove si perde tempo e quali processi sono buoni candidati per gli agenti. Ne esci con un breve elenco di opportunità e una tempistica indicativa, che si lavori insieme o no."
+        "a": "Scegliamo un processo e mappiamo come funziona davvero: chi ci lavora, dove le pratiche restano ferme e dove tornano indietro. Ne esci con una prima idea di quali passaggi eliminare, quali automatizzare e quali lasciare a una persona, che si lavori insieme o no."
       },
       {
         "q": "Quanto tempo serve per mettere in funzione il primo agente?",
-        "a": "La maggior parte dei primi progetti richiede da 6 a 12 settimane dall'analisi alla produzione. I tempi dipendono dalla complessità del processo e da quanti sistemi coinvolge."
+        "a": "Dipende dal processo e da quanti sistemi coinvolge. Concordiamo i tempi una volta mappato il processo e fissiamo il punto di partenza prima di sviluppare qualsiasi cosa."
       },
       {
         "q": "Cosa possono fare concretamente gli agenti?",
-        "a": "Leggono e aggiornano i tuoi sistemi, analizzano dati, applicano le tue regole di business, gestiscono le approvazioni, preparano report e coordinano il lavoro tra strumenti diversi. Quando una pratica richiede una persona, gliela passano con tutto il contesto."
+        "a": "Leggono documenti e messaggi, aggiornano i tuoi sistemi, verificano ogni pratica rispetto alle tue regole e raccolgono gli elementi per una decisione. Poi si fermano e passano la decisione a una persona, con tutto il contesto."
       },
       {
         "q": "Gli agenti funzionano con gli strumenti che abbiamo già?",
@@ -123,23 +321,23 @@
       },
       {
         "q": "Quanto tempo richiederà al nostro team?",
-        "a": "Conta circa 20 ore sull'intero progetto, soprattutto per spiegarci come si lavora oggi e rivedere con noi la progettazione. Lo sviluppo e la messa in produzione sono a carico nostro."
+        "a": "La maggior parte arriva all'inizio, con interviste su come si lavora davvero, seguite da brevi revisioni della progettazione. Lo sviluppo e la gestione sono a carico nostro."
       },
       {
         "q": "Come gestite la sicurezza e i dati?",
         "a": "Gli agenti operano all'interno dei permessi e delle policy di sicurezza che hai già, e ogni azione viene registrata ed è verificabile. Possiamo lavorare nell'ambito del tuo accordo sul trattamento dei dati."
       },
       {
-        "q": "Gli agenti possono seguire le nostre regole?",
-        "a": "Sì. Ogni progetto è costruito attorno ai tuoi processi, ai tuoi sistemi e alle tue regole operative, e approvi tu la progettazione prima che qualcosa vada in produzione."
+        "q": "Come sapete che ha funzionato?",
+        "a": "Misuriamo il processo prima di sviluppare: volumi, tempi di ciclo, tempi di attesa ed eccezioni. Dopo il lancio misuriamo di nuovo le stesse cose e ti mostriamo il confronto."
       },
       {
         "q": "Come funzionano i prezzi?",
         "a": "Dipendono dalla complessità del processo, dai sistemi coinvolti e dall'ampiezza del progetto. Dopo la call conoscitiva ti inviamo una proposta scritta."
       }
     ],
-    "ctaHeading": "Scopri dove gli agenti AI possono aiutare la tua azienda",
-    "ctaLead": "Prenota una call con il nostro team. Analizzeremo insieme i tuoi processi e ti mostreremo dove gli agenti possono fare più differenza fin da subito.",
+    "ctaHeading": "Scopri com'è davvero il tuo processo.",
+    "ctaLead": "Prenota una call e porta un processo. Lo mappiamo insieme e ti mostriamo dove sono le attese.",
     "ctaButton": "Prenota una call conoscitiva"
   },
   "contact": {
@@ -175,7 +373,7 @@
   "seo": {
     "home": {
       "title": "{{name}} | Agenti AI su misura per le operations aziendali",
-      "description": "Progettiamo, sviluppiamo e gestiamo agenti AI su misura che si occupano del lavoro ripetitivo di finanza, vendite e operations, dentro i tuoi strumenti."
+      "description": "Mappiamo come funzionano davvero i tuoi processi di back office, eliminiamo i passaggi superflui e gestiamo agenti AI dentro i tuoi strumenti."
     },
     "blog": {
       "title": "Blog: agenti AI nelle operations reali | {{name}}",

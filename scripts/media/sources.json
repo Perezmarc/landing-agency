@@ -1,0 +1,23 @@
+{
+  "$comment": [
+    "Every source the landing page's media is built from, by permanent URL.",
+    "Generated on Higgsfield (see docs/LANDING-DESIGN.md). Clips are 6 s, 24 fps, start frame = end frame.",
+    "Portrait hero clips were generated from frames composed by composePortrait() in build-media.mjs."
+  ],
+  "base": "https://d8j0ntlcm91z4.cloudfront.net/user_3KPWI2SA8VZRk23pt1M0vYBFVxJ/",
+  "clips": {
+    "hero-before-16x9": "hf_20261011_114702_1d420498-839d-4bf0-a709-864b40ad0291.mp4",
+    "hero-after-16x9": "hf_20261011_120334_ff3db980-8ce4-44d2-967a-3851783fa2d4.mp4",
+    "hero-before-9x16": "hf_20261011_130824_7dbfb744-298a-4884-b462-5a530b04c287.mp4",
+    "hero-after-9x16": "hf_20261011_130814_534f258e-7d19-4ae1-a95c-e6e02161a6aa.mp4",
+    "pebble": "hf_20261011_120208_8639cfaf-5869-4777-9258-6351bf3edafd.mp4",
+    "end": "hf_20261011_120235_f58c7849-b9e9-4154-a708-48c547bc63b1.mp4"
+  },
+  "stills": {
+    "before-4k": "hf_20261011_051234_f59fa925-0649-43cb-aa18-ad3ea2561fab.png",
+    "after-4k": "hf_20261011_051239_413b7141-dce5-428a-9977-1816bb8de1f3.png",
+    "before-cutout": "hf_20261011_051455_8c94ca17-776a-4384-bc23-13abad26c48b.png",
+    "fragments-cutout": "hf_20261011_114520_4e935e33-250f-4dc8-953f-8f9326d629db.png",
+    "pebbles-cutout": "hf_20261011_114524_974e750a-4ef5-443a-81cd-a562ac6bbac6.png"
+  }
+}

@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     "./tokens.css": "./tokens.css",
-    "./themes/*.css": "./themes/*.css"
+    "./themes/*.css": "./themes/*.css",
+    "./fonts/*": "./fonts/*"
   },
   "scripts": {
     "test": "vitest run"

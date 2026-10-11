@@ -1,0 +1,57 @@
+{
+  "$comment": "Written by scripts/media/build-media.mjs. Fractions of each clip's width/height. Do not edit by hand.",
+  "rail": {
+    "w": 96,
+    "h": 244,
+    "streamWidth": 0.1249,
+    "period": 2.4
+  },
+  "hero": {
+    "16x9": {
+      "exit": {
+        "x": 0.6713,
+        "width": 0.0075
+      },
+      "burst": {
+        "x": 0.4688,
+        "y": 0.2478,
+        "w": 0.3962,
+        "h": 0.4878
+      }
+    },
+    "9x16": {
+      "exit": {
+        "x": 0.7604,
+        "width": 0.0125
+      },
+      "burst": {
+        "x": 0.5319,
+        "y": 0.5406,
+        "w": 0.4472,
+        "h": 0.1742
+      }
+    }
+  },
+  "moments": {
+    "pebble": {
+      "entry": {
+        "x": 0.5037,
+        "width": 0.0222
+      },
+      "exit": {
+        "x": 0.5009,
+        "width": 0.0204
+      }
+    },
+    "end": {
+      "entry": {
+        "x": 0.4926,
+        "width": 0.0259
+      }
+    }
+  },
+  "stones": {
+    "raw": 7,
+    "pebble": 4
+  }
+}

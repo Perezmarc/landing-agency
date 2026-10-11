@@ -2,7 +2,7 @@
    @forge/ui — the UI kit, and the only import surface for it.
 
    Every shared, potentially reusable interactive control lives here: buttons,
-   inputs, selects, switches, segmented controls, chips, modals, skeletons,
+   inputs, selects, switches, segmented controls, tabs, chips, modals, skeletons,
    toasts. A page never hand-rolls a `<button>` or an `<input>`; if the kit is
    missing a variant, the variant is added HERE and every usage gets it.
 
@@ -38,6 +38,7 @@ export { default as TextInput } from './TextInput.jsx'
 export { default as Select } from './Select.jsx'
 export { default as Switch } from './Switch.jsx'
 export { default as SegmentedControl } from './SegmentedControl.jsx'
+export { default as Tabs } from './Tabs.jsx'
 export { default as Card } from './Card.jsx'
 export { default as Chip } from './Chip.jsx'
 export { default as Modal } from './Modal.jsx'
@@ -46,7 +47,6 @@ export { default as Spinner } from './Spinner.jsx'
 export { default as BrandMark } from './BrandMark.jsx'
 
 export { Ico, ICONS } from './Icons.jsx'
-export { default as Reveal, useReveal } from './Reveal.jsx'
 export { default as Toast, useToast } from './Toast.jsx'
 export {
   default as Skeleton,

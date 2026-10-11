@@ -15,6 +15,43 @@
    amber theme) you can copy over this block wholesale.
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ── The site face: Inter Tight, self-hosted ──
+   Two weights, Latin and Latin Extended (for Spanish and Italian accents), and
+   nothing else. `swap` shows the fallback stack immediately; Base.astro
+   preloads the 400 Latin file so the swap is rarely seen. Licence: fonts/OFL.txt. */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(./fonts/inter-tight-latin-400-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(./fonts/inter-tight-latin-500-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(./fonts/inter-tight-latin-ext-400-normal.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(./fonts/inter-tight-latin-ext-500-normal.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -23,27 +60,27 @@
 
   /* Surfaces, back to front. --bg is the page, --surface is a card on it,
      --surface-2 is a recessed/inset area (rail, table header, empty state). */
-  --bg:          #f7f7f8;
+  --bg:          #ffffff;
   --surface:     #ffffff;
-  --surface-2:   #fafafb;
+  --surface-2:   #f6f5f2;
 
   /* Ink, strongest to faintest. --ink is body text, --ink-2 is a shade softer
      for dense UI, --mute is secondary copy, --mute-2 is labels and placeholders. */
   --ink:         #16161a;
   --ink-2:       #26262c;
-  --mute:        #6e6e78;
-  --mute-2:      #9a9aa4;
+  --mute:        #5f5c57;   /* 6.6:1 on white: the grey headline line and secondary copy */
+  --mute-2:      #8f8b84;   /* labels and placeholders only, never running text */
 
   /* Hairlines. --line separates, --line-2 is the quieter internal divider. */
-  --line:        #e4e4e8;
-  --line-2:      #eeeef1;
+  --line:        #e6e3dd;
+  --line-2:      #efede8;
 
-  /* Accent — the one brand colour. Used for links, focus rings, the active
-     nav tick, badges. Deliberately a neutral indigo placeholder: swap it. */
-  --accent:      oklch(0.55 0.16 265);
-  --accent-ink:  oklch(0.40 0.14 265);
-  --accent-soft: oklch(0.95 0.03 265);
-  --accent-line: oklch(0.86 0.07 265);
+  /* Accent — the one brand colour, a desaturated sage. Used for links, focus
+     rings, numbering, the agent lane. --accent-ink is the text-safe shade. */
+  --accent:      #6f8a76;
+  --accent-ink:  #4a6352;
+  --accent-soft: #e9eee9;
+  --accent-line: #c9d5cb;
 
   /* Semantic families. Each is: base (solid/strong) · soft (fill) ·
      ink (text on the soft fill) · line (border on the soft fill). */
@@ -65,16 +102,25 @@
   --info-soft:   oklch(0.95 0.04 235);
   --info-ink:    oklch(0.44 0.11 235);
 
-  /* Marketing surfaces — the dark register the landing hero and final CTA sit
-     on. Kept separate from the app palette so a dark hero doesn't force the
-     whole product dark. */
+  /* The dark pair: near-black buttons and code blocks, and the light ink on
+     them. The site itself is light throughout. */
   --mk-dark:        #14151c;
-  --mk-dark-2:      #1c1e28;
   --mk-light:       #f3f3f5;
-  --mk-light-dim:   rgba(243, 243, 245, 0.66);
-  --mk-light-faint: rgba(243, 243, 245, 0.38);
-  --mk-glass:       rgba(20, 21, 28, 0.46);
-  --mk-glass-line:  rgba(255, 255, 255, 0.14);
+
+  /* Frosted glass — the AFTER calendar card, through which the stream shows.
+     --glass-bg-solid is the fallback where backdrop-filter is unsupported or
+     too costly (narrow screens, low-tier devices). */
+  --glass-bg:       rgba(255, 255, 255, 0.55);
+  --glass-bg-solid: rgba(255, 255, 255, 0.9);
+  --glass-line:     rgba(22, 22, 26, 0.08);
+  --glass-blur:     16px;
+
+  /* The calendar's block material: solid work, outlined chasing, hatched
+     waiting. The hatch is a pattern, so it lives here with its ink. */
+  --blk-work:       #e9e6e0;
+  --blk-line:       rgba(22, 22, 26, 0.18);
+  --hatch-ink:      rgba(22, 22, 26, 0.12);
+  --hatch:          repeating-linear-gradient(135deg, transparent 0 5px, var(--hatch-ink) 5px 6px);
 
   /* ═══════════ SCALE — shape, elevation, motion ═══════════ */
 
@@ -102,12 +148,21 @@
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out:    cubic-bezier(0.22, 0.61, 0.2, 1);
 
+  /* The landing page's motion: the hero crash, the wipe that reveals the
+     polished crystal, the stream pouring into the page, content reveals and
+     the calendar re-arranging. --flow-period is one loop of the stream rail. */
+  --dur-burst:    1400ms;
+  --dur-wipe:     450ms;
+  --dur-pour:     700ms;
+  --dur-reveal:   600ms;
+  --dur-calendar: 1600ms;
+  --ease-burst:   cubic-bezier(0.16, 0.84, 0.3, 1);
+  --flow-period:  2.4s;
+
   /* ═══════════ TYPE ═══════════
-     System stacks by default: nothing to download, identical in CI and
-     offline, and fast on first paint. To use a web font, add its <link> to
-     index.html and change the stack here — every heading and control follows,
-     because nothing else names a font family. */
-  --font-body:    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+     Inter Tight, self-hosted above, with the system stack behind it. Nothing
+     else names a font family, so every heading and control follows. */
+  --font-body:    'Inter Tight', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-display: var(--font-body);
   --font-mono:    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
 

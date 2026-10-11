@@ -31,11 +31,21 @@ function placeholders(value) {
   return [...text.matchAll(/\{\{(\w+)\}\}/g)].map(match => match[1]).sort()
 }
 
-/** Every string inside a value, whether it is one or a list of objects. */
+/** Every string inside a value, however deeply it nests lists and objects. */
 function strings(value) {
   if (typeof value === 'string') return [value]
-  if (Array.isArray(value)) return value.flatMap(item => Object.values(item).filter(v => typeof v === 'string'))
+  if (Array.isArray(value)) return value.flatMap(strings)
+  if (value && typeof value === 'object') return Object.values(value).flatMap(strings)
   return []
+}
+
+/** The shape of a value: strings collapse to 'string', objects keep their sorted keys. */
+function shape(value) {
+  if (Array.isArray(value)) return value.map(shape)
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.keys(value).sort().map(key => [key, shape(value[key])]))
+  }
+  return typeof value
 }
 
 describe.each(OTHERS)('%s', (locale) => {
@@ -66,10 +76,13 @@ describe.each(OTHERS)('%s', (locale) => {
 
   it('keeps the same shape for lists', () => {
     // The FAQ and the feature list are arrays of objects rendered by index. A
-    // language one item short renders a page one card short.
+    // language one item short renders a page one card short, and an item with a
+    // renamed or missing field renders a card with a hole in it.
     sourcePaths.filter(path => Array.isArray(at(SOURCE, path))).forEach((path) => {
       expect(at(catalog, path).length, `${path} length in ${locale}`)
         .toBe(at(SOURCE, path).length)
+      expect(shape(at(catalog, path)), `${path} item shape in ${locale}`)
+        .toEqual(shape(at(SOURCE, path)))
     })
   })
 
