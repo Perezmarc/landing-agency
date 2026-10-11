@@ -55,13 +55,31 @@ test.describe('what a crawler reads', () => {
     expect(html).toContain('application/ld+json')
   })
 
-  test('the landing page ships no JavaScript at all', async ({ page }) => {
-    const html = await (await page.request.get('/')).text()
-    // The one <script> is the JSON-LD block, which is data, not code.
-    const scripts = html.match(/<script[^>]*>/g) ?? []
-    expect(scripts).toHaveLength(1)
-    expect(scripts[0]).toContain('application/ld+json')
+  test('every page except the homepages ships no script but its JSON-LD', async ({ page }) => {
+    const homes = new Set(forge.locales.published.map(locale => routePath('home', locale)))
+    for (const route of publishedRoutes().filter(route => !homes.has(route.path))) {
+      const html = await (await page.request.get(route.path)).text()
+      // The one allowed <script> is the JSON-LD block: data, not code.
+      const scripts = html.match(/<script[^>]*>/g) ?? []
+      scripts.forEach(tag => expect(tag, route.path).toContain('application/ld+json'))
+    }
   })
+
+  for (const locale of forge.locales.published) {
+    test(`the ${locale} homepage ships exactly one module script and no inline code`, async ({ page }) => {
+      const html = await (await page.request.get(routePath('home', locale))).text()
+      const scripts = html.match(/<script[^>]*>[\s\S]*?<\/script>/g) ?? []
+      const jsonLd = scripts.filter(s => s.includes('application/ld+json'))
+      const code = scripts.filter(s => !s.includes('application/ld+json'))
+      expect(jsonLd).toHaveLength(1)
+      expect(code).toHaveLength(1)
+      // External, hashed, a module, and empty: the CSP allows 'self' only.
+      expect(code[0]).toMatch(/^<script type="module" src="\/_astro\/[^"]+\.js"><\/script>$/)
+      // No inline event handlers and no javascript: URLs anywhere.
+      expect(html).not.toMatch(/\son[a-z]+=/i)
+      expect(html).not.toMatch(/javascript:/i)
+    })
+  }
 
   test('every page declares its language alternates absolutely', async ({ page }) => {
     await page.goto(routePath('contact', 'en'))
@@ -143,12 +161,15 @@ test.describe('accessibility basics', () => {
     await expect(page.getByRole('link', { name: /skip to content/i })).toBeFocused()
   })
 
-  test('the page does not scroll horizontally at mobile width', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 812 })
-    await page.goto('/')
-    const overflows = await page.evaluate(() =>
-      document.documentElement.scrollWidth > document.documentElement.clientWidth,
-    )
-    expect(overflows).toBe(false)
-  })
+  for (const locale of forge.locales.published) {
+    test(`the ${locale} homepage does not scroll horizontally at mobile width, at the top or the bottom`, async ({ page }) => {
+      await page.setViewportSize({ width: 375, height: 812 })
+      await page.goto(routePath('home', locale))
+      const overflows = () => page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)
+      expect(await overflows()).toBe(false)
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
+      await page.waitForTimeout(400)
+      expect(await overflows()).toBe(false)
+    })
+  }
 })
