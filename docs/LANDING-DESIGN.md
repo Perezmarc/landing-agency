@@ -6,15 +6,18 @@ in a design session. Change them deliberately, and update this file when you do.
 ## The image
 
 Rain falls on a rough, raw quartz crystal and breaks into messy drops. The
-crystal becomes polished, and the water leaves it as **one calm stream**. That
-stream then runs down the whole page, to the final CTA, where it thins into its
-last drops.
+crystal becomes polished, and the water leaves it as **one calm stream**. The
+water lives in the hero; below it the page is calm white with still crystal
+stones. (Water may come back further down, but only as dedicated clips attached
+to specific elements, never as a continuous line down the page.)
 
 - **Light:** soft, neutral, from above. No colour.
 - **Page:** pure white. Every image and clip is graded to it, so nothing reads
-  as a box, and every section is transparent so the stream is continuous.
+  as a box, and every section is transparent.
 - **Material discipline:** crystal and water only. Small raw fragments appear
-  near the problem section; polished pebbles further down.
+  beside the problem copy; polished pebbles beside later section heads. Stones
+  never sit under text: on landscape they keep to the empty right side of a
+  section, on portrait a few small ones sit in the section's top padding.
 - **Palette:** white and warm grey, near-black ink, one sage accent. Headlines
   are light and tight: a grey line, then a black line.
 
@@ -24,18 +27,18 @@ last drops.
 2. A day, before and after: six team tabs.
 3. The problem: "Your process document is not your process."
 4. How we find the real process.
-5. Sort every step. The pebble moment sits beside "An agent".
+5. Sort every step.
 6. Supplier invoices, step by step (an illustration, labelled as one).
 7. How an engagement works.
 8. Built on your systems.
 9. FAQ.
-10. Final CTA, with the stream's last drops.
+10. Final CTA.
 
 ## Two clocks
 
 | Clock | Drives | Never |
 |---|---|---|
-| **Time** | The water. Every clip loops at normal speed; the rail flows on a fixed CSS timer. | Makes anything happen. |
+| **Time** | The water. Every clip loops at normal speed. | Makes anything happen. |
 | **Scroll** | One trigger (crash and reassemble), and the page's own scrolling. | Speeds up, slows down or scrubs the water. |
 
 Scrubbing video with scroll ties the water to the visitor's thumb: it freezes
@@ -67,44 +70,16 @@ The crash runs on this timeline:
 | Time | What happens |
 |---|---|
 | 0 | BEFORE is cut and the transition clip plays from its first frame. |
-| about 40% in | The stream has formed, and the rail's mask "pours" down into the page. |
 | 250 ms before the end | The AFTER loop starts underneath. |
 | end | The transition fades out over the AFTER loop. |
 
 Going back fades the BEFORE layer in over `--dur-hero-fade` (400 ms). Devices
 that get no video crossfade the two posters instead.
 
-## The stream rail
-
-One element down `.mk-flow`, at exactly the hero's stream exit:
-
-```
---rail-x = 50cqw + (exit-x − 0.5) × max(100cqw, 177.78svh)
-```
-
-On portrait screens the 9:16 rendition is used and `177.78svh` becomes
-`56.25svh`.
-
-- Its picture is a short transparent strip of the stream, repeated vertically
-  and slid down one tile per `--flow-period` by a compositor animation.
-- It is part of the document, so it scrolls exactly like the text: no parallax
-  and no lag.
-- **Moments** (the pebble and the end) are clips placed on the rail. Each
-  enters and leaves the frame at its centre, at the rail's stream width, and
-  its edges are feathered. `streams.test.js` holds every clip to this.
-
-Rail x per breakpoint:
-
-| Viewport | Stream x | Layout |
-|---|---|---|
-| Landscape | about 68% (the hero exit) | Copy columns stay within about 46% of the width. |
-| Portrait | about 76% of the 9:16 frame (about 82% on a 375px phone) | Copy gets a right padding, so text never sits on the stream; the pebble gets its own gap. |
-
 ## The calendar
 
 - Native radio tabs (`@forge/ui` `Tabs`) work without JavaScript.
-- The AFTER card is frosted glass over the rail, so its free time shows the
-  stream.
+- The AFTER card is frosted glass.
 - No ancestor of that card may carry an opacity, filter, mask, clip-path,
   `mix-blend-mode` or `will-change`, or the glass stops seeing through.
 - The FLIP animation runs in `motion/calendar.js`.
@@ -115,8 +90,8 @@ Rail x per breakpoint:
 
 | Case | What the visitor sees |
 |---|---|
-| No JS | The AFTER poster, a still stream, the final calendar. |
-| Reduced motion | Posters with a crossfade instead of the crash, a still stream, no videos, no reveals. |
+| No JS | The AFTER poster, the stones (their float is CSS), the final calendar. |
+| Reduced motion | Posters with a crossfade instead of the crash, still stones, no videos, no reveals. |
 | Save-Data, 2g or a weak device | Motion, but posters only: no video requests; the crash is a poster crossfade. |
 
 ## Media pipeline
@@ -140,8 +115,8 @@ The hero clips are BEFORE (loop), the transition (once) and AFTER (loop), in
    not looped.
 3. **Encode** AV1 WebM and H.264 MP4: closed GOP, BT.709, `+faststart`, no
    audio.
-4. **Write** the loops' posters (first frame), the rail strip, the stones and
-   `streams.json`.
+4. **Write** the loops' posters (first frame), the stones and `media.json`
+   (the crash's duration and the stone counts).
 
 `node scripts/media/build-media.mjs --check` reports sizes, decoded void luma
 and the loop-seam PSNR.

@@ -92,14 +92,13 @@ test.describe('Save-Data', () => {
 
 test.describe('with JavaScript off', () => {
   test.use({ javaScriptEnabled: false })
-  test('the hero poster loads, the stream is visible and the calendar shows its after state', async ({ page }) => {
+  test('the hero poster loads, no video is in the HTML and the calendar shows its after state', async ({ page }) => {
     await page.goto(HOME, { waitUntil: 'load' })
     const poster = page.locator('.mk-hero-poster--after img')
     await expect.poll(() => poster.evaluate(img => img.naturalWidth)).toBeGreaterThan(0)
     await expect(page.locator('[data-hero]')).toHaveAttribute('data-hero-state', 'after')
-    const rail = page.locator('[data-rail]')
-    expect(await rail.evaluate(el => getComputedStyle(el).getPropertyValue('--pour').trim())).toBe('100%')
-    expect((await rail.boundingBox()).height).toBeGreaterThan(1000)
+    // Every clip is created by motion/; the server HTML is posters only.
+    await expect(page.locator('video')).toHaveCount(0)
     const after = page.locator('.ui-tabs-panel:visible [data-day-after]')
     await expect(after).not.toHaveClass(/is-first/)
     await expect(after.locator('.blk--person').first()).toBeVisible()

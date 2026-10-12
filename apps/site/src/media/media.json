@@ -1,0 +1,15 @@
+{
+  "$comment": "Written by scripts/media/build-media.mjs. Do not edit by hand.",
+  "hero": {
+    "16x9": {
+      "transition": 3
+    },
+    "9x16": {
+      "transition": 3
+    }
+  },
+  "stones": {
+    "raw": 7,
+    "pebble": 4
+  }
+}

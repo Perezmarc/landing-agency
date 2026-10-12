@@ -13,7 +13,6 @@ import { selectTier } from './tier.js'
 import { initHero } from './hero.js'
 import { initCalendar } from './calendar.js'
 import { initReveal } from './reveal.js'
-import { initMoments } from './moments.js'
 
 const conn = navigator.connection || {}
 const tier = selectTier({
@@ -32,5 +31,4 @@ if (tier.motion) {
   const day = document.querySelector('[data-day]')
   if (day) initCalendar(day)
   initReveal(document.querySelectorAll('[data-reveal]'))
-  if (tier.media) initMoments(document.querySelectorAll('[data-moment]'))
 }

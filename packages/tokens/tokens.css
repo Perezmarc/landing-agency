@@ -107,7 +107,7 @@
   --mk-dark:        #14151c;
   --mk-light:       #f3f3f5;
 
-  /* Frosted glass — the AFTER calendar card, through which the stream shows.
+  /* Frosted glass — the AFTER calendar card and the "built on your systems" cards.
      --glass-bg-solid is the fallback where backdrop-filter is unsupported or
      too costly (narrow screens, low-tier devices). */
   --glass-bg:       rgba(255, 255, 255, 0.55);
@@ -149,14 +149,11 @@
   --ease-out:    cubic-bezier(0.22, 0.61, 0.2, 1);
 
   /* The landing page's motion: the hero's crossfades (back to BEFORE, and the
-     crash on devices without video), the stream pouring into the page,
-     content reveals and the calendar re-arranging. --flow-period is one loop
-     of the stream rail. The crash itself is a video clip, timed by its file. */
+     crash on devices without video), content reveals and the calendar
+     re-arranging. The crash itself is a video clip, timed by its file. */
   --dur-hero-fade: 400ms;
-  --dur-pour:      700ms;
   --dur-reveal:    600ms;
   --dur-calendar:  1600ms;
-  --flow-period:   2.4s;
 
   /* ═══════════ TYPE ═══════════
      Inter Tight, self-hosted above, with the system stack behind it. Nothing

@@ -20,15 +20,14 @@
         (object weight = smoothstep(|frame − field|, 8, 56), blurred), so the
         crystal and the water keep their tones. Near-white is soft-snapped to
         pure white; exposure is normalised per frame (generated video flickers).
-        Hero clips keep half of the soft overhead light in the top of the frame.
+        Every clip keeps half of the soft overhead light in the top of the frame.
      2. Loop. The last second is cross-faded into the first, then cut.
      3. Encode AV1 WebM + H.264 MP4 (+faststart, BT.709, closed GOP, no audio),
         and write the first frame as the poster source.
    The hero transition (the crash) is graded and encoded the same way but not
-  looped: it plays once. Portrait hero clips are composed here from the
-  landscape sources (composePortrait), so the crystal and its crash match.
-  Then: the rail strip, the stones, and streams.json (where
-   the stream enters and leaves each clip).
+   looped: it plays once. Portrait hero clips are composed here from the
+   landscape sources (composePortrait), so the crystal and its crash match.
+   Then: the stones, and media.json (the crash's duration, the stone counts).
    ═══════════════════════════════════════════════════════════════════════════ */
 
 import { spawn, spawnSync } from 'node:child_process'
@@ -50,26 +49,22 @@ const FPS = 24
 const LOOP_FADE = FPS            // one second
 const CHECK_ONLY = process.argv.includes('--check')
 
-/* The clips: output name, source key, output size, and whether it is a hero
-   (hero clips keep part of the overhead light). Hero landscape is encoded at
-   1600 wide: the media box is max(100vw, 177.78svh), 1600 on a 1440×900 screen. */
+/* The clips: output name (also the source key) and output size. Landscape is
+   encoded at 1600 wide: the media box is max(100vw, 177.78svh), 1600 on a 1440×900 screen. */
 const CLIPS = [
-  { name: 'hero-before-16x9', w: 1600, h: 900, hero: true },
-  { name: 'hero-transition-16x9', w: 1600, h: 900, hero: true, once: true },
-  { name: 'hero-after-16x9', w: 1600, h: 900, hero: true },
-  { name: 'hero-before-9x16', w: 720, h: 1280, hero: true },
+  { name: 'hero-before-16x9', w: 1600, h: 900 },
+  { name: 'hero-transition-16x9', w: 1600, h: 900, once: true },
+  { name: 'hero-after-16x9', w: 1600, h: 900 },
+  { name: 'hero-before-9x16', w: 720, h: 1280 },
   // Composed from the landscape sources; the transition keeps a still rain
   // band above it, so its flying fragments are never stretched.
-  { name: 'hero-transition-9x16', w: 720, h: 1280, hero: true, once: true, compose: 'hero-transition-16x9', staticBand: true },
-  { name: 'hero-after-9x16', w: 720, h: 1280, hero: true, compose: 'hero-after-16x9' },
-  { name: 'pebble', w: 540, h: 960, hero: false },
-  { name: 'end', w: 540, h: 960, hero: false },
+  { name: 'hero-transition-9x16', w: 720, h: 1280, once: true, compose: 'hero-transition-16x9', staticBand: true },
+  { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9' },
 ]
 
 /* ── Portrait composition ────────────────────────────────────────────────────
    The 9:16 hero frames were composed from the 16:9 stills, not outpainted: the
-   stream must leave at RX of the width (the portrait rail), with the crystal
-   about 44% of the width. The portrait BEFORE clip was generated from a frame
+   stream leaves at RX of the width, with the crystal about 44% of the width. The portrait BEFORE clip was generated from a frame
    composed this way; the portrait transition and AFTER are composed here,
    frame by frame, from the landscape clips (composePortrait). */
 export const PORTRAIT = { W: 1080, H: 1920, RX: 0.76, EXIT: 0.6716, CRYSTAL: 0.39, CW: 0.44, CY: 0.62 }
@@ -182,7 +177,7 @@ function upsample(src, sw, sh, w, h) {
 
 /* ── 2. grade one frame ─────────────────────────────────────────────────── */
 
-function gradeFrame(frame, w, h, gain, exposure, hero) {
+function gradeFrame(frame, w, h, gain, exposure) {
   const n = w * h, weight = new Float32Array(n)
   for (let p = 0; p < n; p++) {
     let dev = 0
@@ -192,8 +187,8 @@ function gradeFrame(frame, w, h, gain, exposure, hero) {
   const wb = blur(weight, w, h, Math.max(1, Math.round(5 * w / 1920)))
   const out = Buffer.alloc(n * 3)
   for (let y = 0; y < h; y++) {
-    // Hero: keep half of the overhead light in the top 65% of the frame.
-    const keep = hero ? 0.5 * (1 - smoothstep(0.45, 0.65, y / h)) : 0
+    // Keep half of the overhead light in the top 65% of the frame.
+    const keep = 0.5 * (1 - smoothstep(0.45, 0.65, y / h))
     for (let x = 0; x < w; x++) {
       const p = y * w + x, voidness = (1 - wb[p]) * (1 - keep)
       let lo = 255
@@ -271,15 +266,15 @@ async function buildClip(clip, src) {
 
   const frames = decodeAll(src, w, h)
   const N = frames.length, L = LOOP_FADE
-  const graded = i => gradeFrame(frames[i], w, h, gain, exposure[Math.min(i, exposure.length - 1)], clip.hero)
+  const graded = i => gradeFrame(frames[i], w, h, gain, exposure[Math.min(i, exposure.length - 1)])
 
   // Lossless intermediate, then the two web encodes from it.
   const mid = join(CACHE, `${clip.name}.graded.mkv`)
   const enc = encoder(['-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', `${w}x${h}`, '-r', String(FPS), '-i', '-', '-c:v', 'libx264', '-qp', '0', '-preset', 'veryfast', '-pix_fmt', 'yuv444p', mid])
-  let first = null, last = null
+  let first = null
   if (clip.once) {
     // The transition plays once, start to end.
-    for (let i = 0; i < N; i++) { last = graded(i); if (!first) first = last; await enc.write(last) }
+    for (let i = 0; i < N; i++) await enc.write(graded(i))
   } else {
     // Order: L … N−L−1, then the cross-fade of the last second into the first.
     // That plays …, N−L−1, blend(N−L, 0) … blend(N−1, L−1), and wraps to L.
@@ -296,62 +291,14 @@ async function buildClip(clip, src) {
   await enc.close()
 
   const color = ['-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709', '-color_range', 'tv']
-  const hero = clip.name.startsWith('hero')
-  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libsvtav1', '-crf', hero ? '40' : '42', '-preset', '5', '-g', String(FPS * 5), '-pix_fmt', 'yuv420p', ...color, join(OUT, `${clip.name}.webm`)])
-  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libx264', '-crf', hero ? '27' : '28', '-preset', 'slow', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
+  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libsvtav1', '-crf', '40', '-preset', '5', '-g', String(FPS * 5), '-pix_fmt', 'yuv420p', ...color, join(OUT, `${clip.name}.webm`)])
+  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libx264', '-crf', '27', '-preset', 'slow', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
     '-x264-params', `keyint=${FPS * 5}:open-gop=0`, '-movflags', '+faststart', ...color, join(OUT, `${clip.name}.mp4`)])
   // A loop's poster is the first frame it plays. The transition has none: it
   // only ever plays over the BEFORE clip.
   if (!clip.once) await sharp(first, { raw: { width: w, height: h, channels: 3 } }).jpeg({ quality: 90, mozjpeg: true }).toFile(join(OUT, `${clip.name}.jpg`))
   rmSync(mid)
-  return { first, last, w, h, frames: N }
-}
-
-/* ── stream measurement ─────────────────────────────────────────────────── */
-
-/** Where the stream crosses a row band: centre and width as fractions of w.
-    Clear water is darkest at its two refracting edges, so the whole span above
-    12% of the peak deviation is taken, bridging gaps up to ~12px. */
-export function measureRow(rgb, w, h, y0, rows) {
-  const col = new Float64Array(w)
-  for (let y = y0; y < y0 + rows; y++) for (let x = 0; x < w; x++) {
-    const i = (y * w + x) * 3
-    col[x] += (255 - (0.2126 * rgb[i] + 0.7152 * rgb[i + 1] + 0.0722 * rgb[i + 2])) / rows
-  }
-  const peak = Math.max(...col)
-  if (peak < 8) return null
-  const bridge = Math.round(12 * w / 1600)
-  let lo = -1, hi = -1, best = null
-  for (let x = 0; x <= w; x++) {
-    const on = x < w && col[x] > 0.12 * peak
-    if (on) { if (lo < 0 || x - hi > bridge) { if (lo >= 0) best = pick(best, lo, hi); lo = x } hi = x }
-  }
-  best = pick(best, lo, hi)
-  function pick(b, l, r) { if (l < 0) return b; const mass = col.slice(l, r + 1).reduce((s, v) => s + v, 0); return !b || mass > b.mass ? { l, r, mass } : b }
-  return { x: +(((best.l + best.r + 1) / 2) / w).toFixed(4), width: +((best.r - best.l + 1) / w).toFixed(4) }
-}
-
-/* ── rail strip ─────────────────────────────────────────────────────────── */
-
-async function railStrip(pebble, stream) {
-  // The plain stream above the pebble: the top 34% of the clip, centred on the
-  // stream, 8 stream-widths wide. Cross-fade top and bottom so it tiles, then
-  // key the white to alpha so it composites over the page.
-  const { first, w, h } = pebble
-  const cw = Math.round(stream.width * w * 8), cx = Math.round(stream.x * w - cw / 2)
-  const ch = Math.round(h * 0.34), T = Math.round(ch * 0.25), outH = ch - T
-  const out = Buffer.alloc(cw * outH * 4)
-  for (let y = 0; y < outH; y++) for (let x = 0; x < cw; x++) {
-    const t = y < T ? (y + 0.5) / T : 1
-    const a = ((y) * w + cx + x) * 3, b = ((y + outH) * w + cx + x) * 3
-    let lo = 255; const rgb = [0, 0, 0]
-    for (let c = 0; c < 3; c++) { rgb[c] = y < T ? first[b + c] * (1 - t) + first[a + c] * t : first[a + c]; lo = Math.min(lo, rgb[c]) }
-    const alpha = Math.min(1, (255 - lo) / 70), o = (y * cw + x) * 4
-    for (let c = 0; c < 3; c++) out[o + c] = alpha > 0.01 ? Math.max(0, Math.round(255 - (255 - rgb[c]) / alpha)) : 255
-    out[o + 3] = Math.round(alpha * 255)
-  }
-  await sharp(out, { raw: { width: cw, height: outH, channels: 4 } }).webp({ quality: 82, alphaQuality: 90 }).toFile(join(OUT, 'rail-strip.webp'))
-  return { w: cw, h: outH, streamWidth: +(stream.width * w / cw).toFixed(4) }
+  return { frames: N }
 }
 
 /* ── stones ─────────────────────────────────────────────────────────────── */
@@ -408,34 +355,27 @@ async function main() {
   if (CHECK_ONLY) { checks(); return }
 
   const src = async (kind, key) => fetchTo(SOURCES.base + SOURCES[kind][key], join(CACHE, SOURCES[kind][key]))
-  const built = {}, streams = {}
+  const built = {}
   for (const clip of CLIPS) {
     console.log('·', clip.name)
     const source = clip.compose
       ? await composePortrait(await src('clips', clip.compose), join(CACHE, `${clip.name}.composed.mkv`), clip)
       : await src('clips', clip.name)
     built[clip.name] = await buildClip(clip, source)
-    const { first, w, h } = built[clip.name]
-    const band = Math.max(2, Math.round(h * 0.01))
-    streams[clip.name] = { entry: measureRow(first, w, h, 0, band), exit: measureRow(first, w, h, h - band, band) }
   }
 
-  const rail = await railStrip(built.pebble, streams.pebble.entry)
   const raw = await stones(await src('stills', 'fragments-cutout'), 'raw', 7)
   const pebbles = await stones(await src('stills', 'pebbles-cutout'), 'pebble', 4)
 
-  // Hero streams: only the AFTER clip has the stream that becomes the rail.
   const doc = {
-    $comment: 'Written by scripts/media/build-media.mjs. Fractions of each clip\'s width/height. Do not edit by hand.',
-    rail: { ...rail, period: 2.4 },
+    $comment: 'Written by scripts/media/build-media.mjs. Do not edit by hand.',
     hero: {
-      '16x9': { exit: streams['hero-after-16x9'].exit, transition: +(built['hero-transition-16x9'].frames / FPS).toFixed(2) },
-      '9x16': { exit: streams['hero-after-9x16'].exit, transition: +(built['hero-transition-9x16'].frames / FPS).toFixed(2) },
+      '16x9': { transition: +(built['hero-transition-16x9'].frames / FPS).toFixed(2) },
+      '9x16': { transition: +(built['hero-transition-9x16'].frames / FPS).toFixed(2) },
     },
-    moments: { pebble: streams.pebble, end: { entry: streams.end.entry } },
     stones: { raw, pebble: pebbles },
   }
-  writeFileSync(join(OUT, 'streams.json'), JSON.stringify(doc, null, 2) + '\n')
+  writeFileSync(join(OUT, 'media.json'), JSON.stringify(doc, null, 2) + '\n')
   console.log(JSON.stringify(doc, null, 2))
   checks()
 }

@@ -9,10 +9,9 @@
  * a call.
  *
  * The art direction is one image: rain on a raw crystal that becomes polished,
- * and the water leaving it as one calm stream that runs down the whole page.
- * See docs/LANDING-DESIGN.md. The server HTML is the final, no-JS state: the
- * AFTER poster, the stream visible, the calendar after. The one <script> at
- * the bottom adds the motion on top.
+ * with the water leaving it as one calm stream. See docs/LANDING-DESIGN.md.
+ * The server HTML is the final, no-JS state: the AFTER poster and the calendar
+ * after. The one <script> at the bottom adds the motion on top.
  *
  * There are no case studies, logos, testimonials or numbers here because
  * none exist yet. The calendar and the invoice walkthrough are illustrations
@@ -30,15 +29,12 @@ import { Button, Ico } from '@forge/ui'
 import forge from '@forge/manifest'
 import { CATALOGS, useTranslations, useList } from '@forge/i18n'
 import { pageMeta } from '@forge/seo/meta'
-import streams from '../media/streams.json'
+import media from '../media/media.json'
 
 import beforeL from '../media/hero-before-16x9.jpg'
 import afterL from '../media/hero-after-16x9.jpg'
 import beforeP from '../media/hero-before-9x16.jpg'
 import afterP from '../media/hero-after-9x16.jpg'
-import pebblePoster from '../media/pebble.jpg'
-import endPoster from '../media/end.jpg'
-import railStrip from '../media/rail-strip.webp'
 import beforeLWebm from '../media/hero-before-16x9.webm?url'
 import beforeLMp4 from '../media/hero-before-16x9.mp4?url'
 import afterLWebm from '../media/hero-after-16x9.webm?url'
@@ -47,10 +43,6 @@ import beforePWebm from '../media/hero-before-9x16.webm?url'
 import beforePMp4 from '../media/hero-before-9x16.mp4?url'
 import afterPWebm from '../media/hero-after-9x16.webm?url'
 import afterPMp4 from '../media/hero-after-9x16.mp4?url'
-import pebbleWebm from '../media/pebble.webm?url'
-import pebbleMp4 from '../media/pebble.mp4?url'
-import endWebm from '../media/end.webm?url'
-import endMp4 from '../media/end.mp4?url'
 import transitionLWebm from '../media/hero-transition-16x9.webm?url'
 import transitionLMp4 from '../media/hero-transition-16x9.mp4?url'
 import transitionPWebm from '../media/hero-transition-9x16.webm?url'
@@ -83,267 +75,228 @@ const poster = async (landscape, portrait) => ({
   p: await avif(portrait, [480, 720]),
 })
 const posters = { before: await poster(beforeL, beforeP), after: await poster(afterL, afterP) }
-const pebbleImg = await avif(pebblePoster, [270, 540])
-const endImg = await avif(endPoster, [270, 540])
 
 // Data for motion/ (URLs only, no strings): read from data-* attributes.
 const heroData = JSON.stringify({
   before: { l: { webm: beforeLWebm, mp4: beforeLMp4 }, p: { webm: beforePWebm, mp4: beforePMp4 } },
   after: { l: { webm: afterLWebm, mp4: afterLMp4 }, p: { webm: afterPWebm, mp4: afterPMp4 } },
   transition: { l: { webm: transitionLWebm, mp4: transitionLMp4 }, p: { webm: transitionPWebm, mp4: transitionPMp4 } },
-  duration: streams.hero['16x9'].transition,
+  duration: media.hero['16x9'].transition,
 })
 
 const stone = async (name) => (await getImage({ src: stoneFiles[`../media/stones/${name}.webp`], format: 'webp', width: 160 })).src
 const rawStones = await Promise.all([1, 2, 3, 4, 5, 6, 7].map(i => stone(`raw-${i}`)))
 const pebbleStones = await Promise.all([1, 2, 3, 4].map(i => stone(`pebble-${i}`)))
 
-/* The stream's geometry, as data: where it leaves each hero rendition and how
-   wide it is (fractions of the clip), and the rail strip's proportions. */
-const geometry = [
-  `--exit-x-l: ${streams.hero['16x9'].exit.x}`,
-  `--exit-w-l: ${streams.hero['16x9'].exit.width}`,
-  `--exit-x-p: ${streams.hero['9x16'].exit.x}`,
-  `--exit-w-p: ${streams.hero['9x16'].exit.width}`,
-  `--rail-span: ${(1 / streams.rail.streamWidth).toFixed(3)}`,
-  `--rail-aspect: ${(streams.rail.h / streams.rail.w).toFixed(4)}`,
-  `--rail-img: url(${railStrip.src})`,
-  `--flow-period: ${streams.rail.period}s`,
-].join('; ')
-const pebbleStream = `--moment-stream: ${streams.moments.pebble.entry.width}`
-const endStream = `--moment-stream: ${streams.moments.end.entry.width}`
-
 const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
 ---
 <Base meta={meta} locale={locale} current="home" overlay>
-  <div class="mk-home" style={geometry}>
-    <section class="mk-hero" data-hero data-hero-state="after" data-media={heroData}>
-      <div class="mk-hero-stage">
-        <div class="mk-hero-media" aria-hidden="true">
-          <picture class="mk-hero-layer mk-hero-poster mk-hero-poster--after">
-            <source media={PORTRAIT} srcset={posters.after.p.srcSet.attribute} sizes="100vw" type="image/avif" />
-            <img src={posters.after.l.src} srcset={posters.after.l.srcSet.attribute} sizes="max(100vw, 177.78vh)"
-                 alt="" width={1600} height={900} fetchpriority="high" decoding="async" />
+  <section class="mk-hero" data-hero data-hero-state="after" data-media={heroData}>
+    <div class="mk-hero-stage">
+      <div class="mk-hero-media" aria-hidden="true">
+        <picture class="mk-hero-layer mk-hero-poster mk-hero-poster--after">
+          <source media={PORTRAIT} srcset={posters.after.p.srcSet.attribute} sizes="100vw" type="image/avif" />
+          <img src={posters.after.l.src} srcset={posters.after.l.srcSet.attribute} sizes="max(100vw, 177.78vh)"
+               alt="" width={1600} height={900} fetchpriority="high" decoding="async" />
+        </picture>
+        <div class="mk-hero-layer mk-hero-before" data-hero-before>
+          <picture class="mk-hero-layer mk-hero-poster mk-hero-poster--before">
+            <source media={PORTRAIT} srcset={posters.before.p.srcSet.attribute} sizes="100vw" type="image/avif" />
+            <img src={posters.before.l.src} srcset={posters.before.l.srcSet.attribute} sizes="max(100vw, 177.78vh)"
+                 alt="" width={1600} height={900} loading="lazy" decoding="async" />
           </picture>
-          <div class="mk-hero-layer mk-hero-before" data-hero-before>
-            <picture class="mk-hero-layer mk-hero-poster mk-hero-poster--before">
-              <source media={PORTRAIT} srcset={posters.before.p.srcSet.attribute} sizes="100vw" type="image/avif" />
-              <img src={posters.before.l.src} srcset={posters.before.l.srcSet.attribute} sizes="max(100vw, 177.78vh)"
-                   alt="" width={1600} height={900} loading="lazy" decoding="async" />
-            </picture>
-          </div>
-        </div>
-
-        <div class="mk-wrap mk-hero-copy">
-          <span class="mk-eyebrow">{t('home.eyebrow')}</span>
-          <h1>
-            <span class="mk-line mk-line--grey">{t('home.headingLead')}</span>
-            {' '}
-            <span class="mk-line">{t('home.heading')}</span>
-          </h1>
-          <p class="mk-hero-lead">{t('home.lead')}</p>
-          <div class="mk-hero-actions">
-            <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill iconRightName="arrowRight">
-              {t('home.ctaPrimary')}
-            </Button>
-            <Button as="a" href="#how" variant="glass" size="lg" pill>
-              {t('home.ctaSecondary')}
-            </Button>
-          </div>
         </div>
       </div>
-    </section>
 
-    <div class="mk-flow">
-      <div class="mk-rail" aria-hidden="true" data-rail></div>
-
-      <section class="mk-section mk-day" id="day">
-        <div class="mk-wrap">
-          <div class="mk-section-head mk-col" data-reveal>
-            <h2 class="mk-h2">
-              <span class="mk-line mk-line--grey">{day.headingLead}</span>
-              {' '}
-              <span class="mk-line">{day.heading}</span>
-            </h2>
-            <p class="mk-lead">{day.lead}</p>
-          </div>
-          <div data-day>
-            <DayCompare copy={day} locale={locale} />
-          </div>
+      <div class="mk-wrap mk-hero-copy">
+        <span class="mk-eyebrow">{t('home.eyebrow')}</span>
+        <h1>
+          <span class="mk-line mk-line--grey">{t('home.headingLead')}</span>
+          {' '}
+          <span class="mk-line">{t('home.heading')}</span>
+        </h1>
+        <p class="mk-hero-lead">{t('home.lead')}</p>
+        <div class="mk-hero-actions">
+          <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill iconRightName="arrowRight">
+            {t('home.ctaPrimary')}
+          </Button>
+          <Button as="a" href="#how" variant="glass" size="lg" pill>
+            {t('home.ctaSecondary')}
+          </Button>
         </div>
-      </section>
-
-      <section class="mk-section mk-problem">
-        {rawStones.map((src, i) => (
-          <span class={`mk-stone mk-stone--r${i + 1}`} aria-hidden="true">
-            <img src={src} alt="" width={160} height={160} loading="lazy" decoding="async" />
-          </span>
-        ))}
-        <div class="mk-wrap">
-          <div class="mk-col" data-reveal>
-            <h2 class="mk-h2">{t('home.problemHeading')}</h2>
-            <p class="mk-lead">{t('home.problemLead')}</p>
-            <p class="mk-kicker">{t('home.problemKicker')}</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="mk-section" id="how">
-        <div class="mk-wrap">
-          <div class="mk-col">
-            <div class="mk-section-head" data-reveal>
-              <h2 class="mk-h2">{t('home.discoveryHeading')}</h2>
-              <p class="mk-lead">{t('home.discoveryLead')}</p>
-            </div>
-            <ol class="mk-cols mk-cols--stack" data-reveal>
-              {discovery.map((item, i) => (
-                <li>
-                  <span class="mk-num" aria-hidden="true">[{i + 1}]</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      </section>
-
-      <section class="mk-section mk-buckets">
-        <div class="mk-wrap">
-          <div class="mk-col">
-            <div class="mk-section-head" data-reveal>
-              <h2 class="mk-h2">{t('home.bucketsHeading')}</h2>
-              <p class="mk-lead">{t('home.bucketsLead')}</p>
-            </div>
-            <ol class="mk-cols mk-cols--stack" data-reveal>
-              {buckets.map((bucket, i) => (
-                <li>
-                  <span class="mk-num" aria-hidden="true">[{i + 1}]</span>
-                  <h3>{bucket.title}</h3>
-                  <p>{bucket.body}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-        <div class="mk-moment mk-moment--pebble" style={pebbleStream} aria-hidden="true"
-             data-moment={JSON.stringify({ webm: pebbleWebm, mp4: pebbleMp4 })}>
-          <img src={pebbleImg.src} srcset={pebbleImg.srcSet.attribute} sizes="160px" alt="" loading="lazy" decoding="async" />
-        </div>
-      </section>
-
-      <section class="mk-section">
-        <div class="mk-wrap">
-          <div class="mk-col">
-            <div class="mk-section-head" data-reveal>
-              <h2 class="mk-h2">{t('home.exampleHeading')}</h2>
-              <p class="mk-lead">{t('home.exampleLead')}</p>
-            </div>
-            <ol class="mk-steps-list" data-reveal>
-              {exampleSteps.map(item => (
-                <li>
-                  <span>{item.step}</span>
-                  <span class={`mk-tag mk-tag--${bucketOf[item.bucket] ?? 0}`}>{item.bucket}</span>
-                </li>
-              ))}
-            </ol>
-            <p class="mk-illustration-note">{t('home.exampleNote')}</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="mk-section">
-        {pebbleStones.slice(0, 2).map((src, i) => (
-          <span class={`mk-stone mk-stone--p${i + 1}`} aria-hidden="true">
-            <img src={src} alt="" width={160} height={160} loading="lazy" decoding="async" />
-          </span>
-        ))}
-        <div class="mk-wrap">
-          <div class="mk-col">
-            <div class="mk-section-head" data-reveal>
-              <h2 class="mk-h2">{t('home.stepsHeading')}</h2>
-              <p class="mk-lead">{t('home.stepsLead')}</p>
-            </div>
-            <ol class="mk-cols mk-cols--stack" data-reveal>
-              {steps.map((step, i) => (
-                <li>
-                  <span class="mk-num" aria-hidden="true">[{i + 1}]</span>
-                  <h3>{step.title}</h3>
-                  <p>{step.body}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      </section>
-
-      <section class="mk-section">
-        {pebbleStones.slice(2).map((src, i) => (
-          <span class={`mk-stone mk-stone--p${i + 3}`} aria-hidden="true">
-            <img src={src} alt="" width={160} height={160} loading="lazy" decoding="async" />
-          </span>
-        ))}
-        <div class="mk-wrap">
-          <div class="mk-section-head mk-col" data-reveal>
-            <h2 class="mk-h2">{t('home.systemsHeading')}</h2>
-            <p class="mk-lead">{t('home.systemsLead')}</p>
-          </div>
-          <ul class="mk-glass-grid">
-            {systems.map((point, i) => (
-              <li class="mk-glass-card">
-                <span class="mk-num" aria-hidden="true">[{i + 1}]</span>
-                <h3>{point.title}</h3>
-                <p>{point.body}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section class="mk-section" id="faq">
-        <div class="mk-wrap">
-          <div class="mk-col">
-            <div class="mk-section-head" data-reveal>
-              <span class="mk-eyebrow">{t('home.faqEyebrow')}</span>
-              <h2 class="mk-h2">{t('home.faqHeading')}</h2>
-            </div>
-
-            {/* A <details> accordion: open state is the element's own, so it works
-                with no JavaScript, with the keyboard, and with find-in-page. */}
-            <div class="mk-faq">
-              {faqs.map((faq) => (
-                <details class="mk-faq-item">
-                  <summary class="mk-faq-q">
-                    {faq.q}
-                    <Ico name="plus" size={18} className="mk-faq-icon" />
-                  </summary>
-                  <div class="mk-faq-a">{faq.a}</div>
-                </details>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
+  </section>
 
-    <section class="mk-final">
-      <div class="mk-moment mk-moment--end" style={endStream} aria-hidden="true"
-           data-moment={JSON.stringify({ webm: endWebm, mp4: endMp4 })}>
-        <img src={endImg.src} srcset={endImg.srcSet.attribute} sizes="160px" alt="" loading="lazy" decoding="async" />
+  <section class="mk-section mk-day" id="day">
+    <div class="mk-wrap">
+      <div class="mk-section-head" data-reveal>
+        <h2 class="mk-h2">
+          <span class="mk-line mk-line--grey">{day.headingLead}</span>
+          {' '}
+          <span class="mk-line">{day.heading}</span>
+        </h2>
+        <p class="mk-lead">{day.lead}</p>
       </div>
-      <div class="mk-wrap mk-final-inner">
-        <div class="mk-col" data-reveal>
-          <h2>{t('home.ctaHeading')}</h2>
-          <p>{t('home.ctaLead')}</p>
-          <div class="mk-final-actions">
-            <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill iconRightName="arrowRight">
-              {t('home.ctaButton')}
-            </Button>
-          </div>
+      <div data-day>
+        <DayCompare copy={day} locale={locale} />
+      </div>
+    </div>
+  </section>
+
+  <section class="mk-section mk-problem">
+    {rawStones.map((src, i) => (
+      <span class={`mk-stone mk-stone--r${i + 1}`} aria-hidden="true">
+        <img src={src} alt="" width={160} height={160} loading="lazy" decoding="async" />
+      </span>
+    ))}
+    <div class="mk-wrap">
+      <div class="mk-problem-copy" data-reveal>
+        <h2 class="mk-h2">{t('home.problemHeading')}</h2>
+        <p class="mk-lead">{t('home.problemLead')}</p>
+        <p class="mk-kicker">{t('home.problemKicker')}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mk-section" id="how">
+    <div class="mk-wrap">
+      <div class="mk-section-head" data-reveal>
+        <h2 class="mk-h2">{t('home.discoveryHeading')}</h2>
+        <p class="mk-lead">{t('home.discoveryLead')}</p>
+      </div>
+      <ol class="mk-cols" data-reveal>
+        {discovery.map((item, i) => (
+          <li>
+            <span class="mk-num" aria-hidden="true">[{i + 1}]</span>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="mk-section">
+    <div class="mk-wrap">
+      <div class="mk-section-head" data-reveal>
+        <h2 class="mk-h2">{t('home.bucketsHeading')}</h2>
+        <p class="mk-lead">{t('home.bucketsLead')}</p>
+      </div>
+      <ol class="mk-cols" data-reveal>
+        {buckets.map((bucket, i) => (
+          <li>
+            <span class="mk-num" aria-hidden="true">[{i + 1}]</span>
+            <h3>{bucket.title}</h3>
+            <p>{bucket.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="mk-section">
+    <div class="mk-wrap">
+      <div class="mk-walkthrough">
+        <div class="mk-section-head" data-reveal>
+          <h2 class="mk-h2">{t('home.exampleHeading')}</h2>
+          <p class="mk-lead">{t('home.exampleLead')}</p>
+        </div>
+        <ol class="mk-steps-list" data-reveal>
+          {exampleSteps.map(item => (
+            <li>
+              <span>{item.step}</span>
+              <span class={`mk-tag mk-tag--${bucketOf[item.bucket] ?? 0}`}>{item.bucket}</span>
+            </li>
+          ))}
+        </ol>
+        <p class="mk-illustration-note">{t('home.exampleNote')}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mk-section">
+    {pebbleStones.slice(0, 2).map((src, i) => (
+      <span class={`mk-stone mk-stone--p${i + 1}`} aria-hidden="true">
+        <img src={src} alt="" width={160} height={160} loading="lazy" decoding="async" />
+      </span>
+    ))}
+    <div class="mk-wrap">
+      <div class="mk-section-head" data-reveal>
+        <h2 class="mk-h2">{t('home.stepsHeading')}</h2>
+        <p class="mk-lead">{t('home.stepsLead')}</p>
+      </div>
+      <ol class="mk-cols" data-reveal>
+        {steps.map((step, i) => (
+          <li>
+            <span class="mk-num" aria-hidden="true">[{i + 1}]</span>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="mk-section">
+    {pebbleStones.slice(2).map((src, i) => (
+      <span class={`mk-stone mk-stone--p${i + 3}`} aria-hidden="true">
+        <img src={src} alt="" width={160} height={160} loading="lazy" decoding="async" />
+      </span>
+    ))}
+    <div class="mk-wrap">
+      <div class="mk-section-head" data-reveal>
+        <h2 class="mk-h2">{t('home.systemsHeading')}</h2>
+        <p class="mk-lead">{t('home.systemsLead')}</p>
+      </div>
+      <ul class="mk-glass-grid">
+        {systems.map((point, i) => (
+          <li class="mk-glass-card">
+            <span class="mk-num" aria-hidden="true">[{i + 1}]</span>
+            <h3>{point.title}</h3>
+            <p>{point.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="mk-section" id="faq">
+    <div class="mk-wrap">
+      <div class="mk-section-head" data-reveal>
+        <span class="mk-eyebrow">{t('home.faqEyebrow')}</span>
+        <h2 class="mk-h2">{t('home.faqHeading')}</h2>
+      </div>
+
+      {/* A <details> accordion: open state is the element's own, so it works
+          with no JavaScript, with the keyboard, and with find-in-page. */}
+      <div class="mk-faq">
+        {faqs.map((faq) => (
+          <details class="mk-faq-item">
+            <summary class="mk-faq-q">
+              {faq.q}
+              <Ico name="plus" size={18} className="mk-faq-icon" />
+            </summary>
+            <div class="mk-faq-a">{faq.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="mk-final">
+    <div class="mk-wrap mk-final-inner">
+      <div class="mk-final-copy" data-reveal>
+        <h2>{t('home.ctaHeading')}</h2>
+        <p>{t('home.ctaLead')}</p>
+        <div class="mk-final-actions">
+          <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill iconRightName="arrowRight">
+            {t('home.ctaButton')}
+          </Button>
         </div>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
 </Base>
 
 <script>

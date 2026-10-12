@@ -15,7 +15,6 @@
 import { next, settledState } from './hero-state.js'
 
 const PORTRAIT = '(max-aspect-ratio: 1/1)'
-const POUR_AT = 0.4      // the stream forms about 40% into the transition
 const FADE_MS = 400      // BEFORE fading back in; the poster-only crash
 
 function makeVideo(sources, className, loop = true) {
@@ -39,7 +38,6 @@ export function initHero(hero, tier) {
   const data = JSON.parse(hero.dataset.media)
   const media = hero.querySelector('.mk-hero-media')
   const beforeLayer = hero.querySelector('[data-hero-before]')
-  const rail = document.querySelector('[data-rail]')
   const portrait = matchMedia(PORTRAIT)
   const pinned = () => window.innerHeight * 0.5
 
@@ -49,10 +47,7 @@ export function initHero(hero, tier) {
   const setState = (s) => { state = s; hero.dataset.heroState = s }
   const later = (fn, delay) => timers.push(setTimeout(fn, delay))
   const clearTimers = () => { timers.forEach(clearTimeout); timers = [] }
-  // The pour only exists with motion; reduced motion keeps a still, visible stream.
-  const dry = (on) => tier.motion && rail?.classList.toggle('is-dry', on)
   setState(state)
-  dry(state !== 'after')
 
   /* ── videos ── */
   function loadVideos() {
@@ -88,19 +83,13 @@ export function initHero(hero, tier) {
       videos.before?.pause()
       videos.after?.pause()
       const ms = (t.duration || data.duration) * 1000
-      later(pour, ms * POUR_AT)
       // The AFTER loop starts just before the transition ends, under it.
       later(() => { if (videos.after) { videos.after.currentTime = 0; play(videos.after) } }, Math.max(0, ms - 250))
       later(finishCrash, ms + 500)      // in case `ended` never fires
     } else {
-      // No clip: the BEFORE poster fades away (marketing.css), the stream pours.
-      later(pour, FADE_MS / 2)
+      // No clip: the BEFORE poster fades away (marketing.css).
       later(() => apply(next(state, { type: 'done' })), FADE_MS)
     }
-  }
-  function pour() {
-    rail?.classList.add('is-pouring'); dry(false)
-    later(() => rail?.classList.remove('is-pouring'), 900)
   }
   function finishCrash() {
     if (state !== 'crashing') return
@@ -112,14 +101,13 @@ export function initHero(hero, tier) {
     clearTimers()
     hero.classList.remove('is-transitioning')
     videos?.transition?.pause()
-    dry(true)
     if (videos?.before) { videos.before.currentTime = 0; play(videos.before) }
     later(() => { videos?.after?.pause(); apply(next(state, { type: 'done' })) }, FADE_MS)
   }
   function resync() {
     clearTimers()
-    hero.classList.remove('is-transitioning'); rail?.classList.remove('is-pouring')
-    setState(settledState(window.scrollY)); dry(state !== 'after')
+    hero.classList.remove('is-transitioning')
+    setState(settledState(window.scrollY))
     pauseAll()
     if (visible) play(state === 'after' ? videos?.after : videos?.before)
   }

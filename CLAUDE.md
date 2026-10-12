@@ -126,14 +126,13 @@ time, so they ship no JavaScript; never add a `client:` directive.
 
 ### JavaScript: one module, home only
 
-The landing page has motion (the hero crash, the stream, the calendar), and
+The landing page has motion (the hero crash, the calendar, the reveals), and
 all of it lives in ONE vanilla ES module, `apps/site/src/motion/`, loaded by a
 single bare `<script>` in `Home.astro`. Blog, contact and legal ship none. The
 e2e suite enforces both, and the CSP (`script-src 'self'`) blocks anything else.
 
 - **The CSS default is the final, no-JS state.** The HTML must read and look
-  finished with JavaScript off (the AFTER poster, a still stream, the calendar
-  after). JS only adds motion on top, through data attributes and classes.
+  finished with JavaScript off (the AFTER poster, the calendar after). JS only adds motion on top, through data attributes and classes.
 - **Never** `client:*`, `is:inline`, `define:vars`, inline `on*` handlers or
   `javascript:` URLs. Pass data through `data-*` attributes and imported JSON.
 - **No user-facing strings in JS.** Everything readable is in the HTML.
@@ -286,13 +285,13 @@ JSX or CSS:
   drops a `{{placeholder}}`, changes a list's length, or leaves a sentence over
   40 characters identical to English. Lists (`home.steps`, `home.faqs`, …)
   render by index, so every language keeps the same length.
-- **Landing media.** The hero clips, posters, the stream rail, the moments
-  and the stones are built offline by `scripts/media/build-media.mjs` from the
-  sources in `scripts/media/sources.json`, and only the encoded outputs are
-  committed (`apps/site/src/media/`, imported so they are hashed). Generating
+- **Landing media.** The hero clips, posters and the stones are built
+  offline by `scripts/media/build-media.mjs` from the sources in
+  `scripts/media/sources.json`, and only the encoded outputs are committed (`apps/site/src/media/`, imported so they are hashed). Generating
   new sources costs Higgsfield credits: **the owner approves the total before
   any generation.** `docs/LANDING-DESIGN.md` has the art direction and the
-  pipeline's rules; `streams.test.js` holds every clip to the stream geometry.
+  pipeline's rules; `media.test.js` holds the pipeline's output to what the
+  page imports.
 - **Blog.** Markdown files under `apps/site/src/content/blog/<locale>/`,
   typed by `content.config.js`. See `docs/BLOG.md`. Don't write articles
   without being asked.

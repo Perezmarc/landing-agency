@@ -1,21 +1,20 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   MARKETING — the public website: header, the landing page (hero, stream rail,
-   calendar, sections), FAQ, final CTA, footer, plus the legal and blog
-   surfaces. Prefixed `mk-`.
+   MARKETING — the public website: header, the landing page (hero, calendar,
+   sections), FAQ, final CTA, footer, plus the legal and blog surfaces.
+   Prefixed `mk-`.
 
    THE WHOLE PAGE IS LIGHT. The media is graded to pure white, so any tinted
-   band would show it as a box; sections are transparent and the stream reads
-   as one continuous line from the hero to the final CTA.
+   band would show it as a box; sections are transparent.
 
-   THE CSS DEFAULT IS THE FINAL, NO-JS STATE. The hero shows its AFTER poster,
-   the rail is visible, the calendar shows its after state. motion/ only adds
-   movement on top, by setting data attributes and custom properties.
+   THE CSS DEFAULT IS THE FINAL, NO-JS STATE. The hero shows its AFTER poster
+   and the calendar shows its after state. motion/ only adds movement on top,
+   by setting data attributes and classes.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ═══════════ LAYOUT PRIMITIVES ═══════════ */
 .mk-wrap { width: min(1160px, 100% - 40px); margin-inline: auto; }
 .mk-section { position: relative; z-index: 1; padding: 112px 0; }
-/* Content paints above the rail, the moments and the stones in its section. */
+/* Content paints above the stones in its section. */
 .mk-section > .mk-wrap, .mk-final-inner { position: relative; z-index: 1; }
 .mk-eyebrow {
   font-family: var(--font-mono);
@@ -106,45 +105,12 @@
    overlay hero (Nav renders it unless `overlay`). */
 .mk-header-offset { height: 68px; }
 
-/* ═══════════ HOME: THE STREAM'S GEOMETRY ═══════════
-   One formula places the stream everywhere, with no runtime measuring.
-   The hero media box is `max(100%, 177.78svh)` wide (16:9 covering the stage)
-   and centred, so the stream that leaves its bottom edge at --exit-x (a
-   fraction of the clip, from streams.json) sits at --rail-x on the page.
-   Portrait screens use the 9:16 rendition, whose box is `max(100%, 56.25svh)`.
-   .mk-home is an inline-size container, so `cqw` is the page width wherever
-   these are used, including inside transforms and background sizes. */
-.mk-home {
-  position: relative;
-  container-type: inline-size;
-  --box-w: max(100cqw, 177.78svh);
-  --exit-x: var(--exit-x-l);
-  --exit-w: var(--exit-w-l);
-  --rail-x: calc(50cqw + (var(--exit-x) - 0.5) * var(--box-w));
-  --stream-w: calc(var(--exit-w) * var(--box-w));
-  --hero-h: 150svh;
-}
-@media (max-aspect-ratio: 1/1) {
-  .mk-home {
-    --box-w: max(100cqw, 56.25svh);
-    --exit-x: var(--exit-x-p);
-    --exit-w: var(--exit-w-p);
-  }
-}
-
-/* Copy stays clear of the stream: left of it on landscape, and with a right
-   padding on portrait, where the stream runs down a right-hand gutter. */
-.mk-col { max-width: min(640px, 46%); }
-@media (max-aspect-ratio: 1/1) {
-  .mk-col { max-width: none; padding-right: calc(100cqw - var(--rail-x) + 20px); }
-}
-
 /* ═══════════ HERO ═══════════
    A 150svh section with a sticky 100svh stage: the first half-screen of
    scroll passes while the stage stays pinned (that is where the crash runs),
    then the hero scrolls away like content. `overflow: clip`, never hidden:
    hidden would make the section a scroll container and kill the sticky. */
-.mk-hero { position: relative; height: var(--hero-h); overflow: clip; }
+.mk-hero { position: relative; height: 150svh; overflow: clip; }
 .mk-hero-stage {
   position: sticky;
   top: 0;
@@ -155,14 +121,15 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: var(--box-w);
+  /* The clip covers the stage: 16:9, at least the stage's width. */
+  width: max(100%, 177.78svh);
   aspect-ratio: 16 / 9;
   translate: -50% -50%;
 }
 @media (max-aspect-ratio: 1/1) {
-  /* Portrait: the box is pushed down so the crystal sits below the copy; the
-     stream still leaves through the stage's bottom edge. */
-  .mk-hero-media { aspect-ratio: 9 / 16; top: calc(50% + 12svh); }
+  /* Portrait: the 9:16 rendition, pushed down so the crystal sits below the
+     copy. */
+  .mk-hero-media { width: max(100%, 56.25svh); aspect-ratio: 9 / 16; top: calc(50% + 12svh); }
 }
 /* Layers, bottom to top: the AFTER poster and loop, the transition clip (the
    crash, created by JS), then the BEFORE layer (poster and loop). With no JS
@@ -216,101 +183,12 @@
 
 @media (max-aspect-ratio: 1/1) {
   /* Portrait: the copy sits in the upper part of the stage, the crystal lower
-     right (its frame was composed for this), the stream down the gutter. */
+     right (its frame was composed for this). */
   .mk-hero-copy { justify-content: flex-start; padding-top: calc(68px + 3svh); }
   .mk-hero-copy > * { max-width: none; }
   .mk-hero h1 { font-size: clamp(30px, 7.6vw, 52px); margin-top: 14px; }
   .mk-hero-lead { font-size: 15.5px; margin-top: 16px; }
   .mk-hero-actions { margin-top: 22px; }
-  .mk-hero-lead { padding-right: calc(100cqw - var(--rail-x) + 12px); }
-}
-
-/* ═══════════ THE STREAM RAIL ═══════════
-   One element running down .mk-flow (from the hero's bottom edge to the final
-   CTA), exactly at the hero's stream exit, under the content. Its picture is
-   a short transparent strip of the stream, repeated vertically; a compositor
-   animation slides it down one tile per --flow-period, forever, on its own
-   clock. It never moves with scroll. Two layers at slightly different periods
-   give the water its shimmer. */
-.mk-flow { position: relative; }
-.mk-rail {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--rail-x) - var(--stream-w) * var(--rail-span) / 2);
-  width: calc(var(--stream-w) * var(--rail-span));
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-  /* One tile of the strip at this width (its aspect comes from streams.json). */
-  --tile-h: calc(var(--stream-w) * var(--rail-span) * var(--rail-aspect));
-  /* The pour: the clear part of the mask slides down from the hero's edge.
-     JS animates --pour from 0% to 100% after the crash; without JS it is 100%. */
-  -webkit-mask-image: linear-gradient(to bottom, #000 var(--pour), transparent calc(var(--pour) + 8%)),
-    linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to bottom, #000 var(--pour), transparent calc(var(--pour) + 8%)),
-    linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
-  mask-composite: intersect;
-}
-@property --pour {
-  syntax: '<percentage>';
-  inherits: true;
-  initial-value: 100%;
-}
-.mk-rail.is-dry { --pour: 0%; }
-.mk-rail.is-pouring { transition: --pour var(--dur-pour) var(--ease-out); }
-.mk-rail::before,
-.mk-rail::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(-1 * var(--tile-h));
-  bottom: 0;
-  background-image: var(--rail-img);
-  background-repeat: repeat-y;
-  background-size: 100% var(--tile-h);
-  background-position: center top;
-  animation: mk-flow var(--flow-period) linear infinite;
-}
-.mk-rail::after { opacity: 0.45; animation-duration: calc(var(--flow-period) * 1.37); }
-@keyframes mk-flow {
-  from { transform: translateY(0); }
-  to   { transform: translateY(var(--tile-h)); }
-}
-
-/* ═══════════ MOMENTS ═══════════
-   Short looping clips dropped onto the rail: the stream over a pebble, and
-   the stream thinning into its last drops. Each clip's stream enters and
-   leaves at its centre at the rail's width (checked by streams.test.js), and
-   its top and bottom edges are feathered over the rail, so the joins vanish. */
-.mk-moment {
-  position: absolute;
-  z-index: 0;
-  left: calc(var(--rail-x) - var(--moment-w) / 2);
-  width: var(--moment-w);
-  aspect-ratio: 9 / 16;
-  pointer-events: none;
-  --moment-w: calc(var(--stream-w) / var(--moment-stream));
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
-}
-.mk-moment img, .mk-moment video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.mk-moment video { opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); }
-.mk-moment video.is-ready { opacity: 1; }
-/* The pebble's centre (half the clip's height down) sits beside "An agent". */
-.mk-moment--pebble { top: calc(56% - var(--moment-w) * 0.8889); }
-@media (max-aspect-ratio: 1/1) {
-  /* Portrait: copy runs full width, so the pebble gets its own gap in the
-     flow after the list instead of sitting beside it. */
-  .mk-moment--pebble { position: relative; top: auto; left: auto; margin: 24px 0 -48px calc(var(--rail-x) - var(--moment-w) / 2); }
-}
-/* The end clip has no bottom stream: only its top edge is feathered. */
-.mk-moment--end {
-  top: 0;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%);
-  mask-image: linear-gradient(to bottom, transparent, #000 10%);
 }
 
 /* ═══════════ STONES ═══════════
@@ -331,7 +209,8 @@
   from { translate: 0 -4px; }
   to   { translate: 0 4px; }
 }
-/* Positions: a fragment cluster near the problem section, pebbles at edges. */
+/* Positions: a fragment cluster beside the problem copy, pebbles beside the
+   section heads, clear of the text. */
 .mk-stone--r1 { --x: 74%; --y: 8%;  --s: 74px; --float: 8s; }
 .mk-stone--r2 { --x: 82%; --y: 30%; --s: 52px; --float: 10s; }
 .mk-stone--r3 { --x: 61%; --y: 52%; --s: 44px; --float: 7s; }
@@ -340,17 +219,21 @@
 .mk-stone--r6 { --x: 93%; --y: 12%; --s: 34px; --float: 10.5s; }
 .mk-stone--r7 { --x: 64%; --y: 22%; --s: 30px; --float: 8.5s; }
 .mk-stone--p1 { --x: 80%; --y: 18%; --s: 64px; --float: 9.5s; }
-.mk-stone--p2 { --x: 60%; --y: 70%; --s: 48px; --float: 11s; }
+.mk-stone--p2 { --x: 70%; --y: 34%; --s: 48px; --float: 11s; }
 .mk-stone--p3 { --x: 84%; --y: 40%; --s: 56px; --float: 8s; }
 .mk-stone--p4 { --x: 63%; --y: 12%; --s: 42px; --float: 10s; }
 @media (max-aspect-ratio: 1/1) {
-  /* Portrait: copy is full width, so stones shrink and keep to the gutter. */
+  /* Portrait: copy is full width, so a few small stones sit in the section's
+     top padding, at the right, above the text. */
   .mk-stone { --s: 30px; }
   .mk-stone--r1, .mk-stone--r3, .mk-stone--r5, .mk-stone--p2, .mk-stone--p4 { display: none; }
-  .mk-stone--r2, .mk-stone--r4, .mk-stone--r6, .mk-stone--p1, .mk-stone--p3 { --x: calc(100% - 44px); }
+  .mk-stone--r2, .mk-stone--p1, .mk-stone--p3 { --x: calc(100% - 52px); --y: 26px; }
+  .mk-stone--r4 { --x: calc(100% - 96px); --y: 38px; --s: 24px; }
+  .mk-stone--r6 { --x: calc(100% - 134px); --y: 20px; --s: 20px; }
 }
 
 /* ═══════════ PROBLEM ═══════════ */
+.mk-problem-copy { max-width: 640px; }
 .mk-kicker {
   margin-top: 32px;
   font-size: clamp(20px, 2vw, 26px);
@@ -373,13 +256,9 @@
 .mk-num { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent-ink); }
 .mk-cols h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; margin-top: 12px; }
 .mk-cols p { font-size: 14.5px; color: var(--mute); line-height: 1.65; margin-top: 8px; }
-/* Stacked inside a narrow column (the copy keeps left of the stream). */
-.mk-cols--stack { grid-template-columns: minmax(0, 1fr); gap: 0; }
-.mk-cols--stack > li { padding: 18px 0; display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 8px; }
-.mk-cols--stack > li > .mk-num { grid-row: span 2; padding-top: 4px; }
-.mk-cols--stack h3 { margin-top: 0; }
 
 /* ═══════════ THE INVOICE WALKTHROUGH ═══════════ */
+.mk-walkthrough { max-width: 760px; }
 .mk-steps-list { list-style: none; padding: 0; counter-reset: step; border-top: 1px solid var(--line); }
 .mk-steps-list li {
   counter-increment: step;
@@ -553,9 +432,9 @@
 .mk-faq-a a { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
 
 /* ═══════════ FINAL CTA ═══════════
-   Light, like the rest. The stream ends here in its last drops, beside the
-   button: the end moment sits on the rail at the top of this section. */
-.mk-final { position: relative; padding: 120px 0 140px; min-height: 92svh; }
+   Light, like the rest. */
+.mk-final { position: relative; padding: 120px 0 140px; }
+.mk-final-copy { max-width: 640px; }
 .mk-final h2 {
   font-family: var(--font-display);
   font-size: clamp(32px, 4.2vw, 54px);
@@ -692,10 +571,10 @@
 }
 
 /* ═══════════ REDUCED MOTION ═══════════
-   A still stream, still stones, no reveals. motion/ also skips the videos and
+   Still stones, no reveals. motion/ also skips the videos and
    the calendar animation; the hero keeps its before/after story as the
    posters' crossfade. */
 @media (prefers-reduced-motion: reduce) {
-  .mk-rail::before, .mk-rail::after, .mk-stone { animation: none; }
+  .mk-stone { animation: none; }
   .mk-reveal-pending { opacity: 1; translate: none; }
 }
