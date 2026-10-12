@@ -17,73 +17,271 @@
   },
   "home": {
     "eyebrow": "AI agents for business operations",
-    "heading": "Hand whole workflows to AI agents built for your business",
-    "lead": "We design, build and run custom AI agents that take over the repetitive coordination in your finance, revenue and operations teams. They work inside the tools you already use and go live in weeks.",
+    "headingLead": "Find how the work really runs.",
+    "heading": "Then hand the repetitive steps to AI agents.",
+    "lead": "We map how the work actually moves through your team, delete the steps that shouldn't exist, and run AI agents inside the tools you already use. The decisions stay with your people.",
     "ctaPrimary": "Book a discovery call",
     "ctaSecondary": "See how it works",
-    "problemHeading": "Your team is still the glue between your systems",
-    "problemLead": "Invoices get matched by hand, deals wait on approvals, and the Monday report gets rebuilt from five exports. Most automation tools take over one step and leave people to move the work between all the others. We look at the whole workflow and give it to agents that carry each case from the first input to the final update.",
+    "day": {
+      "headingLead": "A day, before and after.",
+      "heading": "The same job, with the repetitive work handed to an agent.",
+      "lead": "Pick a team. On the left is a typical day today. On the right is the same day once an agent prepares the work and a person makes the calls.",
+      "teamLegend": "Choose a team",
+      "beforeTitle": "Today",
+      "afterTitle": "With an agent",
+      "personLane": "You",
+      "agentLane": "Agent",
+      "agentList": "What the agent prepared",
+      "kinds": {
+        "work": "Manual work",
+        "chase": "Chasing",
+        "wait": "Waiting",
+        "decide": "Decision"
+      },
+      "note": "Illustration of a typical day, not a client result.",
+      "teams": {
+        "finance": {
+          "name": "Finance",
+          "role": "Accounts-payable lead",
+          "blocks": {
+            "b1": "Re-key invoices from the shared inbox",
+            "b2": "Chase approvers for missing POs",
+            "b3": "Waiting on a supplier reply",
+            "b4": "Match invoices to POs and receipts",
+            "b5": "Correct vendor-record mismatches",
+            "b6": "Chase approvals again",
+            "b7": "Build the payment-run spreadsheet",
+            "b8": "Answer \"where's my payment?\" emails",
+            "d1": "Review the exceptions the agent prepared",
+            "d2": "Approve the payment run",
+            "d3": "Negotiate early-payment terms with a key supplier",
+            "d4": "Fix the cause of the most common exception",
+            "d5": "Prepare the month-end close",
+            "a1": "Reads the inbox, extracts and matches invoices",
+            "a2": "Chases missing POs and logs the replies",
+            "a3": "Assembles each exception with its policy and history",
+            "a4": "Drafts the payment-run file"
+          }
+        },
+        "revenueOps": {
+          "name": "Revenue ops",
+          "role": "Revenue operations manager",
+          "blocks": {
+            "b1": "Merge duplicate accounts in the CRM",
+            "b2": "Chase reps for missing deal fields",
+            "b3": "Waiting on finance to approve a discount",
+            "b4": "Rebuild the pipeline report from three exports",
+            "b5": "Chase approvers on stuck deal-desk requests",
+            "b6": "Check commissions against closed deals",
+            "b7": "Waiting on legal to return a contract",
+            "b8": "Answer reps asking why a deal is stuck",
+            "d1": "Review the deals the agent flagged",
+            "d2": "Decide on non-standard discount requests",
+            "d3": "Coach a sales team on forecast accuracy",
+            "d4": "Fix the routing rule behind most stuck deals",
+            "d5": "Prepare the quarterly pipeline review",
+            "a1": "Merges duplicates and fills missing CRM fields",
+            "a2": "Assembles each approval with its deal history",
+            "a3": "Builds the pipeline report each morning",
+            "a4": "Checks commissions against closed deals"
+          }
+        },
+        "procurement": {
+          "name": "Procurement",
+          "role": "Procurement specialist",
+          "blocks": {
+            "b1": "Re-key purchase requests from email",
+            "b2": "Chase new vendors for tax and bank documents",
+            "b3": "Waiting on the budget owner's approval",
+            "b4": "Check vendor documents against the onboarding policy",
+            "b5": "Compare three supplier quotes by hand",
+            "b6": "Follow up on late deliveries",
+            "b7": "Waiting on a supplier to confirm",
+            "b8": "Update the contract renewal tracker",
+            "d1": "Approve the vendors the agent prepared",
+            "d2": "Approve purchases above the threshold",
+            "d3": "Negotiate terms with a strategic supplier",
+            "d4": "Decide which contracts to renew",
+            "d5": "Fix the request form that causes most rework",
+            "a1": "Turns emailed requests into purchase requests",
+            "a2": "Collects and checks vendor documents",
+            "a3": "Lays the quotes side by side",
+            "a4": "Chases suppliers on deliveries and logs the replies"
+          }
+        },
+        "compliance": {
+          "name": "Compliance",
+          "role": "Compliance analyst",
+          "blocks": {
+            "b1": "Scan regulator updates for changes that apply",
+            "b2": "Chase control owners for audit evidence",
+            "b3": "Waiting on IT for access logs",
+            "b4": "Collect screenshots and exports for the audit file",
+            "b5": "Check expense claims against policy",
+            "b6": "Chase managers for policy attestations",
+            "b7": "Waiting on a business unit to reply",
+            "b8": "Update the controls spreadsheet",
+            "d1": "Decide which regulatory changes need action",
+            "d2": "Review the exceptions the agent found",
+            "d3": "Agree a remediation plan with a control owner",
+            "d4": "Answer the auditor's open questions",
+            "d5": "Prepare the risk committee update",
+            "a1": "Summarises regulator updates by topic",
+            "a2": "Requests and files audit evidence",
+            "a3": "Checks every claim against policy",
+            "a4": "Chases attestations and logs the replies"
+          }
+        },
+        "customerOps": {
+          "name": "Customer ops",
+          "role": "Customer operations lead",
+          "blocks": {
+            "b1": "Sort and tag the overnight tickets",
+            "b2": "Look up orders across three systems",
+            "b3": "Waiting on the warehouse about a missing parcel",
+            "b4": "Update account details by hand",
+            "b5": "Chase other teams for answers on escalations",
+            "b6": "Process refund and replacement requests",
+            "b7": "Waiting on finance to approve a refund",
+            "b8": "Copy ticket notes into the weekly report",
+            "d1": "Review the escalations the agent prepared",
+            "d2": "Approve refunds outside policy",
+            "d3": "Call a key account about a recurring issue",
+            "d4": "Fix the cause of the most common ticket",
+            "d5": "Coach the team on difficult cases",
+            "a1": "Tags and routes every ticket",
+            "a2": "Gathers the order and account history for each case",
+            "a3": "Applies routine account updates",
+            "a4": "Drafts the weekly report"
+          }
+        },
+        "logistics": {
+          "name": "Logistics",
+          "role": "Logistics coordinator",
+          "blocks": {
+            "b1": "Check carrier portals for delayed shipments",
+            "b2": "Chase carriers for new delivery dates",
+            "b3": "Waiting on a customs broker",
+            "b4": "Re-key delivery updates into the ERP",
+            "b5": "Tell customer service which orders will be late",
+            "b6": "Chase suppliers for shipping notices",
+            "b7": "Waiting on a supplier reply",
+            "b8": "Build the supplier scorecard spreadsheet",
+            "d1": "Decide how to recover the late shipments the agent flagged",
+            "d2": "Approve expedited freight",
+            "d3": "Review performance with a key supplier",
+            "d4": "Fix the booking step that causes most delays",
+            "d5": "Plan next week's capacity",
+            "a1": "Tracks every shipment across the carrier portals",
+            "a2": "Chases carriers and suppliers and logs the replies",
+            "a3": "Updates the ERP and warns customer service",
+            "a4": "Builds the supplier scorecard"
+          }
+        }
+      }
+    },
+    "problemHeading": "Your process document is not your process.",
+    "problemLead": "The real one has rework loops, people chasing each other for answers, and long stretches where a case just waits. A request can sit in a queue for days and need only minutes of actual work. Automate the documented version and you automate the wrong thing.",
+    "problemKicker": "The waiting is the process. The work is minutes.",
+    "discoveryHeading": "How we find the real process",
+    "discoveryLead": "We look at the work from three sides, because each one shows something the others miss.",
+    "discovery": [
+      {
+        "title": "Interviews: the why",
+        "body": "We talk to the people who do the work: who decides, which workarounds they rely on, and the thresholds nobody wrote down."
+      },
+      {
+        "title": "Your systems' logs: the what",
+        "body": "Your ERP, CRM and helpdesk record every case, so we can see how many arrive, how long each step takes, where cases wait and which ones loop back."
+      },
+      {
+        "title": "Everything else",
+        "body": "Procedures, spreadsheets, email threads and chat hold the exceptions and rules your systems never captured."
+      }
+    ],
+    "bucketsHeading": "Sort every step",
+    "bucketsLead": "In that order. Most teams start with the model.",
+    "buckets": [
+      {
+        "title": "Delete",
+        "body": "Steps that exist because of an old workaround, a duplicate check or a report nobody reads. A deleted step costs nothing to run."
+      },
+      {
+        "title": "Plain code",
+        "body": "Steps with fixed rules: copy this field, send that reminder, match these two amounts. Ordinary software does them reliably and cheaply."
+      },
+      {
+        "title": "An agent",
+        "body": "Steps that need reading and judgement within clear limits, such as an unstructured email, a mismatched invoice or a missing document. The agent prepares the case."
+      },
+      {
+        "title": "A person",
+        "body": "Decisions with consequences: approvals, exceptions and negotiations. The agent hands them over with the context attached, and a person makes the call."
+      }
+    ],
+    "exampleHeading": "Supplier invoices, step by step",
+    "exampleLead": "How the method sorts a typical accounts-payable process.",
+    "exampleNote": "Illustration of the method, not a client engagement.",
+    "exampleSteps": [
+      {
+        "step": "Print each invoice for a paper approval file",
+        "bucket": "Delete"
+      },
+      {
+        "step": "Copy the invoice into a second tracking spreadsheet",
+        "bucket": "Delete"
+      },
+      {
+        "step": "Read the PDF invoices that arrive in the shared inbox",
+        "bucket": "An agent"
+      },
+      {
+        "step": "Extract the supplier, amounts and PO number",
+        "bucket": "An agent"
+      },
+      {
+        "step": "Match the invoice to its PO and goods receipt",
+        "bucket": "Plain code"
+      },
+      {
+        "step": "Work out why a match failed and gather the evidence",
+        "bucket": "An agent"
+      },
+      {
+        "step": "Send approvers a reminder",
+        "bucket": "Plain code"
+      },
+      {
+        "step": "Approve an exception above the tolerance",
+        "bucket": "A person"
+      },
+      {
+        "step": "Build the payment-run file",
+        "bucket": "Plain code"
+      },
+      {
+        "step": "Approve the payment run",
+        "bucket": "A person"
+      }
+    ],
     "stepsHeading": "How an engagement works",
-    "stepsLead": "Your team explains how the work gets done today. We handle the design, the build and the running of the agents.",
+    "stepsLead": "You give us access to the work and the people who do it. We do the mapping, the building and the measuring.",
     "steps": [
       {
-        "title": "Opportunity audit",
-        "body": "We map your workflows and find where agents remove the most manual work and waiting. You get a prioritised list with the effort each one takes."
+        "title": "Map the real process",
+        "body": "Interviews, system logs and documents show how the work really moves, including the loops and the waiting."
       },
       {
-        "title": "Workflow design",
-        "body": "We redesign the process around agents: what they decide, what they hand to a person, and which of your systems and rules they work with."
+        "title": "Set the baseline",
+        "body": "Before we build anything, we measure volume, cycle time, waiting time and exceptions, so the result can be compared with today."
       },
       {
-        "title": "Production deployment",
-        "body": "Agents go live inside your existing tools, using the permissions your team already has. Your data stays where it is."
+        "title": "Sort and build",
+        "body": "We delete what shouldn't exist, write plain code for the fixed rules and build agents for the steps that need judgement. Each process has one owner on your side."
       },
       {
-        "title": "Ongoing improvement",
-        "body": "We review every run, tighten the decision rules and give agents more of the workflow as they prove reliable."
-      }
-    ],
-    "outcomesHeading": "What changes for your team",
-    "outcomes": [
-      {
-        "title": "Less manual coordination",
-        "body": "Agents chase approvals, match records and update systems, so your people spend their day on the decisions that need them."
-      },
-      {
-        "title": "Work that keeps moving",
-        "body": "Agents pick up each case as it arrives, at any hour, instead of leaving it in someone's queue until Monday."
-      },
-      {
-        "title": "Room to grow with the team you have",
-        "body": "Handle more volume without hiring at the same pace, and save new roles for work a person should do."
-      }
-    ],
-    "areasHeading": "Where agents take over first",
-    "areasLead": "We start where work is repetitive, follows clear rules and is spread across several tools.",
-    "areas": [
-      {
-        "title": "Finance operations",
-        "body": "Accounts payable and receivable, reconciliation, month-end close and cash forecasting."
-      },
-      {
-        "title": "Revenue operations",
-        "body": "CRM data quality, deal approvals, pipeline reporting and commission checks."
-      },
-      {
-        "title": "Procurement",
-        "body": "Vendor onboarding, purchase approvals, contract tracking and supplier follow-ups."
-      },
-      {
-        "title": "Compliance and risk",
-        "body": "Regulatory tracking, audit evidence, policy monitoring and control testing."
-      },
-      {
-        "title": "Customer operations",
-        "body": "Ticket triage, order exceptions, account updates and escalation routing."
-      },
-      {
-        "title": "Logistics",
-        "body": "Shipment exceptions, demand signals, supplier scorecards and inventory alerts."
+        "title": "Measure and expand",
+        "body": "We measure the same numbers again. Once the process holds, we move on to the next one."
       }
     ],
     "systemsHeading": "Built on the systems you already run",
@@ -91,11 +289,11 @@
     "systems": [
       {
         "title": "Connected to your stack",
-        "body": "Agents work through the APIs of your ERP, CRM, helpdesk, databases and data platforms."
+        "body": "Agents work through the APIs of your ERP, CRM, helpdesk and data platforms, with only the permissions you grant."
       },
       {
-        "title": "Access you control",
-        "body": "Agents act only with the permissions you grant and follow your existing security policies."
+        "title": "A person makes the call",
+        "body": "Agents prepare each case and stop at the decision. Approvals and exceptions go to the person who owns them."
       },
       {
         "title": "A record of every action",
@@ -107,15 +305,15 @@
     "faqs": [
       {
         "q": "What happens on the discovery call?",
-        "a": "It is a working session. We go through how your team handles its workflows today, where the time goes, and which processes are good candidates for agents. You leave with a short list of opportunities and a rough timeline, whether or not we work together."
+        "a": "We pick one process and map how it really runs: who touches it, where cases wait and where they loop back. You leave with a first view of which steps to delete, which to automate and which to keep with a person, whether or not we work together."
       },
       {
         "q": "How long until the first agent is live?",
-        "a": "Most first deployments take 6 to 12 weeks from discovery to production. The range depends on how complex the workflow is and how many systems it touches."
+        "a": "It depends on the process and how many systems it touches. We agree a timeline once the process is mapped, and we set the baseline before we build anything."
       },
       {
         "q": "What can the agents actually do?",
-        "a": "They read and update your systems, analyse data, apply your business rules, route approvals, prepare reports and coordinate work across tools. When a case needs a person, they hand it over with the context attached."
+        "a": "They read documents and messages, update your systems, check each case against your rules and gather the evidence for a decision. Then they stop and hand the decision to a person, with the context attached."
       },
       {
         "q": "Do the agents work with the tools we already have?",
@@ -123,23 +321,23 @@
       },
       {
         "q": "How much of our team's time will it take?",
-        "a": "Plan for around 20 hours across the whole project, mostly explaining how the work is done today and reviewing the design with us. We do the building and the deployment."
+        "a": "Most of it comes at the start, in interviews about how the work really runs, followed by short reviews of the design. We do the building and the running."
       },
       {
         "q": "How do you handle security and data?",
         "a": "Agents run inside your existing permissions and security policies, and every action is logged and auditable. We can work under your data processing agreement."
       },
       {
-        "q": "Can the agents follow our own rules?",
-        "a": "Yes. Each deployment is designed around your workflows, your systems and your operating rules, and you approve the design before anything goes live."
+        "q": "How do you know it worked?",
+        "a": "We measure the process before we build: volume, cycle time, waiting time and exceptions. After launch we measure the same things again and show you the comparison."
       },
       {
         "q": "How does pricing work?",
         "a": "It depends on the complexity of the workflow, the systems involved and the scope of the deployment. After the discovery call we send you a written proposal."
       }
     ],
-    "ctaHeading": "See where AI agents fit in your company",
-    "ctaLead": "Book a call with our team. We will look at your workflows together and show you where agents can make the biggest difference first.",
+    "ctaHeading": "Find out what your process really looks like.",
+    "ctaLead": "Book a call and bring one process. We'll map it with you and show you where the waiting is.",
     "ctaButton": "Book a discovery call"
   },
   "contact": {
@@ -175,7 +373,7 @@
   "seo": {
     "home": {
       "title": "{{name}} | Custom AI agents for business operations",
-      "description": "We design, build and run custom AI agents that take over repetitive work in finance, revenue and operations, inside the tools you already use."
+      "description": "We map how your back-office processes really run, delete the steps that shouldn't exist and run AI agents inside your existing tools."
     },
     "blog": {
       "title": "Blog: AI agents in real operations | {{name}}",

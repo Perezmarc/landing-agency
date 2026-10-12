@@ -26,3 +26,6 @@ design-system/ds-styles.css
 
 # Astro generated types and content cache
 .astro/
+
+# Media pipeline downloads and intermediates (scripts/media/build-media.mjs).
+scripts/media/.cache/

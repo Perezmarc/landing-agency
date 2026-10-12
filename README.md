@@ -5,8 +5,9 @@ agents for finance, revenue and operations teams. A landing page, a blog,
 contact and legal pages, in English, Spanish and Italian.
 
 It was generated from the factory and stripped down to the marketing site: a
-static Astro build with no backend, no JavaScript on the landing page, and
-every string in a translated catalog.
+static Astro build with no backend, one small motion module on the landing
+page (and no JavaScript anywhere else), and every string in a translated
+catalog.
 
 > **Placeholder identity.** The name (`Agency`) and domain (`example.com`) are
 > placeholders. Set the real ones in `packages/manifest/forge.config.js` and

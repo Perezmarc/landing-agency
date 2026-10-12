@@ -1,0 +1,20 @@
+{
+  "$comment": [
+    "Every source the landing page's media is built from, by permanent URL.",
+    "Generated on Higgsfield (see docs/LANDING-DESIGN.md). Loops start and end on the same still; the transition starts on the BEFORE still and ends on the polished AFTER still.",
+    "Portrait transition and AFTER are composed from the landscape clips by composePortrait() in build-media.mjs."
+  ],
+  "base": "https://d8j0ntlcm91z4.cloudfront.net/user_3KPWI2SA8VZRk23pt1M0vYBFVxJ/",
+  "clips": {
+    "hero-before-16x9": "hf_20261011_114702_1d420498-839d-4bf0-a709-864b40ad0291.mp4",
+    "hero-transition-16x9": "hf_20261011_232051_34984049-2c39-4248-be71-a0ad4911d8a9.mp4",
+    "hero-after-16x9": "hf_20261011_233247_8b7e83fd-8644-4233-b71b-0fe87a1255ee.mp4",
+    "hero-before-9x16": "hf_20261011_130824_7dbfb744-298a-4884-b462-5a530b04c287.mp4",
+    "pebble": "hf_20261011_120208_8639cfaf-5869-4777-9258-6351bf3edafd.mp4",
+    "end": "hf_20261011_120235_f58c7849-b9e9-4154-a708-48c547bc63b1.mp4"
+  },
+  "stills": {
+    "fragments-cutout": "hf_20261011_114520_4e935e33-250f-4dc8-953f-8f9326d629db.png",
+    "pebbles-cutout": "hf_20261011_114524_974e750a-4ef5-443a-81cd-a562ac6bbac6.png"
+  }
+}

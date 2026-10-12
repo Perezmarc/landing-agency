@@ -28,9 +28,9 @@
           "value": "strict-origin-when-cross-origin"
         },
         {
-          "$comment": "No connect-src for a backend, because this site has none. It loads its own scripts and styles and nothing else.",
+          "$comment": "No backend, so connect-src is the site itself. The landing page's one module script and its media are same-origin files. 'unsafe-inline' in style-src is for style attributes that carry data as CSS custom properties (positions, stream geometry); scripts stay 'self' only.",
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; connect-src 'self'"
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data:; media-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; worker-src 'none'; connect-src 'self'"
         }
       ]
     },

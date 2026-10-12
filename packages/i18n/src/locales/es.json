@@ -17,73 +17,271 @@
   },
   "home": {
     "eyebrow": "Agentes de IA para las operaciones de tu empresa",
-    "heading": "Delega procesos enteros en agentes de IA hechos para tu empresa",
-    "lead": "Diseñamos, construimos y operamos agentes de IA a medida que se encargan del trabajo repetitivo de coordinación en tus equipos de finanzas, ventas y operaciones. Trabajan dentro de las herramientas que ya usas y entran en producción en semanas.",
+    "headingLead": "Descubre cómo se hace de verdad el trabajo.",
+    "heading": "Después, delega los pasos repetitivos en agentes de IA.",
+    "lead": "Trazamos cómo avanza de verdad el trabajo en tu equipo, eliminamos los pasos que no deberían existir y operamos agentes de IA dentro de las herramientas que ya usas. Las decisiones siguen en manos de tu gente.",
     "ctaPrimary": "Reserva una llamada de diagnóstico",
     "ctaSecondary": "Cómo trabajamos",
-    "problemHeading": "Tu equipo sigue siendo el pegamento entre tus sistemas",
-    "problemLead": "Las facturas se cuadran a mano, las operaciones esperan aprobaciones y el informe del lunes se rehace a partir de cinco exportaciones. La mayoría de las herramientas de automatización se ocupan de un paso y dejan que las personas muevan el trabajo entre todos los demás. Nosotros miramos el proceso completo y se lo damos a agentes que llevan cada caso desde la primera entrada hasta la última actualización.",
+    "day": {
+      "headingLead": "Un día, antes y después.",
+      "heading": "El mismo trabajo, con la parte repetitiva en manos de un agente.",
+      "lead": "Elige un equipo. A la izquierda tienes un día normal de hoy. A la derecha, el mismo día cuando un agente prepara el trabajo y una persona toma las decisiones.",
+      "teamLegend": "Elige un equipo",
+      "beforeTitle": "Hoy",
+      "afterTitle": "Con un agente",
+      "personLane": "Tú",
+      "agentLane": "Agente",
+      "agentList": "Lo que ha preparado el agente",
+      "kinds": {
+        "work": "Trabajo manual",
+        "chase": "Reclamar",
+        "wait": "Espera",
+        "decide": "Decisión"
+      },
+      "note": "Ejemplo ilustrativo de un día normal, no el resultado de un cliente.",
+      "teams": {
+        "finance": {
+          "name": "Finanzas",
+          "role": "Responsable de cuentas a pagar",
+          "blocks": {
+            "b1": "Transcribir a mano las facturas que llegan al buzón compartido",
+            "b2": "Reclamar a los aprobadores los pedidos de compra que faltan",
+            "b3": "Esperar la respuesta de un proveedor",
+            "b4": "Cuadrar las facturas con los pedidos y los albaranes",
+            "b5": "Corregir discrepancias en los datos de los proveedores",
+            "b6": "Volver a reclamar las aprobaciones",
+            "b7": "Montar la hoja de cálculo de la remesa de pagos",
+            "b8": "Contestar correos de «¿dónde está mi pago?»",
+            "d1": "Revisar las excepciones que ha preparado el agente",
+            "d2": "Aprobar la remesa de pagos",
+            "d3": "Negociar condiciones de pronto pago con un proveedor clave",
+            "d4": "Corregir la causa de la excepción más frecuente",
+            "d5": "Preparar el cierre de mes",
+            "a1": "Lee el buzón, extrae las facturas y las cuadra",
+            "a2": "Reclama los pedidos que faltan y registra las respuestas",
+            "a3": "Reúne cada excepción con su política y su historial",
+            "a4": "Prepara un borrador del fichero de la remesa de pagos"
+          }
+        },
+        "revenueOps": {
+          "name": "Operaciones de ventas",
+          "role": "Responsable de operaciones de ventas",
+          "blocks": {
+            "b1": "Fusionar cuentas duplicadas en el CRM",
+            "b2": "Reclamar a los comerciales los campos que faltan en las oportunidades",
+            "b3": "Esperar a que finanzas apruebe un descuento",
+            "b4": "Rehacer el informe de pipeline a partir de tres exportaciones",
+            "b5": "Reclamar a los aprobadores las solicitudes de operaciones atascadas",
+            "b6": "Comprobar las comisiones con las operaciones cerradas",
+            "b7": "Esperar a que el departamento jurídico devuelva un contrato",
+            "b8": "Responder a comerciales que preguntan por qué una operación está parada",
+            "d1": "Revisar las operaciones que ha marcado el agente",
+            "d2": "Decidir sobre las solicitudes de descuento fuera de lo estándar",
+            "d3": "Formar a un equipo comercial en la precisión de las previsiones",
+            "d4": "Corregir la regla de asignación que atasca la mayoría de las operaciones",
+            "d5": "Preparar la revisión trimestral del pipeline",
+            "a1": "Fusiona duplicados y completa los campos que faltan en el CRM",
+            "a2": "Reúne cada aprobación con el historial de la operación",
+            "a3": "Prepara el informe de pipeline cada mañana",
+            "a4": "Cruza las comisiones con las operaciones cerradas"
+          }
+        },
+        "procurement": {
+          "name": "Compras",
+          "role": "Especialista en compras",
+          "blocks": {
+            "b1": "Transcribir a mano las solicitudes de compra que llegan por correo",
+            "b2": "Reclamar a los nuevos proveedores sus documentos fiscales y bancarios",
+            "b3": "Esperar la aprobación del responsable del presupuesto",
+            "b4": "Comprobar los documentos del proveedor según la política de alta",
+            "b5": "Comparar a mano tres presupuestos de proveedores",
+            "b6": "Hacer seguimiento de las entregas con retraso",
+            "b7": "Esperar la confirmación de un proveedor",
+            "b8": "Actualizar el registro de renovaciones de contratos",
+            "d1": "Aprobar los proveedores que ha preparado el agente",
+            "d2": "Aprobar las compras que superan el umbral",
+            "d3": "Negociar condiciones con un proveedor estratégico",
+            "d4": "Decidir qué contratos se renuevan",
+            "d5": "Arreglar el formulario de solicitud que más trabajo obliga a rehacer",
+            "a1": "Convierte las peticiones por correo en solicitudes de compra",
+            "a2": "Recoge y revisa los documentos de los proveedores",
+            "a3": "Pone los presupuestos uno al lado del otro",
+            "a4": "Reclama las entregas a los proveedores y registra las respuestas"
+          }
+        },
+        "compliance": {
+          "name": "Cumplimiento",
+          "role": "Analista de cumplimiento normativo",
+          "blocks": {
+            "b1": "Revisar las novedades del regulador en busca de cambios que nos afecten",
+            "b2": "Reclamar evidencias de auditoría a los responsables de los controles",
+            "b3": "Esperar a que Sistemas envíe los registros de acceso",
+            "b4": "Reunir capturas y exportaciones para el expediente de auditoría",
+            "b5": "Comprobar que los gastos cumplen la política",
+            "b6": "Reclamar a los responsables sus declaraciones de cumplimiento",
+            "b7": "Esperar la respuesta de una unidad de negocio",
+            "b8": "Actualizar la hoja de cálculo de controles",
+            "d1": "Decidir qué cambios normativos requieren actuar",
+            "d2": "Revisar las excepciones que ha encontrado el agente",
+            "d3": "Acordar un plan de corrección con el responsable de un control",
+            "d4": "Responder a las preguntas pendientes del auditor",
+            "d5": "Preparar el informe para el comité de riesgos",
+            "a1": "Resume las novedades del regulador por tema",
+            "a2": "Solicita y archiva las evidencias de auditoría",
+            "a3": "Comprueba cada gasto con la política",
+            "a4": "Reclama las declaraciones y registra las respuestas"
+          }
+        },
+        "customerOps": {
+          "name": "Atención al cliente",
+          "role": "Responsable de atención al cliente",
+          "blocks": {
+            "b1": "Clasificar y etiquetar los tickets de la noche",
+            "b2": "Buscar pedidos en tres sistemas distintos",
+            "b3": "Esperar a que el almacén responda por un paquete perdido",
+            "b4": "Actualizar a mano los datos de las cuentas",
+            "b5": "Reclamar respuestas a otros equipos sobre los escalados",
+            "b6": "Tramitar solicitudes de reembolso y sustitución",
+            "b7": "Esperar a que finanzas apruebe un reembolso",
+            "b8": "Copiar las notas de los tickets en el informe semanal",
+            "d1": "Revisar los escalados que ha preparado el agente",
+            "d2": "Aprobar reembolsos fuera de la política",
+            "d3": "Llamar a un cliente clave por un problema recurrente",
+            "d4": "Corregir la causa del ticket más frecuente",
+            "d5": "Orientar al equipo en los casos difíciles",
+            "a1": "Etiqueta y asigna cada ticket",
+            "a2": "Reúne el historial de pedidos y de la cuenta para cada caso",
+            "a3": "Aplica los cambios rutinarios en las cuentas",
+            "a4": "Prepara un borrador del informe semanal"
+          }
+        },
+        "logistics": {
+          "name": "Logística",
+          "role": "Responsable de coordinación logística",
+          "blocks": {
+            "b1": "Revisar los portales de los transportistas en busca de envíos retrasados",
+            "b2": "Pedir a los transportistas nuevas fechas de entrega",
+            "b3": "Esperar la respuesta de la agencia de aduanas",
+            "b4": "Transcribir a mano las actualizaciones de entrega en el ERP",
+            "b5": "Avisar a atención al cliente de qué pedidos llegarán tarde",
+            "b6": "Reclamar a los proveedores los avisos de envío",
+            "b7": "Esperar la respuesta de un proveedor",
+            "b8": "Montar la hoja de cálculo de evaluación de proveedores",
+            "d1": "Decidir cómo recuperar los envíos retrasados que ha marcado el agente",
+            "d2": "Aprobar un transporte urgente",
+            "d3": "Revisar el rendimiento con un proveedor clave",
+            "d4": "Corregir el paso de reserva que causa más retrasos",
+            "d5": "Planificar la capacidad de la semana que viene",
+            "a1": "Sigue cada envío en los portales de los transportistas",
+            "a2": "Reclama a transportistas y proveedores y registra las respuestas",
+            "a3": "Actualiza el ERP y avisa a atención al cliente",
+            "a4": "Prepara la evaluación de proveedores"
+          }
+        }
+      }
+    },
+    "problemHeading": "Tu proceso documentado no es tu proceso.",
+    "problemLead": "El real tiene trabajo que se rehace una y otra vez, gente que se persigue para conseguir respuestas y largos ratos en los que un caso simplemente espera. Una solicitud puede pasar días en una cola y necesitar solo minutos de trabajo real. Si automatizas la versión documentada, automatizas lo que no es.",
+    "problemKicker": "La espera es el proceso. El trabajo, minutos.",
+    "discoveryHeading": "Cómo encontramos el proceso real",
+    "discoveryLead": "Miramos el trabajo desde tres ángulos, porque cada uno muestra algo que los otros no ven.",
+    "discovery": [
+      {
+        "title": "Entrevistas: el porqué",
+        "body": "Hablamos con quienes hacen el trabajo: quién decide, de qué apaños dependen y qué umbrales nunca se pusieron por escrito."
+      },
+      {
+        "title": "Los registros de tus sistemas: el qué",
+        "body": "Tu ERP, tu CRM y tu herramienta de soporte registran cada caso, así que vemos cuántos llegan, cuánto tarda cada paso, dónde esperan los casos y cuáles vuelven atrás."
+      },
+      {
+        "title": "Todo lo demás",
+        "body": "Los procedimientos, las hojas de cálculo, los hilos de correo y los chats guardan las excepciones y reglas que tus sistemas nunca recogieron."
+      }
+    ],
+    "bucketsHeading": "Clasifica cada paso",
+    "bucketsLead": "En este orden. La mayoría de los equipos empieza por el modelo.",
+    "buckets": [
+      {
+        "title": "Eliminar",
+        "body": "Pasos que existen por un apaño antiguo, una comprobación duplicada o un informe que nadie lee. Un paso eliminado no cuesta nada."
+      },
+      {
+        "title": "Código simple",
+        "body": "Pasos con reglas fijas: copiar este campo, enviar ese recordatorio, cuadrar estos dos importes. El software de siempre los hace de forma fiable y barata."
+      },
+      {
+        "title": "Un agente",
+        "body": "Pasos que requieren leer y tener criterio dentro de unos límites claros, como un correo sin estructura, una factura que no cuadra o un documento que falta. El agente prepara el caso."
+      },
+      {
+        "title": "Una persona",
+        "body": "Decisiones con consecuencias: aprobaciones, excepciones y negociaciones. El agente las entrega con el contexto adjunto y una persona decide."
+      }
+    ],
+    "exampleHeading": "Facturas de proveedores, paso a paso",
+    "exampleLead": "Cómo clasifica el método un proceso típico de cuentas a pagar.",
+    "exampleNote": "Ejemplo ilustrativo del método, no un proyecto con un cliente.",
+    "exampleSteps": [
+      {
+        "step": "Imprimir cada factura para un archivo de aprobación en papel",
+        "bucket": "Eliminar"
+      },
+      {
+        "step": "Copiar la factura en una segunda hoja de seguimiento",
+        "bucket": "Eliminar"
+      },
+      {
+        "step": "Leer las facturas en PDF que llegan al buzón compartido",
+        "bucket": "Un agente"
+      },
+      {
+        "step": "Extraer el proveedor, los importes y el número de pedido",
+        "bucket": "Un agente"
+      },
+      {
+        "step": "Cuadrar la factura con su pedido y su albarán",
+        "bucket": "Código simple"
+      },
+      {
+        "step": "Averiguar por qué no ha cuadrado y reunir las pruebas",
+        "bucket": "Un agente"
+      },
+      {
+        "step": "Enviar un recordatorio a los aprobadores",
+        "bucket": "Código simple"
+      },
+      {
+        "step": "Aprobar una excepción que supera la tolerancia",
+        "bucket": "Una persona"
+      },
+      {
+        "step": "Preparar el fichero de la remesa de pagos",
+        "bucket": "Código simple"
+      },
+      {
+        "step": "Aprobar la remesa de pagos",
+        "bucket": "Una persona"
+      }
+    ],
     "stepsHeading": "Cómo es un proyecto con nosotros",
-    "stepsLead": "Tu equipo nos explica cómo se hace hoy el trabajo. Nosotros nos ocupamos del diseño, la construcción y la operación de los agentes.",
+    "stepsLead": "Tú nos das acceso al trabajo y a las personas que lo hacen. Nosotros nos ocupamos de mapear, construir y medir.",
     "steps": [
       {
-        "title": "Auditoría de oportunidades",
-        "body": "Analizamos tus procesos y detectamos dónde los agentes eliminan más trabajo manual y más esperas. Recibes una lista priorizada con el esfuerzo que requiere cada uno."
+        "title": "Mapear el proceso real",
+        "body": "Las entrevistas, los registros de los sistemas y los documentos muestran cómo avanza de verdad el trabajo, con sus bucles y sus esperas."
       },
       {
-        "title": "Diseño del proceso",
-        "body": "Rediseñamos el proceso en torno a los agentes: qué deciden, qué pasan a una persona y con qué sistemas y reglas de tu empresa trabajan."
+        "title": "Fijar el punto de partida",
+        "body": "Antes de construir nada, medimos el volumen, el tiempo de ciclo, el tiempo de espera y las excepciones, para poder comparar el resultado con la situación actual."
       },
       {
-        "title": "Puesta en producción",
-        "body": "Los agentes se ponen en marcha dentro de tus herramientas actuales, con los permisos que tu equipo ya tiene. Tus datos se quedan donde están."
+        "title": "Clasificar y construir",
+        "body": "Eliminamos lo que no debería existir, escribimos código simple para las reglas fijas y construimos agentes para los pasos que requieren criterio. Cada proceso tiene un único responsable en tu equipo."
       },
       {
-        "title": "Mejora continua",
-        "body": "Revisamos cada ejecución, ajustamos las reglas de decisión y damos a los agentes más partes del proceso a medida que demuestran ser fiables."
-      }
-    ],
-    "outcomesHeading": "Qué cambia para tu equipo",
-    "outcomes": [
-      {
-        "title": "Menos coordinación manual",
-        "body": "Los agentes persiguen aprobaciones, cuadran registros y actualizan sistemas, y tu gente dedica el día a las decisiones que la necesitan."
-      },
-      {
-        "title": "Un trabajo que no se detiene",
-        "body": "Los agentes atienden cada caso en cuanto llega, a cualquier hora, en lugar de dejarlo en la cola de alguien hasta el lunes."
-      },
-      {
-        "title": "Margen para crecer con el equipo que tienes",
-        "body": "Asume más volumen sin contratar al mismo ritmo y reserva los nuevos puestos para el trabajo que debe hacer una persona."
-      }
-    ],
-    "areasHeading": "Dónde empiezan los agentes",
-    "areasLead": "Empezamos donde el trabajo es repetitivo, sigue reglas claras y está repartido entre varias herramientas.",
-    "areas": [
-      {
-        "title": "Finanzas",
-        "body": "Cuentas a pagar y a cobrar, conciliaciones, cierre mensual y previsión de tesorería."
-      },
-      {
-        "title": "Operaciones de ventas",
-        "body": "Calidad de los datos del CRM, aprobación de operaciones, informes de pipeline y control de comisiones."
-      },
-      {
-        "title": "Compras",
-        "body": "Alta de proveedores, aprobación de pedidos, seguimiento de contratos y comunicación con proveedores."
-      },
-      {
-        "title": "Cumplimiento y riesgos",
-        "body": "Seguimiento normativo, evidencias para auditorías, vigilancia de políticas y pruebas de controles."
-      },
-      {
-        "title": "Atención al cliente",
-        "body": "Clasificación de tickets, incidencias en pedidos, cambios en cuentas y gestión de escalados."
-      },
-      {
-        "title": "Logística",
-        "body": "Incidencias en envíos, señales de demanda, evaluación de proveedores y alertas de inventario."
+        "title": "Medir y ampliar",
+        "body": "Volvemos a medir las mismas cifras. Cuando el proceso se sostiene, pasamos al siguiente."
       }
     ],
     "systemsHeading": "Sobre los sistemas que ya utilizas",
@@ -91,11 +289,11 @@
     "systems": [
       {
         "title": "Conectados a tus herramientas",
-        "body": "Los agentes trabajan a través de las API de tu ERP, tu CRM, tu herramienta de soporte, tus bases de datos y tus plataformas de datos."
+        "body": "Los agentes trabajan a través de las API de tu ERP, tu CRM, tu herramienta de soporte y tus plataformas de datos, solo con los permisos que tú les concedes."
       },
       {
-        "title": "Accesos bajo tu control",
-        "body": "Los agentes actúan solo con los permisos que tú les concedes y respetan tus políticas de seguridad."
+        "title": "Decide una persona",
+        "body": "Los agentes preparan cada caso y se detienen en la decisión. Las aprobaciones y las excepciones van a la persona responsable de ellas."
       },
       {
         "title": "Un registro de cada acción",
@@ -107,15 +305,15 @@
     "faqs": [
       {
         "q": "¿Qué pasa en la llamada de diagnóstico?",
-        "a": "Es una sesión de trabajo. Repasamos cómo gestiona hoy tu equipo sus procesos, dónde se va el tiempo y qué procesos son buenos candidatos para los agentes. Sales con una lista corta de oportunidades y un calendario aproximado, trabajemos juntos o no."
+        "a": "Elegimos un proceso y trazamos cómo funciona de verdad: quién interviene, dónde esperan los casos y dónde vuelven atrás. Sales con una primera idea de qué pasos eliminar, cuáles automatizar y cuáles dejar en manos de una persona, trabajemos juntos o no."
       },
       {
         "q": "¿Cuánto se tarda en poner en marcha el primer agente?",
-        "a": "La mayoría de los primeros despliegues llevan entre 6 y 12 semanas desde el diagnóstico hasta producción. El plazo depende de la complejidad del proceso y de cuántos sistemas toca."
+        "a": "Depende del proceso y de cuántos sistemas toca. Acordamos un calendario cuando el proceso está mapeado y fijamos el punto de partida antes de construir nada."
       },
       {
         "q": "¿Qué pueden hacer exactamente los agentes?",
-        "a": "Leen y actualizan tus sistemas, analizan datos, aplican tus reglas de negocio, gestionan aprobaciones, preparan informes y coordinan el trabajo entre herramientas. Cuando un caso necesita a una persona, se lo pasan con todo el contexto."
+        "a": "Leen documentos y mensajes, actualizan tus sistemas, comprueban cada caso con tus reglas y reúnen las pruebas para tomar una decisión. Después se detienen y pasan la decisión a una persona, con todo el contexto."
       },
       {
         "q": "¿Funcionan los agentes con las herramientas que ya tenemos?",
@@ -123,23 +321,23 @@
       },
       {
         "q": "¿Cuánto tiempo le llevará a nuestro equipo?",
-        "a": "Cuenta con unas 20 horas en todo el proyecto, sobre todo para explicarnos cómo se trabaja hoy y revisar el diseño con nosotros. La construcción y el despliegue corren de nuestra cuenta."
+        "a": "La mayor parte se concentra al principio, en entrevistas sobre cómo se trabaja de verdad, y después en revisiones breves del diseño. La construcción y la operación corren de nuestra cuenta."
       },
       {
         "q": "¿Cómo tratáis la seguridad y los datos?",
         "a": "Los agentes funcionan dentro de tus permisos y políticas de seguridad actuales, y cada acción queda registrada y es auditable. Podemos trabajar bajo tu acuerdo de tratamiento de datos."
       },
       {
-        "q": "¿Pueden los agentes seguir nuestras propias reglas?",
-        "a": "Sí. Cada despliegue se diseña en torno a tus procesos, tus sistemas y tus reglas de funcionamiento, y tú apruebas el diseño antes de que nada entre en producción."
+        "q": "¿Cómo sabéis que ha funcionado?",
+        "a": "Medimos el proceso antes de construir: volumen, tiempo de ciclo, tiempo de espera y excepciones. Tras la puesta en marcha volvemos a medir lo mismo y te enseñamos la comparación."
       },
       {
         "q": "¿Cómo funcionan los precios?",
         "a": "Dependen de la complejidad del proceso, los sistemas implicados y el alcance del despliegue. Después de la llamada de diagnóstico te enviamos una propuesta por escrito."
       }
     ],
-    "ctaHeading": "Descubre dónde encajan los agentes de IA en tu empresa",
-    "ctaLead": "Reserva una llamada con nuestro equipo. Revisaremos juntos tus procesos y te mostraremos dónde pueden marcar más diferencia los agentes desde el principio.",
+    "ctaHeading": "Descubre cómo es de verdad tu proceso.",
+    "ctaLead": "Reserva una llamada y trae un proceso. Lo mapeamos contigo y te enseñamos dónde están las esperas.",
     "ctaButton": "Reserva una llamada de diagnóstico"
   },
   "contact": {
@@ -175,7 +373,7 @@
   "seo": {
     "home": {
       "title": "{{name}} | Agentes de IA a medida para las operaciones de tu empresa",
-      "description": "Diseñamos, construimos y operamos agentes de IA a medida que asumen el trabajo repetitivo de finanzas, ventas y operaciones, dentro de tus herramientas."
+      "description": "Mapeamos cómo funcionan de verdad tus procesos de back office, eliminamos los pasos que sobran y operamos agentes de IA dentro de tus herramientas."
     },
     "blog": {
       "title": "Blog: agentes de IA en operaciones reales | {{name}}",

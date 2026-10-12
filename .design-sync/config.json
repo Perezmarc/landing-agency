@@ -26,6 +26,7 @@
     "Select": "packages/ui/src/Select.jsx",
     "Switch": "packages/ui/src/Switch.jsx",
     "SegmentedControl": "packages/ui/src/SegmentedControl.jsx",
+    "Tabs": "packages/ui/src/Tabs.jsx",
     "Card": "packages/ui/src/Card.jsx",
     "Chip": "packages/ui/src/Chip.jsx",
     "Modal": "packages/ui/src/Modal.jsx",

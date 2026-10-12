@@ -4,8 +4,18 @@ import forge from '@forge/manifest'
 
 /* The site: landing, blog, contact, legal.
  *
- * STATIC, ON THE APEX DOMAIN. It ships no application bundle, talks to no
- * backend, and every page is HTML on disk before a request arrives.
+ * STATIC, ON THE APEX DOMAIN. Every page is HTML on disk before a request
+ * arrives and nothing talks to a backend. The landing page ships ONE script,
+ * its motion module (src/motion/), as a hashed file under /_astro/; every
+ * other page ships none.
+ *
+ * Two build settings keep that script and the CSS out of the HTML, because
+ * the Content-Security-Policy (vercel.json) allows `script-src 'self'` only:
+ *   - assetsInlineLimit: 0 — Vite would otherwise inline a small script (or
+ *     asset) into the page, and an inline script is blocked by the CSP.
+ *   - inlineStylesheets: 'never' — styles stay in hashed files too.
+ * Don't enable Astro's experimental CSP: its hashes switch off
+ * 'unsafe-inline', which the custom-property style attributes need.
  *
  * `site` is read from the manifest, so canonical URLs, the sitemap and the
  * hreflang pairs all resolve against the same origin as everything else.
@@ -27,6 +37,8 @@ export default defineConfig({
     // A directory per route with an index.html inside, so a static host serves
     // /contact without a rewrite and the URL carries no extension.
     format: 'directory',
+    inlineStylesheets: 'never',
   },
+  vite: { build: { assetsInlineLimit: 0 } },
   devToolbar: { enabled: false },
 })
