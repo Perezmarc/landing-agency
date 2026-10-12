@@ -129,7 +129,7 @@
   translate: -50% -50%;
 }
 @media (max-aspect-ratio: 1/1) {
-  /* Portrait: the 9:16 rendition, anchored to the stage's bottom. Its crystal
+  /* Portrait: the 9:16 rendition, anchored to the stage's bottom. Its pebble
      is centred at 80% of its height (build-media.mjs PORTRAIT), below the
      copy; on a phone the box is exactly the stage, and on a wider portrait
      screen the white top is what gets cropped. */
@@ -183,9 +183,9 @@
 }
 /* The headline follows the image: over the raw rock the first line (the
    claim: how much time the team could be saving) is black; once the polished
-   crystal shows, the second ("then hand the steps to agents") is. The
+   pebble shows, the second ("then hand the steps to agents") is. The
    default is the AFTER, like the poster. During the clip the switch waits for
-   the crystal to appear. */
+   the pebble to appear. */
 .mk-hero-line { transition: color var(--dur-hero-fade) var(--ease-out); }
 .mk-hero-line--lead { color: var(--mute); }
 .mk-hero-line--main { color: var(--ink); }
@@ -201,7 +201,7 @@
 .mk-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 34px; }
 
 @media (max-aspect-ratio: 1/1) {
-  /* Portrait: the copy sits in the white upper part of the stage, the crystal
+  /* Portrait: the copy sits in the white upper part of the stage, the pebble
      centred below it (its frame was composed for this). */
   .mk-hero-copy { justify-content: flex-start; padding-top: calc(68px + 3svh); }
   .mk-hero-copy > * { max-width: none; }
@@ -209,7 +209,7 @@
   .mk-hero-lead { font-size: 15.5px; margin-top: 16px; }
   .mk-hero-actions { margin-top: 22px; }
 }
-/* Short phones (iPhone SE and the like): tighten the copy so the crystal
+/* Short phones (iPhone SE and the like): tighten the copy so the pebble
    still shows below the buttons. */
 @media (max-aspect-ratio: 1/1) and (max-height: 700px) {
   .mk-hero-copy { padding-top: calc(60px + 2svh); }
@@ -357,11 +357,13 @@
    duration alone (labelLines in data/week.js), never from the screen.
    --start / --len are minutes (inline: data). 38 slots is 08:00 to 17:30.
 
-   Both cards are position: relative and clip nothing at their edges, so a
-   later layer can sit over the BEFORE card's top border and around the AFTER
-   card. Keep it that way: no overflow, clip-path or mask on .mk-cal or its
-   ancestors. */
-.mk-day { --slot: 14px; --day-slots: 38; --head-h: 24px; --hours-w: 40px; }
+   Both cards are position: relative, make no stacking context and clip
+   nothing at their edges, so the water (below) can sit over the BEFORE
+   card's top border and behind and around the AFTER card. Keep it that way:
+   no overflow, clip-path, mask, z-index, transform, opacity or isolation on
+   .mk-cal or the ancestors inside the section. The section itself clips
+   sideways only, so the AFTER water never widens the page. */
+.mk-day { --slot: 14px; --day-slots: 38; --head-h: 24px; --hours-w: 40px; overflow-x: clip; }
 .mk-day-tabs .ui-tabs-strip { width: max-content; }
 .mk-day-meta { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px; margin-top: 8px; }
 .mk-day-role { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
@@ -446,6 +448,73 @@
 /* motion/calendar.js: a copy of an eliminated BEFORE task, placed in the
    AFTER card for the length of the animation, then removed. */
 .mk-task--ghost { pointer-events: none; transform-origin: 50% 50%; }
+
+/* The water (motion/water.js, media tier only): a looping clip in each card,
+   created by JS, so the CSS default is the calendar without it. Each clip
+   carries, as custom properties from media.json, its aspect (--water-ar) and
+   the box in its frame that is fitted to the card (--water-l/t/r/b,
+   fractions of the frame). Both are graded to white.
+   BEFORE: ON the card, multiplied, so only the water shows. The fit box is
+   the slab the water falls on: it spans the card's border box with its top
+   edge on the card's top border. A percentage margin is a fraction of the
+   card's width, which is how the clip's top is set from its own height. The
+   mask keeps --water-above of streams over the border and fades the drips
+   out within --water-below, clear of the chips' labels.
+   AFTER: BEHIND the card (z-index -1 in a card that makes no stacking
+   context, so it paints under the card's white). The fit box (the inner
+   edges of the two sheets running down the slab, and the slab's top and
+   bottom) is stretched onto the card's box, widened by --water-gap each
+   side, so the sheets run just outside the side borders. The mask fades the
+   stream in above the card and out below it. */
+.mk-cal-water {
+  position: absolute;
+  max-width: none;          /* base.css caps media at its container */
+  pointer-events: none;
+  object-fit: fill;
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+.mk-cal-water.is-ready { opacity: 1; }
+.mk-cal-water--before {
+  --water-above: 56px;
+  --water-below: 100px;
+  --w: calc((100% + 2px) / (var(--water-r) - var(--water-l)));
+  z-index: 1;
+  top: -1px;
+  left: calc(-1px - var(--water-l) * var(--w));
+  width: var(--w);
+  aspect-ratio: var(--water-ar);
+  margin-top: calc(-1 * var(--water-t) * var(--w) / var(--water-ar));
+  mix-blend-mode: multiply;
+  mask-image: linear-gradient(to bottom,
+    transparent calc(var(--water-t) * 100% - var(--water-above)),
+    black calc(var(--water-t) * 100% - var(--water-above) * 0.4),
+    black calc(var(--water-t) * 100% + var(--water-below) * 0.25),
+    transparent calc(var(--water-t) * 100% + var(--water-below)));
+}
+.mk-cal-water--after {
+  --water-gap: 0px;
+  --water-above: 140px;
+  --water-below: 160px;
+  --w: calc((100% + 2 * var(--water-gap)) / (var(--water-r) - var(--water-l)));
+  --h: calc(100% / (var(--water-b) - var(--water-t)));
+  z-index: -1;
+  left: calc(-1 * var(--water-gap) - var(--water-l) * var(--w));
+  width: var(--w);
+  top: calc(-1 * var(--water-t) * var(--h));
+  height: var(--h);
+  mask-image: linear-gradient(to bottom,
+    transparent calc(var(--water-t) * 100% - var(--water-above)),
+    black calc(var(--water-t) * 100% - var(--water-above) * 0.5),
+    black calc(var(--water-b) * 100% + var(--water-below) * 0.4),
+    transparent calc(var(--water-b) * 100% + var(--water-below)));
+}
+/* Stacked weeks: the card is nearly the page's width, with 20px either
+   side, and the sheets scale with it. Tuck them half under the card, so what
+   shows outside fits the margin instead of running off the screen. */
+@media (min-width: 721px) and (max-width: 1179px) {
+  .mk-cal-water--after { --water-gap: -2%; }
+}
 
 /* Side by side: BEFORE left, AFTER right, the same width and the same hour
    axis, so a kept task has the same box in both cards and a level glance

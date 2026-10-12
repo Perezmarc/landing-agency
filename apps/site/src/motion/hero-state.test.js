@@ -35,4 +35,12 @@ describe('the hero state machine', () => {
     expect(next('after', { type: 'snap', y: 0 })).toEqual({ state: 'before', effect: 'snap' })
     expect(next('after', { type: 'snap', y: 900 })).toEqual({ state: 'after', effect: null })
   })
+
+  // Regression: a hash link scrolls through the trigger, then far past the
+  // pin. The crash it started went on, off screen, for the whole 3.75 s clip
+  // before the state reached after.
+  it('ends a crash at once when the scroll leaves the pinned stretch', () => {
+    expect(next('crashing', scroll(450))).toEqual({ state: 'crashing', effect: null })
+    expect(next('crashing', scroll(451))).toEqual({ state: 'after', effect: 'snap' })
+  })
 })

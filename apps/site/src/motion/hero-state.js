@@ -8,7 +8,7 @@
    runs. Going back mid-crash fades back to BEFORE (`reverse` from
    crashing); a new trigger crashes again from the start. Jumps that skip the
    pinned stretch (a fling, a hash link, a restored scroll position) snap
-   straight to the end state with no crash. */
+   straight to the end state with no crash, and end a crash already running. */
 
 export const TRIGGER = 24
 export const REST = 4
@@ -45,5 +45,8 @@ export function next(state, event) {
   }
   // crashing or after: go back only at the very top (hysteresis).
   if (y <= REST) return { state: 'reassembling', effect: 'reverse' }
+  // A crash whose stage has scrolled away (a fling, a hash link passing
+  // through the trigger) ends at once rather than playing on off screen.
+  if (state === 'crashing' && y > event.pinned) return { state: 'after', effect: 'snap' }
   return { state, effect: null }
 }

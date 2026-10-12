@@ -6,9 +6,9 @@
    page; it never scrubs a video.
 
    Layers (marketing.css), bottom to top: the AFTER poster and loop, the
-   transition clip (the raw rock shatters and the polished crystal is left with
+   transition clip (the raw rock shatters and a polished pebble is left with
    one stream), then the BEFORE layer (poster and loop). The transition's first
-   frame is the BEFORE rock and its last is the AFTER crystal, so each swap is
+   frame is the BEFORE rock and its last is the AFTER pebble, so each swap is
    invisible. The server HTML is the AFTER state; this module boots into the
    state for the current scroll position and plays from there.
 
@@ -21,36 +21,12 @@
    its first frames are decoded before the trigger. */
 
 import { next, settledState } from './hero-state.js'
+import { makeVideo, onFrame, play as playOr } from './video.js'
 
 const PORTRAIT = '(max-aspect-ratio: 1/1)'
 const FADE_MS = 400      // BEFORE fading back in; the poster-only crash
 const START_MS = 700     // the crash clip must be presenting frames by then
 const AFTER_LEAD_MS = 250 // the AFTER loop starts this long before the crash ends
-
-function makeVideo(sources, className, loop = true) {
-  const v = document.createElement('video')
-  v.className = `mk-hero-layer mk-hero-video ${className}`
-  Object.assign(v, { muted: true, loop, playsInline: true, disablePictureInPicture: true, disableRemotePlayback: true, preload: 'auto' })
-  v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true'); v.tabIndex = -1
-  for (const [type, src] of [['video/webm; codecs="av01.0.05M.08"', sources.webm], ['video/mp4', sources.mp4]]) {
-    const s = document.createElement('source'); s.src = src; s.type = type; v.append(s)
-  }
-  // Show a clip only once a frame is decoded; if play() is refused (iOS Low
-  // Power Mode, in-app webviews), the posters stay.
-  onFrame(v, () => v.classList.add('is-ready'))
-  return v
-}
-
-/** Call `fn` once `v` presents a frame (where there is no frame callback: once
-    it has data and its clock moves, or it is paused on decoded data). */
-function onFrame(v, fn) {
-  if ('requestVideoFrameCallback' in v) { v.requestVideoFrameCallback(() => fn()); return }
-  const check = () => {
-    if (v.readyState < 2 || (!v.paused && v.currentTime === 0)) return
-    v.removeEventListener('timeupdate', check); v.removeEventListener('loadeddata', check); fn()
-  }
-  v.addEventListener('timeupdate', check); v.addEventListener('loadeddata', check)
-}
 
 /** @param {HTMLElement} hero @param {{ motion: boolean, media: boolean }} tier */
 export function initHero(hero, tier) {
@@ -74,10 +50,11 @@ export function initHero(hero, tier) {
   function loadVideos() {
     if (!tier.media || videos) return
     const r = portrait.matches ? 'p' : 'l'
+    const layer = 'mk-hero-layer mk-hero-video'
     videos = {
-      before: makeVideo(data.before[r], 'mk-hero-video--before'),
-      transition: makeVideo(data.transition[r], 'mk-hero-transition', false),
-      after: makeVideo(data.after[r], 'mk-hero-video--after'),
+      before: makeVideo(data.before[r], `${layer} mk-hero-video--before`),
+      transition: makeVideo(data.transition[r], `${layer} mk-hero-transition`, false),
+      after: makeVideo(data.after[r], `${layer} mk-hero-video--after`),
     }
     beforeLayer.append(videos.before)
     media.querySelector('.mk-hero-poster--after').after(videos.after, videos.transition)
@@ -89,12 +66,10 @@ export function initHero(hero, tier) {
     priming = true
     t.play().then(() => { if (priming) { priming = false; t.pause(); t.currentTime = 0 } }, () => { priming = false })
   }
-  // A refused play() (Low Power Mode, a webview) drops the clip for good and
-  // leaves the poster. An AbortError is not a refusal: a pause() cut a pending
-  // play() short, and the clip must stay for the next time it is needed.
+  // A refused play() drops the clip for good and leaves the poster (an
+  // AbortError is not a refusal: video.js).
   function play(v) {
-    v?.play().catch((e) => {
-      if (e?.name === 'AbortError') return
+    if (v) playOr(v, () => {
       v.remove()
       if (videos) for (const k of Object.keys(videos)) if (videos[k] === v) videos[k] = null
     })

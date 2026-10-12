@@ -2,10 +2,30 @@
   "$comment": "Written by scripts/media/build-media.mjs. Do not edit by hand.",
   "hero": {
     "16x9": {
-      "transition": 2.46
+      "transition": 3.75
     },
     "9x16": {
-      "transition": 2.46
+      "transition": 3.75
+    }
+  },
+  "cards": {
+    "before": {
+      "aspect": 2.3881,
+      "fit": {
+        "left": 0,
+        "top": 0.3953,
+        "right": 1,
+        "bottom": 1.4093
+      }
+    },
+    "after": {
+      "aspect": 1.0441,
+      "fit": {
+        "left": 0.1296,
+        "top": 0.1956,
+        "right": 0.862,
+        "bottom": 0.7897
+      }
     }
   },
   "stones": {

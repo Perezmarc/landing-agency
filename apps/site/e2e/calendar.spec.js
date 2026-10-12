@@ -188,7 +188,12 @@ test('after the animation settles, the calendar matches the no-JS markup', async
       await expect(card(page, 'after').locator('.mk-task--ghost').first()).toBeAttached()
     }
     await expect(card(page, 'after').locator('.mk-task--ghost')).toHaveCount(0, { timeout: 4000 })
-    const html = await panel(page).evaluate(el => el.outerHTML)
+    // The water (motion/water.js) is a layer on top of the cards, not their markup.
+    const html = await panel(page).evaluate((el) => {
+      const copy = el.cloneNode(true)
+      copy.querySelectorAll('.mk-cal-water').forEach(v => v.remove())
+      return copy.outerHTML
+    })
     await page.close()
     return html
   }

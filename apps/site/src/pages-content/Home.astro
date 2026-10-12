@@ -8,10 +8,11 @@
  * engagement works → built on your systems → FAQ → final CTA. Every CTA books
  * a call.
  *
- * The art direction is one image: rain on a raw crystal that becomes polished,
- * with the water leaving it as one calm stream. See docs/LANDING-DESIGN.md.
+ * The art direction is one image: rain on a raw crystal that shatters into a
+ * polished pebble, with the water leaving it as one calm stream; the calendar
+ * picks the water up on its two cards. See docs/LANDING-DESIGN.md.
  * The server HTML is the final, no-JS state: the AFTER poster and the calendar
- * after. The one <script> at the bottom adds the motion on top.
+ * after, with no video. The one <script> at the bottom adds the motion on top.
  *
  * There are no case studies, logos, testimonials or numbers here because
  * none exist yet. The calendar and the invoice walkthrough are illustrations
@@ -47,6 +48,10 @@ import transitionLWebm from '../media/hero-transition-16x9.webm?url'
 import transitionLMp4 from '../media/hero-transition-16x9.mp4?url'
 import transitionPWebm from '../media/hero-transition-9x16.webm?url'
 import transitionPMp4 from '../media/hero-transition-9x16.mp4?url'
+import cardBeforeWebm from '../media/card-before.webm?url'
+import cardBeforeMp4 from '../media/card-before.mp4?url'
+import cardAfterWebm from '../media/card-after.webm?url'
+import cardAfterMp4 from '../media/card-after.mp4?url'
 
 const stoneFiles = import.meta.glob('../media/stones/*.webp', { eager: true, import: 'default' })
 
@@ -82,6 +87,12 @@ const heroData = JSON.stringify({
   after: { l: { webm: afterLWebm, mp4: afterLMp4 }, p: { webm: afterPWebm, mp4: afterPMp4 } },
   transition: { l: { webm: transitionLWebm, mp4: transitionLMp4 }, p: { webm: transitionPWebm, mp4: transitionPMp4 } },
   duration: media.hero['16x9'].transition,
+})
+// The calendar's water (motion/water.js): each clip and the box in it that
+// the page fits to its card.
+const waterData = JSON.stringify({
+  before: { webm: cardBeforeWebm, mp4: cardBeforeMp4, ...media.cards.before },
+  after: { webm: cardAfterWebm, mp4: cardAfterMp4, ...media.cards.after },
 })
 
 const stone = async (name) => (await getImage({ src: stoneFiles[`../media/stones/${name}.webp`], format: 'webp', width: 160 })).src
@@ -138,7 +149,7 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
         </h2>
         <p class="mk-lead">{day.lead}</p>
       </div>
-      <div data-day>
+      <div data-day data-water={waterData}>
         <WeekCompare copy={day} locale={locale} />
       </div>
     </div>
