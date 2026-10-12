@@ -89,8 +89,12 @@ export function initHero(hero, tier) {
     priming = true
     t.play().then(() => { if (priming) { priming = false; t.pause(); t.currentTime = 0 } }, () => { priming = false })
   }
+  // A refused play() (Low Power Mode, a webview) drops the clip for good and
+  // leaves the poster. An AbortError is not a refusal: a pause() cut a pending
+  // play() short, and the clip must stay for the next time it is needed.
   function play(v) {
-    v?.play().catch(() => {
+    v?.play().catch((e) => {
+      if (e?.name === 'AbortError') return
       v.remove()
       if (videos) for (const k of Object.keys(videos)) if (videos[k] === v) videos[k] = null
     })

@@ -100,6 +100,8 @@ test('after the animation settles, the calendar matches the no-JS markup', async
     await page.goto(HOME)
     await page.locator('#day').scrollIntoViewIfNeeded()
     await page.locator('.mk-day label', { hasText: COPY.teams.procurement.name }).click()
+    // A team chosen with its AFTER card below the fold plays once the card is in view.
+    await card(page, 'after').evaluate(el => el.scrollIntoView({ block: 'center' }))
     if (javaScriptEnabled) {
       // The animation really ran: the AFTER card briefly holds the eliminated tasks.
       await expect(card(page, 'after').locator('.mk-task--ghost').first()).toBeAttached()
@@ -110,4 +112,27 @@ test('after the animation settles, the calendar matches the no-JS markup', async
     return html
   }
   expect(await snapshot(true)).toBe(await snapshot(false))
+})
+
+/* Regression: the animation started when a quarter of the whole section was
+   visible, while the AFTER card (its second half) was still below the fold,
+   so nobody saw it. It must start only once the AFTER card is on screen. */
+test('the AFTER card empties itself while it is on screen', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(routePath('home', forge.locales.default), { waitUntil: 'load' })
+  await page.evaluate(() => {
+    window.__ghostAt = null
+    new MutationObserver(() => {
+      if (window.__ghostAt !== null) return
+      const ghost = document.querySelector('.mk-task--ghost')
+      if (!ghost) return
+      const card = ghost.closest('[data-cal="after"]').getBoundingClientRect()
+      window.__ghostAt = { top: card.top, bottom: card.bottom, vh: window.innerHeight }
+    }).observe(document.body, { childList: true, subtree: true })
+  })
+  const target = await page.evaluate(() => document.querySelector('[data-day]').getBoundingClientRect().top + window.scrollY + 2000)
+  for (let y = 0; y <= target; y += 120) { await page.evaluate(y => window.scrollTo(0, y), y); await page.waitForTimeout(40) }
+  await expect.poll(() => page.evaluate(() => window.__ghostAt)).not.toBeNull()
+  const at = await page.evaluate(() => window.__ghostAt)
+  expect(at.top).toBeLessThan(at.vh * 0.75)
 })

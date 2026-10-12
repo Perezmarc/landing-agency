@@ -143,6 +143,47 @@ test.describe('on an iPhone-like browser', () => {
   })
 })
 
+/* Regression: pause() while a play() is still pending rejects that promise
+   with AbortError. Treating it as a refusal deleted the loop for the rest of
+   the visit, so back at the top the rock was a still. Slow the BEFORE clip so
+   its play() is still pending when the crash pauses it. */
+test('a loop whose play() is cut short by a pause is kept, and plays again later', async ({ page }) => {
+  await page.route(/hero-before-[^/]*\.(webm|mp4)/, async (route) => {
+    await new Promise(r => setTimeout(r, 2500)); await route.continue()
+  })
+  await page.goto(HOME, { waitUntil: 'load' })
+  await expect.poll(() => heroState(page)).toBe('before')
+  await expect(page.locator('video.mk-hero-video--before')).toHaveCount(1)
+  await page.evaluate(() => window.scrollTo(0, 100))
+  await expect.poll(() => heroState(page), { timeout: 8000 }).toBe('after')
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await expect.poll(() => heroState(page), { timeout: 4000 }).toBe('before')
+  await expect(page.locator('video.mk-hero-video--before')).toHaveCount(1)
+  await expect.poll(async () => (await playhead(page, 'video.mk-hero-video--before'))?.moved, { timeout: 8000 }).toBe(true)
+})
+
+/* Short landscape screens (a phone on its side, a small laptop window): the
+   stage is sticky and clips, so copy that overflows it can never be scrolled
+   to. Every line and both buttons must sit between the header and the stage
+   bottom. */
+for (const [width, height] of [[844, 390], [667, 375], [1280, 600]]) {
+  test(`the hero copy fits a ${width}x${height} screen in every language`, async ({ page }) => {
+    await page.setViewportSize({ width, height })
+    for (const locale of forge.locales.published) {
+      await page.goto(routePath('home', locale), { waitUntil: 'load' })
+      const box = await page.evaluate(() => {
+        const header = document.querySelector('header').getBoundingClientRect().bottom
+        const copy = document.querySelector('.mk-hero-copy')
+        const first = copy.firstElementChild.getBoundingClientRect().top
+        const last = copy.querySelector('.mk-hero-actions').getBoundingClientRect().bottom
+        return { header, first, last, stage: document.querySelector('.mk-hero-stage').getBoundingClientRect().bottom }
+      })
+      expect(box.first, locale).toBeGreaterThanOrEqual(box.header)
+      expect(box.last, locale).toBeLessThanOrEqual(box.stage)
+    }
+  })
+}
+
 test.describe('reduced motion', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } })
   test('no video and no media requests', async ({ page }) => {

@@ -93,8 +93,8 @@ poster crossfade, a snap, a hash link, a page restored from the cache) plays
 that state's loop, so the AFTER is never left a still when a video exists.
 
 The headline follows the image: over the raw rock (BEFORE, and on the way
-back) its first line ("Find how the work really runs.") is black and the
-second grey; once the polished crystal shows, the second line is black and the
+back) its first line ("Find out how much time your whole team could be
+saving.") is black and the second grey; once the polished crystal shows, the second line is black and the
 first grey. The server HTML, like the poster, is the AFTER.
 
 Going back fades the BEFORE layer in over `--dur-hero-fade` (400 ms). Devices

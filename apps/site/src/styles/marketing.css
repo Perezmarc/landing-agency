@@ -166,7 +166,9 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* safe: if the copy is ever taller than the stage it overflows the bottom,
+     never up under the header. */
+  justify-content: safe center;
   padding-top: 68px;
 }
 .mk-hero-copy > * { max-width: min(560px, 42%); }
@@ -181,8 +183,9 @@
 }
 /* The headline follows the image: over the raw rock the first line (the
    claim: how much time the team could be saving) is black; once the polished
-   crystal shows, the second ("then hand the steps to agents") is. The default is the AFTER, like the
-   poster. During the clip the switch waits for the crystal to appear. */
+   crystal shows, the second ("then hand the steps to agents") is. The
+   default is the AFTER, like the poster. During the clip the switch waits for
+   the crystal to appear. */
 .mk-hero-line { transition: color var(--dur-hero-fade) var(--ease-out); }
 .mk-hero-line--lead { color: var(--mute); }
 .mk-hero-line--main { color: var(--ink); }
@@ -213,6 +216,21 @@
   .mk-hero h1 { font-size: clamp(26px, 6.6vw, 40px); margin-top: 10px; }
   .mk-hero-lead { font-size: 14.5px; line-height: 1.5; margin-top: 12px; }
   .mk-hero-actions { margin-top: 16px; }
+}
+/* Short landscape screens (a phone on its side, a small laptop window): the
+   stage is sticky and clips, so the copy must fit between the header and the
+   stage bottom. A wider column and smaller type; the lead goes on the very
+   shortest, where it cannot fit with the buttons. */
+@media (min-aspect-ratio: 1/1) and (max-height: 720px) {
+  .mk-hero-copy { padding-top: 76px; padding-bottom: 12px; }
+  .mk-hero-copy > * { max-width: min(600px, 54%); }
+  .mk-hero h1 { font-size: clamp(24px, 3.4vw, 42px); margin-top: 10px; }
+  .mk-hero-lead { font-size: 14.5px; line-height: 1.5; margin-top: 12px; }
+  .mk-hero-actions { margin-top: 18px; }
+}
+@media (min-aspect-ratio: 1/1) and (max-height: 440px) {
+  .mk-hero-lead { display: none; }
+  .mk-hero h1 { font-size: clamp(22px, 3vw, 30px); }
 }
 
 /* ═══════════ STONES ═══════════

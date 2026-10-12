@@ -7,15 +7,18 @@
    move. Opacity and transform only.
 
      0–250 ms     the AFTER card shows the full week
-     250–1400 ms  the eliminated tasks fade out, earliest slot first
+     250–1550 ms  the eliminated tasks fade out, earliest slot first
 
-   Plays the first time a panel comes into view, and when a tab is chosen.
-   If the section is already on screen at boot it shows the final state: a
-   final → first → final flash is worse than no animation. index.js only
-   loads this on tiers with motion. */
+   Plays when the chosen team's AFTER card is well on screen (SEEN of it
+   visible), the first time it gets there and whenever a tab is chosen while
+   it is there. A tab chosen with the card off screen plays when the card
+   scrolls in. If the card is already on screen at boot it shows the final
+   state: a final → first → final flash is worse than no animation. index.js
+   only loads this on tiers with motion. */
 
 const EASE = 'cubic-bezier(0.22, 0.61, 0.2, 1)'
 const HOLD = 250, SWEEP = 700, DAY_STEP = 40, FADE = 420
+const SEEN = 0.4
 
 function clear(card) {
   card.getAnimations({ subtree: true }).forEach(a => a.cancel())
@@ -52,19 +55,31 @@ export function initCalendar(root) {
   // Browsers restore form state: read the checked radio, not the default.
   const checked = () => tabs.querySelector('.ui-tabs-input:checked')?.value
 
-  const played = new Set()
-  const top = root.getBoundingClientRect().top
-  if (top < window.innerHeight && top > -root.offsetHeight) played.add(checked())
+  const cardOf = value => panelOf(value)?.querySelector('[data-cal="after"]')
+  const seen = card => {
+    const r = card.getBoundingClientRect()
+    const visible = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0)
+    return r.height > 0 && visible >= SEEN * Math.min(r.height, window.innerHeight)
+  }
 
-  const io = new IntersectionObserver(([e]) => {
+  const played = new Set()
+  const first = cardOf(checked())
+  if (first && seen(first)) played.add(checked())
+
+  // Fine thresholds, because a card taller than the screen never reaches SEEN
+  // of its own height; seen() measures against the screen instead.
+  const io = new IntersectionObserver((entries) => {
     const value = checked()
-    if (e.isIntersecting && !played.has(value)) { played.add(value); play(panelOf(value)) }
-  }, { threshold: 0.25 })
-  io.observe(root)
+    for (const e of entries) {
+      if (e.target === cardOf(value) && !played.has(value) && seen(e.target)) { played.add(value); play(panelOf(value)) }
+    }
+  }, { threshold: [0.1, 0.2, 0.3, 0.4, 0.6, 0.8] })
+  for (const card of root.querySelectorAll('[data-cal="after"]')) io.observe(card)
 
   tabs.addEventListener('change', () => {
-    const value = checked(), panel = panelOf(value)
-    played.add(value)
-    if (panel) play(panel)
+    const value = checked(), card = cardOf(value)
+    if (!card) return
+    if (seen(card)) { played.add(value); play(panelOf(value)) }
+    else played.delete(value)
   })
 }

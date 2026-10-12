@@ -32,7 +32,8 @@ so it carries no comments; the reasons are here.
 - The CSP's `connect-src` is the site itself, because there is no backend. The
   landing page's one module script and its media are same-origin files.
   `'unsafe-inline'` in `style-src` is for style attributes that carry data as
-  CSS custom properties (calendar positions, the hero video box); scripts stay `'self'`.
+  CSS custom properties (the calendar's task positions); scripts stay
+  `'self'`.
 - Hashed files under `/_astro/` are immutable, so they are cached for a year.
   The HTML is not, or a deploy would stay invisible until a cache expired.
 
