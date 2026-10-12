@@ -24,7 +24,7 @@ to specific elements, never as a continuous line down the page.)
 ## Page order
 
 1. Hero: the crash.
-2. A day, before and after: six team tabs.
+2. A week, before and after: six team tabs.
 3. The problem: "Your process document is not your process."
 4. How we find the real process.
 5. Sort every step.
@@ -78,19 +78,46 @@ that get no video crossfade the two posters instead.
 
 ## The calendar
 
+"We are taking tasks off your week": two calendars, stacked, on one time
+axis. **BEFORE** ("Today") lists every task of the week, the decisions
+included. **AFTER** ("With an agent") is the same calendar minus the
+eliminated tasks: the kept ones stay in exactly the same day and slot, with
+the same colour, and every eliminated task leaves an empty space. Nothing is
+added, moved or condensed; the empty grid is the message.
+
+- **Week or day, by CSS alone.** From 721px up, five day columns (Mon–Fri)
+  share one hour axis. At 720px and below (the site's mobile breakpoint) a
+  phone shows Monday alone, so Monday holds every category in every team
+  (`week.test.js`). Weekday names come from `Intl.DateTimeFormat` (short,
+  pinned dates, UTC), so they need no catalog strings.
+- **Chips.** Near-black (`--task-chip`, white text at 18:1) with a solid
+  4px left bar in the category's colour: manual work blue, chasing amber,
+  waiting pink, decision green (`--cat-*` in `tokens.css`, each above 6:1
+  against the chip). A legend with the same swatches sits above the cards;
+  the category is also in each chip's screen-reader text.
+- **Scale.** One 15-minute slot is `--slot` tall and is exactly one label
+  line, so a chip's line clamp (`--lines`, inline) depends on its duration
+  only. Every task lasts at least 30 minutes.
+- **Data.** `apps/site/src/data/week.js`: per team, a catalog of tasks (id,
+  category, kept) and a Monday-to-Friday schedule. Labels are in
+  `home.day.teams.<team>.blocks`, categories in `home.day.kinds`. Decisions
+  are always kept and waiting is never kept.
+- **Motion** (`motion/calendar.js`, motion tiers only). The server HTML is
+  the final AFTER. On reveal or a tab change, the eliminated tasks are copied
+  from BEFORE into the same AFTER slots, then fade and collapse out, earliest
+  slot first, and are removed: the end state is the no-JS DOM.
+- **Surfaces.** Both cards are plain white cards, `position: relative`, with
+  nothing clipped at their edges, so a later water layer can splash over the
+  BEFORE card's top border and flow around the AFTER card.
 - Native radio tabs (`@forge/ui` `Tabs`) work without JavaScript.
-- The AFTER card is frosted glass.
-- No ancestor of that card may carry an opacity, filter, mask, clip-path,
-  `mix-blend-mode` or `will-change`, or the glass stops seeing through.
-- The FLIP animation runs in `motion/calendar.js`.
-- The days are illustrations (`apps/site/src/data/day.js`) with no totals,
-  hours or percentages, and the page says so on every tab.
+- The weeks are illustrations with no totals, hours or percentages, and the
+  page says so on every tab.
 
 ## Fallbacks
 
 | Case | What the visitor sees |
 |---|---|
-| No JS | The AFTER poster, the stones (their float is CSS), the final calendar. |
+| No JS | The AFTER poster, the stones (their float is CSS), the final calendar (week or day by width). |
 | Reduced motion | Posters with a crossfade instead of the crash, still stones, no videos, no reveals. |
 | Save-Data, 2g or a weak device | Motion, but posters only: no video requests; the crash is a poster crossfade. |
 

@@ -99,8 +99,9 @@ test.describe('with JavaScript off', () => {
     await expect(page.locator('[data-hero]')).toHaveAttribute('data-hero-state', 'after')
     // Every clip is created by motion/; the server HTML is posters only.
     await expect(page.locator('video')).toHaveCount(0)
-    const after = page.locator('.ui-tabs-panel:visible [data-day-after]')
-    await expect(after).not.toHaveClass(/is-first/)
-    await expect(after.locator('.blk--person').first()).toBeVisible()
+    const after = page.locator('.ui-tabs-panel:visible [data-cal="after"]')
+    await expect(after.locator('.mk-task--ghost')).toHaveCount(0)
+    await expect(after.locator('.mk-task[data-kept="false"]')).toHaveCount(0)
+    await expect(after.locator('.mk-task[data-kept="true"]').first()).toBeVisible()
   })
 })

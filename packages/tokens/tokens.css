@@ -107,20 +107,25 @@
   --mk-dark:        #14151c;
   --mk-light:       #f3f3f5;
 
-  /* Frosted glass — the AFTER calendar card and the "built on your systems" cards.
-     --glass-bg-solid is the fallback where backdrop-filter is unsupported or
-     too costly (narrow screens, low-tier devices). */
+  /* Frosted glass — the "built on your systems" cards. --glass-bg-solid is
+     the fallback where backdrop-filter is unsupported or too costly (narrow
+     screens, low-tier devices). */
   --glass-bg:       rgba(255, 255, 255, 0.55);
   --glass-bg-solid: rgba(255, 255, 255, 0.9);
   --glass-line:     rgba(22, 22, 26, 0.08);
   --glass-blur:     16px;
 
-  /* The calendar's block material: solid work, outlined chasing, hatched
-     waiting. The hatch is a pattern, so it lives here with its ink. */
-  --blk-work:       #e9e6e0;
-  --blk-line:       rgba(22, 22, 26, 0.18);
-  --hatch-ink:      rgba(22, 22, 26, 0.12);
-  --hatch:          repeating-linear-gradient(135deg, transparent 0 5px, var(--hatch-ink) 5px 6px);
+  /* The week calendar's tasks: a near-black chip with white text (18:1),
+     and one saturated colour per category as a solid bar on the chip. The
+     bars are checked against the chip, not the page (all above 6:1); they
+     are used on the calendar only. Blue/amber/pink/green stay apart for the common colour-vision
+     deficiencies, and the category is also in each chip's text. */
+  --task-chip:      var(--ink);
+  --task-chip-ink:  #ffffff;
+  --cat-work:       #4c9fff;
+  --cat-chase:      #f9ad26;
+  --cat-wait:       #fb55b1;
+  --cat-decide:     #30d882;
 
   /* ═══════════ SCALE — shape, elevation, motion ═══════════ */
 
@@ -149,11 +154,10 @@
   --ease-out:    cubic-bezier(0.22, 0.61, 0.2, 1);
 
   /* The landing page's motion: the hero's crossfades (back to BEFORE, and the
-     crash on devices without video), content reveals and the calendar
-     re-arranging. The crash itself is a video clip, timed by its file. */
+     crash on devices without video) and content reveals. The crash itself
+     is a video clip, timed by its file. */
   --dur-hero-fade: 400ms;
   --dur-reveal:    600ms;
-  --dur-calendar:  1600ms;
 
   /* ═══════════ TYPE ═══════════
      Inter Tight, self-hosted above, with the system stack behind it. Nothing

@@ -2,7 +2,7 @@
 /* The landing page.
  *
  * Section order is the argument: the hero (find how the work really runs,
- * then hand the repetitive steps to agents) → a day, before and after → the
+ * then hand the repetitive steps to agents) → a week, before and after → the
  * problem (the documented process is not the real one) → how we find the real
  * process → sort every step → one process sorted, as an illustration → how an
  * engagement works → built on your systems → FAQ → final CTA. Every CTA books
@@ -24,7 +24,7 @@
  */
 import { getImage } from 'astro:assets'
 import Base from '../layouts/Base.astro'
-import DayCompare from '../components/DayCompare.jsx'
+import WeekCompare from '../components/WeekCompare.jsx'
 import { Button, Ico } from '@forge/ui'
 import forge from '@forge/manifest'
 import { CATALOGS, useTranslations, useList } from '@forge/i18n'
@@ -139,7 +139,7 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
         <p class="mk-lead">{day.lead}</p>
       </div>
       <div data-day>
-        <DayCompare copy={day} locale={locale} />
+        <WeekCompare copy={day} locale={locale} />
       </div>
     </div>
   </section>

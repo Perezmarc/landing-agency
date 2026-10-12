@@ -23,22 +23,19 @@
     "ctaPrimary": "Reserva una llamada de diagnóstico",
     "ctaSecondary": "Cómo trabajamos",
     "day": {
-      "headingLead": "Un día, antes y después.",
+      "headingLead": "Una semana, antes y después.",
       "heading": "El mismo trabajo, con la parte repetitiva en manos de un agente.",
-      "lead": "Elige un equipo. A la izquierda tienes un día normal de hoy. A la derecha, el mismo día cuando un agente prepara el trabajo y una persona toma las decisiones.",
+      "lead": "Elige un equipo. El primer calendario es una semana normal de hoy, con todas sus tareas. El segundo es la misma semana cuando un agente se encarga del trabajo repetitivo. Las decisiones siguen en su sitio y los huecos son trabajo que ya no necesita a una persona.",
       "teamLegend": "Elige un equipo",
       "beforeTitle": "Hoy",
       "afterTitle": "Con un agente",
-      "personLane": "Tú",
-      "agentLane": "Agente",
-      "agentList": "Lo que ha preparado el agente",
       "kinds": {
         "work": "Trabajo manual",
         "chase": "Reclamar",
         "wait": "Espera",
         "decide": "Decisión"
       },
-      "note": "Ejemplo ilustrativo de un día normal, no el resultado de un cliente.",
+      "note": "Ejemplo ilustrativo de una semana normal, no el resultado de un cliente.",
       "teams": {
         "finance": {
           "name": "Finanzas",
@@ -52,15 +49,11 @@
             "b6": "Volver a reclamar las aprobaciones",
             "b7": "Montar la hoja de cálculo de la remesa de pagos",
             "b8": "Contestar correos de «¿dónde está mi pago?»",
-            "d1": "Revisar las excepciones que ha preparado el agente",
+            "d1": "Decidir qué hacer con las facturas que no cuadran",
             "d2": "Aprobar la remesa de pagos",
             "d3": "Negociar condiciones de pronto pago con un proveedor clave",
             "d4": "Corregir la causa de la excepción más frecuente",
-            "d5": "Preparar el cierre de mes",
-            "a1": "Lee el buzón, extrae las facturas y las cuadra",
-            "a2": "Reclama los pedidos que faltan y registra las respuestas",
-            "a3": "Reúne cada excepción con su política y su historial",
-            "a4": "Prepara un borrador del fichero de la remesa de pagos"
+            "d5": "Preparar el cierre de mes"
           }
         },
         "revenueOps": {
@@ -75,15 +68,11 @@
             "b6": "Comprobar las comisiones con las operaciones cerradas",
             "b7": "Esperar a que el departamento jurídico devuelva un contrato",
             "b8": "Responder a comerciales que preguntan por qué una operación está parada",
-            "d1": "Revisar las operaciones que ha marcado el agente",
+            "d1": "Revisar las operaciones que corren el riesgo de retrasarse",
             "d2": "Decidir sobre las solicitudes de descuento fuera de lo estándar",
             "d3": "Formar a un equipo comercial en la precisión de las previsiones",
             "d4": "Corregir la regla de asignación que atasca la mayoría de las operaciones",
-            "d5": "Preparar la revisión trimestral del pipeline",
-            "a1": "Fusiona duplicados y completa los campos que faltan en el CRM",
-            "a2": "Reúne cada aprobación con el historial de la operación",
-            "a3": "Prepara el informe de pipeline cada mañana",
-            "a4": "Cruza las comisiones con las operaciones cerradas"
+            "d5": "Preparar la revisión trimestral del pipeline"
           }
         },
         "procurement": {
@@ -98,15 +87,11 @@
             "b6": "Hacer seguimiento de las entregas con retraso",
             "b7": "Esperar la confirmación de un proveedor",
             "b8": "Actualizar el registro de renovaciones de contratos",
-            "d1": "Aprobar los proveedores que ha preparado el agente",
+            "d1": "Aprobar el alta de nuevos proveedores",
             "d2": "Aprobar las compras que superan el umbral",
             "d3": "Negociar condiciones con un proveedor estratégico",
             "d4": "Decidir qué contratos se renuevan",
-            "d5": "Arreglar el formulario de solicitud que más trabajo obliga a rehacer",
-            "a1": "Convierte las peticiones por correo en solicitudes de compra",
-            "a2": "Recoge y revisa los documentos de los proveedores",
-            "a3": "Pone los presupuestos uno al lado del otro",
-            "a4": "Reclama las entregas a los proveedores y registra las respuestas"
+            "d5": "Arreglar el formulario de solicitud que más trabajo obliga a rehacer"
           }
         },
         "compliance": {
@@ -122,14 +107,10 @@
             "b7": "Esperar la respuesta de una unidad de negocio",
             "b8": "Actualizar la hoja de cálculo de controles",
             "d1": "Decidir qué cambios normativos requieren actuar",
-            "d2": "Revisar las excepciones que ha encontrado el agente",
+            "d2": "Decidir sobre las excepciones a la política",
             "d3": "Acordar un plan de corrección con el responsable de un control",
             "d4": "Responder a las preguntas pendientes del auditor",
-            "d5": "Preparar el informe para el comité de riesgos",
-            "a1": "Resume las novedades del regulador por tema",
-            "a2": "Solicita y archiva las evidencias de auditoría",
-            "a3": "Comprueba cada gasto con la política",
-            "a4": "Reclama las declaraciones y registra las respuestas"
+            "d5": "Preparar el informe para el comité de riesgos"
           }
         },
         "customerOps": {
@@ -144,15 +125,11 @@
             "b6": "Tramitar solicitudes de reembolso y sustitución",
             "b7": "Esperar a que finanzas apruebe un reembolso",
             "b8": "Copiar las notas de los tickets en el informe semanal",
-            "d1": "Revisar los escalados que ha preparado el agente",
+            "d1": "Decidir cómo resolver los casos escalados",
             "d2": "Aprobar reembolsos fuera de la política",
             "d3": "Llamar a un cliente clave por un problema recurrente",
             "d4": "Corregir la causa del ticket más frecuente",
-            "d5": "Orientar al equipo en los casos difíciles",
-            "a1": "Etiqueta y asigna cada ticket",
-            "a2": "Reúne el historial de pedidos y de la cuenta para cada caso",
-            "a3": "Aplica los cambios rutinarios en las cuentas",
-            "a4": "Prepara un borrador del informe semanal"
+            "d5": "Orientar al equipo en los casos difíciles"
           }
         },
         "logistics": {
@@ -167,15 +144,11 @@
             "b6": "Reclamar a los proveedores los avisos de envío",
             "b7": "Esperar la respuesta de un proveedor",
             "b8": "Montar la hoja de cálculo de evaluación de proveedores",
-            "d1": "Decidir cómo recuperar los envíos retrasados que ha marcado el agente",
+            "d1": "Decidir cómo recuperar los envíos retrasados",
             "d2": "Aprobar un transporte urgente",
             "d3": "Revisar el rendimiento con un proveedor clave",
             "d4": "Corregir el paso de reserva que causa más retrasos",
-            "d5": "Planificar la capacidad de la semana que viene",
-            "a1": "Sigue cada envío en los portales de los transportistas",
-            "a2": "Reclama a transportistas y proveedores y registra las respuestas",
-            "a3": "Actualiza el ERP y avisa a atención al cliente",
-            "a4": "Prepara la evaluación de proveedores"
+            "d5": "Planificar la capacidad de la semana que viene"
           }
         }
       }

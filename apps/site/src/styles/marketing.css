@@ -298,106 +298,109 @@
 }
 .mk-glass-card h3 { font-size: 17px; font-weight: 500; letter-spacing: -0.015em; margin-top: 12px; }
 .mk-glass-card p { font-size: 14.5px; color: var(--mute); line-height: 1.65; margin-top: 8px; }
-
-/* ═══════════ A DAY, BEFORE AND AFTER ═══════════
-   Two calendars on one time axis. Blocks are placed by --start / --len
-   (minutes, inline: data) times --min-px (the scale, responsive, here). The
-   AFTER card is frosted glass over the rail, so its empty time shows the
-   stream. NOTHING between the AFTER card and the page may carry an opacity,
-   filter, mask, clip-path, mix-blend-mode or will-change, or the card's
-   backdrop-filter stops seeing what is behind it. */
-.mk-day { --min-px: 1.05px; --lane-gap: 8px; --agent-w: 46px; }
-.mk-day-tabs .ui-tabs-strip { width: max-content; }
-.mk-day-role { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; margin-top: 8px; }
-.mk-day-note { font-family: var(--font-mono); font-size: 12px; color: var(--mute); margin-top: 4px; }
-.mk-day-cals { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; margin-top: 24px; align-items: start; }
-
-.mk-cal { min-width: 0; border-radius: var(--r-lg); padding: 18px 18px 20px; }
-.mk-cal--before { background: var(--surface-2); border: 1px solid var(--line-2); }
-.mk-cal--after {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-line);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-}
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .mk-cal--after, .mk-glass-card { background: var(--glass-bg-solid); }
+  .mk-glass-card { background: var(--glass-bg-solid); }
 }
-.mk-cal-title { font-size: 13px; font-weight: 500; letter-spacing: -0.005em; }
-.mk-cal-lanes {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--agent-w);
-  gap: var(--lane-gap);
-  margin: 8px 0 0 48px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--mute);
+
+/* ═══════════ A WEEK, BEFORE AND AFTER ═══════════
+   Two calendars, stacked, on one time axis: BEFORE with every task, AFTER
+   with the kept ones in the same slots and empty space where the rest were.
+   Five day columns from 721px up; a phone shows the first day (Monday) only.
+
+   One 15-minute slot is --slot tall and is exactly one label line, so a chip
+   of N slots holds N−1 lines (--lines, inline, from the duration alone) at
+   any screen size. --start / --len are minutes (inline: data). 38 slots is
+   08:00 to 17:30.
+
+   Both cards are position: relative and clip nothing at their edges, so a
+   later layer can sit over the BEFORE card's top border and around the AFTER
+   card. Keep it that way: no overflow, clip-path or mask on .mk-cal or its
+   ancestors. */
+.mk-day { --slot: 14px; --day-slots: 38; --head-h: 24px; --hours-w: 40px; }
+.mk-day-tabs .ui-tabs-strip { width: max-content; }
+.mk-day-meta { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px; margin-top: 8px; }
+.mk-day-role { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
+.mk-day-note { font-family: var(--font-mono); font-size: 12px; color: var(--mute); margin-top: 4px; }
+.mk-cal-legend { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--ink-2); }
+.mk-cal-key { display: inline-flex; align-items: center; gap: 7px; }
+.mk-cal-key::before {
+  content: "";
+  width: 16px; height: 12px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--cat) 0 4px, var(--task-chip) 4px);
 }
-.mk-cal-lanes span:last-child { color: var(--accent-ink); }
-.mk-cal-body {
+.mk-day-cals { display: grid; gap: 20px; margin-top: 20px; }
+
+.mk-cal {
   position: relative;
-  margin-top: 12px;
-  height: calc(570 * var(--min-px));   /* 08:00 to 17:30 */
-  background-image: repeating-linear-gradient(to bottom, var(--line-2) 0 1px, transparent 1px calc(60 * var(--min-px)));
+  min-width: 0;
+  padding: 18px 20px 20px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--elev-1);
 }
-.mk-cal-hours { position: absolute; inset: 0 auto 0 0; width: 44px; }
+.mk-cal-title { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
+.mk-cal-grid { display: grid; grid-template-columns: var(--hours-w) repeat(5, minmax(0, 1fr)); column-gap: 6px; margin-top: 10px; }
+.mk-cal-hours { position: relative; margin-top: var(--head-h); }
 .mk-cal-hour {
   position: absolute;
-  top: calc(var(--start) * var(--min-px) - 7px);
+  top: calc(var(--start) / 15 * var(--slot) - 7px);
   font-family: var(--font-mono);
   font-size: 10.5px;
   color: var(--mute-2);
   font-variant-numeric: tabular-nums;
 }
-.mk-cal-track { list-style: none; padding: 0; position: absolute; inset: 0 0 0 48px; }
+.mk-cal-day { min-width: 0; }
+.mk-cal-dayname {
+  height: var(--head-h);
+  padding-left: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--mute);
+  text-transform: capitalize;
+}
+.mk-cal-track {
+  list-style: none;
+  padding: 0;
+  position: relative;
+  height: calc(var(--day-slots) * var(--slot));
+  border-radius: 6px;
+  background-color: var(--surface-2);
+  background-image: repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px calc(4 * var(--slot)));
+}
 
-/* A block: an outer box that moves, a fill that can condense, a label that
-   can fade. --lane-x / --lane-w say where its lane is. */
-.blk {
+/* A task: a near-black chip with its category's colour as a solid left bar.
+   The same treatment in both cards, so a kept task looks identical AFTER. */
+.mk-task--work   { --cat: var(--cat-work); }
+.mk-task--chase  { --cat: var(--cat-chase); }
+.mk-task--wait   { --cat: var(--cat-wait); }
+.mk-task--decide { --cat: var(--cat-decide); }
+.mk-task {
   position: absolute;
-  top: calc(var(--start) * var(--min-px) + 1px);
-  height: calc(var(--len) * var(--min-px) - 2px);
-  left: var(--lane-x, 0px);
-  width: var(--lane-w, 100%);
-  padding: 5px 8px;
+  left: 0; right: 0;
+  top: calc(var(--start) / 15 * var(--slot) + 1px);
+  height: calc(var(--len) / 15 * var(--slot) - 2px);
+  padding: 3px 6px 0 10px;
+  border-radius: 6px;
+  background: var(--task-chip);
+  color: var(--task-chip-ink);
   overflow: hidden;
 }
-.blk-fill { position: absolute; inset: 0; border-radius: 7px; transform-origin: 0 0; }
-.blk-label { position: relative; display: block; font-size: 12px; line-height: 1.3; }
-.blk--work .blk-fill { background: var(--blk-work); }
-.blk--chase .blk-fill { border: 1px dashed var(--blk-line); background: var(--surface); }
-.blk--wait .blk-fill { background: var(--hatch), var(--surface); border: 1px solid var(--line); }
-.blk--wait .blk-label { color: var(--mute); font-style: italic; }
-/* AFTER: decisions in the wide "You" lane, white with a sage dot. */
-.blk--person { --lane-w: calc(100% - var(--agent-w) - var(--lane-gap)); }
-.blk--person .blk-fill { background: var(--surface); border: 1px solid var(--line); box-shadow: var(--elev-1); }
-.blk--person .blk-label { padding-left: 12px; }
-.blk--person .blk-label::before {
-  content: "";
-  position: absolute;
-  left: 0; top: 5px;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
+.mk-task::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--cat); }
+.mk-task-label {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--lines);
+  line-clamp: var(--lines);
+  overflow: hidden;
+  font-size: 11.5px;
+  line-height: var(--slot);
 }
-/* AFTER: what moved to the agent, condensed into thin sage bars. */
-.blk--agent { --lane-x: calc(100% - var(--agent-w)); --lane-w: var(--agent-w); }
-.blk--agent .blk-fill { background: var(--accent-soft); border: 1px solid var(--accent-line); border-radius: 5px; }
-.blk--agent .blk-label { opacity: 0; }
-/* AFTER: the waiting evaporated. Present for the animation, invisible. */
-.blk--gone { opacity: 0; }
-
-/* The FIRST frame of the AFTER animation looks like BEFORE: the agent blocks
-   full width in the person lane, the waiting back, the decisions not yet. */
-.mk-cal--after.is-first .blk--agent { --lane-x: 0px; --lane-w: 100%; }
-.mk-cal--after.is-first .blk--agent .blk-label { opacity: 1; }
-.mk-cal--after.is-first .blk--agent .blk-fill { background: var(--blk-work); border-color: transparent; }
-.mk-cal--after.is-first .blk--gone { opacity: 1; }
-.mk-cal--after.is-first .blk--person { opacity: 0; }
-
-.mk-cal-agent { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--glass-line); }
-.mk-cal-agent-title { font-family: var(--font-mono); font-size: 11px; font-weight: 400; color: var(--accent-ink); }
-.mk-cal-agent ul { list-style: none; padding: 0; margin-top: 6px; display: grid; gap: 4px; font-size: 13px; color: var(--ink-2); }
+.mk-task--wait .mk-task-label { font-style: italic; }
+/* motion/calendar.js: a copy of an eliminated BEFORE task, placed in the
+   AFTER card for the length of the animation, then removed. */
+.mk-task--ghost { pointer-events: none; transform-origin: 50% 50%; }
 
 /* ═══════════ FAQ ═══════════ */
 .mk-faq { display: flex; flex-direction: column; max-width: 78ch; }
@@ -448,7 +451,7 @@
 
 /* ═══════════ REVEAL ═══════════
    Set by motion/reveal.js on blocks that start below the fold; removed when
-   they enter. Never applied to the calendar (it would break the glass). */
+   they enter. */
 .mk-reveal-pending { opacity: 0; translate: 0 12px; }
 .mk-reveal-in { transition: opacity var(--dur-reveal) var(--ease-out), translate var(--dur-reveal) var(--ease-out); }
 
@@ -562,12 +565,13 @@
   /* Hero and final CTAs stack: full width comes from the column, NOT from
      <Button block> (a block button inside a flex row crushes its siblings). */
   .mk-hero-actions, .mk-final-actions { flex-direction: column; align-items: stretch; }
-  /* The calendars stack, BEFORE then AFTER, full width; the glass goes nearly
-     opaque here (blur is costly on small GPUs and the stream is beside it). */
-  .mk-day-cals { grid-template-columns: minmax(0, 1fr); }
-  .mk-cal--after { background: var(--glass-bg-solid); backdrop-filter: none; -webkit-backdrop-filter: none; }
-  .mk-day { --min-px: 0.9px; }
+  /* The calendars become one day: the first column (Monday) on a wider axis. */
+  .mk-day { --slot: 16px; }
   .mk-day-tabs .ui-tabs-strip { width: auto; }
+  .mk-cal { padding: 16px 14px 16px; }
+  .mk-cal-grid { grid-template-columns: var(--hours-w) minmax(0, 1fr); }
+  .mk-cal-day + .mk-cal-day { display: none; }
+  .mk-task-label { font-size: 12.5px; }
 }
 
 /* ═══════════ REDUCED MOTION ═══════════
