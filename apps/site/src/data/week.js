@@ -32,6 +32,15 @@ export function minutes(hhmm) {
   return h * 60 + m
 }
 
+/** How many label lines a chip of `len` minutes holds, at the calendar's two
+    scales (marketing.css): `stacked`, where one label line is one slot tall,
+    and `dense` (the weeks side by side), where a line is three quarters of a
+    slot. The chip loses about a quarter of a slot to its padding and gap. */
+export function labelLines(len) {
+  const slots = len / WEEK.step
+  return { stacked: Math.max(1, slots - 1), dense: Math.max(1, Math.floor((4 * slots - 1) / 3)) }
+}
+
 /** Every occurrence of a team's week, flat: { task, day, start, end }. */
 export function occurrences(team) {
   return team.schedule.flatMap((list, day) => list.map(([task, start, end]) => ({ task, day, start, end })))

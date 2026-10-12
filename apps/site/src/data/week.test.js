@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { CATALOGS, DEFAULT_LOCALE } from '@forge/i18n'
-import { WEEK, TEAMS, minutes, occurrences } from './week.js'
+import { WEEK, TEAMS, minutes, occurrences, labelLines } from './week.js'
 
 /* The weeks are illustrations, so these tests guard three things: that the
    structure and the copy stay in step (every id has its string, in every
@@ -96,5 +96,23 @@ describe('the team weeks', () => {
         expect(text, `${locale}: "${text}"`).not.toMatch(/\d+\s*(%|h\b|hours?|horas?|ore\b)/i)
       }
     }
+  })
+})
+
+describe('labelLines', () => {
+  /* marketing.css: a chip is len/15 slots tall, minus a 2px gap and its top
+     padding (about a quarter of a slot together). Stacked, a line is one slot;
+     side by side (dense), three quarters of one. */
+  it('gives each chip as many whole lines as fit its height, at both scales', () => {
+    for (const len of [30, 45, 60, 75, 90, 105, 120]) {
+      const slots = len / WEEK.step, room = slots - 0.25, { stacked, dense } = labelLines(len)
+      expect(stacked, `${len} stacked`).toBe(slots - 1)
+      expect(dense * 0.75, `${len} dense`).toBeLessThanOrEqual(room)
+      expect((dense + 1) * 0.75, `${len} dense`).toBeGreaterThan(room)
+    }
+  })
+
+  it('shows a half-hour task on one line stacked and on two side by side', () => {
+    expect(labelLines(30)).toEqual({ stacked: 1, dense: 2 })
   })
 })

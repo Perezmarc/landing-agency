@@ -345,14 +345,17 @@
 }
 
 /* ═══════════ A WEEK, BEFORE AND AFTER ═══════════
-   Two calendars, stacked, on one time axis: BEFORE with every task, AFTER
-   with the kept ones in the same slots and empty space where the rest were.
-   Five day columns from 721px up; a phone shows the first day (Monday) only.
+   Two calendars on one time scale: BEFORE with every task, AFTER with the
+   kept ones in the same slots and empty space where the rest were.
+     ≥1180px     side by side, BEFORE left, five day columns each (below)
+     721–1179px  stacked, five day columns each
+     ≤720px      stacked, the first day (Monday) only
 
-   One 15-minute slot is --slot tall and is exactly one label line, so a chip
-   of N slots holds N−1 lines (--lines, inline, from the duration alone) at
-   any screen size. --start / --len are minutes (inline: data). 38 slots is
-   08:00 to 17:30.
+   Stacked, one 15-minute slot is --slot tall and is exactly one label line,
+   so a chip of N slots holds N−1 lines (--lines). Side by side, a line is
+   three quarters of a slot (--lines-dense). Both are inline, from the
+   duration alone (labelLines in data/week.js), never from the screen.
+   --start / --len are minutes (inline: data). 38 slots is 08:00 to 17:30.
 
    Both cards are position: relative and clip nothing at their edges, so a
    later layer can sit over the BEFORE card's top border and around the AFTER
@@ -443,6 +446,30 @@
 /* motion/calendar.js: a copy of an eliminated BEFORE task, placed in the
    AFTER card for the length of the animation, then removed. */
 .mk-task--ghost { pointer-events: none; transform-origin: 50% 50%; }
+
+/* Side by side: BEFORE left, AFTER right, the same width and the same hour
+   axis, so a kept task has the same box in both cards and a level glance
+   compares one slot. Each card keeps its own axis on purpose: an axis on the
+   left card only would make the two grids different widths.
+   1180px is measured, not guessed: from there a day column is 96–98px (the
+   1160px wrap caps it) and the share of clipped labels sits at its floor;
+   at 1100px English clips three times as many, at 1024px six times. Below
+   it the stacked weeks keep 170px+ columns. Tighter card, axis and chips
+   (10.5px on 12px lines) fit five columns in half the width. */
+@media (min-width: 1180px) {
+  .mk-day { --slot: 16px; --hours-w: 34px; }
+  .mk-day-cals { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 16px; }
+  .mk-cal { padding: 16px 14px 16px; }
+  .mk-cal-grid { column-gap: 4px; }
+  .mk-cal-hour { font-size: 10px; }
+  .mk-task { padding: 2px 4px 0 8px; border-radius: 5px; }
+  .mk-task-label {
+    -webkit-line-clamp: var(--lines-dense);
+    line-clamp: var(--lines-dense);
+    font-size: 10.5px;
+    line-height: calc(var(--slot) * 0.75);
+  }
+}
 
 /* ═══════════ FAQ ═══════════ */
 .mk-faq { display: flex; flex-direction: column; max-width: 78ch; }

@@ -118,26 +118,48 @@ iPhone SE the second button overlaps its top).
 
 ## The calendar
 
-"We are taking tasks off your week": two calendars, stacked, on one time
-axis. **BEFORE** ("Today") lists every task of the week, the decisions
+"We are taking tasks off your week": two calendars on one time scale, side
+by side on a desktop. **BEFORE** ("Today") lists every task of the week, the decisions
 included. **AFTER** ("With an agent") is the same calendar minus the
 eliminated tasks: the kept ones stay in exactly the same day and slot, with
 the same colour, and every eliminated task leaves an empty space. Nothing is
 added, moved or condensed; the empty grid is the message.
 
-- **Week or day, by CSS alone.** From 721px up, five day columns (Mon–Fri)
-  share one hour axis. At 720px and below (the site's mobile breakpoint) a
-  phone shows Monday alone, so Monday holds every category in every team
-  (`week.test.js`). Weekday names come from `Intl.DateTimeFormat` (short,
-  pinned dates, UTC), so they need no catalog strings.
+- **Layout, by CSS alone.** Three widths:
+  - **1180px and up: side by side.** BEFORE left, AFTER right, tops level,
+    each a full Mon–Fri week with its own hour axis. Both cards are the same
+    width on the same scale, so a kept task has the same box in both and a
+    level line through a time meets the same slot left and right. (An axis
+    on the left card only would make the two grids different widths.)
+  - **721–1179px: stacked weeks**, AFTER below BEFORE, five columns each.
+  - **720px and below** (the site's mobile breakpoint): stacked, Monday
+    alone, so Monday holds every category in every team (`week.test.js`).
+
+  1180px was measured, not guessed. Side by side, a day column is
+  `(card − axis) / 5`: 96–98px from 1180px (the 1160px wrap caps it),
+  88px at 1100px, 80px at 1024px. Across all six teams the share of clipped
+  labels is at its floor from 1180px (English 3–4%, Italian 27–29%, Spanish
+  33%; the long ones end in an ellipsis), and climbs fast below it (English
+  14% at 1100px, 26% at 1024px). Stacked, a tablet keeps 170px+ columns, so
+  the side-by-side view waits for the width that can carry it. 1180px also
+  puts an iPad held landscape on the side-by-side view.
+
+  Weekday names come from `Intl.DateTimeFormat` (short, pinned dates, UTC),
+  so they need no catalog strings.
 - **Chips.** Near-black (`--task-chip`, white text at 18:1) with a solid
   4px left bar in the category's colour: manual work blue, chasing amber,
   waiting pink, decision green (`--cat-*` in `tokens.css`, each above 6:1
   against the chip). A legend with the same swatches sits above the cards;
   the category is also in each chip's screen-reader text.
-- **Scale.** One 15-minute slot is `--slot` tall and is exactly one label
-  line, so a chip's line clamp (`--lines`, inline) depends on its duration
-  only. Every task lasts at least 30 minutes.
+- **Scale.** Stacked, one 15-minute slot is `--slot` tall (14px, 16px on a
+  phone) and is exactly one label line, so a chip's line clamp (`--lines`)
+  depends on its duration only. Side by side the chips are tighter: 16px
+  slots, 10.5px labels on 12px lines (three quarters of a slot), 2/4/0/8px
+  padding, 4px column gaps, a 34px axis, and a denser clamp
+  (`--lines-dense`), so a 30-minute chip shows two lines, a 60-minute one
+  five. Both clamps are inline and come from `labelLines()` in `week.js`
+  (unit-tested), never from the screen. Every task lasts at least 30
+  minutes.
 - **Data.** `apps/site/src/data/week.js`: per team, a catalog of tasks (id,
   category, kept) and a Monday-to-Friday schedule. Labels are in
   `home.day.teams.<team>.blocks`, categories in `home.day.kinds`. Decisions
@@ -145,7 +167,9 @@ added, moved or condensed; the empty grid is the message.
 - **Motion** (`motion/calendar.js`, motion tiers only). The server HTML is
   the final AFTER. On reveal or a tab change, the eliminated tasks are copied
   from BEFORE into the same AFTER slots, then fade and collapse out, earliest
-  slot first, and are removed: the end state is the no-JS DOM.
+  slot first, and are removed: the end state is the no-JS DOM. It plays
+  when 40% of the AFTER card is on screen; side by side both cards are in
+  view together, so the eye sees the left week and the right one emptying.
 - **Surfaces.** Both cards are plain white cards, `position: relative`, with
   nothing clipped at their edges, so a later water layer can splash over the
   BEFORE card's top border and flow around the AFTER card.
@@ -157,7 +181,7 @@ added, moved or condensed; the empty grid is the message.
 
 | Case | What the visitor sees |
 |---|---|
-| No JS | The AFTER poster, the stones (their float is CSS), the final calendar (week or day by width). |
+| No JS | The AFTER poster, the stones (their float is CSS), the final calendar (side by side, stacked weeks or one day, by width). |
 | Reduced motion | Posters with a crossfade instead of the crash, still stones, no videos, no reveals. |
 | Save-Data, 2g, or a device that reports under 4 GB (`deviceMemory`) | Motion, but posters only: no video requests; the crash is a poster crossfade. A browser that reports no memory (Safari, Firefox) gets the clips. |
 | `play()` refused (iOS Low Power Mode) | The posters crossfade; the state and the headline still change. |

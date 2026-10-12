@@ -1,5 +1,5 @@
 import { Tabs } from '@forge/ui'
-import { WEEK, TEAMS, minutes, occurrences } from '../data/week.js'
+import { WEEK, TEAMS, minutes, occurrences, labelLines } from '../data/week.js'
 
 /* "A week, before and after" — six team tabs, each a pair of calendars on one
    time axis: BEFORE with every task of the week, AFTER with only the tasks
@@ -7,17 +7,19 @@ import { WEEK, TEAMS, minutes, occurrences } from '../data/week.js'
 
    Rendered at BUILD time (no client directive), so the server HTML is the
    final state and needs no JavaScript: the kit's Tabs are native radios and
-   CSS shows the checked team's panel. CSS also decides week or day: five day
-   columns on desktop and tablet, the first one alone on a phone.
+   CSS shows the checked team's panel. CSS also decides the layout: the two
+   weeks side by side on a wide screen, stacked weeks on a tablet, and the
+   first day alone, stacked, on a phone.
    motion/calendar.js only animates on top.
 
    It is a React tree rather than Astro slots on purpose: Astro wraps slotted
    children in <astro-static-slot>, which breaks the Tabs' child selectors.
 
    Positioning is data, so it goes inline as custom properties: --start and
-   --len are minutes from the start of the day, --lines is how many label
-   lines the chip holds (one 15-minute slot is one line in marketing.css, so
-   it depends on the duration only, never on the screen). */
+   --len are minutes from the start of the day, --lines and --lines-dense are
+   how many label lines the chip holds at the stacked and the side-by-side
+   scale (labelLines in week.js), so they depend on the duration only, never
+   on the screen. */
 
 const DAY_START = minutes(WEEK.start)
 const DAY_LEN = minutes(WEEK.end) - DAY_START
@@ -35,7 +37,8 @@ function clock(hhmm, locale) {
 
 function place(o) {
   const len = minutes(o.end) - minutes(o.start)
-  return { '--start': minutes(o.start) - DAY_START, '--len': len, '--lines': Math.max(1, len / WEEK.step - 1) }
+  const lines = labelLines(len)
+  return { '--start': minutes(o.start) - DAY_START, '--len': len, '--lines': lines.stacked, '--lines-dense': lines.dense }
 }
 
 function Hours({ locale }) {
