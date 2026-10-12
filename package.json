@@ -18,6 +18,6 @@
     "gen:og": "npm run gen:og --workspace @forge/site"
   },
   "devDependencies": {
-    "turbo": "^2.5.4"
+    "turbo": "^2.11.7"
   }
 }
