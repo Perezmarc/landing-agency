@@ -172,16 +172,16 @@
 .mk-hero-copy > * { max-width: min(560px, 42%); }
 .mk-hero h1 {
   font-family: var(--font-display);
-  font-size: clamp(36px, 4.4vw, 64px);
+  font-size: clamp(34px, 3.6vw, 54px);
   font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 1.02;
   margin-top: 18px;
   text-wrap: balance;
 }
-/* The headline follows the image: over the raw rock the first line ("find how
-   the work really runs") is black; once the polished crystal shows, the second
-   ("then hand the steps to agents") is. The default is the AFTER, like the
+/* The headline follows the image: over the raw rock the first line (the
+   claim: how much time the team could be saving) is black; once the polished
+   crystal shows, the second ("then hand the steps to agents") is. The default is the AFTER, like the
    poster. During the clip the switch waits for the crystal to appear. */
 .mk-hero-line { transition: color var(--dur-hero-fade) var(--ease-out); }
 .mk-hero-line--lead { color: var(--mute); }
@@ -205,6 +205,14 @@
   .mk-hero h1 { font-size: clamp(30px, 7.6vw, 52px); margin-top: 14px; }
   .mk-hero-lead { font-size: 15.5px; margin-top: 16px; }
   .mk-hero-actions { margin-top: 22px; }
+}
+/* Short phones (iPhone SE and the like): tighten the copy so the crystal
+   still shows below the buttons. */
+@media (max-aspect-ratio: 1/1) and (max-height: 700px) {
+  .mk-hero-copy { padding-top: calc(60px + 2svh); }
+  .mk-hero h1 { font-size: clamp(26px, 6.6vw, 40px); margin-top: 10px; }
+  .mk-hero-lead { font-size: 14.5px; line-height: 1.5; margin-top: 12px; }
+  .mk-hero-actions { margin-top: 16px; }
 }
 
 /* ═══════════ STONES ═══════════
