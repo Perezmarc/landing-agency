@@ -19,6 +19,23 @@ There is no backend. "Book a call" is a link (`brand.bookingUrl` in the
 manifest), which is why the site's Content-Security-Policy has no `connect-src`
 beyond itself.
 
+## `apps/site/vercel.json`
+
+Vercel validates this file and rejects a deploy on any key it does not know,
+so it carries no comments; the reasons are here.
+
+- The Vercel project's Root Directory is `apps/site`. It serves static files
+  only.
+- `git.deploymentEnabled.main = false` turns off Vercel's own git deploy for
+  `main`, so `.github/workflows/deploy.yml`, which runs the test suite first,
+  is the only path to production. Pull-request previews are unaffected.
+- The CSP's `connect-src` is the site itself, because there is no backend. The
+  landing page's one module script and its media are same-origin files.
+  `'unsafe-inline'` in `style-src` is for style attributes that carry data as
+  CSS custom properties (positions, stream geometry); scripts stay `'self'`.
+- Hashed files under `/_astro/` are immutable, so they are cached for a year.
+  The HTML is not, or a deploy would stay invisible until a cache expired.
+
 ## Media is built offline, and only its outputs are committed
 
 The landing page's video, posters and stream strip come from

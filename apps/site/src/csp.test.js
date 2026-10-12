@@ -21,3 +21,17 @@ describe('the CSP', () => {
     expect(header('/_astro/(.*)', 'Cache-Control')).toContain('immutable')
   })
 })
+
+describe('vercel.json', () => {
+  /* Vercel validates the file against its schema and rejects the deploy on
+     any unknown key, `$comment` included. The reasons live in
+     docs/ARCHITECTURE.md instead. */
+  const keys = value =>
+    Array.isArray(value) ? value.flatMap(keys)
+      : value && typeof value === 'object' ? Object.entries(value).flatMap(([k, v]) => [k, ...keys(v)])
+        : []
+
+  it('carries no comment keys, which Vercel rejects', () => {
+    expect(keys(vercel).filter(k => k.startsWith('$'))).toEqual([])
+  })
+})
