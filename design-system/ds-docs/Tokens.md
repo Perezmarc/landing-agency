@@ -25,7 +25,7 @@ matter.
 | Dark pair | `--mk-dark` · `--mk-light` | near-black buttons and code blocks, and the light ink on them |
 | Glass | `--glass-bg` · `--glass-bg-solid` · `--glass-line` · `--glass-blur` | frosted cards ("built on your systems"); `-solid` is the no-blur fallback |
 | Calendar | `--task-chip` · `--task-chip-ink` · `--cat-work` · `--cat-chase` · `--cat-wait` · `--cat-decide` | the week calendar's near-black task chips and their category bars |
-| Landing motion | `--dur-hero-fade` · `--dur-reveal` | the hero's crossfades, reveals |
+| Landing motion | `--dur-hero-fade` · `--delay-hero-crystal` · `--dur-reveal` | the hero's crossfades and headline switch, reveals |
 
 The status families come as a set of four for a reason: a status pill needs a
 fill, text that passes contrast **on that fill**, and a border. Picking a

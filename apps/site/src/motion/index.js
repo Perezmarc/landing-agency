@@ -19,9 +19,7 @@ const tier = selectTier({
   reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
   saveData: Boolean(conn.saveData),
   effectiveType: conn.effectiveType,
-  finePointer: matchMedia('(pointer: fine)').matches,
-  cores: navigator.hardwareConcurrency || 4,
-  memory: navigator.deviceMemory || 4,
+  memory: navigator.deviceMemory,
 })
 
 const hero = document.querySelector('[data-hero]')

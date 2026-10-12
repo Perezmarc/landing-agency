@@ -95,13 +95,13 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
     <div class="mk-hero-stage">
       <div class="mk-hero-media" aria-hidden="true">
         <picture class="mk-hero-layer mk-hero-poster mk-hero-poster--after">
-          <source media={PORTRAIT} srcset={posters.after.p.srcSet.attribute} sizes="100vw" type="image/avif" />
+          <source media={PORTRAIT} srcset={posters.after.p.srcSet.attribute} sizes="max(100vw, 56.25vh)" type="image/avif" />
           <img src={posters.after.l.src} srcset={posters.after.l.srcSet.attribute} sizes="max(100vw, 177.78vh)"
                alt="" width={1600} height={900} fetchpriority="high" decoding="async" />
         </picture>
         <div class="mk-hero-layer mk-hero-before" data-hero-before>
           <picture class="mk-hero-layer mk-hero-poster mk-hero-poster--before">
-            <source media={PORTRAIT} srcset={posters.before.p.srcSet.attribute} sizes="100vw" type="image/avif" />
+            <source media={PORTRAIT} srcset={posters.before.p.srcSet.attribute} sizes="max(100vw, 56.25vh)" type="image/avif" />
             <img src={posters.before.l.src} srcset={posters.before.l.srcSet.attribute} sizes="max(100vw, 177.78vh)"
                  alt="" width={1600} height={900} loading="lazy" decoding="async" />
           </picture>
@@ -111,9 +111,9 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
       <div class="mk-wrap mk-hero-copy">
         <span class="mk-eyebrow">{t('home.eyebrow')}</span>
         <h1>
-          <span class="mk-line mk-line--grey">{t('home.headingLead')}</span>
+          <span class="mk-line mk-hero-line mk-hero-line--lead">{t('home.headingLead')}</span>
           {' '}
-          <span class="mk-line">{t('home.heading')}</span>
+          <span class="mk-line mk-hero-line mk-hero-line--main">{t('home.heading')}</span>
         </h1>
         <p class="mk-hero-lead">{t('home.lead')}</p>
         <div class="mk-hero-actions">

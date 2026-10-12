@@ -17,6 +17,8 @@ describe('media.json', () => {
       expect(transition, `${r} transition seconds`).toBeGreaterThan(1)
       expect(transition, `${r} transition seconds`).toBeLessThan(8)
     }
+    // Both renditions are cut from the same crash, trimmed the same way.
+    expect(media.hero['9x16'].transition).toBe(media.hero['16x9'].transition)
   })
 
   it('references only files that exist', () => {

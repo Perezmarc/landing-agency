@@ -155,8 +155,11 @@
 
   /* The landing page's motion: the hero's crossfades (back to BEFORE, and the
      crash on devices without video) and content reveals. The crash itself
-     is a video clip, timed by its file. */
+     is a video clip, timed by its file; --delay-hero-crystal is when, into
+     that clip, the polished crystal shows (the hero headline switches its
+     black line then). */
   --dur-hero-fade: 400ms;
+  --delay-hero-crystal: 700ms;
   --dur-reveal:    600ms;
 
   /* ═══════════ TYPE ═══════════

@@ -20,14 +20,18 @@
         (object weight = smoothstep(|frame − field|, 8, 56), blurred), so the
         crystal and the water keep their tones. Near-white is soft-snapped to
         pure white; exposure is normalised per frame (generated video flickers).
-        Every clip keeps half of the soft overhead light in the top of the frame.
+        Every clip keeps half of the soft overhead light around the crystal
+        (keepRows); a portrait clip's top, under the copy, goes to white.
      2. Loop. The last second is cross-faded into the first, then cut.
      3. Encode AV1 WebM + H.264 MP4 (+faststart, BT.709, closed GOP, no audio),
         and write the first frame as the poster source.
    The hero transition (the crash) is graded and encoded the same way but not
-   looped: it plays once. Portrait hero clips are composed here from the
-   landscape sources (composePortrait), so the crystal and its crash match.
+   looped: it plays once, minus its still head (CRASH_HEAD). All three portrait
+   hero clips are composed here from the landscape ones (composePortrait), so
+   the crystal sits in the same place in each and the cuts stay invisible.
    Then: the stones, and media.json (the crash's duration, the stone counts).
+   The checks also measure the crash's two cuts (PSNR of the frames either
+   side of each).
    ═══════════════════════════════════════════════════════════════════════════ */
 
 import { spawn, spawnSync } from 'node:child_process'
@@ -47,33 +51,57 @@ const SOURCES = JSON.parse(readFileSync(join(HERE, 'sources.json'), 'utf8'))
 
 const FPS = 24
 const LOOP_FADE = FPS            // one second
+/* The crash source holds the unchanged rock for its first 0.58 s: cracks show
+   on frame 14 and the burst on frames 16–18. Dropping the first 13 frames
+   starts the clip one frame before the cracks, still on the BEFORE rock, so
+   the cut from the BEFORE loop stays invisible and the shatter is immediate. */
+const CRASH_HEAD = 13
 const CHECK_ONLY = process.argv.includes('--check')
 
 /* The clips: output name (also the source key) and output size. Landscape is
    encoded at 1600 wide: the media box is max(100vw, 177.78svh), 1600 on a 1440×900 screen. */
 const CLIPS = [
   { name: 'hero-before-16x9', w: 1600, h: 900 },
-  { name: 'hero-transition-16x9', w: 1600, h: 900, once: true },
+  { name: 'hero-transition-16x9', w: 1600, h: 900, once: true, head: CRASH_HEAD },
   { name: 'hero-after-16x9', w: 1600, h: 900 },
-  { name: 'hero-before-9x16', w: 720, h: 1280 },
-  // Composed from the landscape sources; the transition keeps a still rain
-  // band above it, so its flying fragments are never stretched.
-  { name: 'hero-transition-9x16', w: 720, h: 1280, once: true, compose: 'hero-transition-16x9', staticBand: true },
+  // Portrait: all three composed from the landscape clips, so the crystal has
+  // exactly the same place and size in each and every cut stays invisible.
+  { name: 'hero-before-9x16', w: 720, h: 1280, compose: 'hero-before-16x9' },
+  { name: 'hero-transition-9x16', w: 720, h: 1280, once: true, compose: 'hero-transition-16x9', head: CRASH_HEAD },
   { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9' },
 ]
 
 /* ── Portrait composition ────────────────────────────────────────────────────
-   The 9:16 hero frames were composed from the 16:9 stills, not outpainted: the
-   stream leaves at RX of the width, with the crystal about 44% of the width. The portrait BEFORE clip was generated from a frame
-   composed this way; the portrait transition and AFTER are composed here,
-   frame by frame, from the landscape clips (composePortrait). */
-export const PORTRAIT = { W: 1080, H: 1920, RX: 0.76, EXIT: 0.6716, CRYSTAL: 0.39, CW: 0.44, CY: 0.62 }
+   The 9:16 hero frames are composed from the 16:9 clips, not outpainted
+   (outpainting recomposed the scene). The landscape frame is scaled so the
+   crystal is PORTRAIT.W of the portrait width, centred, with its centre at
+   PORTRAIT.Y of the height: below the hero copy and buttons on a phone. At
+   that scale the landscape frame covers the portrait frame's whole width and
+   runs past its bottom, so nothing around or below the crystal is invented;
+   above it, the frame feathers into plain white, where the copy sits.
+   CX, CY, CW: the crystal in the 16:9 frame (centre and width, as fractions of
+   the frame), measured on the AFTER poster; the BEFORE rock sits on it. */
+export const PORTRAIT = { CX: 0.669, CY: 0.505, CW: 0.394, X: 0.5, Y: 0.8, W: 0.61 }
 
-function portraitPlacement() {
-  const { W, H, RX, EXIT, CRYSTAL, CW, CY } = PORTRAIT
-  const sw = Math.round(CW * W / CRYSTAL)
-  const sh = Math.round(sw * 9 / 16)
-  return { sw, sh, left: Math.round(RX * W - EXIT * sw), top: Math.round(CY * H - 0.47 * sh) }
+function portraitPlacement(w, h) {
+  const sw = Math.round(PORTRAIT.W * w / PORTRAIT.CW), sh = Math.round(sw * 9 / 16)
+  const left = Math.round(PORTRAIT.X * w - PORTRAIT.CX * sw), top = Math.round(PORTRAIT.Y * h - PORTRAIT.CY * sh)
+  if (left > 0 || left + sw < w || top < 0 || top + sh < h) throw new Error(`portrait placement leaves the frame uncovered: ${JSON.stringify({ sw, sh, left, top })}`)
+  return { sw, sh, left, top, feather: Math.round(sh * 0.3) }
+}
+
+/* How much of the soft overhead light each row keeps (the rest is graded to
+   white). Landscape: half, in the top 65% of the frame. Portrait: the same,
+   measured inside the placed landscape frame, and none above it, so the hero
+   copy sits on white. */
+function keepRows(clip) {
+  const rows = new Float32Array(clip.h)
+  const pl = clip.compose ? portraitPlacement(clip.w, clip.h) : { top: 0, sh: clip.h, feather: 0 }
+  for (let y = 0; y < clip.h; y++) {
+    const ly = (y - pl.top) / pl.sh
+    rows[y] = ly < 0 ? 0 : 0.5 * (pl.feather ? smoothstep(0, pl.feather / pl.sh, ly) : 1) * (1 - smoothstep(0.45, 0.65, ly))
+  }
+  return rows
 }
 
 /* ── small helpers ───────────────────────────────────────────────────────── */
@@ -120,9 +148,9 @@ function blur(src, w, h, r) {
   return a
 }
 
-/** Every frame of a clip as raw RGB at (w, h). */
-function decodeAll(path, w, h) {
-  const raw = spawnSync('ffmpeg', ['-v', 'error', '-i', path, '-vf', `scale=${w}:${h}:flags=area`, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], { maxBuffer: 2 ** 31 })
+/** Every frame of a clip as raw RGB at (w, h), less the first `head` frames. */
+function decodeAll(path, w, h, head = 0) {
+  const raw = spawnSync('ffmpeg', ['-v', 'error', '-i', path, '-vf', `trim=start_frame=${head},setpts=PTS-STARTPTS,scale=${w}:${h}:flags=area`, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], { maxBuffer: 2 ** 31 })
   if (raw.status !== 0) throw new Error(raw.stderr.toString())
   const size = w * h * 3, frames = []
   for (let i = 0; i + size <= raw.stdout.length; i += size) frames.push(raw.stdout.subarray(i, i + size))
@@ -177,7 +205,7 @@ function upsample(src, sw, sh, w, h) {
 
 /* ── 2. grade one frame ─────────────────────────────────────────────────── */
 
-function gradeFrame(frame, w, h, gain, exposure) {
+function gradeFrame(frame, w, h, gain, exposure, keepRow) {
   const n = w * h, weight = new Float32Array(n)
   for (let p = 0; p < n; p++) {
     let dev = 0
@@ -187,8 +215,7 @@ function gradeFrame(frame, w, h, gain, exposure) {
   const wb = blur(weight, w, h, Math.max(1, Math.round(5 * w / 1920)))
   const out = Buffer.alloc(n * 3)
   for (let y = 0; y < h; y++) {
-    // Keep half of the overhead light in the top 65% of the frame.
-    const keep = 0.5 * (1 - smoothstep(0.45, 0.65, y / h))
+    const keep = keepRow[y]
     for (let x = 0; x < w; x++) {
       const p = y * w + x, voidness = (1 - wb[p]) * (1 - keep)
       let lo = 255
@@ -216,41 +243,30 @@ function encoder(args) {
 }
 
 /* ── portrait composition ───────────────────────────────────────────────────
-   A 16:9 hero clip placed in a 9:16 frame: the frame scaled so its stream
-   leaves at PORTRAIT.RX, the rain band above stretched from its top rows
-   (feathered into the frame), and below it the stream column repeated down a
-   plain ground. Written as a lossless intermediate the grade then reads. */
-async function composePortrait(src, out, { w, h, staticBand = false }) {
-  const k = w / PORTRAIT.W, pl = portraitPlacement()
-  const sw = Math.round(pl.sw * k), sh = Math.round(pl.sh * k), left = Math.round(pl.left * k), top = Math.round(pl.top * k)
-  const frames = decodeAll(src, sw, sh)
-  const x0 = Math.max(0, left), sx0 = Math.max(0, -left), vw = Math.min(sw - sx0, w - x0)
-  const F = Math.round(sh * 0.3), bandH = Math.round(sh * 0.22), rows = Math.round(sh * 0.12)
-  const cx = Math.round(PORTRAIT.EXIT * sw), half = Math.round(sw * 0.02)
-  // The ground under the stream: the first frame's bottom rows, blurred wide.
-  const ground = new Float32Array(sw * 3)
+   A 16:9 hero clip placed in a 9:16 frame (portraitPlacement): cropped at the
+   sides, running past the bottom, and feathered at its top into a still,
+   smooth plate: the first frame's top rows averaged per column and blurred
+   wide, so no rain streak or fragment is ever stretched. The grade then takes
+   that plate to white (keepRows). Written as a lossless intermediate the grade
+   then reads. */
+async function composePortrait(src, out, { w, h, head = 0 }) {
+  const { sw, sh, left, top, feather } = portraitPlacement(w, h)
+  const frames = decodeAll(src, sw, sh, head)
+  const rows = Math.round(sh * 0.04), plate = new Float32Array(sw * 3)
   for (let x = 0; x < sw; x++) for (let c = 0; c < 3; c++) {
     let acc = 0, n = 0
-    for (let dx = -60; dx <= 60; dx++) { const xx = Math.min(sw - 1, Math.max(0, x + dx)); for (let y = sh - 4; y < sh; y++) { acc += frames[0][(y * sw + xx) * 3 + c]; n++ } }
-    ground[x * 3 + c] = acc / n
+    for (let dx = -60; dx <= 60; dx++) { const xx = Math.min(sw - 1, Math.max(0, x + dx)); for (let y = 0; y < rows; y++) { acc += frames[0][(y * sw + xx) * 3 + c]; n++ } }
+    plate[x * 3 + c] = acc / n
   }
   const enc = encoder(['-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', `${w}x${h}`, '-r', String(FPS), '-i', '-', '-c:v', 'libx264', '-qp', '0', '-preset', 'veryfast', '-pix_fmt', 'yuv444p', out])
   for (const frame of frames) {
-    const band = staticBand ? frames[0] : frame, o = Buffer.alloc(w * h * 3)
-    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-      const sx = sx0 + (x - x0), d = (y * w + x) * 3
-      if (sx < 0 || sx >= sx0 + vw) { for (let c = 0; c < 3; c++) o[d + c] = ground[Math.min(sw - 1, Math.max(0, sx)) * 3 + c]; continue }
-      let rgb = [0, 0, 0]
-      if (y < top + F) { const by = Math.min(bandH - 1, Math.floor(y / (top + F) * bandH)); for (let c = 0; c < 3; c++) rgb[c] = band[(by * sw + sx) * 3 + c] }
-      if (y >= top && y < top + sh) {
-        const a = y - top < F ? ((y - top) / F) ** 1.5 : 1
-        for (let c = 0; c < 3; c++) rgb[c] = rgb[c] * (1 - a) + frame[((y - top) * sw + sx) * 3 + c] * a
-      } else if (y >= top + sh) {
-        const inStream = sx >= cx - half && sx < cx + half
-        const ry = sh - rows + ((y - top - sh) % rows)
-        for (let c = 0; c < 3; c++) rgb[c] = inStream ? frame[(ry * sw + sx) * 3 + c] : ground[sx * 3 + c]
+    const o = Buffer.alloc(w * h * 3)
+    for (let y = 0; y < h; y++) {
+      const ly = y - top, a = ly < 0 ? 0 : ly < feather ? (ly / feather) ** 1.5 : 1
+      for (let x = 0; x < w; x++) {
+        const sx = x - left, d = (y * w + x) * 3, s = (ly * sw + sx) * 3
+        for (let c = 0; c < 3; c++) o[d + c] = Math.round(plate[sx * 3 + c] * (1 - a) + (a ? frame[s + c] * a : 0))
       }
-      for (let c = 0; c < 3; c++) o[d + c] = Math.round(rgb[c])
     }
     await enc.write(o)
   }
@@ -260,13 +276,14 @@ async function composePortrait(src, out, { w, h, staticBand = false }) {
 
 async function buildClip(clip, src) {
   const { w, h } = clip
-  const lw = Math.round(w / 4), lh = Math.round(h / 4)
-  const { field: low, exposure } = voidField(decodeAll(src, lw, lh), lw, lh)
+  // A composed source is already trimmed (composePortrait drops the head).
+  const lw = Math.round(w / 4), lh = Math.round(h / 4), head = clip.compose ? 0 : clip.head ?? 0
+  const { field: low, exposure } = voidField(decodeAll(src, lw, lh, head), lw, lh)
   const gain = low.map(ch => { const up = upsample(ch, lw, lh, w, h); for (let i = 0; i < up.length; i++) up[i] = 255 / Math.max(120, up[i]); return up })
 
-  const frames = decodeAll(src, w, h)
+  const frames = decodeAll(src, w, h, head), keep = keepRows(clip)
   const N = frames.length, L = LOOP_FADE
-  const graded = i => gradeFrame(frames[i], w, h, gain, exposure[Math.min(i, exposure.length - 1)])
+  const graded = i => gradeFrame(frames[i], w, h, gain, exposure[Math.min(i, exposure.length - 1)], keep)
 
   // Lossless intermediate, then the two web encodes from it.
   const mid = join(CACHE, `${clip.name}.graded.mkv`)
@@ -328,10 +345,26 @@ async function stones(sheet, prefix, keep) {
 
 /* ── checks ─────────────────────────────────────────────────────────────── */
 
+/** PSNR between frame `a` of one clip and frame `b` of another (-1: the last). */
+function framePSNR(fileA, a, fileB, b) {
+  const pick = (f, i) => i < 0 ? ['-sseof', '-0.05', '-i', f] : ['-i', f]
+  const sel = (i, label) => i < 0 ? `trim=end_frame=1[${label}]` : `select=eq(n\\,${i}),setpts=PTS-STARTPTS[${label}]`
+  const out = run('ffmpeg', ['-v', 'info', ...pick(fileA, a), ...pick(fileB, b), '-filter_complex', `[0:v]${sel(a, 'a')};[1:v]${sel(b, 'b')};[a][b]psnr`, '-frames:v', '1', '-f', 'null', '-'])
+  return Number((out.match(/average:([\d.]+|inf)/) || [])[1])
+}
+
 function checks() {
   const report = []
   for (const clip of CLIPS) {
     const webm = join(OUT, `${clip.name}.webm`), mp4 = join(OUT, `${clip.name}.mp4`)
+    // The crash's two cuts: BEFORE poster (the loop's first frame) → the
+    // transition's first frame, and its last frame → the AFTER loop's first.
+    let cutIn = null, cutOut = null
+    if (clip.once) {
+      const r = clip.name.slice(-4)
+      cutIn = +framePSNR(join(OUT, `hero-before-${r}.mp4`), 0, mp4, 0).toFixed(1)
+      cutOut = +framePSNR(mp4, -1, join(OUT, `hero-after-${r}.mp4`), 0).toFixed(1)
+    }
     // Decoded void luma: signalstats' YHIGH (90th-percentile luma) of the first
     // frame, which is mostly void. Limited range, so 235 is white; ≥ 234 passes.
     const stats = run('ffmpeg', ['-v', 'info', '-i', mp4, '-vf', 'signalstats,metadata=print:key=lavfi.signalstats.YHIGH', '-frames:v', '1', '-f', 'null', '-'])
@@ -342,7 +375,7 @@ function checks() {
       const seam = run('ffmpeg', ['-v', 'info', '-sseof', '-0.05', '-i', mp4, '-i', mp4, '-filter_complex', '[0:v]trim=end_frame=1[a];[1:v]trim=end_frame=1[b];[a][b]psnr', '-f', 'null', '-'])
       psnr = Number((seam.match(/average:([\d.]+|inf)/) || [])[1])
     }
-    report.push({ clip: clip.name, webmKB: Math.round(statSync(webm).size / 1024), mp4KB: Math.round(statSync(mp4).size / 1024), voidLuma: yhigh, seamPSNR: psnr, ok: yhigh >= 234 && (clip.once || psnr >= 30) })
+    report.push({ clip: clip.name, webmKB: Math.round(statSync(webm).size / 1024), mp4KB: Math.round(statSync(mp4).size / 1024), voidLuma: yhigh, seamPSNR: psnr, cutIn, cutOut, ok: yhigh >= 234 && (clip.once || psnr >= 30) })
   }
   console.table(report)
   return report

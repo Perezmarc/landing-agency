@@ -47,7 +47,12 @@ the water natural.
 
 ## The hero
 
-A 150svh section with a sticky 100svh stage. The layers, bottom to top:
+A 250svh section with a sticky 100svh stage: the stage stays pinned for 1.5
+screens of scroll (`motion/hero.js` reads the pin from the layout). That is
+long enough that a brisk continuous wheel (2000 px/s) still has the stage on
+screen through the burst, and a normal scroll sees the whole 2.46 s crash. The
+crash is never scrubbed: the extra length only keeps the stage in view while
+the clip plays on its own clock. The layers, bottom to top:
 
 1. the AFTER poster and AFTER loop (the polished crystal, one stream);
 2. the transition clip, which plays once;
@@ -61,20 +66,55 @@ gathers into one stream. Every swap between layers is therefore invisible.
 States (`motion/hero-state.js`): `before → crashing → after → reassembling`.
 
 - The first scroll past 24px crashes; only `scrollY ≤ 4` goes back.
-- A fling, a hash link or a restored scroll position snaps to the end state
-  with no crash.
+- A fling, a hash link or a restored scroll position (a first reading already
+  past the pin) snaps to the end state with no crash.
 - The state is exposed as `data-hero-state`.
 
-The crash runs on this timeline:
+The crash clip is 2.46 s (59 frames). The source holds the unchanged rock for
+0.58 s, so the pipeline drops its first 13 frames (`CRASH_HEAD`): the clip
+opens one frame before the cracks, the burst follows 0.13 s later, the
+polished crystal shows from about 0.7 s, and the fragments clear by the end.
+It runs on this timeline:
 
 | Time | What happens |
 |---|---|
-| 0 | BEFORE is cut and the transition clip plays from its first frame. |
+| trigger | `play()` is called on the clip; the BEFORE layer stays up (`is-arming`). |
+| first presented frame | BEFORE is cut and the clip shows (`is-transitioning`). |
+| + 700 ms (`--delay-hero-crystal`) | The headline's black line moves from the first to the second. |
 | 250 ms before the end | The AFTER loop starts underneath. |
 | end | The transition fades out over the AFTER loop. |
 
+The clip is never required to be preloaded: iOS Safari ignores `preload` and
+decodes nothing before `play()`. The media tier primes it right after `load`
+(play, then pause at 0) so it starts at once; if it still presents no frame
+within 700 ms, or `play()` is refused (iOS Low Power Mode), the posters
+crossfade instead. Every way into a rest state (after the clip, after the
+poster crossfade, a snap, a hash link, a page restored from the cache) plays
+that state's loop, so the AFTER is never left a still when a video exists.
+
+The headline follows the image: over the raw rock (BEFORE, and on the way
+back) its first line ("Find how the work really runs.") is black and the
+second grey; once the polished crystal shows, the second line is black and the
+first grey. The server HTML, like the poster, is the AFTER.
+
 Going back fades the BEFORE layer in over `--dur-hero-fade` (400 ms). Devices
 that get no video crossfade the two posters instead.
+
+### Portrait
+
+All three 9:16 hero clips (BEFORE, crash, AFTER) are composed from the 16:9
+ones (`composePortrait`), so the crystal has the same place and size in each
+and the cuts stay invisible. The landscape frame is scaled until the crystal is
+61% of the portrait width, centred, with its centre at 80% of the height.
+At that scale the landscape frame covers the whole width and runs past the
+bottom, so nothing around or below the crystal is invented (the old
+composition repeated a strip of each frame down the stream, which stacked
+fragments into squares during the crash). Above the crystal the frame
+feathers into a still, smooth plate that the grade takes to white, so the copy
+sits on white and flying fragments fade out rather than meet a seam. The media
+box is anchored to the stage's bottom: on a phone it is exactly the stage, and
+the crystal sits below the buttons from 375×740 to 430×932 (on a 375×667
+iPhone SE the second button overlaps its top).
 
 ## The calendar
 
@@ -119,7 +159,8 @@ added, moved or condensed; the empty grid is the message.
 |---|---|
 | No JS | The AFTER poster, the stones (their float is CSS), the final calendar (week or day by width). |
 | Reduced motion | Posters with a crossfade instead of the crash, still stones, no videos, no reveals. |
-| Save-Data, 2g or a weak device | Motion, but posters only: no video requests; the crash is a poster crossfade. |
+| Save-Data, 2g, or a device that reports under 4 GB (`deviceMemory`) | Motion, but posters only: no video requests; the crash is a poster crossfade. A browser that reports no memory (Safari, Firefox) gets the clips. |
+| `play()` refused (iOS Low Power Mode) | The posters crossfade; the state and the headline still change. |
 
 ## Media pipeline
 
@@ -137,7 +178,8 @@ The hero clips are BEFORE (loop), the transition (once) and AFTER (loop), in
      weight of `smoothstep(|frame − field|, 8, 56)`.
    - Near-white is soft-snapped to pure white, and exposure is normalised per
      frame.
-   - Hero clips keep half of the overhead light in the top of the frame.
+   - Hero clips keep half of the overhead light above the crystal; a
+     portrait clip's top, where the copy sits, goes to white.
 2. **Loop:** the last second is cross-faded into the first. The transition is
    not looped.
 3. **Encode** AV1 WebM and H.264 MP4: closed GOP, BT.709, `+faststart`, no
@@ -145,15 +187,20 @@ The hero clips are BEFORE (loop), the transition (once) and AFTER (loop), in
 4. **Write** the loops' posters (first frame), the stones and `media.json`
    (the crash's duration and the stone counts).
 
-`node scripts/media/build-media.mjs --check` reports sizes, decoded void luma
-and the loop-seam PSNR.
+`node scripts/media/build-media.mjs --check` reports sizes, decoded void luma,
+the loop-seam PSNR and the crash's two cuts (PSNR between the BEFORE loop's
+first frame and the crash's first, and between the crash's last frame and the
+AFTER loop's first).
 
 | Check | Target | Current |
 |---|---|---|
 | Void luma | ≥ 234 | 235 on every clip |
-| Loop-seam PSNR | ≥ 30 dB | 31–43 dB |
-| Desktop hero media (BEFORE, transition and AFTER, WebM) | ≤ 2.5 MB | about 1.05 MB |
-| Mobile hero media (WebM) | ≤ 1.2 MB | about 0.4 MB |
+| Loop-seam PSNR | ≥ 30 dB | 33–46 dB |
+| Crash cut in / out, 16:9 | as close as the BEFORE loop to itself (about 31–32 dB frame to frame, the rain moving) | 29.7 / 31.5 dB |
+| Crash cut in / out, 9:16 | the same | 33.1 / 33.6 dB |
+| Crash clip | starts at the shatter | 2.46 s (first 13 source frames dropped) |
+| Desktop hero media (BEFORE, transition and AFTER, WebM) | ≤ 2.5 MB | about 1.0 MB (556 + 321 + 130 KB) |
+| Mobile hero media (WebM) | ≤ 1.2 MB | about 0.45 MB (244 + 154 + 53 KB) |
 
 **Sources and credits.** Everything was generated on Higgsfield:
 
@@ -170,10 +217,12 @@ A clip is rejected if the crystal drifts or the camera moves. Web outputs are
 1600 wide at most (720 on portrait); the generation stills are 2K, and nothing
 4K ships.
 
-The portrait BEFORE frame was composed locally from the 16:9 still. The
-portrait transition and AFTER are composed frame by frame from the landscape
-clips (`composePortrait` in the script). Outpainting was tried first and
-recomposed the scene.
+All three portrait hero clips are composed frame by frame from the landscape
+clips (`composePortrait` in the script; see "Portrait" above). A separately
+generated 9:16 BEFORE clip was used before; it was framed for the old
+right-hand crystal and could not be matched to the centred composition, so it
+was dropped from `sources.json`. Outpainting was tried first and recomposed
+the scene.
 
 **Generating anything new costs credits, and the owner approves the total
 first.**

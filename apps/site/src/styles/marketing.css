@@ -106,11 +106,13 @@
 .mk-header-offset { height: 68px; }
 
 /* ═══════════ HERO ═══════════
-   A 150svh section with a sticky 100svh stage: the first half-screen of
-   scroll passes while the stage stays pinned (that is where the crash runs),
-   then the hero scrolls away like content. `overflow: clip`, never hidden:
-   hidden would make the section a scroll container and kill the sticky. */
-.mk-hero { position: relative; height: 150svh; overflow: clip; }
+   A 250svh section with a sticky 100svh stage: the first 1.5 screens of
+   scroll pass while the stage stays pinned (that is where the 2.5 s crash
+   runs, long enough to see it at a brisk wheel or flick), then the hero
+   scrolls away like content. motion/hero.js reads the pin length from the
+   layout. `overflow: clip`, never hidden: hidden would make the section a
+   scroll container and kill the sticky. */
+.mk-hero { position: relative; height: 250svh; overflow: clip; }
 .mk-hero-stage {
   position: sticky;
   top: 0;
@@ -127,9 +129,11 @@
   translate: -50% -50%;
 }
 @media (max-aspect-ratio: 1/1) {
-  /* Portrait: the 9:16 rendition, pushed down so the crystal sits below the
-     copy. */
-  .mk-hero-media { width: max(100%, 56.25svh); aspect-ratio: 9 / 16; top: calc(50% + 12svh); }
+  /* Portrait: the 9:16 rendition, anchored to the stage's bottom. Its crystal
+     is centred at 80% of its height (build-media.mjs PORTRAIT), below the
+     copy; on a phone the box is exactly the stage, and on a wider portrait
+     screen the white top is what gets cropped. */
+  .mk-hero-media { width: max(100%, 56.25svh); aspect-ratio: 9 / 16; top: auto; bottom: 0; translate: -50% 0; }
 }
 /* Layers, bottom to top: the AFTER poster and loop, the transition clip (the
    crash, created by JS), then the BEFORE layer (poster and loop). With no JS
@@ -149,9 +153,11 @@
 .mk-hero[data-hero-state="before"] .mk-hero-before,
 .mk-hero[data-hero-state="reassembling"] .mk-hero-before { opacity: 1; }
 /* The crash clip. Its first frame is the BEFORE rock, so the BEFORE layer is
-   cut at once; it is hidden again as the AFTER loop takes over under it. */
+   cut at once; it is hidden again as the AFTER loop takes over under it.
+   While the clip is asked to start (`is-arming`), the BEFORE layer stays. */
 .mk-hero-video.mk-hero-transition { opacity: 0; transition: opacity 250ms linear; }
 .mk-hero.is-transitioning .mk-hero-transition.is-ready { opacity: 1; transition: none; }
+.mk-hero.is-arming .mk-hero-before { opacity: 1; transition: none; }
 .mk-hero.is-transitioning .mk-hero-before { opacity: 0; transition: none; }
 
 .mk-hero-copy {
@@ -173,6 +179,16 @@
   margin-top: 18px;
   text-wrap: balance;
 }
+/* The headline follows the image: over the raw rock the first line ("find how
+   the work really runs") is black; once the polished crystal shows, the second
+   ("then hand the steps to agents") is. The default is the AFTER, like the
+   poster. During the clip the switch waits for the crystal to appear. */
+.mk-hero-line { transition: color var(--dur-hero-fade) var(--ease-out); }
+.mk-hero-line--lead { color: var(--mute); }
+.mk-hero-line--main { color: var(--ink); }
+.mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-line--lead { color: var(--ink); }
+.mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-line--main { color: var(--mute); }
+.mk-hero.is-transitioning .mk-hero-line { transition-delay: var(--delay-hero-crystal); }
 .mk-hero-lead {
   font-size: clamp(16px, 1.35vw, 18.5px);
   color: var(--mute);
@@ -182,8 +198,8 @@
 .mk-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 34px; }
 
 @media (max-aspect-ratio: 1/1) {
-  /* Portrait: the copy sits in the upper part of the stage, the crystal lower
-     right (its frame was composed for this). */
+  /* Portrait: the copy sits in the white upper part of the stage, the crystal
+     centred below it (its frame was composed for this). */
   .mk-hero-copy { justify-content: flex-start; padding-top: calc(68px + 3svh); }
   .mk-hero-copy > * { max-width: none; }
   .mk-hero h1 { font-size: clamp(30px, 7.6vw, 52px); margin-top: 14px; }
@@ -580,5 +596,6 @@
    posters' crossfade. */
 @media (prefers-reduced-motion: reduce) {
   .mk-stone { animation: none; }
+  .mk-hero-line { transition: none; }
   .mk-reveal-pending { opacity: 1; translate: none; }
 }

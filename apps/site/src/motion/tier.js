@@ -4,12 +4,16 @@
    reduced motion  → no videos, no reveal or calendar animation; the hero's
                      before/after is the posters' crossfade
    Save-Data, 2g   → motion, but posters only: no media requests
-   a capable device (8+ cores with a fine pointer, or 4+ cores and 4+ GB)
-                   → the clips: BEFORE, the crash, AFTER
-   anything weaker → motion, posters only */
+   a device that REPORTS under 4 GB of memory
+                   → motion, posters only
+   anything else   → the clips: BEFORE, the crash, AFTER
 
-export function selectTier({ reducedMotion = false, saveData = false, effectiveType = '4g', finePointer = false, cores = 4, memory = 4 } = {}) {
+   A device is demoted only on positive evidence. Safari and Firefox expose no
+   `deviceMemory` and WebKit clamps `hardwareConcurrency`, so a missing or
+   low-looking core count says nothing: a modern iPhone must get the clips. */
+
+export function selectTier({ reducedMotion = false, saveData = false, effectiveType = '4g', memory } = {}) {
   if (reducedMotion) return { motion: false, media: false }
   if (saveData || effectiveType === 'slow-2g' || effectiveType === '2g') return { motion: true, media: false }
-  return { motion: true, media: (finePointer && cores >= 8) || (cores >= 4 && memory >= 4) }
+  return { motion: true, media: !(typeof memory === 'number' && memory < 4) }
 }

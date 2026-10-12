@@ -27,7 +27,7 @@ hardcoded value is what breaks that.
 | Calendar | `--task-chip` · `--task-chip-ink` · `--cat-work` · `--cat-chase` · `--cat-wait` · `--cat-decide` |
 | Radii | `--r-xs` 6 · `--r-sm` 9 (controls) · `--r-md` 12 · `--r-lg` 16 (cards) · `--r-xl` 20 · `--r-pill` |
 | Elevation | `--elev-1` · `--elev-2` · `--elev-3` · `--card-ring` (the "paper card" recipe) |
-| Motion | `--dur-fast` · `--dur` · `--dur-slow` · `--ease-spring` · `--ease-out`; landing: `--dur-hero-fade` · `--dur-reveal` |
+| Motion | `--dur-fast` · `--dur` · `--dur-slow` · `--ease-spring` · `--ease-out`; landing: `--dur-hero-fade` · `--delay-hero-crystal` · `--dur-reveal` |
 | Type | `--font-body` · `--font-display` · `--font-mono` |
 
 **Fonts** are system stacks by default — nothing is fetched. Swap
