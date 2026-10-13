@@ -25,8 +25,9 @@ import Footer from '../components/Footer.astro'
 import { useTranslations } from '@forge/i18n'
 
 /* `overlay`: the page's first section sits under the fixed header (the home
-   hero), so the header's flow spacer is left out. */
-const { meta, locale, current, overlay = false } = Astro.props
+   hero), so the header's flow spacer is left out. `pool`: the footer pool's
+   clip, for the motion module (the home page only; every page has its poster). */
+const { meta, locale, current, overlay = false, pool = null } = Astro.props
 const t = useTranslations(locale)
 ---
 <!DOCTYPE html>
@@ -42,6 +43,6 @@ const t = useTranslations(locale)
     <main id="main">
       <slot />
     </main>
-    <Footer locale={locale} current={current} />
+    <Footer locale={locale} current={current} pool={pool} />
   </body>
 </html>

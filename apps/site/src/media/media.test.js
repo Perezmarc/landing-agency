@@ -41,6 +41,16 @@ describe('media.json', () => {
     expect(media.cards.after.fit.bottom).toBeLessThan(0.9)
   })
 
+  it('gives the footer pool its band and waterline', () => {
+    const { aspect, waterline } = media.footer.pool
+    // A wide, short band, like the footer.
+    expect(aspect).toBeGreaterThan(3)
+    expect(aspect).toBeLessThan(5)
+    // The waterline near the top: a strip of white wall above it, water below.
+    expect(waterline).toBeGreaterThan(0.03)
+    expect(waterline).toBeLessThan(0.2)
+  })
+
   it('references only files that exist', () => {
     const files = []
     for (const clip of ['hero-before-16x9', 'hero-after-16x9', 'hero-before-9x16', 'hero-after-9x16']) {
@@ -48,6 +58,8 @@ describe('media.json', () => {
     }
     for (const r of ['16x9', '9x16']) files.push(`hero-transition-${r}.webm`, `hero-transition-${r}.mp4`)
     for (const which of ['before', 'after']) files.push(`card-${which}.webm`, `card-${which}.mp4`)
+    // The pool: its clip, and its poster ready to serve as the footer's background.
+    files.push('footer-pool.webm', 'footer-pool.mp4', 'footer-pool.avif', 'footer-pool.webp')
     for (let i = 1; i <= media.stones.raw; i++) files.push(`stones/raw-${i}.webp`)
     for (let i = 1; i <= media.stones.pebble; i++) files.push(`stones/pebble-${i}.webp`)
     files.forEach(f => expect(existsSync(here(f)), f).toBe(true))

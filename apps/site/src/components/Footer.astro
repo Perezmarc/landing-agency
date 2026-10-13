@@ -6,12 +6,18 @@
  * contact page; dumping them on `/es` is the kind of small betrayal that makes
  * people stop using the switcher. `alternates()` already knows every language
  * this page exists in, so the list is exactly right and never links a 404.
+ *
+ * THE POOL. The footer's background is the water that has fallen down the
+ * page: a calm pool, the still poster as CSS on every page (marketing.css),
+ * so blog, contact and legal get it with no JavaScript. On the home page,
+ * `pool` carries the looping clip's URLs (data, no strings) for
+ * motion/pool.js, which lays the clip over the poster on the media tier.
  */
 import forge from '@forge/manifest'
 import { useTranslations, HTML_LANG } from '@forge/i18n'
 import { routePath, alternates } from '@forge/seo/routes'
 
-const { locale, current } = Astro.props
+const { locale, current, pool = null } = Astro.props
 const t = useTranslations(locale)
 
 const year = new Date().getUTCFullYear()
@@ -26,7 +32,7 @@ const languages = alternates(current)
 
 const socials = Object.entries(forge.brand.social).filter(([, handle]) => handle)
 ---
-<footer class="mk-footer">
+<footer class="mk-footer" data-pool={pool}>
   <div class="mk-wrap">
     <div class="mk-footer-grid">
       <div class="mk-footer-col">

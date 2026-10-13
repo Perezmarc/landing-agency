@@ -8,7 +8,7 @@
        node scripts/media/build-media.mjs            # everything
        node scripts/media/build-media.mjs --check    # only the checks
        node scripts/media/build-media.mjs --only card-before,card-after
-                                                     # some clips (no media.json)
+                                                     # some clips (patches media.json)
 
    Needs ffmpeg (libsvtav1, libx264) on PATH; sharp comes from the workspace.
    Sources are listed in sources.json by permanent URL and cached in .cache/.
@@ -26,7 +26,8 @@
         overhead light around the stone (keepMap), so the rain falling
         through it stays visible; a portrait clip's top, under the copy, goes
         to white.
-     2. Loop. The last second is cross-faded into the first, then cut.
+     2. Loop. The last second is cross-faded into the first, then cut (a
+        source that already ends on its first frame just wraps: `seamless`).
      3. Encode AV1 WebM + H.264 MP4 (+faststart, BT.709, closed GOP, no audio),
         and write the first frame as the poster source.
    The hero transition (the crash) is graded and encoded the same way but not
@@ -36,8 +37,12 @@
    The card clips (the calendar's water) are cropped to their slab and graded
    against a clean plate of it (cardPlate): the slab goes to white and only
    the water is left. No posters: they only ever play over the finished card.
+   The footer's pool is cropped to a wide band from just above its waterline
+   and divided by the wall's light carried down through the water
+   (poolGrader): the wall goes to white, the pool keeps its tone. Its poster
+   is written as AVIF and WebP, for the footer's CSS background.
    Then: the stones, and media.json (the crash's duration, each card clip's
-   fit box, the stone counts). The checks also measure the crash's
+   fit box, the pool's aspect and waterline, the stone counts). The checks also measure the crash's
    two cuts (PSNR of the frames either side of each).
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -91,6 +96,20 @@ const CARD = {
   },
 }
 
+/* The footer's pool, in its 1920×1080 source (pixels): a white wall over a
+   wide, shallow, clear pool; the waterline (the pool's far edge) is the dark
+   line at y 594–612, measured on the first frame. `crop` keeps 42px of wall
+   above it and everything below, a band wide and short like the footer.
+   The wall's light falls off to the right (luma 238 → 206): the whole frame
+   is divided by the wall's light (poolField), so the wall goes to white and
+   the pool keeps its own tone and ripples, evenly lit. `depth` then deepens
+   the pool's tone below the waterline (255 − (255 − v) × depth), so it still
+   reads as water once graded. The footer's copy sits on the water, so its
+   darkest tones (a drop's outline, a splash, the rim) are lifted onto a soft
+   floor: below `knee`, v → floor + (knee − floor) × √(v / knee). Nothing
+   then goes under luma 150, where the footer's ink is still 5:1. */
+const POOL = { crop: { x: 0, y: 552, w: 1920, h: 528 }, waterline: 594, depth: 1.5, floor: 150, knee: 200 }
+
 /* The clips: output name (also the source key) and output size. Landscape is
    encoded at 1600 wide: the media box is max(100vw, 177.78svh), 1600 on a 1440×900 screen. */
 const CLIPS = [
@@ -105,6 +124,13 @@ const CLIPS = [
   // The calendar's water: at most 960 wide (they show at about 600).
   { name: 'card-before', w: 960, h: 402, card: CARD.before },
   { name: 'card-after', w: 710, h: 680, card: CARD.after, head: 48 },
+  // The footer's pool: a wide band, from just above the waterline down.
+  // Its source ends on its first frame (PSNR 35.8 dB, above its 32–34 dB
+  // frame step), so it loops as it is, with no cross-fade. It opens (and its
+  // poster is) frame 36: calm rings, no drop splashing up under the footer's
+  // copy. Every frame is busy with ripples: two steps more compression keep
+  // it light.
+  { name: 'footer-pool', w: 1600, h: 440, pool: POOL, seamless: true, start: 36, crf: { av1: 42, h264: 29 } },
 ]
 
 /* ── Portrait composition ────────────────────────────────────────────────────
@@ -368,6 +394,50 @@ function gradeCard(frame, w, h, plate, exposure) {
   return out
 }
 
+/* ── 2c. the footer's pool ────────────────────────────────────────────────
+   The wall's light, as voidField estimates it over the whole frame, is only
+   valid above the waterline: below it the field would take the pool's own
+   tone for light and grade the water away. So each column's light just
+   above the waterline is carried down through the pool, and the frame is
+   divided by that: the wall goes to white, the pool keeps its tone. */
+function poolGrader(clip, src) {
+  const { w, h, pool: { crop, waterline, depth, floor, knee } } = clip
+  const lift = v => v >= knee ? v : floor + (knee - floor) * Math.sqrt(v / knee)
+  const SW = 1920, SH = 1080, q = 4, lw = SW / q, lh = SH / q
+  const { field, exposure } = voidField(decodeAll(src, lw, lh), lw, lh)
+  const edge = Math.floor((waterline - 48) / q)        // clean wall, clear of the low-pass's reach into the pool
+  const y0 = crop.y / q, ch = crop.h / q
+  const gain = field.map(ch0 => {
+    const band = new Float32Array(lw * ch)
+    for (let y = 0; y < ch; y++) for (let x = 0; x < lw; x++) band[y * lw + x] = ch0[Math.min(edge, y0 + y) * lw + x]
+    const up = upsample(band, lw, ch, w, h)
+    for (let i = 0; i < up.length; i++) up[i] = 255 / Math.max(120, up[i])
+    return up
+  })
+  const frames = decodeAll(src, w, h, 0, crop)
+  // Below the waterline (ramped over its own 18 source px), the pool is deepened.
+  const below = new Float32Array(h)
+  for (let y = 0; y < h; y++) below[y] = smoothstep(waterline - crop.y, waterline + 18 - crop.y, (y + 0.5) * crop.h / h)
+  return {
+    count: frames.length,
+    graded: (i) => {
+      const f = frames[i], e = exposure[i], out = Buffer.alloc(w * h * 3)
+      for (let y = 0; y < h; y++) {
+        const d = 1 + (depth - 1) * below[y]
+        for (let x = 0; x < w; x++) {
+          const p = y * w + x
+          for (let c = 0; c < 3; c++) {
+            const v = Math.min(255, f[p * 3 + c] * e * gain[c][p])
+            out[p * 3 + c] = Math.round(lift(Math.min(255, Math.max(0, 255 - (255 - v) * d))))
+          }
+          snapWhite(out, p)
+        }
+      }
+      return out
+    },
+  }
+}
+
 /* ── 3. grade + loop + encode a clip ────────────────────────────────────── */
 
 function encoder(args) {
@@ -416,6 +486,7 @@ function slabOut({ w, h, card: { slab, crop } }) {
 /** The grader for one clip: frame index (after its head) → graded RGB. */
 function grader(clip, src) {
   const { w, h } = clip
+  if (clip.pool) return poolGrader(clip, src)
   if (clip.card) {
     // The plate is built from every frame, the head included: that is where the slab is dry.
     const all = decodeAll(src, w, h, 0, clip.card.crop), head = clip.head ?? 0
@@ -442,6 +513,15 @@ async function buildClip(clip, src) {
   if (clip.once) {
     // The transition plays once, start to end.
     for (let i = 0; i < N; i++) await enc.write(graded(i))
+  } else if (clip.seamless) {
+    // The source already ends on its first frame: play 0 … N−2 and wrap to 0,
+    // rotated to open on frame `start` (the poster). A cross-fade would blend
+    // two sets of ripples into one ghosted frame.
+    const start = clip.start ?? 0
+    for (let k = 0; k < N - 1; k++) {
+      const g = graded((start + k) % (N - 1)); if (!first) first = g
+      await enc.write(g)
+    }
   } else {
     // Order: L … N−L−1, then the cross-fade of the last second into the first.
     // That plays …, N−L−1, blend(N−L, 0) … blend(N−1, L−1), and wraps to L.
@@ -457,14 +537,21 @@ async function buildClip(clip, src) {
   }
   await enc.close()
 
+  const crf = { av1: 40, h264: 27, ...clip.crf }
   const color = ['-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709', '-color_range', 'tv']
-  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libsvtav1', '-crf', '40', '-preset', '5', '-g', String(FPS * 5), '-pix_fmt', 'yuv420p', ...color, join(OUT, `${clip.name}.webm`)])
-  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libx264', '-crf', '27', '-preset', 'slow', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
+  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libsvtav1', '-crf', String(crf.av1), '-preset', '5', '-g', String(FPS * 5), '-pix_fmt', 'yuv420p', ...color, join(OUT, `${clip.name}.webm`)])
+  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libx264', '-crf', String(crf.h264), '-preset', 'slow', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
     '-x264-params', `keyint=${FPS * 5}:open-gop=0`, '-movflags', '+faststart', ...color, join(OUT, `${clip.name}.mp4`)])
   // A hero loop's poster is the first frame it plays. The transition has none:
   // it only ever plays over the BEFORE clip; nor do the card clips, which only
   // ever play over the finished card.
-  if (!clip.once && !clip.card) await sharp(first, { raw: { width: w, height: h, channels: 3 } }).jpeg({ quality: 90, mozjpeg: true }).toFile(join(OUT, `${clip.name}.jpg`))
+  // The footer's pool is a CSS background on every page, so its poster is
+  // written ready to serve (AVIF, WebP for the rest), not as a JPEG for Astro.
+  const still = () => sharp(first, { raw: { width: w, height: h, channels: 3 } })
+  if (clip.pool) {
+    await still().avif({ quality: 60, effort: 9, chromaSubsampling: '4:2:0' }).toFile(join(OUT, `${clip.name}.avif`))
+    await still().webp({ quality: 80, effort: 6 }).toFile(join(OUT, `${clip.name}.webp`))
+  } else if (!clip.once && !clip.card) await still().jpeg({ quality: 90, mozjpeg: true }).toFile(join(OUT, `${clip.name}.jpg`))
   rmSync(mid)
   return { frames: N }
 }
@@ -504,6 +591,12 @@ function framePSNR(fileA, a, fileB, b) {
   return Number((out.match(/average:([\d.]+|inf)/) || [])[1])
 }
 
+/** PSNR between the last two frames of a clip. */
+function lastStep(file) {
+  const n = Number(run('ffprobe', ['-v', 'error', '-count_frames', '-select_streams', 'v:0', '-show_entries', 'stream=nb_read_frames', '-of', 'csv=p=0', file]).trim())
+  return framePSNR(file, n - 2, file, n - 1)
+}
+
 function checks() {
   const report = []
   for (const clip of CLIPS.filter(c => !ONLY || ONLY.has(c.name))) {
@@ -518,18 +611,25 @@ function checks() {
     }
     // Decoded void luma: signalstats' YHIGH (90th-percentile luma) of the first
     // frame, which is mostly void. Limited range, so 235 is white; ≥ 234 passes.
-    const stats = run('ffmpeg', ['-v', 'info', '-i', mp4, '-vf', 'signalstats,metadata=print:key=lavfi.signalstats.YHIGH', '-frames:v', '1', '-f', 'null', '-'])
+    // The pool's frame is mostly water: its void is the wall above the waterline.
+    const wall = clip.pool ? `crop=iw:${Math.floor((clip.pool.waterline - clip.pool.crop.y - 12) * clip.h / clip.pool.crop.h)}:0:0,` : ''
+    const stats = run('ffmpeg', ['-v', 'info', '-i', mp4, '-vf', `${wall}signalstats,metadata=print:key=lavfi.signalstats.YHIGH`, '-frames:v', '1', '-f', 'null', '-'])
     const yhigh = Number((stats.match(/YHIGH=(\d+)/) || [])[1])
     // Loop seam: PSNR between the last and first frames (loops only). It
     // passes at 30 dB, or, for water busy enough that one ordinary frame step
     // is below that (the BEFORE card's splashes), when the seam is no worse
     // than its median frame step less 1 dB: then it is just another frame.
+    // A seamless loop (the pool) is held to the frame steps either side of
+    // its seam instead, its ripples being busiest there.
     let psnr = null, step = null
     if (!clip.once) {
       const seam = run('ffmpeg', ['-v', 'info', '-sseof', '-0.05', '-i', mp4, '-i', mp4, '-filter_complex', '[0:v]trim=end_frame=1[a];[1:v]trim=end_frame=1[b];[a][b]psnr', '-f', 'null', '-'])
       psnr = +Number((seam.match(/average:([\d.]+|inf)/) || [])[1]).toFixed(1)
-      const steps = [10, 30, 50].map(k => framePSNR(mp4, k, mp4, k + 1)).sort((a, b) => a - b)
-      step = +steps[1].toFixed(1)
+      // A seamless loop's seam is one of its own frame steps: it is held to
+      // the steps either side of it (the last two frames, the first two).
+      const at = clip.seamless ? [-2, 0] : [10, 30, 50]
+      const steps = at.map(k => k < 0 ? lastStep(mp4) : framePSNR(mp4, k, mp4, k + 1)).sort((a, b) => a - b)
+      step = +(clip.seamless ? steps[0] : steps[1]).toFixed(1)
     }
     report.push({ clip: clip.name, webmKB: Math.round(statSync(webm).size / 1024), mp4KB: Math.round(statSync(mp4).size / 1024), voidLuma: yhigh, seamPSNR: psnr, stepPSNR: step, cutIn, cutOut, ok: yhigh >= 234 && (clip.once || psnr >= Math.min(30, step - 1)) })
   }
@@ -553,25 +653,41 @@ async function main() {
       : await src('clips', clip.name)
     built[clip.name] = await buildClip(clip, source)
   }
-  if (ONLY) { checks(); return }
-
-  const raw = await stones(await src('stills', 'fragments-cutout'), 'raw', 7)
-  const pebbles = await stones(await src('stills', 'pebbles-cutout'), 'pebble', 4)
-
   // The box in each card clip that the page fits to its card, as fractions
   // of the clip's frame (motion/water.js, marketing.css).
+  const f = v => +v.toFixed(4)
   const card = (name) => {
-    const { w, h, card: { fit, crop } } = CLIPS.find(c => c.name === name), f = v => +v.toFixed(4)
+    const { w, h, card: { fit, crop } } = CLIPS.find(c => c.name === name)
     return { aspect: f(w / h), fit: { left: f((fit.x0 - crop.x) / crop.w), top: f((fit.y0 - crop.y) / crop.h), right: f((fit.x1 - crop.x) / crop.w), bottom: f((fit.y1 - crop.y) / crop.h) } }
   }
-  const doc = {
-    $comment: 'Written by scripts/media/build-media.mjs. Do not edit by hand.',
-    hero: {
-      '16x9': { transition: +(built['hero-transition-16x9'].frames / FPS).toFixed(2) },
-      '9x16': { transition: +(built['hero-transition-9x16'].frames / FPS).toFixed(2) },
-    },
-    cards: { before: card('card-before'), after: card('card-after') },
-    stones: { raw, pebble: pebbles },
+  // The pool's band: its aspect, and its waterline as a fraction of its
+  // height from the top (the footer's layout, e2e/pool.spec.js).
+  const pool = () => {
+    const { w, h, pool: { crop, waterline } } = CLIPS.find(c => c.name === 'footer-pool')
+    return { aspect: f(w / h), waterline: f((waterline - crop.y) / crop.h) }
+  }
+  const transition = r => +(built[`hero-transition-${r}`].frames / FPS).toFixed(2)
+  const order = d => ({ $comment: 'Written by scripts/media/build-media.mjs. Do not edit by hand.', hero: d.hero, cards: d.cards, footer: d.footer, stones: d.stones })
+
+  let doc
+  if (ONLY) {
+    // Patch what was rebuilt into the existing media.json.
+    doc = JSON.parse(readFileSync(join(OUT, 'media.json'), 'utf8'))
+    for (const name of Object.keys(built)) {
+      if (name.startsWith('hero-transition-')) doc.hero[name.slice(-4)] = { transition: transition(name.slice(-4)) }
+      if (name.startsWith('card-')) doc.cards[name.slice(5)] = card(name)
+      if (name === 'footer-pool') doc.footer = { pool: pool() }
+    }
+    doc = order(doc)
+  } else {
+    const raw = await stones(await src('stills', 'fragments-cutout'), 'raw', 7)
+    const pebbles = await stones(await src('stills', 'pebbles-cutout'), 'pebble', 4)
+    doc = order({
+      hero: { '16x9': { transition: transition('16x9') }, '9x16': { transition: transition('9x16') } },
+      cards: { before: card('card-before'), after: card('card-after') },
+      footer: { pool: pool() },
+      stones: { raw, pebble: pebbles },
+    })
   }
   writeFileSync(join(OUT, 'media.json'), JSON.stringify(doc, null, 2) + '\n')
   console.log(JSON.stringify(doc, null, 2))

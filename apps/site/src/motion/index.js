@@ -7,12 +7,14 @@
 
    What runs depends on the device (tier.js): reduced motion gets a still page
    with a soft poster crossfade in the hero; Save-Data and weak devices get the
-   motion but no video (no hero clips, no water on the calendar). */
+   motion but no video (no hero clips, no water on the calendar, the footer's
+   pool a still poster). */
 
 import { selectTier } from './tier.js'
 import { initHero } from './hero.js'
 import { initCalendar } from './calendar.js'
 import { initWater } from './water.js'
+import { initPool } from './pool.js'
 import { initReveal } from './reveal.js'
 
 const conn = navigator.connection || {}
@@ -31,4 +33,6 @@ if (tier.motion) {
   if (day) initCalendar(day)
   if (day && tier.media) initWater(day)
   initReveal(document.querySelectorAll('[data-reveal]'))
+  const pool = document.querySelector('[data-pool]')
+  if (pool && tier.media) initPool(pool)
 }

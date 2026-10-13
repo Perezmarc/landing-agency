@@ -3,7 +3,8 @@
     "Every source the landing page's media is built from, by permanent URL.",
     "Generated on Higgsfield (see docs/LANDING-DESIGN.md). Loops start and end on the same still; the transition starts on the BEFORE still (the raw rock) and ends on the AFTER still (the polished pebble).",
     "The three portrait hero clips are composed from these landscape clips by composePortrait() in build-media.mjs.",
-    "The card clips are pale slabs under water, for the calendar's two cards; the grade takes the slab to white."
+    "The card clips are pale slabs under water, for the calendar's two cards; the grade takes the slab to white.",
+    "The footer pool is a wide shallow pool under a white wall; its still (hf_20261012_171227_3becacc6-761f-43d9-b035-54f32c66acce.png) is its start and end frame."
   ],
   "base": "https://d8j0ntlcm91z4.cloudfront.net/user_3KPWI2SA8VZRk23pt1M0vYBFVxJ/",
   "clips": {
@@ -11,7 +12,8 @@
     "hero-transition-16x9": "hf_20261012_164215_f7f9f5f2-5188-40a6-9806-f4f221c10287.mp4",
     "hero-after-16x9": "hf_20261012_164239_f9e229e4-7fb5-4d85-9f71-5f2a8b85b706.mp4",
     "card-before": "hf_20261012_164245_33ec8f80-69db-4312-9bcb-57d10d47da21.mp4",
-    "card-after": "hf_20261012_164252_33dfadd7-c418-4676-b848-743b0a04ae79.mp4"
+    "card-after": "hf_20261012_164252_33dfadd7-c418-4676-b848-743b0a04ae79.mp4",
+    "footer-pool": "hf_20261012_171337_b6cbc4b2-814c-461a-a4e2-9a2eaed7f3dd.mp4"
   },
   "stills": {
     "fragments-cutout": "hf_20261011_114520_4e935e33-250f-4dc8-953f-8f9326d629db.png",

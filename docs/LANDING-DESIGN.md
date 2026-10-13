@@ -10,7 +10,8 @@ crystal shatters, a smooth polished pebble is left, and the water leaves it as
 **one calm stream**. The water lives in the hero; below it the page is calm
 white with still crystal stones. Water comes back further down only as
 dedicated clips attached to specific elements (the calendar's two cards),
-never as a continuous line down the page.
+never as a continuous line down the page. At the bottom, the footer is all
+the water that has fallen: a calm, shallow pool, edge to edge.
 
 - **Light:** soft, neutral, from above. No colour.
 - **Page:** pure white. Every image and clip is graded to it, so nothing reads
@@ -34,6 +35,7 @@ never as a continuous line down the page.
 8. Built on your systems.
 9. FAQ.
 10. Final CTA.
+11. The footer: the pool (on every page).
 
 ## Two clocks
 
@@ -219,13 +221,58 @@ added, moved or condensed; the empty grid is the message.
 - The weeks are illustrations with no totals, hours or percentages, and the
   page says so on every tab.
 
+## The footer pool
+
+The footer's background is the water that has fallen down the page: a wide,
+shallow, clear pool under a white wall, single drops falling in and sending
+out rings. It is the shared footer, so every page has it.
+
+- **The poster is CSS** (`.mk-footer` in `marketing.css`): AVIF through
+  `image-set()`, WebP for the rest, `cover`, anchored at the top
+  (`--pool-at: 50% 0%`). Blog, contact and legal get it with no JavaScript.
+  The footer sits outside the content wrapper, so the water spans the
+  viewport edge to edge; only its copy is in `.mk-wrap`.
+- **Seamless from above.** The band starts 42 source pixels above the
+  waterline: that strip is the wall graded to pure white (the top 28 rows of
+  the poster are 255), so the white page runs into the footer with no edge
+  and the water begins at the waterline, about 8% of the band's height down
+  (`media.json` `footer.pool.waterline`). The footer has no border or tint.
+- **Layout.** 112px of top padding (88px on a phone) puts the copy in the
+  water below the waterline. At 1440 and 1024 the footer is about 360px
+  tall, shorter than the band drawn at the viewport's width (396px at 1440),
+  so the band is cropped at the bottom. On a phone `cover` fits the
+  footer's height (about 570px at 375 wide) and shows the middle of the
+  band at about 1.3 times its encoded scale; the link columns sit two to a
+  row under the brand there, which keeps the footer, and so the scale, down.
+- **Readable copy.** The ripples' dark rings fail `--mute` (3.8-4.0:1 on the
+  poster's darkest 1%), so the footer's text is `--ink`/`--ink-2`, with a
+  soft halo of the page's white (`text-shadow`), and links underline on
+  hover instead of turning sage. The grade also floors the water's darkest
+  tones at luma 150 (see the pipeline), so no frame goes under 5:1 behind
+  ink. `e2e/pool.spec.js` measures every piece of footer text against the
+  darkest 2% of the water actually painted under it, without the halo:
+  about 9:1 on the poster at 1440, 1024 and 375, and above 7:1 over the
+  moving clip.
+- **Motion** (`motion/pool.js`, the media tier only, home page only). The
+  home page hands the footer the clip's URLs (`data-pool`, from
+  `Home.astro` through `Base.astro`). Once the footer is within half a
+  screen (and after `load`), one looping `<video>` is created in the footer,
+  `position: absolute; inset: 0`, `object-fit: cover` with the same
+  `--pool-at` as the background, under the copy (`z-index: -1`). It opens on
+  the poster's own frame, so when it fades in (`is-ready`) nothing changes:
+  measured at t = 0, the clip and the poster differ by about 2 levels on
+  average. A mask fades its top 24px in over the poster's white, so a drop
+  falling in from above is never cut at the footer's edge. It pauses off
+  screen, in a hidden tab and on `pagehide`; a refused `play()` removes it
+  and leaves the poster. Reduced motion and Save-Data get the poster only.
+
 ## Fallbacks
 
 | Case | What the visitor sees |
 |---|---|
-| No JS | The AFTER poster, the stones (their float is CSS), the final calendar (side by side, stacked weeks or one day, by width), no water. |
-| Reduced motion | Posters with a crossfade instead of the crash, still stones, no videos (no water on the calendar), no reveals. |
-| Save-Data, 2g, or a device that reports under 4 GB (`deviceMemory`) | Motion, but posters only: no video requests; the crash is a poster crossfade. A browser that reports no memory (Safari, Firefox) gets the clips. |
+| No JS (and every page but home) | The AFTER poster, the stones (their float is CSS), the final calendar (side by side, stacked weeks or one day, by width) with no water on it; the footer's pool as its still poster. |
+| Reduced motion | Posters with a crossfade instead of the crash, still stones, no videos (no water on the calendar, the pool's poster in the footer), no reveals. |
+| Save-Data, 2g, or a device that reports under 4 GB (`deviceMemory`) | Motion, but posters only: no video requests; the crash is a poster crossfade and the footer is the pool's poster. A browser that reports no memory (Safari, Firefox) gets the clips. |
 | `play()` refused (iOS Low Power Mode) | The posters crossfade; the state and the headline still change. |
 
 ## Media pipeline
@@ -235,7 +282,8 @@ permanent URL in `scripts/media/sources.json`, and only the outputs are
 committed (`apps/site/src/media/`). It does the following:
 
 The hero clips are BEFORE (loop), the transition (once) and AFTER (loop), in
-16:9 and 9:16; the card clips are the calendar's two loops.
+16:9 and 9:16; the card clips are the calendar's two loops; the footer pool
+is one wide loop.
 
 1. **Grade to white.**
    - The void field is the per-pixel 90th percentile over all frames,
@@ -261,21 +309,46 @@ The hero clips are BEFORE (loop), the transition (once) and AFTER (loop), in
      side of its edge) is the median of its calmest 8 frames, where it is
      dry. The slab and the wall come out white and the water keeps its own
      light and shade, ready to be multiplied over a white card.
+   - **The footer pool** (`poolGrader`) is cropped to a band from 42px
+     above the waterline (the pool's far rim, y 594-612 in the 1920x1080
+     source) to the bottom, encoded at 1600x440. The wall's light falls off
+     to the right (luma 238 to 206), and below the waterline the void field
+     would take the pool's own tone for light and grade the water away, so
+     the field is estimated over the whole frame and each column's light
+     from just above the waterline is carried down through the pool. The
+     frame is divided by that: the wall goes to white and the pool keeps its
+     tone, evenly lit. Below the waterline the tone is deepened
+     (`255 - (255 - v) * 1.5`) so it still reads as water, and the darkest
+     tones (a drop's outline, a splash, the rim) are lifted onto a soft
+     floor (below luma 200, `v -> 150 + 50 * sqrt(v / 200)`), so the
+     footer's copy never sits on anything under luma 150. The source's dust
+     specks fade out with it.
 2. **Loop:** the last second is cross-faded into the first. The transition is
    not looped. The AFTER card loop starts at source frame 48: before that
    the flow builds up from a dry slab (those frames still feed the plate).
+   The pool's source already ends on its first frame (PSNR 35.8 dB between
+   them, above its own 32-34 dB frame step), so it is not cross-faded (that
+   would ghost two sets of ripples together): it plays frames 0-142 and
+   wraps (`seamless`), rotated to open on frame 36 (`start`), calm rings
+   with no drop splashing up under the copy, which is also its poster.
 3. **Encode** AV1 WebM and H.264 MP4: closed GOP, BT.709, `+faststart`, no
-   audio.
-4. **Write** the hero loops' posters (first frame), the stones and
-   `media.json` (the crash's duration, each card clip's aspect and fit box,
-   and the stone counts). The card clips need no posters: they only play
-   over the finished card.
+   audio. The pool is busy with ripples in every frame, so it is encoded two
+   steps harder (AV1 CRF 42, x264 CRF 29).
+4. **Write** the hero loops' posters (first frame), the pool's poster (its
+   first frame, as AVIF and WebP, served as they are by the footer's CSS),
+   the stones and `media.json` (the crash's duration, each card clip's
+   aspect and fit box, the pool's aspect and waterline, and the stone
+   counts). The card clips need no posters: they only play over the
+   finished card.
 
 `node scripts/media/build-media.mjs --check` reports sizes, decoded void luma,
 the loop-seam PSNR (beside the clip's median frame-to-frame PSNR) and the
 crash's two cuts (PSNR between the BEFORE loop's first frame and the crash's
 first, and between the crash's last frame and the AFTER loop's first).
-`--only card-before,card-after` rebuilds some clips (and leaves `media.json`).
+`--only card-before,card-after` rebuilds some clips and patches their entries
+in `media.json`. For the pool, the void luma is measured on the wall above
+the waterline (the rest of its frame is water), and as a seamless loop its
+seam is held to the frame steps either side of it.
 
 | Check | Target | Current |
 |---|---|---|
@@ -287,9 +360,14 @@ first, and between the crash's last frame and the AFTER loop's first).
 | Desktop hero media (BEFORE, transition and AFTER, WebM) | ≤ 2.5 MB | about 1.2 MB (661 + 420 + 163 KB; MP4 1.8 MB) |
 | Mobile hero media (WebM) | ≤ 1.2 MB | about 0.57 MB (299 + 211 + 70 KB; MP4 0.72 MB) |
 | Calendar water (WebM, every tier with media) | ≤ 960 wide | 960×402 + 710×680, 195 + 57 KB (MP4 267 + 82 KB) |
+| Footer pool: void luma (the wall) / seam | 235 / no worse than the steps either side less 1 dB | 235 / 29.9 dB (steps 30.0 dB) |
+| Footer pool clip (WebM, home, media tier) | ≤ 400 KB, ≤ 1600 wide | 1600×440, 143 frames (5.96 s), 325 KB (MP4 600 KB) |
+| Footer pool poster (every page) | light enough for every page | AVIF 14 KB, WebP 27 KB |
 
 **Sources and credits.** Everything was generated on Higgsfield (the clips
-by URL in `sources.json`):
+by URL in `sources.json`). The stills are FLUX 3 Image; every clip (the
+hero's BEFORE, crash and AFTER loops, the two card clips and the footer
+pool) is Gemini Omni Flash 1.1 image-to-video:
 
 - **The BEFORE still** (`f59fa925`): the raw rock in visible, splashy rain.
 - **The AFTER still** (`01381381`, `hf_20261012_161912_01381381-...png`): a
@@ -304,6 +382,12 @@ by URL in `sources.json`):
   BEFORE, uneven streams splashing over its top edge (horizontal, at about
   40% of the frame) and dripping down its face; for AFTER, one stream
   landing on its top edge, running down both sides and rejoining below.
+- **The footer pool:** a still (FLUX 3, `3becacc6`,
+  `hf_20261012_171227_3becacc6-...png`) of a white wall over a wide,
+  shallow, clear pool, the waterline across the middle of the frame; then
+  a 6 s, 16:9, 1080p loop (Gemini Omni Flash 1.1, `b6cbc4b2`) with that
+  still as its start and end frame: single drops fall in at different
+  places and send out rings, the camera locked off.
 
 The polished faceted crystal of the first version is retired; none of its
 clips or stills is referenced any more. A clip is rejected if the stone

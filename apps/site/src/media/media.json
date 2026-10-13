@@ -28,6 +28,12 @@
       }
     }
   },
+  "footer": {
+    "pool": {
+      "aspect": 3.6364,
+      "waterline": 0.0795
+    }
+  },
   "stones": {
     "raw": 7,
     "pebble": 4
