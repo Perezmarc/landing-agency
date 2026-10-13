@@ -9,9 +9,9 @@ Rain falls on a rough, raw quartz crystal and breaks into messy drops. The
 crystal shatters, a smooth polished pebble is left, and the water leaves it as
 **one calm stream**. The water lives in the hero; below it the page is calm
 white with still crystal stones. Water comes back further down only as
-dedicated clips attached to specific elements (the calendar's two cards),
-never as a continuous line down the page: the stream that left the hero
-falls onto the AFTER card on the same x, with plain page between. At the bottom, the footer is all
+dedicated clips attached to specific elements (the calendar's two cards), as
+a thin accent on their borders, and as the one stream that left the hero,
+carried on the same x, unbroken, down to the AFTER card. At the bottom, the footer is all
 the water that has fallen: a filled container seen from the side, a flat
 waterline edge to edge and the body of water below it.
 
@@ -217,76 +217,97 @@ added, moved or condensed; the empty grid is the message.
   view together, so the eye sees the left week and the right one emptying.
 - **Surfaces.** Both cards are plain white cards, `position: relative`, that
   make no stacking context and clip nothing at their edges, so the water can
-  splash over the BEFORE card's top border and flow behind and around the
+  splash on the BEFORE card's top border and flow behind and around the
   AFTER card. The section clips sideways only (`overflow-x: clip`), so the
-  water never widens the page. Stacked (below 1180px) the cards are 64px
-  apart, so the stream falling onto the AFTER card shows between them.
-- **Water** (`motion/water.js`, the media tier only). Once the calendar is
-  within half a screen of the viewport (and after `load`), two looping clips
-  are created and put in the chosen team's cards; they move with the tabs,
-  and pause off screen, in a hidden tab and on `pagehide`. Nothing is
-  requested before, the server HTML has no video, and the CSS default is the
-  finished calendar without water; reduced motion and Save-Data get none.
-  Each clip carries the box in its frame that is fitted to its card (`fit`
-  in `media.json`, written by the pipeline) as custom properties, and
-  `marketing.css` does the placement, in percentages of the card, so it
-  follows every layout:
-  - **BEFORE ("Today"): on the card, the rain.** A pale slab with uneven
-    streams falling onto its top edge and splashing. The clip is cropped to
-    the slab's width and kept from the top of its source frame, so the
-    streams come from above; the slab spans the card's border box, its top
-    edge on the card's top border; it is multiplied (`mix-blend-mode:
-    multiply`), so its white disappears and only the water shows. A mask
-    fades the streams in from the page over 110px above the border (fully
-    there only in the last 28px) and fades the drips out within 100px below
-    it, so no chip label is covered for long.
-  - **AFTER ("With an agent"): behind the card.** The water runs down just
-    inside both side edges of a slab and leaves below as one stream. The
-    clip sits at `z-index: -1` inside the card, under its white surface,
-    which hides the slab's face and its ripples. Its fit box is the inner
-    edges of the two side sheets and the slab's top and bottom, stretched
-    onto the card (independent X and Y scale, `object-fit: fill`: the water
-    is vertical, so a taller card only lengthens it), so the sheets run just
-    outside the side borders and rejoin below it. The clip starts 9 source
-    rows above the slab (the source's own incoming stream is cropped away)
-    and the mask fades the stream out 160px below.
-  - **The stream onto the AFTER card is the hero's.** `card-stream` is cut
-    from the hero AFTER loop's graded frames: the column under the pebble,
-    64×250 of the 1600×900 frame, centred on the stream. It sits behind the
-    AFTER card, its bottom tucked 24px under the top border, and fades in
-    from the page over its top 60%. `motion/water.js` measures where the
-    hero's stream leaves the hero on screen (the hero media box and the
-    stream's x from `media.json`, for the rendition in use) and hands the
-    clip that x and the hero's scale as `--stream-left` / `--stream-w`
-    (measured layout values, redone on resize), held at least 24px inside
-    the card. So the eye follows the same stream, the same width, straight
-    down from the pebble onto the card, with plain page between. Measured
-    (screen x of the hero stream = the card stream; `e2e/stream.spec.js`
-    holds it to 2px):
+  water never widens the page. The cards sit 48px below the note and legend
+  (36px on a phone), the room the BEFORE water's band needs. Stacked (below
+  1180px) the cards are 64px apart, so the stream falling onto the AFTER card
+  shows between them.
+- **Water** (`motion/water.js`, the media tier only). An accent on the
+  borders, never over the content: no chip, tab, title, note or legend is
+  covered. Once the calendar is within a screen of the viewport (and after
+  `load`), the card clips are created and put in the chosen team's cards,
+  with the stream's copies; they move with the tabs. Each clip plays only
+  from half a screen before it is on screen, and pauses in a hidden tab and
+  on `pagehide`. Nothing is requested before, the server HTML has no video,
+  and the CSS default is the finished calendar without water; reduced
+  motion and Save-Data get none (and so no stream below the hero: the static
+  page shows none, by design). Each card clip carries the box in its frame
+  that is fitted to its card (`fit` in `media.json`, written by the
+  pipeline) as custom properties, and `marketing.css` does the placement, in
+  percentages of the card, so it follows every layout. No media was
+  regenerated for this: the band, the strength and the stacking are all CSS
+  masks, opacity and JS placement on the existing clips.
+  - **BEFORE ("Today"): splashes around the top border.** The rain clip (a
+    pale slab with streams falling onto its top edge and splashing) sits ON
+    the card, multiplied (`mix-blend-mode: multiply`, its near-white lifted
+    to white by `brightness(1.06)` so the band has no edge), at half
+    strength (`--water-alpha`: 0.5; 0.4 stacked, where the clip is about 1.7
+    times its side-by-side scale). The slab's top edge is the card's top
+    border and it spans the card widened by `--water-out` (14px; 10px on a
+    phone). A mask of four layers keeps a thin band: 40px over the top border
+    (32px stacked, 28px on a phone), fading in from the page, and 10px under
+    it (inside the card's 16-18px padding), plus side strips 12px out and 8px
+    in, down to 120px (80px on a phone); everything is cut to the card's
+    width plus that strip. So the splashes and droplets break along the top
+    edge; the falling streams above and the drips below are masked away. The
+    source has little water at the slab's side edges, so the side strips
+    mostly stay empty.
+  - **AFTER ("With an agent"): a thin flow down the sides and out below.**
+    The clip sits at `z-index: -1` inside the card, under its white surface,
+    which hides the slab's face. Its fit box (the inner edges of the two side
+    sheets, the slab's top and bottom) is stretched onto the card
+    (independent X and Y scale, `object-fit: fill`), with the sides tucked
+    under the card by `--water-gap` (-3.5%; -4% stacked, -3% on a phone), so
+    only the outer edge of each sheet shows, about 10-20px. It is at 60%
+    strength, and the mask lets the water leave below within 56px (40px on
+    a phone).
+  - **The stream from the hero to the AFTER card.** `card-stream` is cut from
+    the hero AFTER loop's graded frames: the column under the pebble, 64×250
+    of the 1600×900 frame, from row 650 to the frame's bottom, centred on the
+    stream. One clip is short, and stretching it would show, so it is
+    stacked: copies of the same clip, each at its own time (the golden ratio
+    of the loop apart), each showing only its rows below 40% (the clip
+    narrows down the column, and its lower rows have the width the stream
+    has at the hero's edge), fading in from 40% to 55% over the solid rows of
+    the copy above, 45% of a copy apart. The first copy's solid rows start at
+    the hero section's bottom edge (where the hero's stream is cut off); the
+    last runs 24px under the AFTER card's top border. A copy wholly behind
+    the BEFORE card (stacked layouts) is left out. All of them are children
+    of the AFTER card at `z-index: -1`, so they paint under the page's text
+    and the cards; the section intro, note and legend carry a white
+    `text-shadow` halo, so where the stream passes behind them (through the
+    middle of the paragraph on a phone, past the legend side by side) every
+    glyph stays clear of it. `motion/water.js` measures where the hero's
+    stream leaves the hero on screen (the hero media box and the stream's x
+    from `media.json`, for the rendition in use), held at least 24px inside
+    the card, and the hero's scale, and hands each copy `--stream-left`,
+    `--stream-top`, `--stream-w` and its `--stream-hide` / `--stream-solid`
+    rows. It re-measures whenever the page's box changes (a
+    `ResizeObserver` on the body: resizes, fonts, images, a taller week) and
+    each time the calendar comes near, so a later layout shift cannot leave
+    the stream short of the card. Measured (`e2e/stream.spec.js` holds the x
+    to 2px and the gap to 3px):
 
-    | Layout | Viewport | x (share of the screen) | on the card at | old card stream |
+    | Layout | Viewport | Hero bottom → AFTER card top | Copies | Largest gap |
     |---|---|---|---|---|
-    | side by side | 1440×900 | 977 (68%) | 44% of its width | 1023 (+45px) |
-    | side by side | 1920×1080 | 1269 (66%) | 53% | 1263 (−6px) |
-    | side by side | 1180×820 | 825 (70%) | 40% | 887 (+62px) |
-    | side by side | 2560×1440 | 1692 (66%) | 71% | 1583 (−109px) |
-    | stacked weeks | 1024×768 | 732 (72%) | 72% | 526 (−206px) |
-    | stacked weeks | 768×1024 | 378 (49%) | 49% | 394 (+16px) |
-    | one day | 390×844 | 192 (49%) | 49% | 200 (+8px) |
+    | side by side | 1440×900 | 654px | 7 | 0px |
+    | side by side | 1180×820 | 591px | 6 | 0px |
+    | stacked weeks | 1024×768 | 1252px (622 behind the BEFORE card) | 9 | 0px |
+    | one day | 390×844 | 1363px (692 behind the BEFORE card) | 14 | 0px |
 
-    The old card stream was the card clip's own, about the card's centre
-    (computed from its old fit box); no layout needs the 24px clamp.
-  - **Per layout.** Side by side (1180px and up) the AFTER sheets show in
-    full: on the right in the page margin, on the left in the 16px gap
-    between the cards. Stacked weeks (721-1179px) the card is nearly the
-    page's width with 20px margins, so the sheets are tucked 2% of the card
-    under it (`--water-gap: -2%`) and what shows fits the margin. On a phone
-    (one day, 720px and below) both clips are kept: the BEFORE splash fits
-    the narrow card well, and the AFTER clip is stretched about 2.7 times
-    vertically, which the vertical sheets and the long V below carry.
-    Stacked and on a phone the incoming stream shows in the 64px between
-    the cards (above that it is behind the BEFORE card); side by side it
-    falls about 200px through the page above the card, behind the legend.
+    With JavaScript off, reduced motion or Save-Data there are no copies:
+    the hero's stream ends at the hero's edge and the page below is plain.
+  - **How far the card water reaches** (measured in `e2e/water.spec.js`,
+    which shoots the page with each card clip shown and hidden; it holds
+    every changed pixel out of the content box and within 60px of the border
+    box, 44px on a phone):
+
+    | Viewport | BEFORE: above the top border | AFTER: below / left / right |
+    |---|---|---|
+    | 1440×900 | 36px | 49 / 12 / 22px |
+    | 1024×768 | 28px | 50 / 12 / 20px |
+    | 375×812 | 23px | 34 / 8 / 15px |
 - Native radio tabs (`@forge/ui` `Tabs`) work without JavaScript.
 - The weeks are illustrations with no totals, hours or percentages, and the
   page says so on every tab.
