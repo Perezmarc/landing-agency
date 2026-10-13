@@ -36,31 +36,36 @@ describe('media.json', () => {
     expect(media.hero['16x9'].extend).toBeUndefined()
   })
 
-  it('gives each card clip a box to fit to its card', () => {
-    for (const which of ['before', 'after']) {
-      const { aspect, fit } = media.cards[which]
-      expect(aspect, which).toBeGreaterThan(0.5)
-      expect(aspect, which).toBeLessThan(4)
-      expect(fit.left, which).toBeGreaterThanOrEqual(0)
-      expect(fit.right, which).toBeLessThanOrEqual(1)
-      expect(fit.right - fit.left, which).toBeGreaterThan(0.5)
-      expect(fit.bottom, which).toBeGreaterThan(fit.top)
-    }
-    // BEFORE: the slab spans the clip's width, its top edge with streams above it.
-    expect(media.cards.before.fit.left).toBe(0)
-    expect(media.cards.before.fit.right).toBe(1)
-    expect(media.cards.before.fit.top).toBeGreaterThan(0.2)
-    expect(media.cards.before.fit.top).toBeLessThan(0.6)
-    // AFTER: it starts at the card's top edge (the stream coming in is the
-    // stream clip), with room below for the stream going out.
-    expect(media.cards.after.fit.top).toBeGreaterThan(0)
-    expect(media.cards.after.fit.top).toBeLessThan(0.05)
-    expect(media.cards.after.fit.bottom).toBeLessThan(0.9)
+  it('gives the BEFORE strip its scale and edge, and the AFTER clip a box to fit to its card', () => {
+    // BEFORE: a thin strip along the slab's top edge (a wide, short frame),
+    // its source width (the page draws it at a fraction of a CSS px per
+    // source px) and its edge row low in it: the splashes above, a few rows
+    // of the slab under it.
+    const { aspect, width, edge } = media.cards.before
+    expect(aspect).toBeGreaterThan(10)
+    expect(aspect).toBeLessThan(20)
+    expect(width).toBeGreaterThan(900)
+    expect(edge).toBeGreaterThan(0.7)
+    expect(edge).toBeLessThan(0.9)
+    expect(media.cards.before.fit).toBeUndefined()
+    // AFTER: the slab's silhouette, inside the frame, with room below for
+    // the stream going out; it starts at the card's top edge (the stream
+    // coming in is the stream clip).
+    const { fit } = media.cards.after
+    expect(media.cards.after.aspect).toBeGreaterThan(0.5)
+    expect(media.cards.after.aspect).toBeLessThan(4)
+    expect(fit.left).toBeGreaterThan(0)
+    expect(fit.right).toBeLessThan(1)
+    expect(fit.right - fit.left).toBeGreaterThan(0.5)
+    expect(fit.bottom).toBeGreaterThan(fit.top)
+    expect(fit.top).toBeGreaterThan(0)
+    expect(fit.top).toBeLessThan(0.05)
+    expect(fit.bottom).toBeLessThan(0.9)
     // The stream: a tall, narrow column with the stream in its middle.
-    const { aspect, width, x } = media.cards.stream
-    expect(aspect).toBeLessThan(0.5)
-    expect(width).toBeGreaterThanOrEqual(64)
-    expect(Math.abs(x - 0.5)).toBeLessThan(0.1)
+    const stream = media.cards.stream
+    expect(stream.aspect).toBeLessThan(0.5)
+    expect(stream.width).toBeGreaterThanOrEqual(64)
+    expect(Math.abs(stream.x - 0.5)).toBeLessThan(0.1)
   })
 
   it('gives the footer pool its band, its phone rendition and waterline', () => {
@@ -85,12 +90,14 @@ describe('media.json', () => {
       files.push(`${clip}.webm`, `${clip}.mp4`, `${clip}.jpg`)
     }
     for (const r of ['16x9', '9x16']) files.push(`hero-transition-${r}.webm`, `hero-transition-${r}.mp4`)
-    for (const which of ['before', 'after', 'stream']) files.push(`card-${which}.webm`, `card-${which}.mp4`)
+    for (const clip of ['card-splash', 'card-after', 'card-stream']) files.push(`${clip}.webm`, `${clip}.mp4`)
     // The pool, in both renditions: its clip, and its poster ready to serve as the footer's background.
     for (const name of ['footer-pool', 'footer-pool-narrow']) files.push(`${name}.webm`, `${name}.mp4`, `${name}.avif`, `${name}.webp`)
     for (let i = 1; i <= media.stones.raw; i++) files.push(`stones/raw-${i}.webp`)
     for (let i = 1; i <= media.stones.pebble; i++) files.push(`stones/pebble-${i}.webp`)
     files.forEach(f => expect(existsSync(here(f)), f).toBe(true))
+    // The BEFORE card's old full-frame clip was replaced by the splash strip.
+    for (const f of ['card-before.webm', 'card-before.mp4']) expect(existsSync(here(f)), f).toBe(false)
     expect(readFileSync(here('media.json'), 'utf8')).toContain('build-media.mjs')
   })
 })

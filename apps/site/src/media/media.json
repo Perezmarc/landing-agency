@@ -19,20 +19,16 @@
   },
   "cards": {
     "before": {
-      "aspect": 1.8824,
-      "fit": {
-        "left": 0,
-        "top": 0.5221,
-        "right": 1,
-        "bottom": 1.3235
-      }
+      "aspect": 15,
+      "width": 1026,
+      "edge": 0.8235
     },
     "after": {
       "aspect": 1.277,
       "fit": {
-        "left": 0.1296,
+        "left": 0.0958,
         "top": 0.0162,
-        "right": 0.862,
+        "right": 0.907,
         "bottom": 0.7428
       }
     },

@@ -1,10 +1,13 @@
 /* The calendar's water: an accent on the chosen team's two cards' borders,
    and the hero's stream carried down to the AFTER card.
 
-     BEFORE ("Today")        water splashes around the card's top border and
-                             a little down its sides: the clip sits ON the
-                             card, multiplied (its white disappears), masked
-                             to a thin band around the border.
+     BEFORE ("Today")        small splashes sitting on the card's top border:
+                             a thin strip clip (card-splash, the slab's top
+                             edge where the rain lands), drawn small, ON the
+                             card, multiplied (its white disappears), its
+                             edge row on the border, repeated along it: 1–4
+                             copies (by the card's width), each at its own
+                             time, cross-faded into each other.
      AFTER ("With an agent") a thin edge of water runs down just outside both
                              sides and leaves below: the clip sits BEHIND the
                              card, whose white surface hides the rest.
@@ -19,10 +22,11 @@
    viewport: nothing is requested before. The server HTML has no video and
    the CSS default is the finished calendar without water, so a refused
    play() just leaves the page as it is. Placement is CSS (marketing.css):
-   this only hands each card clip the box it fits to its card (media.json
-   `fit`) as custom properties, and each stream copy its measured place
-   (align). The clips follow the chosen tab, and each plays only while it is
-   on screen, in a visible tab. */
+   this only hands each card clip what media.json says about it (the AFTER
+   clip's `fit` box, the strip's source `width` and `edge` row) as custom
+   properties, and each strip and stream copy its measured place (align).
+   The clips follow the chosen tab, and each plays only while it is on
+   screen, in a visible tab. */
 
 import { makeVideo, play } from './video.js'
 
@@ -36,6 +40,21 @@ const TUCK = 24          // and runs this far under its top border
    fading in from HIDE to SOLID over the copy above; copies are STEP apart,
    so each one's fade lies on the solid rows of the one above. */
 const HIDE = 0.4, SOLID = 0.55, STEP = 1 - SOLID
+const GOLDEN = 0.618     // copies of one clip start this far apart in its loop, so they never repeat
+
+/* The BEFORE strip's copies along a border `span` px long, each `copy` px
+   wide (its CSS scale): as few as cover it with neighbours overlapping by at
+   least OVERLAP of a copy, one if a copy nearly spans it. `places` is each
+   copy's left edge as a share of the room left over (0 at the left, 1 at
+   the right, 0.5 alone); `overlap` is how much of a copy its neighbour
+   covers, the width of the linear cross-fade between them, so the two
+   always add up to one strip and no seam shows. */
+const OVERLAP = 0.15, ALONE = 0.1
+export function stripPlaces(span, copy) {
+  if (!(copy > 0) || span - copy <= ALONE * copy) return { places: [0.5], overlap: 0 }
+  const n = 1 + Math.ceil((span - copy) / (copy * (1 - OVERLAP)))
+  return { places: Array.from({ length: n }, (_, i) => i / (n - 1)), overlap: 1 - (span - copy) / (n - 1) / copy }
+}
 
 /** @param {HTMLElement} root the [data-day] wrapper, carrying data-water */
 export function initWater(root) {
@@ -61,16 +80,45 @@ export function initWater(root) {
     return v
   }
   function drop(v) { sight.unobserve(v); seen.delete(v); v.pause(); v.remove() }
+  // A copy that starts `i` golden steps into the loop.
+  function offset(v, i) {
+    v.addEventListener('loadedmetadata', () => { v.currentTime = (i * GOLDEN % 1) * v.duration }, { once: true })
+  }
 
   function create() {
-    clips = { before: null, after: null, stream: [] }
-    for (const which of ['before', 'after']) {
-      const { aspect, fit } = data[which]
-      const v = clip(which)
-      for (const [k, value] of Object.entries({ ar: aspect, l: fit.left, t: fit.top, r: fit.right, b: fit.bottom })) v.style.setProperty(`--water-${k}`, value)
-      clips[which] = v
-    }
+    clips = { before: [], after: null, stream: [] }
+    const { aspect, fit } = data.after
+    const v = clip('after')
+    for (const [k, value] of Object.entries({ ar: aspect, l: fit.left, t: fit.top, r: fit.right, b: fit.bottom })) v.style.setProperty(`--water-${k}`, value)
+    clips.after = v
     place()
+  }
+
+  /* The BEFORE strip's copies along the card's top border: as many as its
+     width needs at the strip's CSS scale (stripPlaces), each handed its
+     place. The strip's size and its edge row on the border are CSS. */
+  function strips(card) {
+    if (!card || refused.has('before')) return
+    const add = () => {
+      const i = clips.before.length, v = clip('before')
+      for (const [k, value] of Object.entries({ ar: data.before.aspect, src: data.before.width, edge: data.before.edge })) v.style.setProperty(`--water-${k}`, value)
+      offset(v, i)
+      clips.before.push(v)
+    }
+    if (!clips.before.length) add()
+    // The first copy is measured where it is drawn (after a tab change it is
+    // still in the hidden panel's card), the rest follow it in order.
+    if (clips.before[0].parentNode !== card) card.append(clips.before[0])
+    const { places, overlap } = stripPlaces(card.getBoundingClientRect().width, clips.before[0].getBoundingClientRect().width)
+    while (clips.before.length > places.length) drop(clips.before.pop())
+    while (clips.before.length < places.length) add()
+    // In order, so the CSS can tell the first and last copies (their outer
+    // ends fade at the card's corners, the others over their overlap).
+    clips.before.forEach((v, i) => {
+      if (v.parentNode !== card) card.append(v)
+      v.style.setProperty('--water-at', places[i])
+      v.style.setProperty('--water-overlap', `${(overlap * 100).toFixed(2)}%`)
+    })
   }
 
   /* The stream starts where the hero's stream leaves the hero: its x on
@@ -81,9 +129,11 @@ export function initWater(root) {
      behind the BEFORE card (stacked layouts) is left out. All of it is layout
      measurement, so it is set inline and redone when the layout changes. */
   function align() {
-    const card = clips?.after?.parentNode ?? panel()?.querySelector('[data-cal="after"]')
+    if (!clips) return
+    strips(panel()?.querySelector('[data-cal="before"]'))
+    const card = clips.after?.parentNode ?? panel()?.querySelector('[data-cal="after"]')
     const hero = document.querySelector('.mk-hero'), media = document.querySelector('.mk-hero-media')
-    if (!clips || !card || !hero || !media || refused.has('stream')) return
+    if (!card || !hero || !media || refused.has('stream')) return
     const s = data.hero[matchMedia(PORTRAIT).matches ? 'p' : 'l']
     const m = media.getBoundingClientRect(), c = card.getBoundingClientRect()
     const before = card.parentNode.querySelector('[data-cal="before"]')?.getBoundingClientRect()
@@ -105,8 +155,7 @@ export function initWater(root) {
         v.style.setProperty('--stream-ar', data.stream.aspect)
         v.style.setProperty('--stream-hide', `${HIDE * 100}%`)
         v.style.setProperty('--stream-solid', `${SOLID * 100}%`)
-        // Each copy at its own time, so the stacked copies never repeat.
-        v.addEventListener('loadedmetadata', () => { v.currentTime = (i * 0.618 % 1) * v.duration }, { once: true })
+        offset(v, i)   // each copy at its own time, so the stacked copies never repeat
       }
       if (v.parentNode !== card) card.append(v)   // in order, so each copy paints over the one above
       v.style.setProperty('--stream-w', `${width.toFixed(2)}px`)
@@ -114,16 +163,13 @@ export function initWater(root) {
       v.style.setProperty('--stream-top', `${(top - origin).toFixed(2)}px`)
     })
   }
-  // Into the chosen team's two cards (a move, so nothing is fetched again).
+  // Into the chosen team's two cards (a move, so nothing is fetched again);
+  // align() moves the strips and the stream copies.
   function place() {
     const p = panel()
     if (!clips || !p) return
-    for (const which of ['before', 'after']) {
-      const v = clips[which], card = p.querySelector(`[data-cal="${which}"]`)
-      if (v && card && v.parentNode !== card) card.append(v)
-    }
     const after = p.querySelector('[data-cal="after"]')
-    for (const v of clips.stream) if (v.parentNode !== after) after.append(v)
+    if (clips.after && after && clips.after.parentNode !== after) after.append(clips.after)
     align()
   }
   function resume(v) {
@@ -131,10 +177,10 @@ export function initWater(root) {
     play(v, () => {
       const which = v.dataset.water
       refused.add(which)
-      if (which === 'stream') { clips.stream.forEach(drop); clips.stream = [] } else { drop(v); clips[which] = null }
+      if (which === 'after') { drop(v); clips.after = null } else { clips[which].forEach(drop); clips[which] = [] }
     })
   }
-  const all = () => clips ? [clips.before, clips.after, ...clips.stream].filter(Boolean) : []
+  const all = () => clips ? [...clips.before, clips.after, ...clips.stream].filter(Boolean) : []
 
   const near = new IntersectionObserver(([e]) => {
     if (!e.isIntersecting) return

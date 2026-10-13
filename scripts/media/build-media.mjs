@@ -7,7 +7,7 @@
 
        node scripts/media/build-media.mjs            # everything
        node scripts/media/build-media.mjs --check    # only the checks
-       node scripts/media/build-media.mjs --only card-before,card-after
+       node scripts/media/build-media.mjs --only card-splash,card-after
                                                      # some clips (patches media.json)
 
    Needs ffmpeg (libsvtav1, libx264) on PATH; sharp comes from the workspace.
@@ -38,9 +38,11 @@
    bottom of a phone screen taller than its small viewport. The stream that
    falls onto the calendar's AFTER card (card-stream) is cut from the hero
    AFTER loop's graded frames.
-   The card clips (the calendar's water) are cropped to their slab and graded
-   against a clean plate of it (cardPlate): the slab goes to white and only
-   the water is left. No posters: they only ever play over the finished card.
+   The card clips (the calendar's water) are cropped to their slab (the
+   BEFORE card's to a thin strip along its top edge) and graded against a
+   clean plate of it (cardPlate): the slab goes to white and only the water
+   is left, and only where the page shows it (cardKeep). No posters: they
+   only ever play over the finished card.
    The footer's pool (water seen from the side) is cropped to a wide band
    from its waterline down and graded against its own median frame
    (poolGrader): the white above the line goes to pure white, and every
@@ -86,29 +88,43 @@ const ONLY = ONLY_AT > 0 ? new Set(process.argv[ONLY_AT + 1].split(',')) : null
 
 /* The calendar's card clips, in their 1280×720 sources (pixels): `slab` is
    the pale slab's box, measured on the per-pixel median frame (the plate is
-   built around it), `crop` what is kept of the frame, and `fit` the box the
-   page fits to the card's edges (media.json → marketing.css).
-   BEFORE: cropped to the slab's own width, so the slab spans the card; the
-   crop keeps the streams above its top edge from the top of the frame (the
-   rain falls onto the card from the page) and the drips a short way down
-   its face, and `fit` is the slab (its top edge on the card's top border).
+   built around it), and `crop` what is kept of the frame.
+   SPLASH (the BEFORE card's top border, from the `card-before` source): a
+   thin strip along the slab's top edge only, over its full width. The
+   slab's silhouette starts on row `edge` (285; the rows under it, to 293,
+   are its wet top face seen from just above, then its front face). Six
+   streams fall onto that edge and burst in crowns on it, up to about 50
+   rows above it. The strip keeps `above` rows over the edge (the crowns
+   whole, rims included, and the last of each stream) and `below` under it
+   (the top face and where the drips start), and grades everything else to
+   white: the streams fade in from `above` to `solid` rows over the edge (so
+   only their last few rows show, where they hit) and the face fades out
+   over the last 4 of `below`. The crop is 68 rows (AV1's least height is
+   64), so its top rows are white. The page draws it small (0.3 CSS px per
+   source px) and repeats it along the border, its `edge` row on the card's
+   top border (media.json `edge`, `width` → marketing.css, motion/water.js).
    AFTER: the water runs down the slab's face just inside its left and right
-   edges and leaves below as one stream. `fit` is the inner edges of those
-   two sheets (measured on the graded clip) and the slab's top and bottom, so
-   the card hides the face and the sheets run just outside its sides. The
-   crop starts 9 rows above the slab: the stream that comes in from above is
-   not this clip's but the hero's own (`card-stream`, below), placed by the
-   page on the hero stream's x. Its
+   edges and leaves below as one stream. `fit` is the outer edge of those
+   two sheets (x 353 and 929, a few px inside the slab's silhouette at 345
+   and 936, measured on the graded clip) and the slab's top and bottom, so
+   the card's border box can be fitted to it and the page puts that edge a
+   few px outside the card's sides: the card hides the face and only the
+   sheets' outermost line runs outside the border. Water past it (a sheet
+   overhanging the rim, a smear at the top-right corner) is graded to white
+   within `outside` px, top to bottom (the stream leaving below is in the
+   middle, well inside). The crop starts 9 rows above the slab: the
+   stream that comes in from above is not this clip's but the hero's own
+   (`card-stream`, below), placed by the page on the hero stream's x. Its
    first 48 frames build the flow up from a dry slab, so the loop starts
    after them (they still feed the plate: that is where the edges are dry). */
 const CARD = {
-  before: {
-    slab: { x0: 131, y0: 284, x1: 1157, y1: 720 }, crop: { x: 131, y: 0, w: 1026, h: 544 },
-    fit: { x0: 131, y0: 284, x1: 1157, y1: 720 },
+  splash: {
+    slab: { x0: 131, y0: 285, x1: 1157, y1: 720 }, crop: { x: 131, y: 229, w: 1026, h: 68 },
+    edge: 285, keep: { above: 52, solid: 26, below: 10 },
   },
   after: {
     slab: { x0: 345, y0: 173, x1: 935, y1: 577 }, crop: { x: 285, y: 164, w: 710, h: 556 },
-    fit: { x0: 377, y0: 173, x1: 897, y1: 577 },
+    fit: { x0: 353, y0: 173, x1: 929, y1: 577 }, outside: 1,
   },
 }
 
@@ -165,9 +181,11 @@ const CLIPS = [
   { name: 'hero-before-9x16', w: 720, h: 1280, compose: 'hero-before-16x9', extend: true },
   { name: 'hero-transition-9x16', w: 720, h: 1280, once: true, compose: 'hero-transition-16x9', head: CRASH_HEAD, extend: true, history: 'hero-before-9x16' },
   { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9', head: AFTER_HEAD, extend: true },
-  // The calendar's water: at most 960 wide (they show at about 600).
-  { name: 'card-before', w: 960, h: 510, card: CARD.before },
-  { name: 'card-after', w: 710, h: 556, card: CARD.after, head: 48 },
+  // The calendar's water: at most 960 wide. The BEFORE card's splash strip is
+  // cut from the card-before source (its own output name: `source`), and
+  // shows at about 300 CSS px (2–4 copies along the border).
+  { name: 'card-splash', source: 'card-before', role: 'before', w: 960, h: 64, card: CARD.splash },
+  { name: 'card-after', role: 'after', w: 710, h: 556, card: CARD.after, head: 48 },
   // The stream that comes into the AFTER card: the hero AFTER loop's own
   // stream, cut from its graded frames (the column under the pebble, from
   // STREAM.y down to the frame's bottom), so it is the same water at the
@@ -468,10 +486,46 @@ function cardPlate(frames, w, h, slab) {
   return { plate, exposure }
 }
 
-function gradeCard(frame, w, h, plate, exposure) {
+/** How much of a card clip's water is kept at each output pixel (1 all, 0
+    graded to white), in its source's pixels (CARD): the splash strip's rows
+    around the edge (`keep`), and the AFTER clip's water cut within `outside`
+    px past its fit box's sides, top to bottom. */
+function cardKeep({ w, h, card: { crop, fit, edge, keep, outside } }) {
+  const out = new Float32Array(w * h).fill(1)
+  for (let y = 0; y < h; y++) {
+    const sy = crop.y + (y + 0.5) * crop.h / h
+    const row = keep ? smoothstep(edge - keep.above, edge - keep.solid, sy) * (1 - smoothstep(edge + keep.below - 4, edge + keep.below, sy)) : 1
+    for (let x = 0; x < w; x++) {
+      const sx = crop.x + (x + 0.5) * crop.w / w
+      const side = outside ? 1 - smoothstep(0, outside, Math.max(fit.x0 - sx, sx - fit.x1)) : 1
+      out[y * w + x] = row * side
+    }
+  }
+  return out
+}
+
+function gradeCard(frame, w, h, plate, exposure, keep, crisp) {
   const n = w * h, out = Buffer.alloc(n * 3)
   for (let p = 0; p < n; p++) {
-    for (let c = 0; c < 3; c++) out[p * 3 + c] = Math.min(255, Math.max(0, Math.round(frame[p * 3 + c] * exposure * 255 / Math.max(60, plate[c][p]))))
+    for (let c = 0; c < 3; c++) out[p * 3 + c] = Math.min(255, Math.max(0, Math.round(255 - (255 - frame[p * 3 + c] * exposure * 255 / Math.max(60, plate[c][p])) * keep[p])))
+    if (!crisp) snapWhite(out, p)
+  }
+  return crisp ? crispen(out, w, h, crisp) : out
+}
+
+/* The splash strip is drawn at about 0.4 of its scale, where a crown's
+   translucent sheet (the grey of the slab seen through it) reads as a flat
+   grey patch. So its water is kept by its edges: each pixel's distance from
+   white less `flat` of its neighbourhood's (a blur of radius `r`), times
+   `gain`, so a drop's outline, a crown's rim and a stream stay crisp and
+   their flat insides go pale. In luma, applied to every channel alike. */
+function crispen(img, w, h, { r, flat, gain }) {
+  const n = w * h, d = new Float32Array(n)
+  for (let p = 0; p < n; p++) d[p] = 255 - (LUMA[0] * img[p * 3] + LUMA[1] * img[p * 3 + 1] + LUMA[2] * img[p * 3 + 2])
+  const s = blur(d, w, h, r), out = Buffer.alloc(n * 3)
+  for (let p = 0; p < n; p++) {
+    const k = d[p] > 0.5 ? Math.max(0, Math.min(255, (d[p] - flat * s[p]) * gain)) / d[p] : 0
+    for (let c = 0; c < 3; c++) out[p * 3 + c] = Math.round(255 - (255 - img[p * 3 + c]) * k)
     snapWhite(out, p)
   }
   return out
@@ -615,8 +669,8 @@ function grader(clip, src) {
   if (clip.card) {
     // The plate is built from every frame, the head included: that is where the slab is dry.
     const all = decodeAll(src, w, h, 0, clip.card.crop), head = clip.head ?? 0
-    const { plate, exposure } = cardPlate(all, w, h, slabOut(clip))
-    return { count: all.length - head, graded: i => gradeCard(all[head + i], w, h, plate, exposure[head + i]) }
+    const { plate, exposure } = cardPlate(all, w, h, slabOut(clip)), keep = cardKeep(clip)
+    return { count: all.length - head, graded: i => gradeCard(all[head + i], w, h, plate, exposure[head + i], keep, clip.card.crisp) }
   }
   // A composed source is already trimmed (composePortrait drops the head).
   const lw = Math.round(w / 4), lh = Math.round(h / 4), head = clip.compose ? 0 : clip.head ?? 0
@@ -936,16 +990,20 @@ async function main() {
     console.log('·', clip.name)
     const source = clip.compose
       ? await composePortrait(await src('clips', clip.compose), join(CACHE, `${clip.name}.composed.mkv`), clip)
-      : await src('clips', clip.name)
+      : await src('clips', clip.source ?? clip.name)
     built[clip.name] = await buildClip(clip, source)
   }
-  // The box in each card clip that the page fits to its card, as fractions
-  // of the clip's frame (motion/water.js, marketing.css).
+  // What the page needs to place each card clip (motion/water.js,
+  // marketing.css): the splash strip's source width (its scale on the page
+  // is CSS px per source px) and its edge row, as a fraction of its height;
+  // the AFTER clip's box that is fitted to its card, as fractions of its frame.
   const f = v => +v.toFixed(4)
   const card = (name) => {
-    const { w, h, card: { fit, crop } } = CLIPS.find(c => c.name === name)
+    const { w, h, card: { fit, crop, edge } } = CLIPS.find(c => c.name === name)
+    if (edge) return { aspect: f(w / h), width: crop.w, edge: f((edge - crop.y) / crop.h) }
     return { aspect: f(w / h), fit: { left: f((fit.x0 - crop.x) / crop.w), top: f((fit.y0 - crop.y) / crop.h), right: f((fit.x1 - crop.x) / crop.w), bottom: f((fit.y1 - crop.y) / crop.h) } }
   }
+  const role = r => CLIPS.find(c => c.role === r).name
   // The pool's band: its aspect and its waterline as a fraction of its height
   // from the top (the footer's layout, e2e/pool.spec.js), and each
   // rendition's AV1 codec string (10-bit, so the page's <source> says so).
@@ -980,7 +1038,8 @@ async function main() {
     doc = JSON.parse(readFileSync(join(OUT, 'media.json'), 'utf8'))
     for (const name of Object.keys(built)) {
       if (name.startsWith('hero-')) doc.hero[name.slice(-4)] = hero(name.slice(-4), doc.hero[name.slice(-4)])
-      if (name === 'card-before' || name === 'card-after') doc.cards[name.slice(5)] = card(name)
+      const { role: r } = CLIPS.find(c => c.name === name)
+      if (r) doc.cards[r] = card(name)
       if (name === 'footer-pool') doc.footer = { pool: pool() }
     }
     if (MEASURED['card-stream']) doc.cards.stream = cardStream()
@@ -990,7 +1049,7 @@ async function main() {
     const pebbles = await stones(await src('stills', 'pebbles-cutout'), 'pebble', 4)
     doc = order({
       hero: { '16x9': hero('16x9'), '9x16': hero('9x16') },
-      cards: { before: card('card-before'), after: card('card-after'), stream: cardStream() },
+      cards: { before: card(role('before')), after: card(role('after')), stream: cardStream() },
       footer: { pool: pool() },
       stones: { raw, pebble: pebbles },
     })

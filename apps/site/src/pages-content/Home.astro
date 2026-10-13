@@ -49,8 +49,8 @@ import transitionLWebm from '../media/hero-transition-16x9.webm?url'
 import transitionLMp4 from '../media/hero-transition-16x9.mp4?url'
 import transitionPWebm from '../media/hero-transition-9x16.webm?url'
 import transitionPMp4 from '../media/hero-transition-9x16.mp4?url'
-import cardBeforeWebm from '../media/card-before.webm?url'
-import cardBeforeMp4 from '../media/card-before.mp4?url'
+import cardSplashWebm from '../media/card-splash.webm?url'
+import cardSplashMp4 from '../media/card-splash.mp4?url'
 import cardAfterWebm from '../media/card-after.webm?url'
 import cardAfterMp4 from '../media/card-after.mp4?url'
 import cardStreamWebm from '../media/card-stream.webm?url'
@@ -95,11 +95,12 @@ const heroData = JSON.stringify({
   transition: { l: { webm: transitionLWebm, mp4: transitionLMp4 }, p: { webm: transitionPWebm, mp4: transitionPMp4 } },
   duration: media.hero['16x9'].transition,
 })
-// The calendar's water (motion/water.js): each clip and the box in it that
-// the page fits to its card; and the stream coming into the AFTER card, with
+// The calendar's water (motion/water.js): the BEFORE card's splash strip
+// (its source width and edge row), the AFTER clip and the box in it that the
+// page fits to its card; and the stream coming into the AFTER card, with
 // where the hero's stream leaves each hero rendition, so it lands on its x.
 const waterData = JSON.stringify({
-  before: { webm: cardBeforeWebm, mp4: cardBeforeMp4, ...media.cards.before },
+  before: { webm: cardSplashWebm, mp4: cardSplashMp4, ...media.cards.before },
   after: { webm: cardAfterWebm, mp4: cardAfterMp4, ...media.cards.after },
   stream: { webm: cardStreamWebm, mp4: cardStreamMp4, ...media.cards.stream },
   hero: { l: media.hero['16x9'].stream, p: media.hero['9x16'].stream },

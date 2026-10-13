@@ -220,8 +220,9 @@ added, moved or condensed; the empty grid is the message.
   make no stacking context and clip nothing at their edges, so the water can
   splash on the BEFORE card's top border and flow behind and around the
   AFTER card. The section clips sideways only (`overflow-x: clip`), so the
-  water never widens the page. The cards sit 48px below the note and legend
-  (36px on a phone), the room the BEFORE water's band needs. Stacked (below
+  water never widens the page. The cards sit 24px below the note and legend
+  (20px on a phone), clear of the BEFORE water's band (16px and less).
+  Stacked (below
   1180px) the cards are 64px apart, so the stream falling onto the AFTER card
   shows between them.
 - **Water** (`motion/water.js`, the media tier only). An accent on the
@@ -233,36 +234,53 @@ added, moved or condensed; the empty grid is the message.
   on `pagehide`. Nothing is requested before, the server HTML has no video,
   and the CSS default is the finished calendar without water; reduced
   motion and Save-Data get none (and so no stream below the hero: the static
-  page shows none, by design). Each card clip carries the box in its frame
-  that is fitted to its card (`fit` in `media.json`, written by the
-  pipeline) as custom properties, and `marketing.css` does the placement, in
-  percentages of the card, so it follows every layout. No media was
-  regenerated for this: the band, the strength and the stacking are all CSS
-  masks, opacity and JS placement on the existing clips.
-  - **BEFORE ("Today"): splashes around the top border.** The rain clip (a
-    pale slab with streams falling onto its top edge and splashing) sits ON
-    the card, multiplied (`mix-blend-mode: multiply`, its near-white lifted
-    to white by `brightness(1.06)` so the band has no edge), at half
-    strength (`--water-alpha`: 0.5; 0.4 stacked, where the clip is about 1.7
-    times its side-by-side scale). The slab's top edge is the card's top
-    border and it spans the card widened by `--water-out` (14px; 10px on a
-    phone). A mask of four layers keeps a thin band: 40px over the top border
-    (32px stacked, 28px on a phone), fading in from the page, and 10px under
-    it (inside the card's 16-18px padding), plus side strips 12px out and 8px
-    in, down to 120px (80px on a phone); everything is cut to the card's
-    width plus that strip. So the splashes and droplets break along the top
-    edge; the falling streams above and the drips below are masked away. The
-    source has little water at the slab's side edges, so the side strips
-    mostly stay empty.
-  - **AFTER ("With an agent"): a thin flow down the sides and out below.**
-    The clip sits at `z-index: -1` inside the card, under its white surface,
-    which hides the slab's face. Its fit box (the inner edges of the two side
-    sheets, the slab's top and bottom) is stretched onto the card
-    (independent X and Y scale, `object-fit: fill`), with the sides tucked
-    under the card by `--water-gap` (-3.5%; -4% stacked, -3% on a phone), so
-    only the outer edge of each sheet shows, about 10-20px. It is at 60%
-    strength, and the mask lets the water leave below within 56px (40px on
-    a phone).
+  page shows none, by design). `media.json` says how each card clip meets
+  its card (written by the pipeline), `motion/water.js` hands it to the
+  clips as custom properties, and `marketing.css` does the placement, so it
+  follows every layout. No media was generated for this: both card clips
+  are re-crops and re-grades of the existing sources.
+  - **BEFORE ("Today"): small splashes sitting on the top border.** A
+    dedicated clip, `card-splash`, cut from the rain source: a thin strip
+    along the slab's top edge only (source rows 229-297 of 720 over the
+    slab's full width, 1026 px, encoded 960×64), where the six streams land
+    and burst in crowns. The grade keeps 52 source rows over the edge (the
+    crowns, and only the last of each stream: they fade in from 52 to 26
+    rows up) and 10 under it, and takes everything else (the slab, the wall,
+    the streams higher up) to white. On the page it sits ON the card,
+    multiplied (`mix-blend-mode: multiply`, `brightness(1.04)` lifting the
+    source's near-white haze), at 0.75 strength, drawn small: `--water-k`
+    CSS px per source px, 0.3 (0.28 on a phone), so a drop is a few px. Its
+    edge row (`media.json` `cards.before.edge`) is exactly the card's top
+    border. It is repeated along the border: `motion/water.js` measures the
+    card and one copy and uses as few copies as cover the border with
+    neighbours overlapping by at least 15% (`stripPlaces`, unit-tested),
+    each a separate `<video>` started its own golden-ratio step into the
+    loop, so no splash repeats side by side; each copy cross-fades linearly
+    into the next over their whole overlap (the two always add up to one
+    strip, so there is no seam) and fades out over 8% at the card's corners.
+    So the visible band is at most 16px over the border and 3px under it
+    (inside the card's 16-18px padding), and nothing reaches the title, the
+    note, the legend or the tabs.
+
+    | Layout | Viewport | Card | Copy (scale) | Copies |
+    |---|---|---|---|---|
+    | side by side | 1440×900 | 572px | 308px (0.3) | 3 |
+    | side by side | 1180×820 | 562px | 308px (0.3) | 2 |
+    | stacked weeks | 1024×768 | 984px | 308px (0.3) | 4 |
+    | one day | 390×844 | 350px | 287px (0.28) | 2 |
+
+  - **AFTER ("With an agent"): a thin line down both sides.** The clip sits
+    at `z-index: -1` inside the card, under its white surface, which hides
+    the slab's face. Its fit box is the outer edge of the two sheets running
+    down the slab's sides (source x 353 and 929, just inside the slab's
+    silhouette, and the slab's top and bottom), and the pipeline grades
+    whatever spills past it to white (within 1 source px), so a sheet
+    overhanging the rim, or the smear at the top-right corner, never shows.
+    That box is stretched onto the card's border box widened by
+    `--water-out` each side (4px; 3px on a phone; independent X and Y
+    scale, `object-fit: fill`): only the sheets' outermost line runs down
+    outside each side border, at 70% strength, and the mask lets the water
+    leave below within 56px (40px on a phone).
   - **The stream from the hero to the AFTER card.** `card-stream` is cut from
     the hero AFTER loop's graded frames: the column under the pebble, 64×250
     of the 1600×900 frame, from row 650 to the frame's bottom, centred on the
@@ -300,15 +318,17 @@ added, moved or condensed; the empty grid is the message.
     With JavaScript off, reduced motion or Save-Data there are no copies:
     the hero's stream ends at the hero's edge and the page below is plain.
   - **How far the card water reaches** (measured in `e2e/water.spec.js`,
-    which shoots the page with each card clip shown and hidden; it holds
-    every changed pixel out of the content box and within 60px of the border
-    box, 44px on a phone):
+    which shoots the page with each card's clips shown and hidden; it holds
+    every changed pixel out of the content box, the BEFORE splashes within
+    16px over the top border (15px on a phone), 5px under it and inside the
+    card's width, each strip's edge row on the border to 1px, and the AFTER
+    line within 6px of each side border, 5px on a phone):
 
-    | Viewport | BEFORE: above the top border | AFTER: below / left / right |
+    | Viewport | BEFORE: above / under the top border | AFTER: left / right / below |
     |---|---|---|
-    | 1440×900 | 36px | 49 / 12 / 22px |
-    | 1024×768 | 28px | 50 / 12 / 20px |
-    | 375×812 | 23px | 34 / 8 / 15px |
+    | 1440×900 | 13 / 3px | 5 / 6 / 51px |
+    | 1024×768 | 14 / 2px | 6 / 6 / 50px |
+    | 375×812 | 12 / 2px | 4 / 4 / 36px |
 - Native radio tabs (`@forge/ui` `Tabs`) work without JavaScript.
 - The weeks are illustrations with no totals, hours or percentages, and the
   page says so on every tab.
@@ -471,8 +491,9 @@ card (cut from the hero AFTER loop); the footer pool is one wide loop.
 4. **Write** the hero loops' posters (first frame), the pool's posters (its
    first frame in both renditions, as AVIF quality 85 4:4:4 and WebP
    quality 92, served as they are by the footer's CSS),
-   the stones and `media.json` (the crash's duration, each card clip's
-   aspect and fit box, where the hero AFTER loop's stream leaves each
+   the stones and `media.json` (the crash's duration, the BEFORE splash
+   strip's aspect, source width and edge row, the AFTER card clip's aspect
+   and fit box, where the hero AFTER loop's stream leaves each
    rendition and the card stream's scale, the portrait extension, the pool's
    aspects, waterline and AV1 codec strings, and the stone counts). The card
    clips need no posters: they only play over the
@@ -482,7 +503,7 @@ card (cut from the hero AFTER loop); the footer pool is one wide loop.
 the loop-seam PSNR (beside the clip's median frame-to-frame PSNR) and the
 crash's two cuts (PSNR between the BEFORE loop's first frame and the crash's
 first, and between the crash's last frame and the AFTER loop's first).
-`--only card-before,card-after` rebuilds some clips and patches their entries
+`--only card-splash,card-after` rebuilds some clips and patches their entries
 in `media.json` (`card-stream` needs `hero-after-16x9` in the same run,
 and `hero-transition-9x16` needs `hero-before-9x16`). The card stream's
 seam is the hero loop's own; measured on a narrow column of moving water,
@@ -494,13 +515,13 @@ loop its seam is held to the frame steps either side of it.
 | Check | Target | Current |
 |---|---|---|
 | Void luma | ≥ 234 | 235 on every clip |
-| Loop-seam PSNR | ≥ 30 dB, or, for water busier than that frame to frame, no worse than its median frame step less 1 dB | hero 33.6–41.3 dB; AFTER card 32.1 dB; BEFORE card 29.6 dB (its splashes step at 30.3 dB); card stream 22.7 dB (held to its 5th-percentile step, 22.6 dB) |
+| Loop-seam PSNR | ≥ 30 dB, or, for water busier than that frame to frame, no worse than its median frame step less 1 dB | hero 33.6–41.3 dB; AFTER card 32.0 dB; BEFORE splash strip 29.3 dB (its splashes step at 30.3 dB); card stream 22.7 dB (held to its 5th-percentile step, 22.6 dB) |
 | Crash cut in / out, 16:9 | as close as the BEFORE loop to itself (about 31–33 dB frame to frame, the rain moving) | 29.7 / 32.7 dB |
 | Crash cut in / out, 9:16 (whole frame, extension included) | the same | 33.4 / 33.3 dB |
 | Crash clip | starts at the shatter | 3.75 s (first 6 source frames dropped) |
 | Desktop hero media (BEFORE, transition and AFTER, WebM) | ≤ 2.5 MB | about 1.2 MB (661 + 420 + 163 KB; MP4 1.8 MB) |
 | Mobile hero media (WebM, 720×1792 with the extension) | ≤ 1.2 MB | about 0.63 MB (339 + 228 + 76 KB; MP4 0.86 MB) |
-| Calendar water (WebM, every tier with media) | ≤ 960 wide | 960×510 + 710×556 + 64×250, 233 + 52 + 13 KB (MP4 332 + 77 + 15 KB) |
+| Calendar water (WebM, every tier with media) | ≤ 960 wide | 960×64 + 710×556 + 64×250, 50 + 52 + 13 KB (MP4 70 + 76 + 15 KB) |
 | Footer pool: void luma (the white above the line) / seam | ≥ 234 / no worse than the steps either side less 1 dB | 236 / 42.3 dB (steps 42.1 dB) |
 | Footer pool clip, desktop (WebM, home, media tier) | ≤ 1 MB, the source's full width | 1920×532, 143 frames (5.96 s), 10-bit AV1, 489 KB (MP4 1.47 MB) |
 | Footer pool clip, phone (≤ 720px) | ≤ 0.5 MB | 1080×532, 300 KB (MP4 850 KB) |
@@ -533,6 +554,10 @@ its 1 s loop cross-fade showed. None of their files is referenced any more.
   BEFORE, uneven streams splashing over its top edge (horizontal, at about
   40% of the frame) and dripping down its face; for AFTER, one stream
   landing on its top edge, running down both sides and rejoining below.
+  The page uses BEFORE only as the thin strip along the slab's top edge
+  (`card-splash`); its first rendition, the whole frame fitted to the
+  card, drew the drops at up to 1.7 times source scale, floating in a band
+  above the border, and is retired.
 - **The footer pool:** a still (FLUX 3, `a383150c`,
   `hf_20261013_063135_a383150c-...png`) of a filled container seen exactly
   from the side, with no perspective: pure white above a perfectly flat
