@@ -27,10 +27,13 @@ describe('media.json', () => {
     expect(media.hero['16x9'].stream.x).toBeGreaterThan(0.6)
     expect(media.hero['16x9'].stream.x).toBeLessThan(0.72)
     expect(Math.abs(media.hero['9x16'].stream.x - 0.5)).toBeLessThan(0.03)
-    // One card-stream pixel: a 1600-wide frame's pixel, scaled as the
-    // portrait composition scales it.
-    expect(media.hero['16x9'].stream.unit).toBeCloseTo(1 / 1600, 6)
-    expect(media.hero['9x16'].stream.unit).toBeGreaterThan(media.hero['16x9'].stream.unit)
+    // Its width there, edge to edge: a thin stream (about 20 px of the
+    // 1600-wide frame), wider in the portrait frame, which shows the
+    // landscape one scaled up.
+    expect(media.hero['16x9'].stream.width).toBeGreaterThan(8 / 1600)
+    expect(media.hero['16x9'].stream.width).toBeLessThan(32 / 1600)
+    expect(media.hero['9x16'].stream.width).toBeGreaterThan(media.hero['16x9'].stream.width)
+    expect(media.hero['9x16'].stream.width).toBeLessThan(0.04)
     // The portrait clips run on below their 9:16 frame.
     expect(media.hero['9x16'].extend).toBeGreaterThanOrEqual(0.3)
     expect(media.hero['16x9'].extend).toBeUndefined()
@@ -50,7 +53,7 @@ describe('media.json', () => {
     expect(media.cards.before.fit).toBeUndefined()
     // AFTER: the slab's silhouette, inside the frame, with room below for
     // the stream going out; it starts at the card's top edge (the stream
-    // coming in is the stream clip).
+    // coming in is drawn by the page).
     const { fit } = media.cards.after
     expect(media.cards.after.aspect).toBeGreaterThan(0.5)
     expect(media.cards.after.aspect).toBeLessThan(4)
@@ -61,11 +64,8 @@ describe('media.json', () => {
     expect(fit.top).toBeGreaterThan(0)
     expect(fit.top).toBeLessThan(0.05)
     expect(fit.bottom).toBeLessThan(0.9)
-    // The stream: a tall, narrow column with the stream in its middle.
-    const stream = media.cards.stream
-    expect(stream.aspect).toBeLessThan(0.5)
-    expect(stream.width).toBeGreaterThanOrEqual(64)
-    expect(Math.abs(stream.x - 0.5)).toBeLessThan(0.1)
+    // The stream down to the AFTER card is drawn, not a clip.
+    expect(media.cards.stream).toBeUndefined()
   })
 
   it('gives the footer pool its band, its phone rendition and waterline', () => {
@@ -90,7 +90,7 @@ describe('media.json', () => {
       files.push(`${clip}.webm`, `${clip}.mp4`, `${clip}.jpg`)
     }
     for (const r of ['16x9', '9x16']) files.push(`hero-transition-${r}.webm`, `hero-transition-${r}.mp4`)
-    for (const clip of ['card-splash', 'card-after', 'card-stream']) files.push(`${clip}.webm`, `${clip}.mp4`)
+    for (const clip of ['card-splash', 'card-after']) files.push(`${clip}.webm`, `${clip}.mp4`)
     // The pool, in both renditions: its clip, and its poster ready to serve as the footer's background.
     for (const name of ['footer-pool', 'footer-pool-narrow']) files.push(`${name}.webm`, `${name}.mp4`, `${name}.avif`, `${name}.webp`)
     for (let i = 1; i <= media.stones.raw; i++) files.push(`stones/raw-${i}.webp`)
@@ -98,6 +98,8 @@ describe('media.json', () => {
     files.forEach(f => expect(existsSync(here(f)), f).toBe(true))
     // The BEFORE card's old full-frame clip was replaced by the splash strip.
     for (const f of ['card-before.webm', 'card-before.mp4']) expect(existsSync(here(f)), f).toBe(false)
+    // The stacked card-stream clip was replaced by the drawn stream.
+    for (const f of ['card-stream.webm', 'card-stream.mp4']) expect(existsSync(here(f)), f).toBe(false)
     expect(readFileSync(here('media.json'), 'utf8')).toContain('build-media.mjs')
   })
 })

@@ -9,8 +9,8 @@ import { stripPlaces } from '../src/motion/water.js'
    a thin strip of small splashes repeated along the BEFORE card's top
    border (its edge row on the border) and a clip behind the AFTER card whose
    sheets run down just outside its sides, both kept to a thin band around
-   the borders; and the stream falling onto the AFTER card (copies of one
-   clip; e2e/stream.spec.js checks where it runs). On the media tier only,
+   the borders (the stream falling onto the AFTER card is drawn, not a clip:
+   e2e/stream.spec.js). On the media tier only,
    created once the calendar is near the viewport. Asserted by state and
    geometry; the band by comparing the page with the card clips shown and
    hidden. */
@@ -18,9 +18,8 @@ import { stripPlaces } from '../src/motion/water.js'
 const media = JSON.parse(readFileSync(new URL('../src/media/media.json', import.meta.url), 'utf8'))
 const HOME = routePath('home', forge.locales.default)
 const COPY = CATALOGS[forge.locales.default].home.day
-const isCardMedia = url => /card-(splash|after|stream)[^/]*\.(webm|mp4)(\?|$)/.test(url)
-const water = (page, which) => page.locator(`.mk-day .ui-tabs-panel:visible [data-cal="${which === 'stream' ? 'after' : which}"] > .mk-cal-water--${which}`)
-const copies = page => water(page, 'stream').count()
+const isCardMedia = url => /card-(splash|after)[^/]*\.(webm|mp4)(\?|$)/.test(url)
+const water = (page, which) => page.locator(`.mk-day .ui-tabs-panel:visible [data-cal="${which}"] > .mk-cal-water--${which}`)
 const strips = page => water(page, 'before').count()
 const toCalendar = page => page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start' }))
 
@@ -55,24 +54,19 @@ test('no card clip until the calendar is near; then one on each card of the chos
   await toCalendar(page)
   await expect.poll(() => strips(page)).toBeGreaterThan(1)
   await expect(water(page, 'after')).toHaveCount(1)
-  await expect.poll(() => copies(page)).toBeGreaterThan(1)
-  const n = await copies(page)
-  await expect(page.locator('.mk-cal-water')).toHaveCount(await strips(page) + 1 + n)
+  await expect(page.locator('.mk-cal-water')).toHaveCount(await strips(page) + 1)
   for (const v of await page.locator('.mk-cal-water').all()) {
     await expect(v).toHaveAttribute('aria-hidden', 'true')
     await expect(v).toHaveCSS('pointer-events', 'none')
   }
-  // The copies of the stream, and the BEFORE strip's, each start at their own time.
-  for (const which of ['stream', 'before']) {
-    await expect.poll(() => water(page, which).evaluateAll(vs => new Set(vs.filter(v => v.readyState > 0).map(v => v.currentTime.toFixed(1))).size)).toBe(await water(page, which).count())
-  }
+  // The BEFORE strip's copies each start at their own time.
+  await expect.poll(() => water(page, 'before').evaluateAll(vs => new Set(vs.filter(v => v.readyState > 0).map(v => v.currentTime.toFixed(1))).size)).toBe(await strips(page))
   // They play (AV1 in Chromium), and they follow the chosen team.
   await expect.poll(() => water(page, 'after').evaluate(v => !v.paused && v.currentTime > 0)).toBe(true)
   await page.locator('.mk-day label', { hasText: COPY.teams.logistics.name }).click()
   await expect.poll(() => strips(page)).toBeGreaterThan(1)
   await expect(water(page, 'after')).toHaveCount(1)
-  await expect.poll(() => copies(page)).toBeGreaterThan(1)
-  await expect(page.locator('.mk-cal-water')).toHaveCount(await strips(page) + 1 + await copies(page))
+  await expect(page.locator('.mk-cal-water')).toHaveCount(await strips(page) + 1)
 
   // Off screen they pause.
   await page.evaluate(() => window.scrollTo(0, 0))
@@ -186,7 +180,7 @@ for (const [width, height] of [[1440, 900], [1024, 768], [375, 812]]) {
     // The slab's silhouette (the fit box) is the card's border box widened
     // by --water-out each side, a few px: the card hides the slab's face
     // and only the sheets' outer edge runs outside it. The clip starts at
-    // the card's top edge (the stream coming in is the stream copies') and
+    // the card's top edge (the stream coming in is drawn by the page) and
     // the stream leaves below.
     const out = await water(page, 'after').evaluate(v => parseFloat(getComputedStyle(v).getPropertyValue('--water-out')))
     expect(out).toBeGreaterThan(0)
@@ -221,7 +215,10 @@ for (const [width, height] of [[1440, 900], [1024, 768], [375, 812]]) {
     await page.goto(HOME, { waitUntil: 'load' })
     await toCalendar(page)
     for (const which of ['before', 'after']) await expect.poll(() => water(page, which).evaluateAll(vs => vs.length > 0 && vs.every(v => v.classList.contains('is-ready')))).toBe(true)
-    await page.addStyleTag({ content: '.mk-header { visibility: hidden; }' })   // fixed over the page: not the cards' business
+    // Not the cards' business: the header (fixed over the page) and the drawn
+    // stream (where it meets the BEFORE card's top border, the splashes
+    // multiply over it, so their faintest haze would count as a change).
+    await page.addStyleTag({ content: '.mk-header { visibility: hidden; } .mk-day-stream { display: none; }' })
     const band = BAND[width]
     // The BEFORE card's top border: the splashes over it, a few px under it
     // (inside the padding), never past its sides.
@@ -273,6 +270,5 @@ test('what places the card clips comes from media.json', async ({ page }) => {
   const data = JSON.parse(await page.locator('[data-day]').getAttribute('data-water'))
   expect(data.before).toMatchObject(media.cards.before)
   expect(data.after).toMatchObject(media.cards.after)
-  expect(data.stream).toMatchObject(media.cards.stream)
-  expect(data.hero).toEqual({ l: media.hero['16x9'].stream, p: media.hero['9x16'].stream })
+  expect(Object.keys(data).sort()).toEqual(['after', 'before'])
 })

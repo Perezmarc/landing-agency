@@ -12,8 +12,12 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ═══════════ LAYOUT PRIMITIVES ═══════════ */
-.mk-wrap { width: min(1160px, 100% - 40px); margin-inline: auto; }
-.mk-section { position: relative; z-index: 1; padding: 112px 0; }
+/* --wrap-w and --section-pad are also read by the stream drawn below the
+   hero (.mk-day-stream), which lands inside the wrap and ends in the
+   section's last card. */
+.mk-wrap, .mk-day-stream { --wrap-w: min(1160px, 100% - 40px); }
+.mk-wrap { width: var(--wrap-w); margin-inline: auto; }
+.mk-section { --section-pad: 112px; position: relative; z-index: 1; padding: var(--section-pad) 0; }
 /* Content paints above the stones in its section. */
 .mk-section > .mk-wrap, .mk-final-inner { position: relative; z-index: 1; }
 .mk-eyebrow {
@@ -115,7 +119,14 @@
    page under it when a phone's browser bars collapse; the copy, and the
    pebble, are laid out in the SMALL viewport (100svh), which is always on
    screen. The pebble's stream runs down to the stage's bottom edge in every
-   layout. The stage is the size container the portrait box is sized from. */
+   layout. The stage is the size container the portrait box is sized from.
+   --hero-w is the media box's width, also read by the calendar section
+   below, where the stream is drawn on from the hero's bottom edge
+   (.mk-day-stream): % is the full-width parent's width in both. */
+.mk-hero, .mk-day { --hero-w: max(100%, 177.78lvh); }
+@media (max-aspect-ratio: 1/1) {
+  .mk-hero, .mk-day { --hero-w: max(100%, 56.25svh); }
+}
 .mk-hero { position: relative; height: calc(150svh + 100lvh); overflow: clip; }
 .mk-hero-stage {
   position: sticky;
@@ -131,7 +142,7 @@
   /* The clip covers the stage: 16:9, at least the stage's width, centred.
      The stream runs out through the frame's bottom edge, so it leaves
      through the stage's. */
-  width: max(100%, 177.78lvh);
+  width: var(--hero-w);
   aspect-ratio: 16 / 9;
   translate: -50% -50%;
 }
@@ -146,7 +157,6 @@
      its bottom edge. --hero-extend comes from media.json (Home.astro). */
   .mk-hero-media {
     --frame-h: max(177.78cqw, 100svh);
-    width: max(100%, 56.25svh);
     height: calc(var(--frame-h) * (1 + var(--hero-extend)));
     aspect-ratio: auto;
     top: calc(100svh - var(--frame-h));
@@ -496,16 +506,7 @@
    the slab's face and only the sheets' outermost line runs down outside
    the side borders (the pipeline cleared what spills past it); the mask
    lets the stream leave below within --band-below.
-   STREAM: the stream coming into the AFTER card is the hero's own (the
-   card-stream clip is cut from the hero AFTER loop), behind the page's text
-   and the cards, from the hero's bottom edge to the AFTER card's top border.
-   One clip is 250 source rows, so it is stacked: copies of it at offset
-   times, each showing only its lower rows (where the stream has the width
-   it has at the hero's edge) and fading in over the one above it.
-   motion/water.js measures where the hero's stream leaves the hero and
-   hands each copy its place (--stream-left, --stream-top, from the card's
-   padding box), the hero's scale (--stream-w) and the rows it hides and
-   fades (--stream-hide, --stream-solid). */
+   The stream coming into the AFTER card is drawn (.mk-day-stream, below). */
 .mk-cal-water {
   position: absolute;
   max-width: none;          /* base.css caps media at its container */
@@ -550,18 +551,99 @@
     black calc(var(--water-b) * 100% + var(--band-below) * 0.3),
     transparent calc(var(--water-b) * 100% + var(--band-below)));
 }
+
+/* The hero's stream, drawn on from the hero's bottom edge down into the
+   AFTER card: one element, all CSS, the same with or without JavaScript.
+   It is drawn, not filmed: a clip of the stream is short, and copies of it
+   stacked down the page doubled its edges where they overlapped.
+   Across: the stream where it leaves the hero (media.json, measured on the
+   hero AFTER loop's bottom row over the whole loop: its centre --sx and its
+   width --sw, fractions of the hero's media box, --hero-w, centred on the
+   page like this full-width section), so the two meet on the same x at
+   the same width. It is held --edge inside the wrap, where the AFTER card
+   is in every layout (only a screen over about 3400 CSS px wide needs it).
+   Down: from the section's top, which is the hero's bottom edge, to 32px
+   above the section's content bottom, which is the AFTER card's bottom: it
+   runs on behind the card (and behind the BEFORE card where the weeks are
+   stacked), whose white hides it, so it is seen to end under the AFTER
+   card's top border. It paints under the section's content (.mk-wrap is
+   z-index 1), like the stones.
+   The look, measured on that row and drawn in the page's ink: a fine dark
+   refractive line on each edge (the left one darker and thinner), a pale
+   grey body that clears toward a glassy core just inside the right edge,
+   with one faint line in it (at 75%). As
+   gradients it is crisp at every DPR. motion/water.js adds `is-flowing` on
+   the media tier while it is near the viewport: soft glints and ripples
+   drift down it (two pseudo-elements, transformed, on different periods
+   and speeds, so it never strobes and each loops seamlessly). With no JS,
+   reduced motion or Save-Data it is still. */
+.mk-day-stream {
+  --sx: var(--stream-lx);
+  --sw: var(--stream-lw);
+  --half: calc(var(--sw) * var(--hero-w) / 2);
+  --edge: 24px;
+  --at: 50% + (var(--sx) - 0.5) * var(--hero-w);   /* the hero stream's centre */
+  position: absolute;
+  top: 0;
+  bottom: calc(var(--section-pad) + 32px);
+  left: calc(clamp(50% - var(--wrap-w) / 2 + var(--edge) + var(--half), var(--at), 50% + var(--wrap-w) / 2 - var(--edge) - var(--half)) - var(--half));
+  width: calc(2 * var(--half));
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(to right,
+    color-mix(in srgb, var(--ink) 60%, transparent) 0,
+    color-mix(in srgb, var(--ink) 68%, transparent) 2.5%,
+    color-mix(in srgb, var(--ink) 46%, transparent) 5%,
+    color-mix(in srgb, var(--ink) 22%, transparent) 8%,
+    color-mix(in srgb, var(--ink) 13%, transparent) 13%,
+    color-mix(in srgb, var(--ink) 10%, transparent) 22%,
+    color-mix(in srgb, var(--ink) 9%, transparent) 40%,
+    color-mix(in srgb, var(--ink) 6%, transparent) 52%,
+    color-mix(in srgb, var(--ink) 2.5%, transparent) 62%,
+    color-mix(in srgb, var(--ink) 1%, transparent) 70%,
+    color-mix(in srgb, var(--ink) 5%, transparent) 75%,
+    color-mix(in srgb, var(--ink) 1%, transparent) 79%,
+    color-mix(in srgb, var(--ink) 2%, transparent) 84%,
+    color-mix(in srgb, var(--ink) 14%, transparent) 87%,
+    color-mix(in srgb, var(--ink) 36%, transparent) 90%,
+    color-mix(in srgb, var(--ink) 38%, transparent) 95%,
+    color-mix(in srgb, var(--ink) 26%, transparent) 100%);
+}
+@media (max-aspect-ratio: 1/1) {
+  .mk-day-stream { --sx: var(--stream-px); --sw: var(--stream-pw); }
+}
+/* Reduced motion: never, even with the class. */
+@media (prefers-reduced-motion: no-preference) {
+  .mk-day-stream.is-flowing::before,
+  .mk-day-stream.is-flowing::after {
+    content: '';
+    position: absolute;
+    inset: calc(-1 * var(--p)) 0 0;
+    animation: mk-stream-flow var(--t) linear infinite;
+  }
+  /* Ripples: a shade of ink, across the whole width, so the edges seem to
+     swell a little as they pass. */
+  .mk-day-stream.is-flowing::before {
+    --p: 211px;
+    --t: 3.3s;
+    background: repeating-linear-gradient(to bottom,
+      transparent 0, color-mix(in srgb, var(--ink) 4%, transparent) 30px, transparent 64px, transparent var(--p));
+  }
+  /* Glints: the page's white, over the body and the core. */
+  .mk-day-stream.is-flowing::after {
+    --p: 337px;
+    --t: 4.4s;
+    left: 9%;
+    right: 13%;
+    background: repeating-linear-gradient(to bottom,
+      transparent 0, color-mix(in srgb, var(--bg) 45%, transparent) 70px, transparent 150px, transparent var(--p));
+  }
+}
+@keyframes mk-stream-flow { to { transform: translateY(var(--p)); } }
 /* The stream passes behind the section's intro and the note and legend
    (on a phone, through the middle of the paragraph): a halo of the page's
    white keeps every glyph clear of it, and is invisible anywhere else. */
 .mk-day .mk-section-head, .mk-day-meta { text-shadow: 0 0 2px var(--bg), 0 0 4px var(--bg); }
-.mk-cal-water--stream {
-  z-index: -1;
-  left: var(--stream-left);
-  top: var(--stream-top);
-  width: var(--stream-w);
-  aspect-ratio: var(--stream-ar);
-  mask-image: linear-gradient(to bottom, transparent var(--stream-hide), black var(--stream-solid));
-}
 /* Stacked (below 1180px) the BEFORE card is right above the AFTER one, so
    the stream coming into the AFTER card shows only between them: a wider
    gap lets it be seen falling onto the card. */
@@ -798,7 +880,7 @@
 
 /* ═══════════ RESPONSIVE ═══════════ */
 @media (max-width: 900px) {
-  .mk-section { padding: 80px 0; }
+  .mk-section { --section-pad: 80px; }
   .mk-footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
 }
 @media (max-width: 720px) {

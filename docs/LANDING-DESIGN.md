@@ -228,13 +228,13 @@ added, moved or condensed; the empty grid is the message.
 - **Water** (`motion/water.js`, the media tier only). An accent on the
   borders, never over the content: no chip, tab, title, note or legend is
   covered. Once the calendar is within a screen of the viewport (and after
-  `load`), the card clips are created and put in the chosen team's cards,
-  with the stream's copies; they move with the tabs. Each clip plays only
+  `load`), the card clips are created and put in the chosen team's cards;
+  they move with the tabs. Each clip plays only
   from half a screen before it is on screen, and pauses in a hidden tab and
   on `pagehide`. Nothing is requested before, the server HTML has no video,
   and the CSS default is the finished calendar without water; reduced
-  motion and Save-Data get none (and so no stream below the hero: the static
-  page shows none, by design). `media.json` says how each card clip meets
+  motion and Save-Data get none. The stream below the hero is not a clip
+  (see below): it is in the server HTML and shows in every tier. `media.json` says how each card clip meets
   its card (written by the pipeline), `motion/water.js` hands it to the
   clips as custom properties, and `marketing.css` does the placement, so it
   follows every layout. No media was generated for this: both card clips
@@ -281,42 +281,70 @@ added, moved or condensed; the empty grid is the message.
     scale, `object-fit: fill`): only the sheets' outermost line runs down
     outside each side border, at 70% strength, and the mask lets the water
     leave below within 56px (40px on a phone).
-  - **The stream from the hero to the AFTER card.** `card-stream` is cut from
-    the hero AFTER loop's graded frames: the column under the pebble, 64×250
-    of the 1600×900 frame, from row 650 to the frame's bottom, centred on the
-    stream. One clip is short, and stretching it would show, so it is
-    stacked: copies of the same clip, each at its own time (the golden ratio
-    of the loop apart), each showing only its rows below 40% (the clip
-    narrows down the column, and its lower rows have the width the stream
-    has at the hero's edge), fading in from 40% to 55% over the solid rows of
-    the copy above, 45% of a copy apart. The first copy's solid rows start at
-    the hero section's bottom edge (where the hero's stream is cut off); the
-    last runs 24px under the AFTER card's top border. A copy wholly behind
-    the BEFORE card (stacked layouts) is left out. All of them are children
-    of the AFTER card at `z-index: -1`, so they paint under the page's text
-    and the cards; the section intro, note and legend carry a white
-    `text-shadow` halo, so where the stream passes behind them (through the
-    middle of the paragraph on a phone, past the legend side by side) every
-    glyph stays clear of it. `motion/water.js` measures where the hero's
-    stream leaves the hero on screen (the hero media box and the stream's x
-    from `media.json`, for the rendition in use), held at least 24px inside
-    the card, and the hero's scale, and hands each copy `--stream-left`,
-    `--stream-top`, `--stream-w` and its `--stream-hide` / `--stream-solid`
-    rows. It re-measures whenever the page's box changes (a
-    `ResizeObserver` on the body: resizes, fonts, images, a taller week) and
-    each time the calendar comes near, so a later layout shift cannot leave
-    the stream short of the card. Measured (`e2e/stream.spec.js` holds the x
-    to 2px and the gap to 3px):
+  - **The stream from the hero to the AFTER card: drawn, one element.** It
+    used to be 7-14 stacked copies of a 64×250 clip cut from the hero's
+    AFTER loop, each at its own time, faded in over the one above; where
+    they overlapped the stream's edges doubled, its width stepped and its
+    texture restarted, so it read as pieces pasted together. It is now one
+    `.mk-day-stream` in the server HTML (`Home.astro`, a child of the
+    calendar section), drawn with CSS gradients, crisp at every DPR, with no
+    media and no placement script:
+    - **Look**, measured on the hero AFTER loop's bottom row (both
+      renditions, every frame aligned to its own edges): a fine dark
+      refractive line on each edge (the left one darker and about one
+      source px, the right one paler and about two), a pale grey body
+      (luma about 220-235) that clears toward a glassy core just inside the
+      right edge (about 250), with one faint inner line at 75%. Drawn in the
+      page's ink at those strengths over the white.
+    - **Across**: on the hero stream's own x at its own width where it
+      leaves the hero. `media.json` `hero.*.stream` is that stream's centre
+      and width at the frame's bottom row (the median of each frame's two
+      edges over the whole loop, where the luma crosses 240; the water
+      wobbles ±3 source px), as fractions of the frame's width:
+      16:9 x 0.6631, width 0.0129 (20.6 of 1600 px); 9:16 x 0.4937, width
+      0.0219 (15.7 of 720). `Home.astro` hands them to the section as
+      custom properties, and the CSS places the stream from the hero media
+      box's width (`--hero-w`, shared with `.mk-hero-media`), centred on the
+      page like the section, so it is right with no JavaScript and needs no
+      re-measuring on a layout shift. It is held 24px inside the wrap (the
+      AFTER card's sides in every layout); only a screen over about 3400
+      CSS px wide needs that.
+    - **Down**: from the section's top, which is the hero section's bottom
+      edge, to 32px above the section's content bottom, which is the AFTER
+      card's bottom. It paints under the section's content (`.mk-wrap` is
+      `z-index: 1`), so it runs on behind the AFTER card (and behind the
+      BEFORE card where the weeks are stacked), whose white hides it: it is
+      seen to end under the AFTER card's top border. The section intro,
+      note and legend carry a white `text-shadow` halo, so where the stream
+      passes behind them (through the middle of the paragraph on a phone,
+      past the legend side by side) every glyph stays clear of it.
+    - **Motion**: on the media tier, `motion/water.js` adds `is-flowing`
+      while the stream is within half a screen of the viewport: two
+      pseudo-elements drift down it on transforms, soft glints of the
+      page's white over the body (a 337px period, 4.4 s) and faint ripples
+      of ink across the whole width (211px, 3.3 s), so the edges seem to
+      swell a little as one passes. Different periods and speeds, soft
+      ramps, low contrast: it never strobes, and each layer loops
+      seamlessly. With no JavaScript, reduced motion (the rules are inside
+      `prefers-reduced-motion: no-preference`) or Save-Data it is still.
 
-    | Layout | Viewport | Hero bottom → AFTER card top | Copies | Largest gap |
+    Measured (`e2e/stream.spec.js` holds x and width to 1px, the join to
+    0.5px and the gap to 2px, and samples the column on screen):
+
+    | Layout | Viewport | Centre / width | Off the hero stream (x / width) | Hero bottom → AFTER card top |
     |---|---|---|---|---|
-    | side by side | 1440×900 | 654px | 7 | 0px |
-    | side by side | 1180×820 | 591px | 6 | 0px |
-    | stacked weeks | 1024×768 | 1252px (622 behind the BEFORE card) | 9 | 0px |
-    | one day | 390×844 | 1363px (692 behind the BEFORE card) | 14 | 0px |
+    | side by side | 1440×900 | 980.96 / 20.6px | 0.01 / 0.02px | 630px |
+    | side by side | 1920×1080 | | 0.01 / 0.00px | |
+    | side by side | 1180×820 | | 0.01 / 0.01px | |
+    | stacked weeks | 1024×768 | 734.69 / 17.6px | 0.01 / 0.00px | 1228px (behind the BEFORE card for most of it) |
+    | stacked weeks | 768×1024 | | 0.01 / 0.01px | |
+    | one day | 390×844 | 192.01 / 10.4px | 0.02 / 0.01px | 1347px (behind the BEFORE card for most of it) |
 
-    With JavaScript off, reduced motion or Save-Data there are no copies:
-    the hero's stream ends at the hero's edge and the page below is plain.
+    The join is at 0px in every layout (the stream's top is the hero's
+    bottom). On screen, averaged over a second of the AFTER loop, the hero
+    stream's edges 2px above the join sit within 0.1px (1440) and 0.5px
+    (390) of the drawn stream's; frame by frame the hero's wobble ±3px
+    around them, which is the one thing a still drawing cannot follow.
   - **How far the card water reaches** (measured in `e2e/water.spec.js`,
     which shoots the page with each card's clips shown and hidden; it holds
     every changed pixel out of the content box, the BEFORE splashes within
@@ -414,8 +442,9 @@ committed (`apps/site/src/media/`). It does the following:
 
 The hero clips are BEFORE (loop), the transition (once) and AFTER (loop), in
 16:9 and 9:16 (the 9:16 ones extended below their frame, see "Portrait");
-the card clips are the calendar's two loops and the stream onto the AFTER
-card (cut from the hero AFTER loop); the footer pool is one wide loop.
+the card clips are the calendar's two loops; the footer pool is one wide
+loop. (The stream onto the AFTER card is drawn by the page from where the
+hero AFTER loop's stream leaves its frame.)
 
 1. **Grade to white.**
    - The void field is the per-pixel 90th percentile over all frames,
@@ -494,7 +523,7 @@ card (cut from the hero AFTER loop); the footer pool is one wide loop.
    the stones and `media.json` (the crash's duration, the BEFORE splash
    strip's aspect, source width and edge row, the AFTER card clip's aspect
    and fit box, where the hero AFTER loop's stream leaves each
-   rendition and the card stream's scale, the portrait extension, the pool's
+   rendition (its centre and width on the bottom row), the portrait extension, the pool's
    aspects, waterline and AV1 codec strings, and the stone counts). The card
    clips need no posters: they only play over the
    finished card.
@@ -504,18 +533,15 @@ the loop-seam PSNR (beside the clip's median frame-to-frame PSNR) and the
 crash's two cuts (PSNR between the BEFORE loop's first frame and the crash's
 first, and between the crash's last frame and the AFTER loop's first).
 `--only card-splash,card-after` rebuilds some clips and patches their entries
-in `media.json` (`card-stream` needs `hero-after-16x9` in the same run,
-and `hero-transition-9x16` needs `hero-before-9x16`). The card stream's
-seam is the hero loop's own; measured on a narrow column of moving water,
-its frame steps run 21-35 dB, so it is held to the low end of them (the
-5th percentile). For the pool, the void luma is measured on the white rows
+in `media.json` (`hero-transition-9x16` needs `hero-before-9x16` in the
+same run). For the pool, the void luma is measured on the white rows
 above the waterline (the rest of its frame is water), and as a seamless
 loop its seam is held to the frame steps either side of it.
 
 | Check | Target | Current |
 |---|---|---|
 | Void luma | ≥ 234 | 235 on every clip |
-| Loop-seam PSNR | ≥ 30 dB, or, for water busier than that frame to frame, no worse than its median frame step less 1 dB | hero 33.6–41.3 dB; AFTER card 32.0 dB; BEFORE splash strip 29.3 dB (its splashes step at 30.3 dB); card stream 22.7 dB (held to its 5th-percentile step, 22.6 dB) |
+| Loop-seam PSNR | ≥ 30 dB, or, for water busier than that frame to frame, no worse than its median frame step less 1 dB | hero 33.6–41.3 dB; AFTER card 32.0 dB; BEFORE splash strip 29.3 dB (its splashes step at 30.3 dB) |
 | Crash cut in / out, 16:9 | as close as the BEFORE loop to itself (about 31–33 dB frame to frame, the rain moving) | 29.7 / 32.7 dB |
 | Crash cut in / out, 9:16 (whole frame, extension included) | the same | 33.4 / 33.3 dB |
 | Crash clip | starts at the shatter | 3.75 s (first 6 source frames dropped) |

@@ -53,8 +53,6 @@ import cardSplashWebm from '../media/card-splash.webm?url'
 import cardSplashMp4 from '../media/card-splash.mp4?url'
 import cardAfterWebm from '../media/card-after.webm?url'
 import cardAfterMp4 from '../media/card-after.mp4?url'
-import cardStreamWebm from '../media/card-stream.webm?url'
-import cardStreamMp4 from '../media/card-stream.mp4?url'
 import poolWebm from '../media/footer-pool.webm?url'
 import poolMp4 from '../media/footer-pool.mp4?url'
 import poolNarrowWebm from '../media/footer-pool-narrow.webm?url'
@@ -97,16 +95,18 @@ const heroData = JSON.stringify({
 })
 // The calendar's water (motion/water.js): the BEFORE card's splash strip
 // (its source width and edge row), the AFTER clip and the box in it that the
-// page fits to its card; and the stream coming into the AFTER card, with
-// where the hero's stream leaves each hero rendition, so it lands on its x.
+// page fits to its card.
 const waterData = JSON.stringify({
   before: { webm: cardSplashWebm, mp4: cardSplashMp4, ...media.cards.before },
   after: { webm: cardAfterWebm, mp4: cardAfterMp4, ...media.cards.after },
-  stream: { webm: cardStreamWebm, mp4: cardStreamMp4, ...media.cards.stream },
-  hero: { l: media.hero['16x9'].stream, p: media.hero['9x16'].stream },
 })
 // How far the portrait clips run on below their 9:16 frame (marketing.css).
 const heroStyle = `--hero-extend: ${media.hero['9x16'].extend}`
+// Where the hero's stream leaves each rendition (its centre and width, as
+// fractions of the hero's media box), so the stream drawn on below the hero
+// (.mk-day-stream, marketing.css) takes up exactly where it is cut off.
+const [streamL, streamP] = [media.hero['16x9'].stream, media.hero['9x16'].stream]
+const dayStyle = `--stream-lx: ${streamL.x}; --stream-lw: ${streamL.width}; --stream-px: ${streamP.x}; --stream-pw: ${streamP.width}`
 
 // The footer's pool (motion/pool.js): the looping clip over its poster, in
 // its two renditions (the full band, and its centre for phones), each with
@@ -160,7 +160,8 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
     </div>
   </section>
 
-  <section class="mk-section mk-day" id="day">
+  <section class="mk-section mk-day" id="day" style={dayStyle}>
+    <div class="mk-day-stream" data-stream aria-hidden="true"></div>
     <div class="mk-wrap">
       <div class="mk-section-head" data-reveal>
         <h2 class="mk-h2">
