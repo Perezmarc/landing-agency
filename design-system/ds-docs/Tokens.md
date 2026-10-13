@@ -18,7 +18,7 @@ matter.
 | Group | Tokens | Use for |
 |---|---|---|
 | Surfaces | `--bg` · `--surface` · `--surface-2` | the page · a card on it · a recessed area (rail, table header) |
-| Ink | `--ink` · `--ink-2` · `--mute` · `--mute-2` | body text · dense UI · secondary copy · labels and placeholders |
+| Ink | `--ink` · `--ink-2` · `--mute` · `--mute-2` · `--title-off` | body text · dense UI · secondary copy · labels and placeholders · the hero headline's inactive line |
 | Lines | `--line` · `--line-2` | separators · quieter internal dividers |
 | Accent | `--accent` · `--accent-soft` · `--accent-ink` · `--accent-line` | the one brand colour: links, focus, the active nav tick |
 | Status | `--good` · `--warn` · `--bad` | each with `-soft` (fill), `-ink` (text on that fill), `-line` (border) |

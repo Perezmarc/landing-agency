@@ -187,10 +187,10 @@
    default is the AFTER, like the poster. During the clip the switch waits for
    the pebble to appear. */
 .mk-hero-line { transition: color var(--dur-hero-fade) var(--ease-out); }
-.mk-hero-line--lead { color: var(--mute); }
+.mk-hero-line--lead { color: var(--title-off); }
 .mk-hero-line--main { color: var(--ink); }
 .mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-line--lead { color: var(--ink); }
-.mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-line--main { color: var(--mute); }
+.mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-line--main { color: var(--title-off); }
 .mk-hero.is-transitioning .mk-hero-line { transition-delay: var(--delay-hero-crystal); }
 .mk-hero-lead {
   font-size: clamp(16px, 1.35vw, 18.5px);

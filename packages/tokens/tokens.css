@@ -69,6 +69,7 @@
   --ink:         #16161a;
   --ink-2:       #26262c;
   --mute:        #5f5c57;   /* 6.6:1 on white: the grey headline line and secondary copy */
+  --title-off:   #8f8d89;   /* --mute 30% lighter, 3.4:1 on white (AA for large text): the hero headline's inactive line */
   --mute-2:      #8f8b84;   /* labels and placeholders only, never running text */
 
   /* Hairlines. --line separates, --line-2 is the quieter internal divider. */

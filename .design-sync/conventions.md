@@ -18,7 +18,7 @@ hardcoded value is what breaks that.
 | Group | Tokens |
 |---|---|
 | Surfaces | `--bg` (page) · `--surface` (card) · `--surface-2` (recessed) |
-| Text | `--ink` · `--ink-2` · `--mute` · `--mute-2` |
+| Text | `--ink` · `--ink-2` · `--mute` · `--mute-2` · `--title-off` |
 | Lines | `--line` · `--line-2` |
 | Accent | `--accent` · `--accent-soft` · `--accent-ink` · `--accent-line` |
 | Status | `--good` · `--warn` · `--bad` — each with `-soft` (fill), `-ink` (text on the fill) and `-line` (border) |
