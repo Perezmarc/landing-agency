@@ -1,6 +1,6 @@
 # Product Marketing Context
 
-**Document version:** v4
+**Document version:** v5
 **Last updated:** 2026-10-12
 
 > Auto-drafted from the founder's brief ("an AI consulting agency, almost exactly
@@ -118,6 +118,7 @@
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v5 (2026-10-13): The hero headline becomes the owner's two lines, "Understand your processes." / "Then automate them with AI agents.": the method in its order, understand first, automate second. It replaces the time-saving claim of v4.
 - v4 (2026-10-12): The hero's first line becomes the owner's claim, "Find out how much time your whole team could be saving.", an invitation to measure rather than a promised figure; "Then hand the repetitive steps to AI agents." stays as the second line. [NEED: a real time-saved figure from an engagement before any number appears on the page.]
 - v3 (2026-10-12): The homepage calendar becomes a week (one day on phones) whose AFTER is the BEFORE minus the eliminated tasks, to say "we take tasks off your week"; the "what the agent prepared" list was dropped. Still an illustration, with no figures.
 - v2 (2026-10-11): Positioning becomes process-first (map the real process, delete before you automate, agent prepares / person decides, baseline before and after), adopting the ideas of Varick's talk "Don't apply AI" (learn.varickagents.com/dont-apply-ai) without its clients, examples or figures. v1's "20 hours" and "6 to 12 weeks" marked [NEED]. The homepage calendar and invoice walkthrough recorded as illustrations.
