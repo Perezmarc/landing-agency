@@ -106,34 +106,52 @@
 .mk-header-offset { height: 68px; }
 
 /* ═══════════ HERO ═══════════
-   A 250svh section with a sticky 100svh stage: the first 1.5 screens of
-   scroll pass while the stage stays pinned (that is where the 2.5 s crash
-   runs, long enough to see it at a brisk wheel or flick), then the hero
-   scrolls away like content. motion/hero.js reads the pin length from the
-   layout. `overflow: clip`, never hidden: hidden would make the section a
-   scroll container and kill the sticky. */
-.mk-hero { position: relative; height: 250svh; overflow: clip; }
+   A sticky stage, pinned for the first 1.5 screens of scroll (150svh: that
+   is where the 3.75 s crash runs, long enough to see it at a brisk wheel or
+   flick), then the hero scrolls away like content. motion/hero.js reads the
+   pin length from the layout. `overflow: clip`, never hidden: hidden would
+   make the section a scroll container and kill the sticky.
+   The stage is the LARGE viewport (100lvh), so the screen never shows the
+   page under it when a phone's browser bars collapse; the copy, and the
+   pebble, are laid out in the SMALL viewport (100svh), which is always on
+   screen. The pebble's stream runs down to the stage's bottom edge in every
+   layout. The stage is the size container the portrait box is sized from. */
+.mk-hero { position: relative; height: calc(150svh + 100lvh); overflow: clip; }
 .mk-hero-stage {
   position: sticky;
   top: 0;
-  height: 100svh;
+  height: 100lvh;
   overflow: clip;
+  container-type: inline-size;
 }
 .mk-hero-media {
   position: absolute;
   left: 50%;
   top: 50%;
-  /* The clip covers the stage: 16:9, at least the stage's width. */
-  width: max(100%, 177.78svh);
+  /* The clip covers the stage: 16:9, at least the stage's width, centred.
+     The stream runs out through the frame's bottom edge, so it leaves
+     through the stage's. */
+  width: max(100%, 177.78lvh);
   aspect-ratio: 16 / 9;
   translate: -50% -50%;
 }
 @media (max-aspect-ratio: 1/1) {
-  /* Portrait: the 9:16 rendition, anchored to the stage's bottom. Its pebble
-     is centred at 80% of its height (build-media.mjs PORTRAIT), below the
-     copy; on a phone the box is exactly the stage, and on a wider portrait
-     screen the white top is what gets cropped. */
-  .mk-hero-media { width: max(100%, 56.25svh); aspect-ratio: 9 / 16; top: auto; bottom: 0; translate: -50% 0; }
+  /* Portrait: the 9:16 rendition, its 9:16 frame anchored to the bottom of
+     the small viewport. Its pebble is centred at 80% of that frame
+     (build-media.mjs PORTRAIT), below the copy; on a phone the frame is
+     exactly the small viewport, and on a wider portrait screen the white top
+     is what gets cropped. Below the frame the clip runs on by --hero-extend
+     of its height (the stream, extended by the pipeline: EXTEND), so where
+     the stage is taller than the small viewport the stream still reaches
+     its bottom edge. --hero-extend comes from media.json (Home.astro). */
+  .mk-hero-media {
+    --frame-h: max(177.78cqw, 100svh);
+    width: max(100%, 56.25svh);
+    height: calc(var(--frame-h) * (1 + var(--hero-extend)));
+    aspect-ratio: auto;
+    top: calc(100svh - var(--frame-h));
+    translate: -50% 0;
+  }
 }
 /* Layers, bottom to top: the AFTER poster and loop, the transition clip (the
    crash, created by JS), then the BEFORE layer (poster and loop). With no JS
@@ -163,7 +181,7 @@
 .mk-hero-copy {
   position: relative;
   z-index: 2;
-  height: 100%;
+  height: 100svh;
   display: flex;
   flex-direction: column;
   /* safe: if the copy is ever taller than the stage it overflows the bottom,
@@ -458,14 +476,21 @@
    the slab the water falls on: it spans the card's border box with its top
    edge on the card's top border. A percentage margin is a fraction of the
    card's width, which is how the clip's top is set from its own height. The
-   mask keeps --water-above of streams over the border and fades the drips
+   mask shows the rain falling onto the border: it fades in from the page
+   over --water-above (opaque only in its last 40%), and fades the drips
    out within --water-below, clear of the chips' labels.
    AFTER: BEHIND the card (z-index -1 in a card that makes no stacking
    context, so it paints under the card's white). The fit box (the inner
    edges of the two sheets running down the slab, and the slab's top and
    bottom) is stretched onto the card's box, widened by --water-gap each
-   side, so the sheets run just outside the side borders. The mask fades the
-   stream in above the card and out below it. */
+   side, so the sheets run just outside the side borders. The clip starts at
+   the card's top edge and the mask fades the stream out below the card.
+   STREAM: the stream coming into the AFTER card is the hero's own (the
+   card-stream clip is cut from the hero AFTER loop), also behind the card.
+   motion/water.js measures where the hero's stream is on screen and hands
+   it --stream-left (from the card's left) and --stream-w (the hero's
+   scale), so it falls on the same x, at the same width; its bottom is
+   tucked under the card's top border, and it fades in from the page. */
 .mk-cal-water {
   position: absolute;
   max-width: none;          /* base.css caps media at its container */
@@ -476,7 +501,7 @@
 }
 .mk-cal-water.is-ready { opacity: 1; }
 .mk-cal-water--before {
-  --water-above: 56px;
+  --water-above: 110px;
   --water-below: 100px;
   --w: calc((100% + 2px) / (var(--water-r) - var(--water-l)));
   z-index: 1;
@@ -488,13 +513,13 @@
   mix-blend-mode: multiply;
   mask-image: linear-gradient(to bottom,
     transparent calc(var(--water-t) * 100% - var(--water-above)),
-    black calc(var(--water-t) * 100% - var(--water-above) * 0.4),
+    rgb(0 0 0 / 0.55) calc(var(--water-t) * 100% - var(--water-above) * 0.6),
+    black calc(var(--water-t) * 100% - var(--water-above) * 0.25),
     black calc(var(--water-t) * 100% + var(--water-below) * 0.25),
     transparent calc(var(--water-t) * 100% + var(--water-below)));
 }
 .mk-cal-water--after {
   --water-gap: 0px;
-  --water-above: 140px;
   --water-below: 160px;
   --w: calc((100% + 2 * var(--water-gap)) / (var(--water-r) - var(--water-l)));
   --h: calc(100% / (var(--water-b) - var(--water-t)));
@@ -504,16 +529,31 @@
   top: calc(-1 * var(--water-t) * var(--h));
   height: var(--h);
   mask-image: linear-gradient(to bottom,
-    transparent calc(var(--water-t) * 100% - var(--water-above)),
-    black calc(var(--water-t) * 100% - var(--water-above) * 0.5),
+    transparent calc(var(--water-t) * 100% - 6px),
+    black calc(var(--water-t) * 100% + 2px),
     black calc(var(--water-b) * 100% + var(--water-below) * 0.4),
     transparent calc(var(--water-b) * 100% + var(--water-below)));
+}
+.mk-cal-water--stream {
+  --stream-tuck: 24px;
+  z-index: -1;
+  left: var(--stream-left);
+  width: var(--stream-w);
+  aspect-ratio: var(--stream-ar);
+  bottom: calc(100% - var(--stream-tuck));
+  mask-image: linear-gradient(to bottom, transparent, black 60%);
 }
 /* Stacked weeks: the card is nearly the page's width, with 20px either
    side, and the sheets scale with it. Tuck them half under the card, so what
    shows outside fits the margin instead of running off the screen. */
 @media (min-width: 721px) and (max-width: 1179px) {
   .mk-cal-water--after { --water-gap: -2%; }
+}
+/* Stacked (below 1180px) the BEFORE card is right above the AFTER one, so
+   the stream coming into the AFTER card shows only between them: a wider
+   gap lets it be seen falling onto the card. */
+@media (max-width: 1179px) {
+  .mk-day-cals { row-gap: 64px; }
 }
 
 /* Side by side: BEFORE left, AFTER right, the same width and the same hour

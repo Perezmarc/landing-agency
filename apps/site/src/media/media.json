@@ -2,30 +2,44 @@
   "$comment": "Written by scripts/media/build-media.mjs. Do not edit by hand.",
   "hero": {
     "16x9": {
-      "transition": 3.75
+      "transition": 3.75,
+      "stream": {
+        "x": 0.6609,
+        "unit": 0.000625
+      }
     },
     "9x16": {
-      "transition": 3.75
+      "transition": 3.75,
+      "stream": {
+        "x": 0.4927,
+        "unit": 0.001005
+      },
+      "extend": 0.4
     }
   },
   "cards": {
     "before": {
-      "aspect": 2.3881,
+      "aspect": 1.8824,
       "fit": {
         "left": 0,
-        "top": 0.3953,
+        "top": 0.5221,
         "right": 1,
-        "bottom": 1.4093
+        "bottom": 1.3235
       }
     },
     "after": {
-      "aspect": 1.0441,
+      "aspect": 1.277,
       "fit": {
         "left": 0.1296,
-        "top": 0.1956,
+        "top": 0.0162,
         "right": 0.862,
-        "bottom": 0.7897
+        "bottom": 0.7428
       }
+    },
+    "stream": {
+      "aspect": 0.256,
+      "width": 64,
+      "x": 0.5073
     }
   },
   "footer": {

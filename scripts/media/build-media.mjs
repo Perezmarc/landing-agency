@@ -33,7 +33,11 @@
    The hero transition (the crash) is graded and encoded the same way but not
    looped: it plays once, minus its still head (CRASH_HEAD). All three portrait
    hero clips are composed here from the landscape ones (composePortrait), so
-   the pebble sits in the same place in each and the cuts stay invisible.
+   the pebble sits in the same place in each and the cuts stay invisible,
+   and run on below their 9:16 frame (EXTEND), so the stream reaches the
+   bottom of a phone screen taller than its small viewport. The stream that
+   falls onto the calendar's AFTER card (card-stream) is cut from the hero
+   AFTER loop's graded frames.
    The card clips (the calendar's water) are cropped to their slab and graded
    against a clean plate of it (cardPlate): the slab goes to white and only
    the water is left. No posters: they only ever play over the finished card.
@@ -79,21 +83,25 @@ const ONLY = ONLY_AT > 0 ? new Set(process.argv[ONLY_AT + 1].split(',')) : null
    built around it), `crop` what is kept of the frame, and `fit` the box the
    page fits to the card's edges (media.json → marketing.css).
    BEFORE: cropped to the slab's own width, so the slab spans the card; the
-   crop keeps the streams above its top edge and the drips a short way down
+   crop keeps the streams above its top edge from the top of the frame (the
+   rain falls onto the card from the page) and the drips a short way down
    its face, and `fit` is the slab (its top edge on the card's top border).
    AFTER: the water runs down the slab's face just inside its left and right
    edges and leaves below as one stream. `fit` is the inner edges of those
    two sheets (measured on the graded clip) and the slab's top and bottom, so
-   the card hides the face and the sheets run just outside its sides. Its
+   the card hides the face and the sheets run just outside its sides. The
+   crop starts 9 rows above the slab: the stream that comes in from above is
+   not this clip's but the hero's own (`card-stream`, below), placed by the
+   page on the hero stream's x. Its
    first 48 frames build the flow up from a dry slab, so the loop starts
    after them (they still feed the plate: that is where the edges are dry). */
 const CARD = {
   before: {
-    slab: { x0: 131, y0: 284, x1: 1157, y1: 720 }, crop: { x: 131, y: 114, w: 1026, h: 430 },
+    slab: { x0: 131, y0: 284, x1: 1157, y1: 720 }, crop: { x: 131, y: 0, w: 1026, h: 544 },
     fit: { x0: 131, y0: 284, x1: 1157, y1: 720 },
   },
   after: {
-    slab: { x0: 345, y0: 173, x1: 935, y1: 577 }, crop: { x: 285, y: 40, w: 710, h: 680 },
+    slab: { x0: 345, y0: 173, x1: 935, y1: 577 }, crop: { x: 285, y: 164, w: 710, h: 556 },
     fit: { x0: 377, y0: 173, x1: 897, y1: 577 },
   },
 }
@@ -133,12 +141,20 @@ const CLIPS = [
   { name: 'hero-after-16x9', w: 1600, h: 900 },
   // Portrait: all three composed from the landscape clips, so the pebble has
   // exactly the same place and size in each and every cut stays invisible.
-  { name: 'hero-before-9x16', w: 720, h: 1280, compose: 'hero-before-16x9' },
-  { name: 'hero-transition-9x16', w: 720, h: 1280, once: true, compose: 'hero-transition-16x9', head: CRASH_HEAD },
-  { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9' },
+  // Each is extended below its 9:16 frame (EXTEND), so the stream runs on to
+  // the bottom of the tallest viewport; the crash's extension starts from
+  // the BEFORE loop's (`history`), so it is built after it.
+  { name: 'hero-before-9x16', w: 720, h: 1280, compose: 'hero-before-16x9', extend: true },
+  { name: 'hero-transition-9x16', w: 720, h: 1280, once: true, compose: 'hero-transition-16x9', head: CRASH_HEAD, extend: true, history: 'hero-before-9x16' },
+  { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9', extend: true },
   // The calendar's water: at most 960 wide (they show at about 600).
-  { name: 'card-before', w: 960, h: 402, card: CARD.before },
-  { name: 'card-after', w: 710, h: 680, card: CARD.after, head: 48 },
+  { name: 'card-before', w: 960, h: 510, card: CARD.before },
+  { name: 'card-after', w: 710, h: 556, card: CARD.after, head: 48 },
+  // The stream that comes into the AFTER card: the hero AFTER loop's own
+  // stream, cut from its graded frames (the column under the pebble, from
+  // STREAM.y down to the frame's bottom), so it is the same water at the
+  // same scale. The page puts it on the hero stream's x (motion/water.js).
+  { name: 'card-stream', w: 64, h: 250, cut: 'hero-after-16x9' },   // 64: AV1's least width
   // The footer's pool: a wide band, from the waterline down. Its source ends
   // on its first frame, so it loops as it is, with no cross-fade; frame 0,
   // its poster, is one of its calmest (no drop in the water under the copy).
@@ -164,6 +180,38 @@ function portraitPlacement(w, h) {
   if (left > 0 || left + sw < w || top < 0 || top + sh < h) throw new Error(`portrait placement leaves the frame uncovered: ${JSON.stringify({ sw, sh, left, top })}`)
   return { sw, sh, left, top, feather: Math.round(sh * 0.3) }
 }
+
+/* ── The portrait stream, extended ─────────────────────────────────────────
+   On a phone the visible screen can be taller than the small viewport the
+   pebble is placed in (100svh: the browser's bars collapse as the page
+   scrolls, and the hero's stage is 100lvh), so every portrait clip runs on
+   EXTEND.rows below its 9:16 frame (0.4 of its height: 720×1792; Safari's
+   bars take about a fifth of an iPhone's screen, so the large viewport is
+   up to about 1.3 small ones, and 0.4 leaves room). The
+   landscape source ends at the frame's bottom, so those rows are made, not
+   cropped: by advection, the way falling water moves. Row r below the frame
+   at frame t is the frame's own bottom row at frame t − d(r) (interpolated
+   between frames), where d(r) is how long water takes to fall r + 1 px from
+   the edge, leaving it at `speed` px a frame (the BEFORE loop's drops near
+   the bottom, measured at 720 wide) and gaining `gravity` px a frame, every
+   frame. So whatever crosses the bottom edge (the stream, a drop, a drip)
+   keeps falling, faster; and the crash's new stream, which reaches the edge
+   at about its frame 66 of 90, fills all the rows in 21 frames, before the
+   cut to the AFTER loop. A loop takes its past from itself, wrapping, so its
+   seam is untouched; the crash takes the past before its first frame from
+   the BEFORE loop it cuts in from (the drips already falling keep falling).
+   The burst's fragments are not water: in the crash's first `clean` frames
+   (until the last fragment has crossed the edge) what crosses it fades to
+   white within `fragments` rows, so a fragment is not drawn out into a
+   streak. Nothing is tiled: every row is a different moment of the same
+   edge. The last `fade` of the rows eases to white, so if a screen ever
+   shows past them the stream fades rather than stops. */
+const EXTEND = { rows: 512, speed: 9, gravity: 1.5, fade: 0.12, clean: 56, fragments: 48 }
+
+/* The stream under the pebble, at the bottom of the AFTER loop's frame: the
+   card-stream clip is cut from STREAM.y down (1600×900 frame pixels), and the
+   stream's x is measured on the frame's last STREAM.rows rows (media.json). */
+const STREAM = { y: 650, rows: 8 }
 
 /* How far a pixel must stand out from the void field to count as an object
    (stone, water, rain) and keep its tone: the weight ramps from lo to hi. */
@@ -553,57 +601,133 @@ function grader(clip, src) {
   return { count: frames.length, graded: i => gradeFrame(frames[i], w, h, gain, exposure[Math.min(i, exposure.length - 1)], keep) }
 }
 
+/** Where the stream crosses the bottom of a frame: the darkness-weighted
+    centre of the darkest column and its neighbours, over the last
+    STREAM.rows rows above row `bottom`, as a fraction of the width. */
+function streamX(frame, w, bottom) {
+  const dark = new Float32Array(w)
+  for (let y = bottom - STREAM.rows; y < bottom; y++) for (let x = 0; x < w; x++) {
+    const p = (y * w + x) * 3
+    dark[x] += 255 - (LUMA[0] * frame[p] + LUMA[1] * frame[p + 1] + LUMA[2] * frame[p + 2])
+  }
+  let peak = 0
+  for (let x = 1; x < w; x++) if (dark[x] > dark[peak]) peak = x
+  let sum = 0, at = 0
+  for (let x = Math.max(0, peak - 12); x <= Math.min(w - 1, peak + 12); x++) if (dark[x] > dark[peak] * 0.1) { sum += dark[x]; at += dark[x] * (x + 0.5) }
+  return at / sum / w
+}
+
+/** The EXTEND rows under frame `k` of a sequence, from its bottom rows
+    (`rows[i]`: frame i's last row). `past(i)` gives the row for a frame
+    before 0 (a loop: itself, wrapped; the crash: the BEFORE loop); `clean`
+    is the first frame whose edge carries only water (the crash: EXTEND.clean). */
+function extension(rows, k, w, past, clean = 0) {
+  const { rows: R, fade, fragments } = EXTEND, v = EXTEND.speed * w / 720, g = EXTEND.gravity * w / 720
+  const ext = Buffer.alloc(R * w * 3)
+  for (let r = 0; r < R; r++) {
+    const d = (Math.sqrt(v * v + 2 * g * (r + 1)) - v) / g, t = k - d, i0 = Math.floor(t), f = t - i0
+    const white = smoothstep(1 - fade, 1, (r + 1) / R), gone = smoothstep(0, fragments, r)
+    // How much of a source frame's row shows at this depth.
+    const keep = i => (1 - white) * (i >= 0 && i < clean ? 1 - gone : 1)
+    const at = i => i >= 0 && i < rows.length ? rows[i] : past(i), a = at(i0), b = at(i0 + 1)
+    const ka = keep(i0) * (1 - f), kb = keep(i0 + 1) * f
+    for (let i = 0; i < w * 3; i++) ext[r * w * 3 + i] = Math.round(255 - (255 - a[i]) * ka - (255 - b[i]) * kb)
+  }
+  return ext
+}
+
+const BOTTOMS = {}   // a portrait loop's bottom rows, for the crash's past
+const MEASURED = {}  // where each hero AFTER loop's stream leaves its frame
+
+/* A clip cut from another's graded intermediate: the card stream, the
+   column under the AFTER loop's pebble, centred on its stream. */
+function cutClip(clip, mid) {
+  const x = Math.round(MEASURED[clip.cut].x * 1600 - clip.w / 2)
+  MEASURED[clip.name] = { x: (MEASURED[clip.cut].x * 1600 - x) / clip.w }
+  encodeWeb(clip, ['-vf', `crop=${clip.w}:${clip.h}:${x}:${STREAM.y}`], mid)
+  return { frames: null }
+}
+
+function encodeWeb(clip, filter, mid) {
+  const crf = { av1: 40, h264: 27, ...clip.crf }
+  const color = ['-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709', '-color_range', 'tv']
+  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, ...filter, '-an', '-c:v', 'libsvtav1', '-crf', String(crf.av1), '-preset', '5', '-g', String(FPS * 5), '-pix_fmt', 'yuv420p', ...color, join(OUT, `${clip.name}.webm`)])
+  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, ...filter, '-an', '-c:v', 'libx264', '-crf', String(crf.h264), '-preset', 'slow', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
+    '-x264-params', `keyint=${FPS * 5}:open-gop=0`, '-movflags', '+faststart', ...color, join(OUT, `${clip.name}.mp4`)])
+}
+
 async function buildClip(clip, src) {
   const { w, h } = clip
   const { count: N, graded } = grader(clip, src)
   const L = LOOP_FADE
 
-  // Lossless intermediate, then the two web encodes from it.
-  const mid = join(CACHE, `${clip.name}.graded.mkv`)
-  const enc = encoder(['-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', `${w}x${h}`, '-r', String(FPS), '-i', '-', '-c:v', 'libx264', '-qp', '0', '-preset', 'veryfast', '-pix_fmt', 'yuv444p', mid])
-  let first = null
-  if (clip.once) {
-    // The transition plays once, start to end.
-    for (let i = 0; i < N; i++) await enc.write(graded(i))
-  } else if (clip.seamless) {
-    // The source already ends on its first frame: play 0 … N−2 and wrap to 0.
-    // A cross-fade would blend two sets of ripples into one ghosted frame.
-    for (let k = 0; k < N - 1; k++) {
-      const g = graded(k); if (!first) first = g
-      await enc.write(g)
-    }
-  } else {
-    // Order: L … N−L−1, then the cross-fade of the last second into the first.
-    // That plays …, N−L−1, blend(N−L, 0) … blend(N−1, L−1), and wraps to L.
-    for (let i = L; i < N - L; i++) {
-      const g = graded(i); if (!first) first = g
-      await enc.write(g)
-    }
-    for (let j = 0; j < L; j++) {
-      const a = graded(N - L + j), b = graded(j), t = (j + 0.5) / L, mix = Buffer.alloc(a.length)
-      for (let k = 0; k < a.length; k++) mix[k] = Math.round(a[k] * (1 - t) + b[k] * t)
-      await enc.write(mix)
+  // The frames in playing order.
+  function* sequence() {
+    if (clip.once) {
+      // The transition plays once, start to end.
+      for (let i = 0; i < N; i++) yield graded(i)
+    } else if (clip.seamless) {
+      // The source already ends on its first frame: play 0 … N−2 and wrap to 0.
+      // A cross-fade would blend two sets of ripples into one ghosted frame.
+      for (let k = 0; k < N - 1; k++) yield graded(k)
+    } else {
+      // Order: L … N−L−1, then the cross-fade of the last second into the first.
+      // That plays …, N−L−1, blend(N−L, 0) … blend(N−1, L−1), and wraps to L.
+      for (let i = L; i < N - L; i++) yield graded(i)
+      for (let j = 0; j < L; j++) {
+        const a = graded(N - L + j), b = graded(j), t = (j + 0.5) / L, mix = Buffer.alloc(a.length)
+        for (let k = 0; k < a.length; k++) mix[k] = Math.round(a[k] * (1 - t) + b[k] * t)
+        yield mix
+      }
     }
   }
-  await enc.close()
 
-  const crf = { av1: 40, h264: 27, ...clip.crf }
-  const color = ['-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709', '-color_range', 'tv']
-  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libsvtav1', '-crf', String(crf.av1), '-preset', '5', '-g', String(FPS * 5), '-pix_fmt', 'yuv420p', ...color, join(OUT, `${clip.name}.webm`)])
-  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libx264', '-crf', String(crf.h264), '-preset', 'slow', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
-    '-x264-params', `keyint=${FPS * 5}:open-gop=0`, '-movflags', '+faststart', ...color, join(OUT, `${clip.name}.mp4`)])
+  // Lossless intermediate, then the two web encodes from it.
+  const H = h + (clip.extend ? EXTEND.rows : 0)
+  const mid = join(CACHE, `${clip.name}.graded.mkv`)
+  const enc = encoder(['-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', `${w}x${H}`, '-r', String(FPS), '-i', '-', '-c:v', 'libx264', '-qp', '0', '-preset', 'veryfast', '-pix_fmt', 'yuv444p', mid])
+  let first = null, count = 0
+  if (clip.extend) {
+    // Every frame first (the extension reads the bottom rows around it).
+    const frames = [...sequence()], rows = frames.map(f => Buffer.from(f.subarray((h - 1) * w * 3)))
+    const M = rows.length, wrap = i => rows[((i % M) + M) % M]
+    let past = wrap
+    if (clip.history) {
+      const before = BOTTOMS[clip.history]
+      if (!before) throw new Error(`${clip.name} extends from ${clip.history}: build it in the same run`)
+      past = i => before[((i % before.length) + before.length) % before.length]
+    }
+    if (!clip.once) BOTTOMS[clip.name] = rows
+    for (const [k, f] of frames.entries()) {
+      const g = Buffer.concat([f, extension(rows, k, w, past, clip.once ? EXTEND.clean : 0)])
+      if (!first) first = g
+      await enc.write(g)
+    }
+    count = M
+  } else {
+    for (const g of sequence()) { if (!first) first = g; await enc.write(g); count++ }
+  }
+  await enc.close()
+  if (clip.name.startsWith('hero-after-')) MEASURED[clip.name] = { x: streamX(first, w, h) }
+
+  encodeWeb(clip, [], mid)
   // A hero loop's poster is the first frame it plays. The transition has none:
   // it only ever plays over the BEFORE clip; nor do the card clips, which only
   // ever play over the finished card.
   // The footer's pool is a CSS background on every page, so its poster is
   // written ready to serve (AVIF, WebP for the rest), not as a JPEG for Astro.
-  const still = () => sharp(first, { raw: { width: w, height: h, channels: 3 } })
+  const still = () => sharp(first, { raw: { width: w, height: H, channels: 3 } })
   if (clip.pool) {
     await still().avif({ quality: 60, effort: 9, chromaSubsampling: '4:2:0' }).toFile(join(OUT, `${clip.name}.avif`))
     await still().webp({ quality: 90, effort: 6 }).toFile(join(OUT, `${clip.name}.webp`))
   } else if (!clip.once && !clip.card) await still().jpeg({ quality: 90, mozjpeg: true }).toFile(join(OUT, `${clip.name}.jpg`))
+  // A clip cut from this one reads its intermediate first.
+  for (const cut of CLIPS.filter(c => c.cut === clip.name && (!ONLY || ONLY.has(c.name)))) {
+    console.log('·', cut.name)
+    cutClip(cut, mid)
+  }
   rmSync(mid)
-  return { frames: N }
+  return { frames: clip.once ? N : count }
 }
 
 /* ── stones ─────────────────────────────────────────────────────────────── */
@@ -639,6 +763,15 @@ function framePSNR(fileA, a, fileB, b) {
   const sel = (i, label) => i < 0 ? `trim=end_frame=1[${label}]` : `select=eq(n\\,${i}),setpts=PTS-STARTPTS[${label}]`
   const out = run('ffmpeg', ['-v', 'info', ...pick(fileA, a), ...pick(fileB, b), '-filter_complex', `[0:v]${sel(a, 'a')};[1:v]${sel(b, 'b')};[a][b]psnr`, '-frames:v', '1', '-f', 'null', '-'])
   return Number((out.match(/average:([\d.]+|inf)/) || [])[1])
+}
+
+/** Every frame step's PSNR (frame n against n + 1), sorted. */
+function allSteps(file) {
+  const stats = join(CACHE, 'steps.psnr.txt')
+  run('ffmpeg', ['-v', 'error', '-i', file, '-i', file, '-filter_complex', `[0:v]trim=start_frame=1,setpts=PTS-STARTPTS[a];[1:v]setpts=PTS-STARTPTS[b];[a][b]psnr=stats_file=${stats}`, '-f', 'null', '-'])
+  const out = readFileSync(stats, 'utf8').split('\n').map(l => Number((l.match(/psnr_avg:([\d.]+)/) || [])[1])).filter(Number.isFinite)
+  rmSync(stats)
+  return out.sort((a, b) => a - b)
 }
 
 /** PSNR between the last two frames of a clip. */
@@ -678,9 +811,15 @@ function checks() {
       psnr = +Number((seam.match(/average:([\d.]+|inf)/) || [])[1]).toFixed(1)
       // A seamless loop's seam is one of its own frame steps: it is held to
       // the steps either side of it (the last two frames, the first two).
-      const at = clip.seamless ? [-2, 0] : [10, 30, 50]
-      const steps = at.map(k => k < 0 ? lastStep(mp4) : framePSNR(mp4, k, mp4, k + 1)).sort((a, b) => a - b)
-      step = +(clip.seamless ? steps[0] : steps[1]).toFixed(1)
+      // A cut clip (the card stream: a narrow column of moving water, which
+      // its steps measure alone) is its parent's loop, seam included: it is
+      // held to the low end of its own frame steps (the 5th percentile).
+      if (clip.cut) step = +allSteps(mp4)[Math.floor(0.05 * allSteps(mp4).length)].toFixed(1)
+      else {
+        const at = clip.seamless ? [-2, 0] : [10, 30, 50]
+        const steps = at.map(k => k < 0 ? lastStep(mp4) : framePSNR(mp4, k, mp4, k + 1)).sort((a, b) => a - b)
+        step = +(clip.seamless ? steps[0] : steps[1]).toFixed(1)
+      }
     }
     report.push({ clip: clip.name, webmKB: Math.round(statSync(webm).size / 1024), mp4KB: Math.round(statSync(mp4).size / 1024), voidLuma: yhigh, seamPSNR: psnr, stepPSNR: step, cutIn, cutOut, ok: yhigh >= 234 && (clip.once || psnr >= Math.min(30, step - 1)) })
   }
@@ -696,8 +835,11 @@ async function main() {
 
   const src = async (kind, key) => fetchTo(SOURCES.base + SOURCES[kind][key], join(CACHE, SOURCES[kind][key]))
   const built = {}
+  if (ONLY?.has('card-stream') && !ONLY.has('hero-after-16x9')) throw new Error('card-stream is cut from hero-after-16x9: rebuild both')
+  if (ONLY?.has('hero-transition-9x16') && !ONLY.has('hero-before-9x16')) throw new Error('the 9:16 crash extends from hero-before-9x16: rebuild both')
   for (const clip of CLIPS) {
     if (ONLY && !ONLY.has(clip.name)) continue
+    if (clip.cut) continue           // built from its source clip's intermediate
     console.log('·', clip.name)
     const source = clip.compose
       ? await composePortrait(await src('clips', clip.compose), join(CACHE, `${clip.name}.composed.mkv`), clip)
@@ -718,6 +860,23 @@ async function main() {
     return { aspect: f(clip.w / clip.h), waterline: f(poolRows(clip).line / clip.h) }
   }
   const transition = r => +(built[`hero-transition-${r}`].frames / FPS).toFixed(2)
+  // Where the AFTER loop's stream leaves the frame (a fraction of its width),
+  // and one card-stream pixel as a fraction of that width, so the page can
+  // draw the card's stream on the hero's x at the hero's scale. The portrait
+  // frame's extension is a fraction of its 9:16 height.
+  const stream = r => {
+    const unit = r === '16x9' ? 1 / 1600 : portraitPlacement(720, 1280).sw / 1600 / 720
+    return { x: f(MEASURED[`hero-after-${r}`].x), unit: +unit.toPrecision(4) }
+  }
+  const hero = (r, prev = {}) => ({
+    transition: built[`hero-transition-${r}`] ? transition(r) : prev.transition,
+    stream: MEASURED[`hero-after-${r}`] ? stream(r) : prev.stream,
+    ...(r === '9x16' ? { extend: f(EXTEND.rows / 1280) } : {}),
+  })
+  const cardStream = () => {
+    const { w, h } = CLIPS.find(c => c.name === 'card-stream')
+    return { aspect: f(w / h), width: w, x: f(MEASURED['card-stream'].x) }
+  }
   const order = d => ({ $comment: 'Written by scripts/media/build-media.mjs. Do not edit by hand.', hero: d.hero, cards: d.cards, footer: d.footer, stones: d.stones })
 
   let doc
@@ -725,17 +884,18 @@ async function main() {
     // Patch what was rebuilt into the existing media.json.
     doc = JSON.parse(readFileSync(join(OUT, 'media.json'), 'utf8'))
     for (const name of Object.keys(built)) {
-      if (name.startsWith('hero-transition-')) doc.hero[name.slice(-4)] = { transition: transition(name.slice(-4)) }
-      if (name.startsWith('card-')) doc.cards[name.slice(5)] = card(name)
+      if (name.startsWith('hero-')) doc.hero[name.slice(-4)] = hero(name.slice(-4), doc.hero[name.slice(-4)])
+      if (name === 'card-before' || name === 'card-after') doc.cards[name.slice(5)] = card(name)
       if (name === 'footer-pool') doc.footer = { pool: pool() }
     }
+    if (MEASURED['card-stream']) doc.cards.stream = cardStream()
     doc = order(doc)
   } else {
     const raw = await stones(await src('stills', 'fragments-cutout'), 'raw', 7)
     const pebbles = await stones(await src('stills', 'pebbles-cutout'), 'pebble', 4)
     doc = order({
-      hero: { '16x9': { transition: transition('16x9') }, '9x16': { transition: transition('9x16') } },
-      cards: { before: card('card-before'), after: card('card-after') },
+      hero: { '16x9': hero('16x9'), '9x16': hero('9x16') },
+      cards: { before: card('card-before'), after: card('card-after'), stream: cardStream() },
       footer: { pool: pool() },
       stones: { raw, pebble: pebbles },
     })

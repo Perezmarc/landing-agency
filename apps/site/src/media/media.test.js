@@ -21,6 +21,21 @@ describe('media.json', () => {
     expect(media.hero['9x16'].transition).toBe(media.hero['16x9'].transition)
   })
 
+  it('says where the hero stream leaves each rendition, and how far the portrait one runs on', () => {
+    // Under the pebble: about two thirds across the landscape frame, the
+    // middle of the portrait one.
+    expect(media.hero['16x9'].stream.x).toBeGreaterThan(0.6)
+    expect(media.hero['16x9'].stream.x).toBeLessThan(0.72)
+    expect(Math.abs(media.hero['9x16'].stream.x - 0.5)).toBeLessThan(0.03)
+    // One card-stream pixel: a 1600-wide frame's pixel, scaled as the
+    // portrait composition scales it.
+    expect(media.hero['16x9'].stream.unit).toBeCloseTo(1 / 1600, 6)
+    expect(media.hero['9x16'].stream.unit).toBeGreaterThan(media.hero['16x9'].stream.unit)
+    // The portrait clips run on below their 9:16 frame.
+    expect(media.hero['9x16'].extend).toBeGreaterThanOrEqual(0.3)
+    expect(media.hero['16x9'].extend).toBeUndefined()
+  })
+
   it('gives each card clip a box to fit to its card', () => {
     for (const which of ['before', 'after']) {
       const { aspect, fit } = media.cards[which]
@@ -36,9 +51,16 @@ describe('media.json', () => {
     expect(media.cards.before.fit.right).toBe(1)
     expect(media.cards.before.fit.top).toBeGreaterThan(0.2)
     expect(media.cards.before.fit.top).toBeLessThan(0.6)
-    // AFTER: room above and below the card for the stream coming in and going out.
-    expect(media.cards.after.fit.top).toBeGreaterThan(0.1)
+    // AFTER: it starts at the card's top edge (the stream coming in is the
+    // stream clip), with room below for the stream going out.
+    expect(media.cards.after.fit.top).toBeGreaterThan(0)
+    expect(media.cards.after.fit.top).toBeLessThan(0.05)
     expect(media.cards.after.fit.bottom).toBeLessThan(0.9)
+    // The stream: a tall, narrow column with the stream in its middle.
+    const { aspect, width, x } = media.cards.stream
+    expect(aspect).toBeLessThan(0.5)
+    expect(width).toBeGreaterThanOrEqual(64)
+    expect(Math.abs(x - 0.5)).toBeLessThan(0.1)
   })
 
   it('gives the footer pool its band and waterline', () => {
@@ -58,7 +80,7 @@ describe('media.json', () => {
       files.push(`${clip}.webm`, `${clip}.mp4`, `${clip}.jpg`)
     }
     for (const r of ['16x9', '9x16']) files.push(`hero-transition-${r}.webm`, `hero-transition-${r}.mp4`)
-    for (const which of ['before', 'after']) files.push(`card-${which}.webm`, `card-${which}.mp4`)
+    for (const which of ['before', 'after', 'stream']) files.push(`card-${which}.webm`, `card-${which}.mp4`)
     // The pool: its clip, and its poster ready to serve as the footer's background.
     files.push('footer-pool.webm', 'footer-pool.mp4', 'footer-pool.avif', 'footer-pool.webp')
     for (let i = 1; i <= media.stones.raw; i++) files.push(`stones/raw-${i}.webp`)
