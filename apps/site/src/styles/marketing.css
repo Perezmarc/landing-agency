@@ -1,21 +1,20 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   MARKETING — the public website: header, the landing page (hero, stream rail,
-   calendar, sections), FAQ, final CTA, footer, plus the legal and blog
-   surfaces. Prefixed `mk-`.
+   MARKETING — the public website: header, the landing page (hero, calendar,
+   sections), FAQ, final CTA, footer, plus the legal and blog surfaces.
+   Prefixed `mk-`.
 
    THE WHOLE PAGE IS LIGHT. The media is graded to pure white, so any tinted
-   band would show it as a box; sections are transparent and the stream reads
-   as one continuous line from the hero to the final CTA.
+   band would show it as a box; sections are transparent.
 
-   THE CSS DEFAULT IS THE FINAL, NO-JS STATE. The hero shows its AFTER poster,
-   the rail is visible, the calendar shows its after state. motion/ only adds
-   movement on top, by setting data attributes and custom properties.
+   THE CSS DEFAULT IS THE FINAL, NO-JS STATE. The hero shows its AFTER poster
+   and the calendar shows its after state. motion/ only adds movement on top,
+   by setting data attributes and classes.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ═══════════ LAYOUT PRIMITIVES ═══════════ */
 .mk-wrap { width: min(1160px, 100% - 40px); margin-inline: auto; }
 .mk-section { position: relative; z-index: 1; padding: 112px 0; }
-/* Content paints above the rail, the moments and the stones in its section. */
+/* Content paints above the stones in its section. */
 .mk-section > .mk-wrap, .mk-final-inner { position: relative; z-index: 1; }
 .mk-eyebrow {
   font-family: var(--font-mono);
@@ -106,63 +105,53 @@
    overlay hero (Nav renders it unless `overlay`). */
 .mk-header-offset { height: 68px; }
 
-/* ═══════════ HOME: THE STREAM'S GEOMETRY ═══════════
-   One formula places the stream everywhere, with no runtime measuring.
-   The hero media box is `max(100%, 177.78svh)` wide (16:9 covering the stage)
-   and centred, so the stream that leaves its bottom edge at --exit-x (a
-   fraction of the clip, from streams.json) sits at --rail-x on the page.
-   Portrait screens use the 9:16 rendition, whose box is `max(100%, 56.25svh)`.
-   .mk-home is an inline-size container, so `cqw` is the page width wherever
-   these are used, including inside transforms and background sizes. */
-.mk-home {
-  position: relative;
-  container-type: inline-size;
-  --box-w: max(100cqw, 177.78svh);
-  --exit-x: var(--exit-x-l);
-  --exit-w: var(--exit-w-l);
-  --rail-x: calc(50cqw + (var(--exit-x) - 0.5) * var(--box-w));
-  --stream-w: calc(var(--exit-w) * var(--box-w));
-  --hero-h: 150svh;
-}
-@media (max-aspect-ratio: 1/1) {
-  .mk-home {
-    --box-w: max(100cqw, 56.25svh);
-    --exit-x: var(--exit-x-p);
-    --exit-w: var(--exit-w-p);
-  }
-}
-
-/* Copy stays clear of the stream: left of it on landscape, and with a right
-   padding on portrait, where the stream runs down a right-hand gutter. */
-.mk-col { max-width: min(640px, 46%); }
-@media (max-aspect-ratio: 1/1) {
-  .mk-col { max-width: none; padding-right: calc(100cqw - var(--rail-x) + 20px); }
-}
-
 /* ═══════════ HERO ═══════════
-   A 150svh section with a sticky 100svh stage: the first half-screen of
-   scroll passes while the stage stays pinned (that is where the crash runs),
-   then the hero scrolls away like content. `overflow: clip`, never hidden:
-   hidden would make the section a scroll container and kill the sticky. */
-.mk-hero { position: relative; height: var(--hero-h); overflow: clip; }
+   A sticky stage, pinned for the first 1.5 screens of scroll (150svh: that
+   is where the 3.75 s crash runs, long enough to see it at a brisk wheel or
+   flick), then the hero scrolls away like content. motion/hero.js reads the
+   pin length from the layout. `overflow: clip`, never hidden: hidden would
+   make the section a scroll container and kill the sticky.
+   The stage is the LARGE viewport (100lvh), so the screen never shows the
+   page under it when a phone's browser bars collapse; the copy, and the
+   pebble, are laid out in the SMALL viewport (100svh), which is always on
+   screen. The pebble's stream runs down to the stage's bottom edge in every
+   layout. The stage is the size container the portrait box is sized from. */
+.mk-hero { position: relative; height: calc(150svh + 100lvh); overflow: clip; }
 .mk-hero-stage {
   position: sticky;
   top: 0;
-  height: 100svh;
+  height: 100lvh;
   overflow: clip;
+  container-type: inline-size;
 }
 .mk-hero-media {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: var(--box-w);
+  /* The clip covers the stage: 16:9, at least the stage's width, centred.
+     The stream runs out through the frame's bottom edge, so it leaves
+     through the stage's. */
+  width: max(100%, 177.78lvh);
   aspect-ratio: 16 / 9;
   translate: -50% -50%;
 }
 @media (max-aspect-ratio: 1/1) {
-  /* Portrait: the box is pushed down so the crystal sits below the copy; the
-     stream still leaves through the stage's bottom edge. */
-  .mk-hero-media { aspect-ratio: 9 / 16; top: calc(50% + 12svh); }
+  /* Portrait: the 9:16 rendition, its 9:16 frame anchored to the bottom of
+     the small viewport. Its pebble is centred at 80% of that frame
+     (build-media.mjs PORTRAIT), below the copy; on a phone the frame is
+     exactly the small viewport, and on a wider portrait screen the white top
+     is what gets cropped. Below the frame the clip runs on by --hero-extend
+     of its height (the stream, extended by the pipeline: EXTEND), so where
+     the stage is taller than the small viewport the stream still reaches
+     its bottom edge. --hero-extend comes from media.json (Home.astro). */
+  .mk-hero-media {
+    --frame-h: max(177.78cqw, 100svh);
+    width: max(100%, 56.25svh);
+    height: calc(var(--frame-h) * (1 + var(--hero-extend)));
+    aspect-ratio: auto;
+    top: calc(100svh - var(--frame-h));
+    translate: -50% 0;
+  }
 }
 /* Layers, bottom to top: the AFTER poster and loop, the transition clip (the
    crash, created by JS), then the BEFORE layer (poster and loop). With no JS
@@ -182,30 +171,45 @@
 .mk-hero[data-hero-state="before"] .mk-hero-before,
 .mk-hero[data-hero-state="reassembling"] .mk-hero-before { opacity: 1; }
 /* The crash clip. Its first frame is the BEFORE rock, so the BEFORE layer is
-   cut at once; it is hidden again as the AFTER loop takes over under it. */
+   cut at once; it is hidden again as the AFTER loop takes over under it.
+   While the clip is asked to start (`is-arming`), the BEFORE layer stays. */
 .mk-hero-video.mk-hero-transition { opacity: 0; transition: opacity 250ms linear; }
 .mk-hero.is-transitioning .mk-hero-transition.is-ready { opacity: 1; transition: none; }
+.mk-hero.is-arming .mk-hero-before { opacity: 1; transition: none; }
 .mk-hero.is-transitioning .mk-hero-before { opacity: 0; transition: none; }
 
 .mk-hero-copy {
   position: relative;
   z-index: 2;
-  height: 100%;
+  height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* safe: if the copy is ever taller than the stage it overflows the bottom,
+     never up under the header. */
+  justify-content: safe center;
   padding-top: 68px;
 }
 .mk-hero-copy > * { max-width: min(560px, 42%); }
 .mk-hero h1 {
   font-family: var(--font-display);
-  font-size: clamp(36px, 4.4vw, 64px);
+  font-size: clamp(34px, 3.6vw, 54px);
   font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 1.02;
   margin-top: 18px;
   text-wrap: balance;
 }
+/* The headline follows the image: over the raw rock the first line (the
+   claim: how much time the team could be saving) is black; once the polished
+   pebble shows, the second ("then hand the steps to agents") is. The
+   default is the AFTER, like the poster. During the clip the switch waits for
+   the pebble to appear. */
+.mk-hero-line { transition: color var(--dur-hero-fade) var(--ease-out); }
+.mk-hero-line--lead { color: var(--title-off); }
+.mk-hero-line--main { color: var(--ink); }
+.mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-line--lead { color: var(--ink); }
+.mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-line--main { color: var(--title-off); }
+.mk-hero.is-transitioning .mk-hero-line { transition-delay: var(--delay-hero-crystal); }
 .mk-hero-lead {
   font-size: clamp(16px, 1.35vw, 18.5px);
   color: var(--mute);
@@ -215,102 +219,36 @@
 .mk-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 34px; }
 
 @media (max-aspect-ratio: 1/1) {
-  /* Portrait: the copy sits in the upper part of the stage, the crystal lower
-     right (its frame was composed for this), the stream down the gutter. */
+  /* Portrait: the copy sits in the white upper part of the stage, the pebble
+     centred below it (its frame was composed for this). */
   .mk-hero-copy { justify-content: flex-start; padding-top: calc(68px + 3svh); }
   .mk-hero-copy > * { max-width: none; }
   .mk-hero h1 { font-size: clamp(30px, 7.6vw, 52px); margin-top: 14px; }
   .mk-hero-lead { font-size: 15.5px; margin-top: 16px; }
   .mk-hero-actions { margin-top: 22px; }
-  .mk-hero-lead { padding-right: calc(100cqw - var(--rail-x) + 12px); }
 }
-
-/* ═══════════ THE STREAM RAIL ═══════════
-   One element running down .mk-flow (from the hero's bottom edge to the final
-   CTA), exactly at the hero's stream exit, under the content. Its picture is
-   a short transparent strip of the stream, repeated vertically; a compositor
-   animation slides it down one tile per --flow-period, forever, on its own
-   clock. It never moves with scroll. Two layers at slightly different periods
-   give the water its shimmer. */
-.mk-flow { position: relative; }
-.mk-rail {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--rail-x) - var(--stream-w) * var(--rail-span) / 2);
-  width: calc(var(--stream-w) * var(--rail-span));
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-  /* One tile of the strip at this width (its aspect comes from streams.json). */
-  --tile-h: calc(var(--stream-w) * var(--rail-span) * var(--rail-aspect));
-  /* The pour: the clear part of the mask slides down from the hero's edge.
-     JS animates --pour from 0% to 100% after the crash; without JS it is 100%. */
-  -webkit-mask-image: linear-gradient(to bottom, #000 var(--pour), transparent calc(var(--pour) + 8%)),
-    linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to bottom, #000 var(--pour), transparent calc(var(--pour) + 8%)),
-    linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
-  mask-composite: intersect;
+/* Short phones (iPhone SE and the like): tighten the copy so the pebble
+   still shows below the buttons. */
+@media (max-aspect-ratio: 1/1) and (max-height: 700px) {
+  .mk-hero-copy { padding-top: calc(60px + 2svh); }
+  .mk-hero h1 { font-size: clamp(26px, 6.6vw, 40px); margin-top: 10px; }
+  .mk-hero-lead { font-size: 14.5px; line-height: 1.5; margin-top: 12px; }
+  .mk-hero-actions { margin-top: 16px; }
 }
-@property --pour {
-  syntax: '<percentage>';
-  inherits: true;
-  initial-value: 100%;
+/* Short landscape screens (a phone on its side, a small laptop window): the
+   stage is sticky and clips, so the copy must fit between the header and the
+   stage bottom. A wider column and smaller type; the lead goes on the very
+   shortest, where it cannot fit with the buttons. */
+@media (min-aspect-ratio: 1/1) and (max-height: 720px) {
+  .mk-hero-copy { padding-top: 76px; padding-bottom: 12px; }
+  .mk-hero-copy > * { max-width: min(600px, 54%); }
+  .mk-hero h1 { font-size: clamp(24px, 3.4vw, 42px); margin-top: 10px; }
+  .mk-hero-lead { font-size: 14.5px; line-height: 1.5; margin-top: 12px; }
+  .mk-hero-actions { margin-top: 18px; }
 }
-.mk-rail.is-dry { --pour: 0%; }
-.mk-rail.is-pouring { transition: --pour var(--dur-pour) var(--ease-out); }
-.mk-rail::before,
-.mk-rail::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(-1 * var(--tile-h));
-  bottom: 0;
-  background-image: var(--rail-img);
-  background-repeat: repeat-y;
-  background-size: 100% var(--tile-h);
-  background-position: center top;
-  animation: mk-flow var(--flow-period) linear infinite;
-}
-.mk-rail::after { opacity: 0.45; animation-duration: calc(var(--flow-period) * 1.37); }
-@keyframes mk-flow {
-  from { transform: translateY(0); }
-  to   { transform: translateY(var(--tile-h)); }
-}
-
-/* ═══════════ MOMENTS ═══════════
-   Short looping clips dropped onto the rail: the stream over a pebble, and
-   the stream thinning into its last drops. Each clip's stream enters and
-   leaves at its centre at the rail's width (checked by streams.test.js), and
-   its top and bottom edges are feathered over the rail, so the joins vanish. */
-.mk-moment {
-  position: absolute;
-  z-index: 0;
-  left: calc(var(--rail-x) - var(--moment-w) / 2);
-  width: var(--moment-w);
-  aspect-ratio: 9 / 16;
-  pointer-events: none;
-  --moment-w: calc(var(--stream-w) / var(--moment-stream));
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
-}
-.mk-moment img, .mk-moment video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.mk-moment video { opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); }
-.mk-moment video.is-ready { opacity: 1; }
-/* The pebble's centre (half the clip's height down) sits beside "An agent". */
-.mk-moment--pebble { top: calc(56% - var(--moment-w) * 0.8889); }
-@media (max-aspect-ratio: 1/1) {
-  /* Portrait: copy runs full width, so the pebble gets its own gap in the
-     flow after the list instead of sitting beside it. */
-  .mk-moment--pebble { position: relative; top: auto; left: auto; margin: 24px 0 -48px calc(var(--rail-x) - var(--moment-w) / 2); }
-}
-/* The end clip has no bottom stream: only its top edge is feathered. */
-.mk-moment--end {
-  top: 0;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%);
-  mask-image: linear-gradient(to bottom, transparent, #000 10%);
+@media (min-aspect-ratio: 1/1) and (max-height: 440px) {
+  .mk-hero-lead { display: none; }
+  .mk-hero h1 { font-size: clamp(22px, 3vw, 30px); }
 }
 
 /* ═══════════ STONES ═══════════
@@ -331,7 +269,8 @@
   from { translate: 0 -4px; }
   to   { translate: 0 4px; }
 }
-/* Positions: a fragment cluster near the problem section, pebbles at edges. */
+/* Positions: a fragment cluster beside the problem copy, pebbles beside the
+   section heads, clear of the text. */
 .mk-stone--r1 { --x: 74%; --y: 8%;  --s: 74px; --float: 8s; }
 .mk-stone--r2 { --x: 82%; --y: 30%; --s: 52px; --float: 10s; }
 .mk-stone--r3 { --x: 61%; --y: 52%; --s: 44px; --float: 7s; }
@@ -340,17 +279,21 @@
 .mk-stone--r6 { --x: 93%; --y: 12%; --s: 34px; --float: 10.5s; }
 .mk-stone--r7 { --x: 64%; --y: 22%; --s: 30px; --float: 8.5s; }
 .mk-stone--p1 { --x: 80%; --y: 18%; --s: 64px; --float: 9.5s; }
-.mk-stone--p2 { --x: 60%; --y: 70%; --s: 48px; --float: 11s; }
+.mk-stone--p2 { --x: 70%; --y: 34%; --s: 48px; --float: 11s; }
 .mk-stone--p3 { --x: 84%; --y: 40%; --s: 56px; --float: 8s; }
 .mk-stone--p4 { --x: 63%; --y: 12%; --s: 42px; --float: 10s; }
 @media (max-aspect-ratio: 1/1) {
-  /* Portrait: copy is full width, so stones shrink and keep to the gutter. */
+  /* Portrait: copy is full width, so a few small stones sit in the section's
+     top padding, at the right, above the text. */
   .mk-stone { --s: 30px; }
   .mk-stone--r1, .mk-stone--r3, .mk-stone--r5, .mk-stone--p2, .mk-stone--p4 { display: none; }
-  .mk-stone--r2, .mk-stone--r4, .mk-stone--r6, .mk-stone--p1, .mk-stone--p3 { --x: calc(100% - 44px); }
+  .mk-stone--r2, .mk-stone--p1, .mk-stone--p3 { --x: calc(100% - 52px); --y: 26px; }
+  .mk-stone--r4 { --x: calc(100% - 96px); --y: 38px; --s: 24px; }
+  .mk-stone--r6 { --x: calc(100% - 134px); --y: 20px; --s: 20px; }
 }
 
 /* ═══════════ PROBLEM ═══════════ */
+.mk-problem-copy { max-width: 640px; }
 .mk-kicker {
   margin-top: 32px;
   font-size: clamp(20px, 2vw, 26px);
@@ -373,13 +316,9 @@
 .mk-num { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent-ink); }
 .mk-cols h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; margin-top: 12px; }
 .mk-cols p { font-size: 14.5px; color: var(--mute); line-height: 1.65; margin-top: 8px; }
-/* Stacked inside a narrow column (the copy keeps left of the stream). */
-.mk-cols--stack { grid-template-columns: minmax(0, 1fr); gap: 0; }
-.mk-cols--stack > li { padding: 18px 0; display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 8px; }
-.mk-cols--stack > li > .mk-num { grid-row: span 2; padding-top: 4px; }
-.mk-cols--stack h3 { margin-top: 0; }
 
 /* ═══════════ THE INVOICE WALKTHROUGH ═══════════ */
+.mk-walkthrough { max-width: 760px; }
 .mk-steps-list { list-style: none; padding: 0; counter-reset: step; border-top: 1px solid var(--line); }
 .mk-steps-list li {
   counter-increment: step;
@@ -419,106 +358,227 @@
 }
 .mk-glass-card h3 { font-size: 17px; font-weight: 500; letter-spacing: -0.015em; margin-top: 12px; }
 .mk-glass-card p { font-size: 14.5px; color: var(--mute); line-height: 1.65; margin-top: 8px; }
-
-/* ═══════════ A DAY, BEFORE AND AFTER ═══════════
-   Two calendars on one time axis. Blocks are placed by --start / --len
-   (minutes, inline: data) times --min-px (the scale, responsive, here). The
-   AFTER card is frosted glass over the rail, so its empty time shows the
-   stream. NOTHING between the AFTER card and the page may carry an opacity,
-   filter, mask, clip-path, mix-blend-mode or will-change, or the card's
-   backdrop-filter stops seeing what is behind it. */
-.mk-day { --min-px: 1.05px; --lane-gap: 8px; --agent-w: 46px; }
-.mk-day-tabs .ui-tabs-strip { width: max-content; }
-.mk-day-role { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; margin-top: 8px; }
-.mk-day-note { font-family: var(--font-mono); font-size: 12px; color: var(--mute); margin-top: 4px; }
-.mk-day-cals { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; margin-top: 24px; align-items: start; }
-
-.mk-cal { min-width: 0; border-radius: var(--r-lg); padding: 18px 18px 20px; }
-.mk-cal--before { background: var(--surface-2); border: 1px solid var(--line-2); }
-.mk-cal--after {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-line);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-}
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .mk-cal--after, .mk-glass-card { background: var(--glass-bg-solid); }
+  .mk-glass-card { background: var(--glass-bg-solid); }
 }
-.mk-cal-title { font-size: 13px; font-weight: 500; letter-spacing: -0.005em; }
-.mk-cal-lanes {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--agent-w);
-  gap: var(--lane-gap);
-  margin: 8px 0 0 48px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--mute);
+
+/* ═══════════ A WEEK, BEFORE AND AFTER ═══════════
+   Two calendars on one time scale: BEFORE with every task, AFTER with the
+   kept ones in the same slots and empty space where the rest were.
+     ≥1180px     side by side, BEFORE left, five day columns each (below)
+     721–1179px  stacked, five day columns each
+     ≤720px      stacked, the first day (Monday) only
+
+   Stacked, one 15-minute slot is --slot tall and is exactly one label line,
+   so a chip of N slots holds N−1 lines (--lines). Side by side, a line is
+   three quarters of a slot (--lines-dense). Both are inline, from the
+   duration alone (labelLines in data/week.js), never from the screen.
+   --start / --len are minutes (inline: data). 38 slots is 08:00 to 17:30.
+
+   Both cards are position: relative, make no stacking context and clip
+   nothing at their edges, so the water (below) can sit over the BEFORE
+   card's top border and behind and around the AFTER card. Keep it that way:
+   no overflow, clip-path, mask, z-index, transform, opacity or isolation on
+   .mk-cal or the ancestors inside the section. The section itself clips
+   sideways only, so the AFTER water never widens the page. */
+.mk-day { --slot: 14px; --day-slots: 38; --head-h: 24px; --hours-w: 40px; overflow-x: clip; }
+.mk-day-tabs .ui-tabs-strip { width: max-content; }
+.mk-day-meta { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px; margin-top: 8px; }
+.mk-day-role { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
+.mk-day-note { font-family: var(--font-mono); font-size: 12px; color: var(--mute); margin-top: 4px; }
+.mk-cal-legend { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--ink-2); }
+.mk-cal-key { display: inline-flex; align-items: center; gap: 7px; }
+.mk-cal-key::before {
+  content: "";
+  width: 16px; height: 12px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--cat) 0 4px, var(--task-chip) 4px);
 }
-.mk-cal-lanes span:last-child { color: var(--accent-ink); }
-.mk-cal-body {
+.mk-day-cals { display: grid; gap: 20px; margin-top: 20px; }
+
+.mk-cal {
   position: relative;
-  margin-top: 12px;
-  height: calc(570 * var(--min-px));   /* 08:00 to 17:30 */
-  background-image: repeating-linear-gradient(to bottom, var(--line-2) 0 1px, transparent 1px calc(60 * var(--min-px)));
+  min-width: 0;
+  padding: 18px 20px 20px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--elev-1);
 }
-.mk-cal-hours { position: absolute; inset: 0 auto 0 0; width: 44px; }
+.mk-cal-title { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
+.mk-cal-grid { display: grid; grid-template-columns: var(--hours-w) repeat(5, minmax(0, 1fr)); column-gap: 6px; margin-top: 10px; }
+.mk-cal-hours { position: relative; margin-top: var(--head-h); }
 .mk-cal-hour {
   position: absolute;
-  top: calc(var(--start) * var(--min-px) - 7px);
+  top: calc(var(--start) / 15 * var(--slot) - 7px);
   font-family: var(--font-mono);
   font-size: 10.5px;
   color: var(--mute-2);
   font-variant-numeric: tabular-nums;
 }
-.mk-cal-track { list-style: none; padding: 0; position: absolute; inset: 0 0 0 48px; }
+.mk-cal-day { min-width: 0; }
+.mk-cal-dayname {
+  height: var(--head-h);
+  padding-left: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--mute);
+  text-transform: capitalize;
+}
+.mk-cal-track {
+  list-style: none;
+  padding: 0;
+  position: relative;
+  height: calc(var(--day-slots) * var(--slot));
+  border-radius: 6px;
+  background-color: var(--surface-2);
+  background-image: repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px calc(4 * var(--slot)));
+}
 
-/* A block: an outer box that moves, a fill that can condense, a label that
-   can fade. --lane-x / --lane-w say where its lane is. */
-.blk {
+/* A task: a near-black chip with its category's colour as a solid left bar.
+   The same treatment in both cards, so a kept task looks identical AFTER. */
+.mk-task--work   { --cat: var(--cat-work); }
+.mk-task--chase  { --cat: var(--cat-chase); }
+.mk-task--wait   { --cat: var(--cat-wait); }
+.mk-task--decide { --cat: var(--cat-decide); }
+.mk-task {
   position: absolute;
-  top: calc(var(--start) * var(--min-px) + 1px);
-  height: calc(var(--len) * var(--min-px) - 2px);
-  left: var(--lane-x, 0px);
-  width: var(--lane-w, 100%);
-  padding: 5px 8px;
+  left: 0; right: 0;
+  top: calc(var(--start) / 15 * var(--slot) + 1px);
+  height: calc(var(--len) / 15 * var(--slot) - 2px);
+  padding: 3px 6px 0 10px;
+  border-radius: 6px;
+  background: var(--task-chip);
+  color: var(--task-chip-ink);
   overflow: hidden;
 }
-.blk-fill { position: absolute; inset: 0; border-radius: 7px; transform-origin: 0 0; }
-.blk-label { position: relative; display: block; font-size: 12px; line-height: 1.3; }
-.blk--work .blk-fill { background: var(--blk-work); }
-.blk--chase .blk-fill { border: 1px dashed var(--blk-line); background: var(--surface); }
-.blk--wait .blk-fill { background: var(--hatch), var(--surface); border: 1px solid var(--line); }
-.blk--wait .blk-label { color: var(--mute); font-style: italic; }
-/* AFTER: decisions in the wide "You" lane, white with a sage dot. */
-.blk--person { --lane-w: calc(100% - var(--agent-w) - var(--lane-gap)); }
-.blk--person .blk-fill { background: var(--surface); border: 1px solid var(--line); box-shadow: var(--elev-1); }
-.blk--person .blk-label { padding-left: 12px; }
-.blk--person .blk-label::before {
-  content: "";
-  position: absolute;
-  left: 0; top: 5px;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
+.mk-task::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--cat); }
+.mk-task-label {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--lines);
+  line-clamp: var(--lines);
+  overflow: hidden;
+  font-size: 11.5px;
+  line-height: var(--slot);
 }
-/* AFTER: what moved to the agent, condensed into thin sage bars. */
-.blk--agent { --lane-x: calc(100% - var(--agent-w)); --lane-w: var(--agent-w); }
-.blk--agent .blk-fill { background: var(--accent-soft); border: 1px solid var(--accent-line); border-radius: 5px; }
-.blk--agent .blk-label { opacity: 0; }
-/* AFTER: the waiting evaporated. Present for the animation, invisible. */
-.blk--gone { opacity: 0; }
+.mk-task--wait .mk-task-label { font-style: italic; }
+/* motion/calendar.js: a copy of an eliminated BEFORE task, placed in the
+   AFTER card for the length of the animation, then removed. */
+.mk-task--ghost { pointer-events: none; transform-origin: 50% 50%; }
 
-/* The FIRST frame of the AFTER animation looks like BEFORE: the agent blocks
-   full width in the person lane, the waiting back, the decisions not yet. */
-.mk-cal--after.is-first .blk--agent { --lane-x: 0px; --lane-w: 100%; }
-.mk-cal--after.is-first .blk--agent .blk-label { opacity: 1; }
-.mk-cal--after.is-first .blk--agent .blk-fill { background: var(--blk-work); border-color: transparent; }
-.mk-cal--after.is-first .blk--gone { opacity: 1; }
-.mk-cal--after.is-first .blk--person { opacity: 0; }
+/* The water (motion/water.js, media tier only): a looping clip in each card,
+   created by JS, so the CSS default is the calendar without it. Each clip
+   carries, as custom properties from media.json, its aspect (--water-ar) and
+   the box in its frame that is fitted to the card (--water-l/t/r/b,
+   fractions of the frame). Both are graded to white.
+   BEFORE: ON the card, multiplied, so only the water shows. The fit box is
+   the slab the water falls on: it spans the card's border box with its top
+   edge on the card's top border. A percentage margin is a fraction of the
+   card's width, which is how the clip's top is set from its own height. The
+   mask shows the rain falling onto the border: it fades in from the page
+   over --water-above (opaque only in its last 40%), and fades the drips
+   out within --water-below, clear of the chips' labels.
+   AFTER: BEHIND the card (z-index -1 in a card that makes no stacking
+   context, so it paints under the card's white). The fit box (the inner
+   edges of the two sheets running down the slab, and the slab's top and
+   bottom) is stretched onto the card's box, widened by --water-gap each
+   side, so the sheets run just outside the side borders. The clip starts at
+   the card's top edge and the mask fades the stream out below the card.
+   STREAM: the stream coming into the AFTER card is the hero's own (the
+   card-stream clip is cut from the hero AFTER loop), also behind the card.
+   motion/water.js measures where the hero's stream is on screen and hands
+   it --stream-left (from the card's left) and --stream-w (the hero's
+   scale), so it falls on the same x, at the same width; its bottom is
+   tucked under the card's top border, and it fades in from the page. */
+.mk-cal-water {
+  position: absolute;
+  max-width: none;          /* base.css caps media at its container */
+  pointer-events: none;
+  object-fit: fill;
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+.mk-cal-water.is-ready { opacity: 1; }
+.mk-cal-water--before {
+  --water-above: 110px;
+  --water-below: 100px;
+  --w: calc((100% + 2px) / (var(--water-r) - var(--water-l)));
+  z-index: 1;
+  top: -1px;
+  left: calc(-1px - var(--water-l) * var(--w));
+  width: var(--w);
+  aspect-ratio: var(--water-ar);
+  margin-top: calc(-1 * var(--water-t) * var(--w) / var(--water-ar));
+  mix-blend-mode: multiply;
+  mask-image: linear-gradient(to bottom,
+    transparent calc(var(--water-t) * 100% - var(--water-above)),
+    rgb(0 0 0 / 0.55) calc(var(--water-t) * 100% - var(--water-above) * 0.6),
+    black calc(var(--water-t) * 100% - var(--water-above) * 0.25),
+    black calc(var(--water-t) * 100% + var(--water-below) * 0.25),
+    transparent calc(var(--water-t) * 100% + var(--water-below)));
+}
+.mk-cal-water--after {
+  --water-gap: 0px;
+  --water-below: 160px;
+  --w: calc((100% + 2 * var(--water-gap)) / (var(--water-r) - var(--water-l)));
+  --h: calc(100% / (var(--water-b) - var(--water-t)));
+  z-index: -1;
+  left: calc(-1 * var(--water-gap) - var(--water-l) * var(--w));
+  width: var(--w);
+  top: calc(-1 * var(--water-t) * var(--h));
+  height: var(--h);
+  mask-image: linear-gradient(to bottom,
+    transparent calc(var(--water-t) * 100% - 6px),
+    black calc(var(--water-t) * 100% + 2px),
+    black calc(var(--water-b) * 100% + var(--water-below) * 0.4),
+    transparent calc(var(--water-b) * 100% + var(--water-below)));
+}
+.mk-cal-water--stream {
+  --stream-tuck: 24px;
+  z-index: -1;
+  left: var(--stream-left);
+  width: var(--stream-w);
+  aspect-ratio: var(--stream-ar);
+  bottom: calc(100% - var(--stream-tuck));
+  mask-image: linear-gradient(to bottom, transparent, black 60%);
+}
+/* Stacked weeks: the card is nearly the page's width, with 20px either
+   side, and the sheets scale with it. Tuck them half under the card, so what
+   shows outside fits the margin instead of running off the screen. */
+@media (min-width: 721px) and (max-width: 1179px) {
+  .mk-cal-water--after { --water-gap: -2%; }
+}
+/* Stacked (below 1180px) the BEFORE card is right above the AFTER one, so
+   the stream coming into the AFTER card shows only between them: a wider
+   gap lets it be seen falling onto the card. */
+@media (max-width: 1179px) {
+  .mk-day-cals { row-gap: 64px; }
+}
 
-.mk-cal-agent { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--glass-line); }
-.mk-cal-agent-title { font-family: var(--font-mono); font-size: 11px; font-weight: 400; color: var(--accent-ink); }
-.mk-cal-agent ul { list-style: none; padding: 0; margin-top: 6px; display: grid; gap: 4px; font-size: 13px; color: var(--ink-2); }
+/* Side by side: BEFORE left, AFTER right, the same width and the same hour
+   axis, so a kept task has the same box in both cards and a level glance
+   compares one slot. Each card keeps its own axis on purpose: an axis on the
+   left card only would make the two grids different widths.
+   1180px is measured, not guessed: from there a day column is 96–98px (the
+   1160px wrap caps it) and the share of clipped labels sits at its floor;
+   at 1100px English clips three times as many, at 1024px six times. Below
+   it the stacked weeks keep 170px+ columns. Tighter card, axis and chips
+   (10.5px on 12px lines) fit five columns in half the width. */
+@media (min-width: 1180px) {
+  .mk-day { --slot: 16px; --hours-w: 34px; }
+  .mk-day-cals { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 16px; }
+  .mk-cal { padding: 16px 14px 16px; }
+  .mk-cal-grid { column-gap: 4px; }
+  .mk-cal-hour { font-size: 10px; }
+  .mk-task { padding: 2px 4px 0 8px; border-radius: 5px; }
+  .mk-task-label {
+    -webkit-line-clamp: var(--lines-dense);
+    line-clamp: var(--lines-dense);
+    font-size: 10.5px;
+    line-height: calc(var(--slot) * 0.75);
+  }
+}
 
 /* ═══════════ FAQ ═══════════ */
 .mk-faq { display: flex; flex-direction: column; max-width: 78ch; }
@@ -553,9 +613,9 @@
 .mk-faq-a a { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
 
 /* ═══════════ FINAL CTA ═══════════
-   Light, like the rest. The stream ends here in its last drops, beside the
-   button: the end moment sits on the rail at the top of this section. */
-.mk-final { position: relative; padding: 120px 0 140px; min-height: 92svh; }
+   Light, like the rest. */
+.mk-final { position: relative; padding: 120px 0 140px; }
+.mk-final-copy { max-width: 640px; }
 .mk-final h2 {
   font-family: var(--font-display);
   font-size: clamp(32px, 4.2vw, 54px);
@@ -569,20 +629,65 @@
 
 /* ═══════════ REVEAL ═══════════
    Set by motion/reveal.js on blocks that start below the fold; removed when
-   they enter. Never applied to the calendar (it would break the glass). */
+   they enter. */
 .mk-reveal-pending { opacity: 0; translate: 0 12px; }
 .mk-reveal-in { transition: opacity var(--dur-reveal) var(--ease-out), translate var(--dur-reveal) var(--ease-out); }
 
-/* ═══════════ FOOTER ═══════════ */
-.mk-footer { position: relative; z-index: 1; background: var(--surface-2); border-top: 1px solid var(--line); padding: 64px 0 32px; }
+/* ═══════════ FOOTER ═══════════
+   The water that has fallen down the page: a filled container seen from the
+   side, edge to edge (the footer is outside the content wrapper, so its box
+   is the viewport's width). Its still poster is the background on every
+   page, with no JavaScript; on the home page motion/pool.js lays the looping
+   clip over it, placed exactly like the background (cover, --pool-at), so
+   the swap is invisible. The poster's first rows are pure white and its
+   flat waterline (the meniscus) is the footer's top edge; the copy sits in
+   the body of water below it. The grade floors the water's darkest tones,
+   and the footer's text is ink with a soft halo of the page's white to lift
+   it off the moving caustics (e2e/pool.spec.js measures its contrast).
+   Two renditions at the source's own scale: the full band (1920 wide), and
+   on a phone its centre (1080 wide), which is all a narrow footer shows of
+   it. `--pool-clip` tells motion/pool.js which one the poster is, so the
+   clip over it is the same. */
+.mk-footer {
+  --pool-at: 50% 0%;
+  --pool-clip: wide;
+  position: relative;
+  z-index: 1;
+  background: var(--bg) url('../media/footer-pool.webp') var(--pool-at) / cover no-repeat;
+  background-image: image-set(url('../media/footer-pool.avif') type('image/avif'), url('../media/footer-pool.webp') type('image/webp'));
+  padding: 112px 0 36px;
+  color: var(--ink);
+  text-shadow: 0 0 3px var(--bg), 0 0 12px var(--bg);
+}
+.mk-footer-pool {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  max-width: none;          /* base.css caps media at its container */
+  object-fit: cover;
+  object-position: var(--pool-at);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+.mk-footer-pool.is-ready { opacity: 1; }
+@media (max-width: 720px) {
+  .mk-footer {
+    --pool-clip: narrow;
+    background-image: url('../media/footer-pool-narrow.webp');
+    background-image: image-set(url('../media/footer-pool-narrow.avif') type('image/avif'), url('../media/footer-pool-narrow.webp') type('image/webp'));
+  }
+}
 .mk-footer-grid {
   display: grid;
   grid-template-columns: 1.6fr repeat(3, minmax(0, 1fr));
   gap: 40px;
 }
-.mk-footer-blurb { font-size: 13.5px; color: var(--mute); line-height: 1.65; max-width: 34ch; margin-top: 14px; }
+.mk-footer-blurb { font-size: 13.5px; color: var(--ink-2); line-height: 1.65; max-width: 34ch; margin-top: 14px; }
 .mk-footer-col a { display: block; font-size: 14px; color: var(--ink-2); padding: 5px 0; }
-.mk-footer-col a:hover { color: var(--accent-ink); }
+.mk-footer a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .mk-footer-bar {
   display: flex;
   flex-wrap: wrap;
@@ -592,7 +697,7 @@
   padding-top: 24px;
   border-top: 1px solid var(--line);
   font-size: 12.5px;
-  color: var(--mute);
+  color: var(--ink-2);
 }
 .mk-footer-bar-spacer { flex: 1; }
 
@@ -679,23 +784,29 @@
 @media (max-width: 720px) {
   .mk-nav, .mk-header-actions { display: none; }
   .mk-burger { display: grid; }
-  .mk-footer-grid { grid-template-columns: 1fr; }
+  /* Two link columns under the brand: a shorter footer shows the pool at a
+     smaller scale (cover fits its height on a phone). */
+  .mk-footer { padding-top: 88px; }
+  .mk-footer-grid { gap: 28px 20px; }
+  .mk-footer-grid > :first-child { grid-column: 1 / -1; }
   /* Hero and final CTAs stack: full width comes from the column, NOT from
      <Button block> (a block button inside a flex row crushes its siblings). */
   .mk-hero-actions, .mk-final-actions { flex-direction: column; align-items: stretch; }
-  /* The calendars stack, BEFORE then AFTER, full width; the glass goes nearly
-     opaque here (blur is costly on small GPUs and the stream is beside it). */
-  .mk-day-cals { grid-template-columns: minmax(0, 1fr); }
-  .mk-cal--after { background: var(--glass-bg-solid); backdrop-filter: none; -webkit-backdrop-filter: none; }
-  .mk-day { --min-px: 0.9px; }
+  /* The calendars become one day: the first column (Monday) on a wider axis. */
+  .mk-day { --slot: 16px; }
   .mk-day-tabs .ui-tabs-strip { width: auto; }
+  .mk-cal { padding: 16px 14px 16px; }
+  .mk-cal-grid { grid-template-columns: var(--hours-w) minmax(0, 1fr); }
+  .mk-cal-day + .mk-cal-day { display: none; }
+  .mk-task-label { font-size: 12.5px; }
 }
 
 /* ═══════════ REDUCED MOTION ═══════════
-   A still stream, still stones, no reveals. motion/ also skips the videos and
+   Still stones, no reveals. motion/ also skips the videos and
    the calendar animation; the hero keeps its before/after story as the
    posters' crossfade. */
 @media (prefers-reduced-motion: reduce) {
-  .mk-rail::before, .mk-rail::after, .mk-stone { animation: none; }
+  .mk-stone { animation: none; }
+  .mk-hero-line { transition: none; }
   .mk-reveal-pending { opacity: 1; translate: none; }
 }

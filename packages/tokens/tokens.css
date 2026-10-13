@@ -69,6 +69,7 @@
   --ink:         #16161a;
   --ink-2:       #26262c;
   --mute:        #5f5c57;   /* 6.6:1 on white: the grey headline line and secondary copy */
+  --title-off:   #8f8d89;   /* --mute 30% lighter, 3.4:1 on white (AA for large text): the hero headline's inactive line */
   --mute-2:      #8f8b84;   /* labels and placeholders only, never running text */
 
   /* Hairlines. --line separates, --line-2 is the quieter internal divider. */
@@ -107,20 +108,25 @@
   --mk-dark:        #14151c;
   --mk-light:       #f3f3f5;
 
-  /* Frosted glass — the AFTER calendar card, through which the stream shows.
-     --glass-bg-solid is the fallback where backdrop-filter is unsupported or
-     too costly (narrow screens, low-tier devices). */
+  /* Frosted glass — the "built on your systems" cards. --glass-bg-solid is
+     the fallback where backdrop-filter is unsupported or too costly (narrow
+     screens, low-tier devices). */
   --glass-bg:       rgba(255, 255, 255, 0.55);
   --glass-bg-solid: rgba(255, 255, 255, 0.9);
   --glass-line:     rgba(22, 22, 26, 0.08);
   --glass-blur:     16px;
 
-  /* The calendar's block material: solid work, outlined chasing, hatched
-     waiting. The hatch is a pattern, so it lives here with its ink. */
-  --blk-work:       #e9e6e0;
-  --blk-line:       rgba(22, 22, 26, 0.18);
-  --hatch-ink:      rgba(22, 22, 26, 0.12);
-  --hatch:          repeating-linear-gradient(135deg, transparent 0 5px, var(--hatch-ink) 5px 6px);
+  /* The week calendar's tasks: a near-black chip with white text (18:1),
+     and one saturated colour per category as a solid bar on the chip. The
+     bars are checked against the chip, not the page (all above 6:1); they
+     are used on the calendar only. Blue/amber/pink/green stay apart for the common colour-vision
+     deficiencies, and the category is also in each chip's text. */
+  --task-chip:      var(--ink);
+  --task-chip-ink:  #ffffff;
+  --cat-work:       #4c9fff;
+  --cat-chase:      #f9ad26;
+  --cat-wait:       #fb55b1;
+  --cat-decide:     #30d882;
 
   /* ═══════════ SCALE — shape, elevation, motion ═══════════ */
 
@@ -149,14 +155,13 @@
   --ease-out:    cubic-bezier(0.22, 0.61, 0.2, 1);
 
   /* The landing page's motion: the hero's crossfades (back to BEFORE, and the
-     crash on devices without video), the stream pouring into the page,
-     content reveals and the calendar re-arranging. --flow-period is one loop
-     of the stream rail. The crash itself is a video clip, timed by its file. */
+     crash on devices without video) and content reveals. The crash itself
+     is a video clip, timed by its file; --delay-hero-crystal is when, into
+     that clip, the polished pebble shows clear of the flying fragments (the
+     hero headline switches its black line then). */
   --dur-hero-fade: 400ms;
-  --dur-pour:      700ms;
+  --delay-hero-crystal: 1250ms;
   --dur-reveal:    600ms;
-  --dur-calendar:  1600ms;
-  --flow-period:   2.4s;
 
   /* ═══════════ TYPE ═══════════
      Inter Tight, self-hosted above, with the system stack behind it. Nothing

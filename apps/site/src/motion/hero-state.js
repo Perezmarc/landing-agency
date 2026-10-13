@@ -5,10 +5,10 @@
        └──done── reassembling ◀──back to REST (≤ 4px)──────┘
 
    Scroll never scrubs anything: it only decides which way the one-shot
-   one-shot runs. Going back mid-crash fades back to BEFORE (`reverse` from
+   runs. Going back mid-crash fades back to BEFORE (`reverse` from
    crashing); a new trigger crashes again from the start. Jumps that skip the
    pinned stretch (a fling, a hash link, a restored scroll position) snap
-   straight to the end state with no crash. */
+   straight to the end state with no crash, and end a crash already running. */
 
 export const TRIGGER = 24
 export const REST = 4
@@ -21,8 +21,9 @@ export function settledState(y) {
 /**
  * @param {'before'|'crashing'|'after'|'reassembling'} state
  * @param {{ type: 'scroll', y: number, pinned: number } | { type: 'done' } | { type: 'snap', y: number }} event
- *   pinned — how far the stage stays pinned (half a screen); a scroll that is
- *   already past it skipped the moment, so it snaps.
+ *   pinned — how far the stage stays pinned (the hero's height less the
+ *   stage's, 1.5 screens); a scroll that is already past it skipped the
+ *   moment, so it snaps.
  * @returns {{ state: string, effect: null | 'crash' | 'reverse' | 'snap' }}
  */
 export function next(state, event) {
@@ -44,5 +45,8 @@ export function next(state, event) {
   }
   // crashing or after: go back only at the very top (hysteresis).
   if (y <= REST) return { state: 'reassembling', effect: 'reverse' }
+  // A crash whose stage has scrolled away (a fling, a hash link passing
+  // through the trigger) ends at once rather than playing on off screen.
+  if (state === 'crashing' && y > event.pinned) return { state: 'after', effect: 'snap' }
   return { state, effect: null }
 }

@@ -17,28 +17,25 @@
   },
   "home": {
     "eyebrow": "AI agents for business operations",
-    "headingLead": "Find how the work really runs.",
-    "heading": "Then hand the repetitive steps to AI agents.",
+    "headingLead": "Understand your processes.",
+    "heading": "Then automate them with AI agents.",
     "lead": "We map how the work actually moves through your team, delete the steps that shouldn't exist, and run AI agents inside the tools you already use. The decisions stay with your people.",
     "ctaPrimary": "Book a discovery call",
     "ctaSecondary": "See how it works",
     "day": {
-      "headingLead": "A day, before and after.",
+      "headingLead": "A week, before and after.",
       "heading": "The same job, with the repetitive work handed to an agent.",
-      "lead": "Pick a team. On the left is a typical day today. On the right is the same day once an agent prepares the work and a person makes the calls.",
+      "lead": "Pick a team. The first calendar is a typical week today, with every task in it. The second is the same week once an agent takes on the repetitive work. The decisions stay where they were, and the empty slots are work that no longer needs a person.",
       "teamLegend": "Choose a team",
       "beforeTitle": "Today",
       "afterTitle": "With an agent",
-      "personLane": "You",
-      "agentLane": "Agent",
-      "agentList": "What the agent prepared",
       "kinds": {
         "work": "Manual work",
         "chase": "Chasing",
         "wait": "Waiting",
         "decide": "Decision"
       },
-      "note": "Illustration of a typical day, not a client result.",
+      "note": "Illustration of a typical week, not a client result.",
       "teams": {
         "finance": {
           "name": "Finance",
@@ -52,15 +49,11 @@
             "b6": "Chase approvals again",
             "b7": "Build the payment-run spreadsheet",
             "b8": "Answer \"where's my payment?\" emails",
-            "d1": "Review the exceptions the agent prepared",
+            "d1": "Decide what to do with invoices that don't match",
             "d2": "Approve the payment run",
             "d3": "Negotiate early-payment terms with a key supplier",
             "d4": "Fix the cause of the most common exception",
-            "d5": "Prepare the month-end close",
-            "a1": "Reads the inbox, extracts and matches invoices",
-            "a2": "Chases missing POs and logs the replies",
-            "a3": "Assembles each exception with its policy and history",
-            "a4": "Drafts the payment-run file"
+            "d5": "Prepare the month-end close"
           }
         },
         "revenueOps": {
@@ -75,15 +68,11 @@
             "b6": "Check commissions against closed deals",
             "b7": "Waiting on legal to return a contract",
             "b8": "Answer reps asking why a deal is stuck",
-            "d1": "Review the deals the agent flagged",
+            "d1": "Review the deals at risk of slipping",
             "d2": "Decide on non-standard discount requests",
             "d3": "Coach a sales team on forecast accuracy",
             "d4": "Fix the routing rule behind most stuck deals",
-            "d5": "Prepare the quarterly pipeline review",
-            "a1": "Merges duplicates and fills missing CRM fields",
-            "a2": "Assembles each approval with its deal history",
-            "a3": "Builds the pipeline report each morning",
-            "a4": "Checks commissions against closed deals"
+            "d5": "Prepare the quarterly pipeline review"
           }
         },
         "procurement": {
@@ -98,15 +87,11 @@
             "b6": "Follow up on late deliveries",
             "b7": "Waiting on a supplier to confirm",
             "b8": "Update the contract renewal tracker",
-            "d1": "Approve the vendors the agent prepared",
+            "d1": "Approve new vendors",
             "d2": "Approve purchases above the threshold",
             "d3": "Negotiate terms with a strategic supplier",
             "d4": "Decide which contracts to renew",
-            "d5": "Fix the request form that causes most rework",
-            "a1": "Turns emailed requests into purchase requests",
-            "a2": "Collects and checks vendor documents",
-            "a3": "Lays the quotes side by side",
-            "a4": "Chases suppliers on deliveries and logs the replies"
+            "d5": "Fix the request form that causes most rework"
           }
         },
         "compliance": {
@@ -122,14 +107,10 @@
             "b7": "Waiting on a business unit to reply",
             "b8": "Update the controls spreadsheet",
             "d1": "Decide which regulatory changes need action",
-            "d2": "Review the exceptions the agent found",
+            "d2": "Decide on exceptions to policy",
             "d3": "Agree a remediation plan with a control owner",
             "d4": "Answer the auditor's open questions",
-            "d5": "Prepare the risk committee update",
-            "a1": "Summarises regulator updates by topic",
-            "a2": "Requests and files audit evidence",
-            "a3": "Checks every claim against policy",
-            "a4": "Chases attestations and logs the replies"
+            "d5": "Prepare the risk committee update"
           }
         },
         "customerOps": {
@@ -144,15 +125,11 @@
             "b6": "Process refund and replacement requests",
             "b7": "Waiting on finance to approve a refund",
             "b8": "Copy ticket notes into the weekly report",
-            "d1": "Review the escalations the agent prepared",
+            "d1": "Decide how to handle escalated cases",
             "d2": "Approve refunds outside policy",
             "d3": "Call a key account about a recurring issue",
             "d4": "Fix the cause of the most common ticket",
-            "d5": "Coach the team on difficult cases",
-            "a1": "Tags and routes every ticket",
-            "a2": "Gathers the order and account history for each case",
-            "a3": "Applies routine account updates",
-            "a4": "Drafts the weekly report"
+            "d5": "Coach the team on difficult cases"
           }
         },
         "logistics": {
@@ -167,15 +144,11 @@
             "b6": "Chase suppliers for shipping notices",
             "b7": "Waiting on a supplier reply",
             "b8": "Build the supplier scorecard spreadsheet",
-            "d1": "Decide how to recover the late shipments the agent flagged",
+            "d1": "Decide how to recover late shipments",
             "d2": "Approve expedited freight",
             "d3": "Review performance with a key supplier",
             "d4": "Fix the booking step that causes most delays",
-            "d5": "Plan next week's capacity",
-            "a1": "Tracks every shipment across the carrier portals",
-            "a2": "Chases carriers and suppliers and logs the replies",
-            "a3": "Updates the ERP and warns customer service",
-            "a4": "Builds the supplier scorecard"
+            "d5": "Plan next week's capacity"
           }
         }
       }

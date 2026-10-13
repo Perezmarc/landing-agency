@@ -1,13 +1,4 @@
 {
-  "$comment": [
-    "The site, on the apex domain. Static files only.",
-    "",
-    "Set this Vercel project's Root Directory to apps/site.",
-    "",
-    "`git.deploymentEnabled.main = false` disables Vercel's own git deploy for",
-    "main so .github/workflows/deploy.yml, which gates on the test suite, is",
-    "the only path to production. PR previews are unaffected."
-  ],
   "git": {
     "deploymentEnabled": {
       "main": false
@@ -28,14 +19,12 @@
           "value": "strict-origin-when-cross-origin"
         },
         {
-          "$comment": "No backend, so connect-src is the site itself. The landing page's one module script and its media are same-origin files. 'unsafe-inline' in style-src is for style attributes that carry data as CSS custom properties (positions, stream geometry); scripts stay 'self' only.",
           "key": "Content-Security-Policy",
           "value": "default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data:; media-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; worker-src 'none'; connect-src 'self'"
         }
       ]
     },
     {
-      "$comment": "Hashed asset filenames are immutable, so they can be cached forever. The HTML above them must not be, or a deploy is invisible until a cache expires.",
       "source": "/_astro/(.*)",
       "headers": [
         {

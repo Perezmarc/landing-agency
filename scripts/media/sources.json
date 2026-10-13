@@ -1,17 +1,19 @@
 {
   "$comment": [
     "Every source the landing page's media is built from, by permanent URL.",
-    "Generated on Higgsfield (see docs/LANDING-DESIGN.md). Loops start and end on the same still; the transition starts on the BEFORE still and ends on the polished AFTER still.",
-    "Portrait transition and AFTER are composed from the landscape clips by composePortrait() in build-media.mjs."
+    "Generated on Higgsfield (see docs/LANDING-DESIGN.md). Loops start and end on the same still; the transition starts on the BEFORE still (the raw rock) and ends on the AFTER still (the polished pebble).",
+    "The three portrait hero clips are composed from these landscape clips by composePortrait() in build-media.mjs.",
+    "The card clips are pale slabs under water, for the calendar's two cards; the grade takes the slab to white.",
+    "The footer pool is a filled container seen from the side, white above a flat waterline; its still (hf_20261013_063135_a383150c-1491-43f3-b5cd-d8e84a44614c.png) is its start and end frame."
   ],
   "base": "https://d8j0ntlcm91z4.cloudfront.net/user_3KPWI2SA8VZRk23pt1M0vYBFVxJ/",
   "clips": {
-    "hero-before-16x9": "hf_20261011_114702_1d420498-839d-4bf0-a709-864b40ad0291.mp4",
-    "hero-transition-16x9": "hf_20261011_232051_34984049-2c39-4248-be71-a0ad4911d8a9.mp4",
-    "hero-after-16x9": "hf_20261011_233247_8b7e83fd-8644-4233-b71b-0fe87a1255ee.mp4",
-    "hero-before-9x16": "hf_20261011_130824_7dbfb744-298a-4884-b462-5a530b04c287.mp4",
-    "pebble": "hf_20261011_120208_8639cfaf-5869-4777-9258-6351bf3edafd.mp4",
-    "end": "hf_20261011_120235_f58c7849-b9e9-4154-a708-48c547bc63b1.mp4"
+    "hero-before-16x9": "hf_20261012_164109_82259113-1df0-47fa-8b2b-1497879e214d.mp4",
+    "hero-transition-16x9": "hf_20261012_164215_f7f9f5f2-5188-40a6-9806-f4f221c10287.mp4",
+    "hero-after-16x9": "hf_20261012_164239_f9e229e4-7fb5-4d85-9f71-5f2a8b85b706.mp4",
+    "card-before": "hf_20261012_164245_33ec8f80-69db-4312-9bcb-57d10d47da21.mp4",
+    "card-after": "hf_20261012_164252_33dfadd7-c418-4676-b848-743b0a04ae79.mp4",
+    "footer-pool": "hf_20261013_082257_62dfd87a-e8fd-438d-9e16-418c6673c9c8.mp4"
   },
   "stills": {
     "fragments-cutout": "hf_20261011_114520_4e935e33-250f-4dc8-953f-8f9326d629db.png",

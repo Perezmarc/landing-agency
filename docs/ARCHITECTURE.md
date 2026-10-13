@@ -10,7 +10,7 @@ it. The consumers that matter — crawlers, AI answer engines, rich-result
 parsers — read the raw HTTP response, so nothing they need is injected later.
 Every page but the landing page ships no JavaScript. The landing page ships
 one module, `apps/site/src/motion/`, as a hashed file: the hero crash, the
-stream down the page, the calendar animation. The server HTML is already the
+calendar animation and the content reveals. The server HTML is already the
 final state, so with JavaScript off (or blocked) the page reads complete. The
 e2e suite checks the script count per page, the 30 KB budget, and runs the
 homepage under the production CSP.
@@ -19,12 +19,30 @@ There is no backend. "Book a call" is a link (`brand.bookingUrl` in the
 manifest), which is why the site's Content-Security-Policy has no `connect-src`
 beyond itself.
 
+## `apps/site/vercel.json`
+
+Vercel validates this file and rejects a deploy on any key it does not know,
+so it carries no comments; the reasons are here.
+
+- The Vercel project's Root Directory is `apps/site`. It serves static files
+  only.
+- `git.deploymentEnabled.main = false` turns off Vercel's own git deploy for
+  `main`, so `.github/workflows/deploy.yml`, which runs the test suite first,
+  is the only path to production. Pull-request previews are unaffected.
+- The CSP's `connect-src` is the site itself, because there is no backend. The
+  landing page's one module script and its media are same-origin files.
+  `'unsafe-inline'` in `style-src` is for style attributes that carry data as
+  CSS custom properties (the calendar's task positions); scripts stay
+  `'self'`.
+- Hashed files under `/_astro/` are immutable, so they are cached for a year.
+  The HTML is not, or a deploy would stay invisible until a cache expired.
+
 ## Media is built offline, and only its outputs are committed
 
-The landing page's video, posters and stream strip come from
+The landing page's video, posters and stones come from
 `scripts/media/build-media.mjs`, which grades generated clips to pure white,
-loops and encodes them, and measures where the stream enters and leaves each
-one (`streams.json`). It is not part of the build: a deploy never depends on a
+loops and encodes them, cuts the stones from their sheets, and writes what the
+page reads about them (`media.json`). It is not part of the build: a deploy never depends on a
 generation service or on ffmpeg. See `docs/LANDING-DESIGN.md`.
 
 ## Everything brand-shaped is in one manifest

@@ -17,28 +17,25 @@
   },
   "home": {
     "eyebrow": "Agenti AI per le operations aziendali",
-    "headingLead": "Scopri come funziona davvero il lavoro.",
-    "heading": "Poi affida i passaggi ripetitivi ad agenti AI.",
+    "headingLead": "Comprendi i tuoi processi.",
+    "heading": "Poi automatizzali con agenti AI.",
     "lead": "Mappiamo come il lavoro si muove davvero nel tuo team, eliminiamo i passaggi che non dovrebbero esistere e gestiamo agenti AI dentro gli strumenti che usi già. Le decisioni restano alle tue persone.",
     "ctaPrimary": "Prenota una call conoscitiva",
     "ctaSecondary": "Scopri come lavoriamo",
     "day": {
-      "headingLead": "Una giornata, prima e dopo.",
+      "headingLead": "Una settimana, prima e dopo.",
       "heading": "Lo stesso lavoro, con la parte ripetitiva affidata a un agente.",
-      "lead": "Scegli un team. A sinistra c'è una giornata tipo di oggi. A destra c'è la stessa giornata quando un agente prepara il lavoro e una persona prende le decisioni.",
+      "lead": "Scegli un team. Il primo calendario è una settimana tipo di oggi, con tutte le sue attività. Il secondo è la stessa settimana quando un agente si occupa del lavoro ripetitivo. Le decisioni restano al loro posto e gli spazi vuoti sono lavoro che non richiede più una persona.",
       "teamLegend": "Scegli un team",
       "beforeTitle": "Oggi",
       "afterTitle": "Con un agente",
-      "personLane": "Tu",
-      "agentLane": "Agente",
-      "agentList": "Cosa ha preparato l'agente",
       "kinds": {
         "work": "Lavoro manuale",
         "chase": "Solleciti",
         "wait": "Attesa",
         "decide": "Decisione"
       },
-      "note": "Esempio illustrativo di una giornata tipo, non il risultato di un cliente.",
+      "note": "Esempio illustrativo di una settimana tipo, non il risultato di un cliente.",
       "teams": {
         "finance": {
           "name": "Finanza",
@@ -52,15 +49,11 @@
             "b6": "Sollecitare di nuovo le approvazioni",
             "b7": "Preparare il foglio di calcolo della distinta di pagamento",
             "b8": "Rispondere alle email «dov'è il mio pagamento?»",
-            "d1": "Rivedere le eccezioni preparate dall'agente",
+            "d1": "Decidere cosa fare con le fatture che non quadrano",
             "d2": "Approvare la distinta di pagamento",
             "d3": "Negoziare con un fornitore chiave le condizioni per il pagamento anticipato",
             "d4": "Eliminare la causa dell'eccezione più frequente",
-            "d5": "Preparare la chiusura di fine mese",
-            "a1": "Legge la casella, estrae le fatture e le riconcilia",
-            "a2": "Sollecita gli ordini mancanti e registra le risposte",
-            "a3": "Prepara ogni eccezione con la relativa policy e lo storico",
-            "a4": "Prepara una bozza del file della distinta di pagamento"
+            "d5": "Preparare la chiusura di fine mese"
           }
         },
         "revenueOps": {
@@ -75,15 +68,11 @@
             "b6": "Verificare le provvigioni rispetto alle trattative chiuse",
             "b7": "Aspettare che l'ufficio legale restituisca un contratto",
             "b8": "Rispondere ai commerciali che chiedono perché una trattativa è ferma",
-            "d1": "Rivedere le trattative segnalate dall'agente",
+            "d1": "Rivedere le trattative a rischio di slittare",
             "d2": "Decidere sulle richieste di sconto fuori standard",
             "d3": "Affiancare un team commerciale sull'accuratezza delle previsioni",
             "d4": "Correggere la regola di assegnazione che blocca la maggior parte delle trattative",
-            "d5": "Preparare la revisione trimestrale della pipeline",
-            "a1": "Unisce i duplicati e completa i campi mancanti nel CRM",
-            "a2": "Prepara ogni approvazione con lo storico della trattativa",
-            "a3": "Costruisce il report della pipeline ogni mattina",
-            "a4": "Controlla le provvigioni sulle trattative chiuse"
+            "d5": "Preparare la revisione trimestrale della pipeline"
           }
         },
         "procurement": {
@@ -98,15 +87,11 @@
             "b6": "Seguire le consegne in ritardo",
             "b7": "Aspettare la conferma di un fornitore",
             "b8": "Aggiornare il registro dei rinnovi contrattuali",
-            "d1": "Approvare i fornitori preparati dall'agente",
+            "d1": "Approvare i nuovi fornitori",
             "d2": "Approvare gli acquisti sopra soglia",
             "d3": "Negoziare le condizioni con un fornitore strategico",
             "d4": "Decidere quali contratti rinnovare",
-            "d5": "Correggere il modulo di richiesta che genera più rilavorazioni",
-            "a1": "Trasforma le richieste via email in richieste d'acquisto",
-            "a2": "Raccoglie e verifica i documenti dei fornitori",
-            "a3": "Mette i preventivi uno accanto all'altro",
-            "a4": "Sollecita i fornitori sulle consegne e registra le risposte"
+            "d5": "Correggere il modulo di richiesta che genera più rilavorazioni"
           }
         },
         "compliance": {
@@ -122,14 +107,10 @@
             "b7": "Aspettare la risposta di una business unit",
             "b8": "Aggiornare il foglio di calcolo dei controlli",
             "d1": "Decidere quali cambiamenti normativi richiedono un intervento",
-            "d2": "Rivedere le eccezioni trovate dall'agente",
+            "d2": "Decidere sulle eccezioni alla policy",
             "d3": "Concordare un piano di rimedio con il responsabile di un controllo",
             "d4": "Rispondere alle domande aperte del revisore",
-            "d5": "Preparare l'aggiornamento per il comitato rischi",
-            "a1": "Riassume gli aggiornamenti normativi per argomento",
-            "a2": "Richiede e archivia le evidenze di audit",
-            "a3": "Verifica ogni nota spese rispetto alla policy",
-            "a4": "Sollecita le attestazioni e registra le risposte"
+            "d5": "Preparare l'aggiornamento per il comitato rischi"
           }
         },
         "customerOps": {
@@ -144,15 +125,11 @@
             "b6": "Gestire le richieste di rimborso e sostituzione",
             "b7": "Aspettare che la finanza approvi un rimborso",
             "b8": "Copiare le note dei ticket nel report settimanale",
-            "d1": "Rivedere le escalation preparate dall'agente",
+            "d1": "Decidere come gestire i casi escalati",
             "d2": "Approvare i rimborsi fuori policy",
             "d3": "Chiamare un cliente chiave per un problema ricorrente",
             "d4": "Eliminare la causa del ticket più frequente",
-            "d5": "Affiancare il team sui casi difficili",
-            "a1": "Etichetta e smista ogni ticket",
-            "a2": "Raccoglie lo storico di ordini e account per ogni pratica",
-            "a3": "Applica gli aggiornamenti di routine agli account",
-            "a4": "Prepara una bozza del report settimanale"
+            "d5": "Affiancare il team sui casi difficili"
           }
         },
         "logistics": {
@@ -167,15 +144,11 @@
             "b6": "Sollecitare i fornitori per gli avvisi di spedizione",
             "b7": "Aspettare la risposta di un fornitore",
             "b8": "Preparare il foglio di calcolo per la valutazione dei fornitori",
-            "d1": "Decidere come recuperare le spedizioni in ritardo segnalate dall'agente",
+            "d1": "Decidere come recuperare le spedizioni in ritardo",
             "d2": "Approvare un trasporto urgente",
             "d3": "Rivedere le prestazioni con un fornitore chiave",
             "d4": "Correggere la fase di prenotazione che causa più ritardi",
-            "d5": "Pianificare la capacità della settimana prossima",
-            "a1": "Monitora ogni spedizione sui portali dei vettori",
-            "a2": "Sollecita vettori e fornitori e registra le risposte",
-            "a3": "Aggiorna l'ERP e avvisa il customer service",
-            "a4": "Prepara la valutazione dei fornitori"
+            "d5": "Pianificare la capacità della settimana prossima"
           }
         }
       }
