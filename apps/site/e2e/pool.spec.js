@@ -109,17 +109,22 @@ for (const [width, height] of SIZES) {
     expect(box.width).toBe(box.vw)
 
     const painted = await underText(page)
-    // Seamless: the footer's top rows are the page's white; the waterline (the
-    // first row with a dark pixel) is within the top sixth of the footer.
+    // Seamless: the footer's top row is the page's white, and the waterline
+    // (the first row that is no longer white across the footer) is its top
+    // edge: one flat line, under the water's colour from edge to edge.
     const rows = await page.evaluate(async (shot) => {
       const img = new Image(); img.src = `data:image/png;base64,${shot}`; await img.decode()
       const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight
       const ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0)
       const scale = img.naturalWidth / document.querySelector('.mk-footer').getBoundingClientRect().width
-      const minOf = (y) => { const d = ctx.getImageData(0, y, c.width, 1).data; let m = 255; for (let i = 0; i < d.length; i += 4) m = Math.min(m, d[i], d[i + 1], d[i + 2]); return m }
-      let waterline = -1
-      for (let y = 0; y < c.height; y++) if (minOf(y) < 200) { waterline = y / scale; break }
-      return { top: minOf(0), waterline, height: c.height / scale }
+      const luma = (y) => { const d = ctx.getImageData(0, y, c.width, 1).data, l = []; for (let i = 0; i < d.length; i += 4) l.push(0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]); return l }
+      const median = (l) => [...l].sort((a, b) => a - b)[l.length >> 1]
+      let line = -1
+      for (let y = 0; y < c.height; y++) if (median(luma(y)) < 245) { line = y; break }
+      // Every column is under the white within a few rows of the line.
+      const under = new Array(c.width).fill(false)
+      for (let y = line; y < line + Math.ceil(6 * scale); y++) luma(y).forEach((v, x) => { if (v < 245) under[x] = true })
+      return { top: Math.min(...luma(0)), waterline: line / scale, span: under.filter(Boolean).length / c.width, height: c.height / scale }
     }, painted.shot)
     // The poster covers the footer from its top: it is drawn at the larger of
     // the width's and the height's scale, so the waterline lands at
@@ -127,8 +132,10 @@ for (const [width, height] of SIZES) {
     const { aspect, waterline } = media.footer.pool
     const drawn = Math.max(box.width / aspect, rows.height)
     expect(rows.top).toBeGreaterThanOrEqual(253)
-    expect(Math.abs(rows.waterline - waterline * drawn)).toBeLessThanOrEqual(0.03 * drawn)
-    expect(rows.waterline).toBeLessThan(rows.height / 6)
+    expect(Math.abs(rows.waterline - waterline * drawn)).toBeLessThanOrEqual(3)
+    expect(rows.waterline).toBeGreaterThan(0)
+    expect(rows.waterline).toBeLessThan(0.03 * drawn)
+    expect(rows.span).toBe(1)
 
     // WCAG AA (4.5:1) for every piece of footer text, against the darkest 2%
     // of the water under it, without the halo.
@@ -164,6 +171,8 @@ test('the clip is created only near the footer, covers the poster exactly, plays
   expect(fit.dy).toBeLessThanOrEqual(1)
   expect(fit.fit).toBe('cover')
   expect(fit.at).toBe(fit.bg)
+  // Unmasked: its top is the poster's own white and waterline.
+  await expect(clip).toHaveCSS('mask-image', 'none')
   // Under the clip, the copy still paints on top of the water.
   const order = await page.locator('.mk-footer').evaluate((f) => {
     const a = f.querySelector('.mk-footer-col a'), v = f.querySelector('.mk-footer-pool')

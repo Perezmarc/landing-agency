@@ -46,9 +46,10 @@ describe('media.json', () => {
     // A wide, short band, like the footer.
     expect(aspect).toBeGreaterThan(3)
     expect(aspect).toBeLessThan(5)
-    // The waterline near the top: a strip of white wall above it, water below.
-    expect(waterline).toBeGreaterThan(0.03)
-    expect(waterline).toBeLessThan(0.2)
+    // The waterline is the band's top edge: a few rows of white above it
+    // (so the line is never cut), the water below.
+    expect(waterline).toBeGreaterThan(0)
+    expect(waterline).toBeLessThan(0.02)
   })
 
   it('references only files that exist', () => {

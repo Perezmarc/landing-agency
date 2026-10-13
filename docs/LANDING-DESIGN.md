@@ -11,7 +11,8 @@ crystal shatters, a smooth polished pebble is left, and the water leaves it as
 white with still crystal stones. Water comes back further down only as
 dedicated clips attached to specific elements (the calendar's two cards),
 never as a continuous line down the page. At the bottom, the footer is all
-the water that has fallen: a calm, shallow pool, edge to edge.
+the water that has fallen: a filled container seen from the side, a flat
+waterline edge to edge and the body of water below it.
 
 - **Light:** soft, neutral, from above. No colour.
 - **Page:** pure white. Every image and clip is graded to it, so nothing reads
@@ -223,36 +224,42 @@ added, moved or condensed; the empty grid is the message.
 
 ## The footer pool
 
-The footer's background is the water that has fallen down the page: a wide,
-shallow, clear pool under a white wall, single drops falling in and sending
-out rings. It is the shared footer, so every page has it.
+The footer's background is the water that has fallen down the page, in 2D
+with no perspective: a filled container seen exactly from the side, a flat
+horizontal waterline (a thin meniscus) at the footer's top edge and the body
+of water below it, pale grey-blue with soft caustics. Now and then a drop
+hits the line, dimples it and sends tiny bubbles sinking and light rings
+drifting through the water. It is the shared footer, so every page has it.
 
 - **The poster is CSS** (`.mk-footer` in `marketing.css`): AVIF through
   `image-set()`, WebP for the rest, `cover`, anchored at the top
   (`--pool-at: 50% 0%`). Blog, contact and legal get it with no JavaScript.
   The footer sits outside the content wrapper, so the water spans the
   viewport edge to edge; only its copy is in `.mk-wrap`.
-- **Seamless from above.** The band starts 42 source pixels above the
-  waterline: that strip is the wall graded to pure white (the top 28 rows of
-  the poster are 255), so the white page runs into the footer with no edge
-  and the water begins at the waterline, about 8% of the band's height down
-  (`media.json` `footer.pool.waterline`). The footer has no border or tint.
-- **Layout.** 112px of top padding (88px on a phone) puts the copy in the
-  water below the waterline. At 1440 and 1024 the footer is about 360px
-  tall, shorter than the band drawn at the viewport's width (396px at 1440),
-  so the band is cropped at the bottom. On a phone `cover` fits the
-  footer's height (about 570px at 375 wide) and shows the middle of the
+- **The waterline is the footer's top edge.** The band's first rows are pure
+  white (the first row decodes at 254 and up in the AVIF), so the white
+  page runs straight into the line, and the line is 1.5% of the band down
+  (`media.json` `footer.pool.waterline`): about 6px at 1440 and 1024, and
+  9px on a phone, where the band is drawn larger. The line is flat to a
+  pixel and the same from edge to edge (the grade gives every column one
+  row profile), so there is no box edge anywhere, only the water's own
+  line. The footer has no border or tint.
+- **Layout.** 112px of top padding (88px on a phone) leaves a strip of
+  water between the line and the copy. At 1440 and 1024 the footer is about
+  360px tall, shorter than the band drawn at the viewport's width (396px at
+  1440), so the band is cropped at the bottom. On a phone `cover` fits the
+  footer's height (570-590px at 375 wide) and shows the middle of the
   band at about 1.3 times its encoded scale; the link columns sit two to a
   row under the brand there, which keeps the footer, and so the scale, down.
-- **Readable copy.** The ripples' dark rings fail `--mute` (3.8-4.0:1 on the
-  poster's darkest 1%), so the footer's text is `--ink`/`--ink-2`, with a
-  soft halo of the page's white (`text-shadow`), and links underline on
-  hover instead of turning sage. The grade also floors the water's darkest
-  tones at luma 150 (see the pipeline), so no frame goes under 5:1 behind
-  ink. `e2e/pool.spec.js` measures every piece of footer text against the
-  darkest 2% of the water actually painted under it, without the halo:
-  about 9:1 on the poster at 1440, 1024 and 375, and above 7:1 over the
-  moving clip.
+- **Readable copy.** The water is graded pale (median luma 215, nothing in
+  the poster under 191), and its darkest moving tones (a drop's outline, a
+  bubble) are floored at luma 160 by the grade (see the pipeline), so no
+  frame goes under 5.8:1 behind `--ink-2`. The footer's text is
+  `--ink`/`--ink-2` with a soft halo of the page's white (`text-shadow`),
+  and links underline on hover. `e2e/pool.spec.js` measures every piece of
+  footer text against the darkest 2% of the water actually painted under
+  it, without the halo: 8.9-9.4:1 on the poster at 1440, 1024 and 375, and
+  8.5:1 or more over the moving clip (sampled through the whole loop).
 - **Motion** (`motion/pool.js`, the media tier only, home page only). The
   home page hands the footer the clip's URLs (`data-pool`, from
   `Home.astro` through `Base.astro`). Once the footer is within half a
@@ -261,10 +268,10 @@ out rings. It is the shared footer, so every page has it.
   `--pool-at` as the background, under the copy (`z-index: -1`). It opens on
   the poster's own frame, so when it fades in (`is-ready`) nothing changes:
   measured at t = 0, the clip and the poster differ by about 2 levels on
-  average. A mask fades its top 24px in over the poster's white, so a drop
-  falling in from above is never cut at the footer's edge. It pauses off
-  screen, in a hidden tab and on `pagehide`; a refused `play()` removes it
-  and leaves the poster. Reduced motion and Save-Data get the poster only.
+  average. It is not masked: its top is the same white and line as the
+  poster's. It pauses off screen, in a hidden tab and on `pagehide`; a
+  refused `play()` removes it and leaves the poster (an `AbortError` from a
+  pause is not a refusal). Reduced motion and Save-Data get the poster only.
 
 ## Fallbacks
 
@@ -309,31 +316,37 @@ is one wide loop.
      side of its edge) is the median of its calmest 8 frames, where it is
      dry. The slab and the wall come out white and the water keeps its own
      light and shade, ready to be multiplied over a white card.
-   - **The footer pool** (`poolGrader`) is cropped to a band from 42px
-     above the waterline (the pool's far rim, y 594-612 in the 1920x1080
-     source) to the bottom, encoded at 1600x440. The wall's light falls off
-     to the right (luma 238 to 206), and below the waterline the void field
-     would take the pool's own tone for light and grade the water away, so
-     the field is estimated over the whole frame and each column's light
-     from just above the waterline is carried down through the pool. The
-     frame is divided by that: the wall goes to white and the pool keeps its
-     tone, evenly lit. Below the waterline the tone is deepened
-     (`255 - (255 - v) * 1.5`) so it still reads as water, and the darkest
-     tones (a drop's outline, a splash, the rim) are lifted onto a soft
-     floor (below luma 200, `v -> 150 + 50 * sqrt(v / 200)`), so the
-     footer's copy never sits on anything under luma 150. The source's dust
-     specks fade out with it.
+   - **The footer pool** (`poolGrader`, `poolRows`) is cropped to a band
+     from 8 rows above its waterline (y 525 in the 1920x1080 source, flat to
+     a pixel across the frame) to the bottom, encoded at 1600x440. The 15
+     rows above the line are a grey strip of the surface seen from just
+     above, and the 34 below it (the meniscus moving up and down a few
+     pixels as the surface rocks, and the surface's underside reflected in
+     it) read as a thick glassy band; both are perspective. The strip is
+     cropped away and graded to white, and the meniscus is squeezed into 12
+     rows, so the footer's edge is one thin line with the water right under
+     it. Then everything that does not move (the white, the meniscus, the
+     water's tone, a vignette that takes the white from luma 236 in the
+     middle to 212 at the edges, and a meniscus drawn near-black at the
+     edges and mid-grey in the middle) is the per-pixel median frame, and
+     it is replaced by one row profile for every column: the centre third's
+     median, white-balanced on a patch of the white above the line (to
+     255), and pure white above the line. What moves (drops, bubbles, rings,
+     caustics) is each frame's difference from the median, added back as
+     luma, so the water keeps one colour. Its darkest tones are lifted onto
+     a soft floor, also in luma (below 200, `v -> 160 + 40 * sqrt(v / 200)`),
+     so the footer's copy never sits on anything under luma 160.
 2. **Loop:** the last second is cross-faded into the first. The transition is
    not looped. The AFTER card loop starts at source frame 48: before that
    the flow builds up from a dry slab (those frames still feed the plate).
-   The pool's source already ends on its first frame (PSNR 35.8 dB between
-   them, above its own 32-34 dB frame step), so it is not cross-faded (that
-   would ghost two sets of ripples together): it plays frames 0-142 and
-   wraps (`seamless`), rotated to open on frame 36 (`start`), calm rings
-   with no drop splashing up under the copy, which is also its poster.
+   The pool's source already ends on its first frame (PSNR 40.3 dB between
+   them, as close as its own frame steps), so it is not cross-faded (that
+   would ghost two sets of caustics together): it plays frames 0-142 and
+   wraps (`seamless`). Frame 0, its poster, is one of its calmest: no drop
+   in the water under the copy.
 3. **Encode** AV1 WebM and H.264 MP4: closed GOP, BT.709, `+faststart`, no
-   audio. The pool is busy with ripples in every frame, so it is encoded two
-   steps harder (AV1 CRF 42, x264 CRF 29).
+   audio. The pool is busy with caustics in every frame, so it is encoded
+   two steps harder (AV1 CRF 42, x264 CRF 29).
 4. **Write** the hero loops' posters (first frame), the pool's poster (its
    first frame, as AVIF and WebP, served as they are by the footer's CSS),
    the stones and `media.json` (the crash's duration, each card clip's
@@ -346,9 +359,9 @@ the loop-seam PSNR (beside the clip's median frame-to-frame PSNR) and the
 crash's two cuts (PSNR between the BEFORE loop's first frame and the crash's
 first, and between the crash's last frame and the AFTER loop's first).
 `--only card-before,card-after` rebuilds some clips and patches their entries
-in `media.json`. For the pool, the void luma is measured on the wall above
-the waterline (the rest of its frame is water), and as a seamless loop its
-seam is held to the frame steps either side of it.
+in `media.json`. For the pool, the void luma is measured on the white rows
+above the waterline (the rest of its frame is water), and as a seamless
+loop its seam is held to the frame steps either side of it.
 
 | Check | Target | Current |
 |---|---|---|
@@ -360,9 +373,9 @@ seam is held to the frame steps either side of it.
 | Desktop hero media (BEFORE, transition and AFTER, WebM) | ≤ 2.5 MB | about 1.2 MB (661 + 420 + 163 KB; MP4 1.8 MB) |
 | Mobile hero media (WebM) | ≤ 1.2 MB | about 0.57 MB (299 + 211 + 70 KB; MP4 0.72 MB) |
 | Calendar water (WebM, every tier with media) | ≤ 960 wide | 960×402 + 710×680, 195 + 57 KB (MP4 267 + 82 KB) |
-| Footer pool: void luma (the wall) / seam | 235 / no worse than the steps either side less 1 dB | 235 / 29.9 dB (steps 30.0 dB) |
-| Footer pool clip (WebM, home, media tier) | ≤ 400 KB, ≤ 1600 wide | 1600×440, 143 frames (5.96 s), 325 KB (MP4 600 KB) |
-| Footer pool poster (every page) | light enough for every page | AVIF 14 KB, WebP 27 KB |
+| Footer pool: void luma (the white above the line) / seam | ≥ 234 / no worse than the steps either side less 1 dB | 237 / 38.6 dB (steps 38.5 dB) |
+| Footer pool clip (WebM, home, media tier) | ≤ 400 KB, ≤ 1600 wide | 1600×440, 143 frames (5.96 s), 121 KB (MP4 436 KB) |
+| Footer pool poster (every page) | light enough for every page; the clip's first frame | AVIF 3 KB, WebP 13 KB; 2.2 levels from the clip's frame 0 on average |
 
 **Sources and credits.** Everything was generated on Higgsfield (the clips
 by URL in `sources.json`). The stills are FLUX 3 Image; every clip (the
@@ -382,12 +395,17 @@ pool) is Gemini Omni Flash 1.1 image-to-video:
   BEFORE, uneven streams splashing over its top edge (horizontal, at about
   40% of the frame) and dripping down its face; for AFTER, one stream
   landing on its top edge, running down both sides and rejoining below.
-- **The footer pool:** a still (FLUX 3, `3becacc6`,
-  `hf_20261012_171227_3becacc6-...png`) of a white wall over a wide,
-  shallow, clear pool, the waterline across the middle of the frame; then
-  a 6 s, 16:9, 1080p loop (Gemini Omni Flash 1.1, `b6cbc4b2`) with that
-  still as its start and end frame: single drops fall in at different
-  places and send out rings, the camera locked off.
+- **The footer pool:** a still (FLUX 3, `a383150c`,
+  `hf_20261013_063135_a383150c-...png`) of a filled container seen exactly
+  from the side, with no perspective: pure white above a perfectly flat
+  waterline (a thin bright meniscus), a pale grey-blue body of water with
+  soft caustics below it; then a 6 s, 16:9, 1080p loop (Gemini Omni Flash
+  1.1, `62dfd87a`) with that still as its start and end frame: now and then
+  a drop hits the waterline, splashes on the line and sends tiny bubbles
+  sinking, and light rings drift in the water, the camera locked off. It
+  replaced a first pool (`3becacc6` / `b6cbc4b2`) that showed the water's
+  surface from above, receding; the owner rejected its perspective, and
+  none of its files is referenced any more.
 
 The polished faceted crystal of the first version is retired; none of its
 clips or stills is referenced any more. A clip is rejected if the stone

@@ -594,17 +594,16 @@
 .mk-reveal-in { transition: opacity var(--dur-reveal) var(--ease-out), translate var(--dur-reveal) var(--ease-out); }
 
 /* ═══════════ FOOTER ═══════════
-   The water that has fallen down the page: a calm pool, edge to edge (the
-   footer is outside the content wrapper, so its box is the viewport's
-   width). Its still poster is the background on every page, with no
-   JavaScript; on the home page motion/pool.js lays the looping clip over it,
-   placed exactly like the background (cover, --pool-at), so the swap is
-   invisible. The poster's top is the white wall graded to pure white and
-   meets the page above with no edge; the waterline is about 8% of the band
-   down, and the copy starts in the water below it. Under the copy the
-   ripples' dark rings fail --mute (under 4:1 on the poster's darkest 1%), so the
-   footer's text is ink (8:1 and up there), with a soft halo of the page's
-   white to lift it off the moving ripples (e2e/pool.spec.js measures it). */
+   The water that has fallen down the page: a filled container seen from the
+   side, edge to edge (the footer is outside the content wrapper, so its box
+   is the viewport's width). Its still poster is the background on every
+   page, with no JavaScript; on the home page motion/pool.js lays the looping
+   clip over it, placed exactly like the background (cover, --pool-at), so
+   the swap is invisible. The poster's first rows are pure white and its
+   flat waterline (the meniscus) is the footer's top edge; the copy sits in
+   the body of water below it. The grade floors the water's darkest tones,
+   and the footer's text is ink with a soft halo of the page's white to lift
+   it off the moving caustics (e2e/pool.spec.js measures its contrast). */
 .mk-footer {
   --pool-at: 50% 0%;
   position: relative;
@@ -625,9 +624,6 @@
   object-fit: cover;
   object-position: var(--pool-at);
   pointer-events: none;
-  /* A drop falls in from above the clip's top edge: fade it in over the
-     poster's white wall rather than cut it at the footer's edge. */
-  mask-image: linear-gradient(to bottom, transparent, black 24px);
   opacity: 0;
   transition: opacity var(--dur-slow) var(--ease-out);
 }

@@ -37,10 +37,12 @@
    The card clips (the calendar's water) are cropped to their slab and graded
    against a clean plate of it (cardPlate): the slab goes to white and only
    the water is left. No posters: they only ever play over the finished card.
-   The footer's pool is cropped to a wide band from just above its waterline
-   and divided by the wall's light carried down through the water
-   (poolGrader): the wall goes to white, the pool keeps its tone. Its poster
-   is written as AVIF and WebP, for the footer's CSS background.
+   The footer's pool (water seen from the side) is cropped to a wide band
+   from its waterline down and graded against its own median frame
+   (poolGrader): the white above the line goes to pure white, and every
+   column takes the same row profile, so the waterline is one flat line and
+   only the moving water is kept. Its poster is written as AVIF and WebP, for
+   the footer's CSS background.
    Then: the stones, and media.json (the crash's duration, each card clip's
    fit box, the pool's aspect and waterline, the stone counts). The checks also measure the crash's
    two cuts (PSNR of the frames either side of each).
@@ -96,19 +98,32 @@ const CARD = {
   },
 }
 
-/* The footer's pool, in its 1920×1080 source (pixels): a white wall over a
-   wide, shallow, clear pool; the waterline (the pool's far edge) is the dark
-   line at y 594–612, measured on the first frame. `crop` keeps 42px of wall
-   above it and everything below, a band wide and short like the footer.
-   The wall's light falls off to the right (luma 238 → 206): the whole frame
-   is divided by the wall's light (poolField), so the wall goes to white and
-   the pool keeps its own tone and ripples, evenly lit. `depth` then deepens
-   the pool's tone below the waterline (255 − (255 − v) × depth), so it still
-   reads as water once graded. The footer's copy sits on the water, so its
-   darkest tones (a drop's outline, a splash, the rim) are lifted onto a soft
-   floor: below `knee`, v → floor + (knee − floor) × √(v / knee). Nothing
-   then goes under luma 150, where the footer's ink is still 5:1. */
-const POOL = { crop: { x: 0, y: 552, w: 1920, h: 528 }, waterline: 594, depth: 1.5, floor: 150, knee: 200 }
+/* The footer's pool, in its 1920×1080 source (pixels): a filled container
+   seen exactly from the side, white above, the body of water below. The
+   waterline is flat to a pixel across the frame (its first row, y 525, on
+   the per-pixel median frame); the 15 rows above it (y 510–524) are a grey
+   strip of the surface seen from just above. `crop` starts 8 rows above the
+   line, inside that strip, which the grade turns to pure white (8 rows, so
+   the posters' lossy edge never reaches the first row: AVIF's first row is
+   254 and up), and runs to the bottom: a band wide and short like the
+   footer, with the line at its top. Below the line, the meniscus
+   (y 525–558: the line itself, moving up and down a few pixels as the
+   surface rocks, and the surface's underside reflected in it) is 34 rows
+   deep, a thick glassy band at the footer's edge; `meniscus` squeezes it
+   into 12 rows (poolRows), so it reads as one thin line and the body of
+   water starts right under it. `wall` is a patch of the white
+   above the line (the centre third, where it is brightest, luma 236): the
+   white the grade maps to 255. The frame is vignetted (the white falls to
+   luma 212 at the edges) and the meniscus is drawn harder at the edges
+   (near-black there, mid-grey in the middle), so the grade gives every
+   column the centre third's row profile and keeps only what moves (see
+   poolGrader). The footer's copy sits on the water, so its darkest tones (a
+   drop's outline, a bubble) are lifted onto a soft floor: below `knee`,
+   v → floor + (knee − floor) × √(v / knee). */
+const POOL = {
+  crop: { x: 0, y: 517, w: 1920, h: 554 }, waterline: 525, meniscus: { end: 559, rows: 12 },
+  wall: { x: 640, y: 420, w: 640, h: 72 }, floor: 160, knee: 200,
+}
 
 /* The clips: output name (also the source key) and output size. Landscape is
    encoded at 1600 wide: the media box is max(100vw, 177.78svh), 1600 on a 1440×900 screen. */
@@ -124,13 +139,11 @@ const CLIPS = [
   // The calendar's water: at most 960 wide (they show at about 600).
   { name: 'card-before', w: 960, h: 402, card: CARD.before },
   { name: 'card-after', w: 710, h: 680, card: CARD.after, head: 48 },
-  // The footer's pool: a wide band, from just above the waterline down.
-  // Its source ends on its first frame (PSNR 35.8 dB, above its 32–34 dB
-  // frame step), so it loops as it is, with no cross-fade. It opens (and its
-  // poster is) frame 36: calm rings, no drop splashing up under the footer's
-  // copy. Every frame is busy with ripples: two steps more compression keep
-  // it light.
-  { name: 'footer-pool', w: 1600, h: 440, pool: POOL, seamless: true, start: 36, crf: { av1: 42, h264: 29 } },
+  // The footer's pool: a wide band, from the waterline down. Its source ends
+  // on its first frame, so it loops as it is, with no cross-fade; frame 0,
+  // its poster, is one of its calmest (no drop in the water under the copy).
+  // Every frame is busy with caustics: more compression keeps it light.
+  { name: 'footer-pool', w: 1600, h: 440, pool: POOL, seamless: true, crf: { av1: 42, h264: 29 } },
 ]
 
 /* ── Portrait composition ────────────────────────────────────────────────────
@@ -197,6 +210,7 @@ async function fetchTo(url, path) {
 }
 
 const smoothstep = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t) }
+const LUMA = [0.2126, 0.7152, 0.0722]        // BT.709
 
 /** Separable box blur (3 passes ≈ gaussian) of a single-channel Float32Array. */
 function blur(src, w, h, r) {
@@ -395,42 +409,80 @@ function gradeCard(frame, w, h, plate, exposure) {
 }
 
 /* ── 2c. the footer's pool ────────────────────────────────────────────────
-   The wall's light, as voidField estimates it over the whole frame, is only
-   valid above the waterline: below it the field would take the pool's own
-   tone for light and grade the water away. So each column's light just
-   above the waterline is carried down through the pool, and the frame is
-   divided by that: the wall goes to white, the pool keeps its tone. */
-function poolGrader(clip, src) {
-  const { w, h, pool: { crop, waterline, depth, floor, knee } } = clip
-  const lift = v => v >= knee ? v : floor + (knee - floor) * Math.sqrt(v / knee)
-  const SW = 1920, SH = 1080, q = 4, lw = SW / q, lh = SH / q
-  const { field, exposure } = voidField(decodeAll(src, lw, lh), lw, lh)
-  const edge = Math.floor((waterline - 48) / q)        // clean wall, clear of the low-pass's reach into the pool
-  const y0 = crop.y / q, ch = crop.h / q
-  const gain = field.map(ch0 => {
-    const band = new Float32Array(lw * ch)
-    for (let y = 0; y < ch; y++) for (let x = 0; x < lw; x++) band[y * lw + x] = ch0[Math.min(edge, y0 + y) * lw + x]
-    const up = upsample(band, lw, ch, w, h)
-    for (let i = 0; i < up.length; i++) up[i] = 255 / Math.max(120, up[i])
-    return up
-  })
-  const frames = decodeAll(src, w, h, 0, crop)
-  // Below the waterline (ramped over its own 18 source px), the pool is deepened.
-  const below = new Float32Array(h)
-  for (let y = 0; y < h; y++) below[y] = smoothstep(waterline - crop.y, waterline + 18 - crop.y, (y + 0.5) * crop.h / h)
+   Water seen from the side: everything that does not move (the white, the
+   meniscus, the body of water's tone, the vignette) is in the per-pixel
+   median frame, and everything that moves (drops, bubbles, rings, caustics)
+   is each frame's difference from it. So the still part is replaced by one
+   row profile for every column, the centre third's median of the median
+   frame, white-balanced on the wall above the line (`wall` → 255) and pure
+   white above the waterline; and the moving part is added back on top, as
+   luma (so the water keeps one colour), scaled by the same correction (bounded, so a splash over the meniscus's
+   near-black edge pixels does not blow up). The waterline is then one flat,
+   even line edge to edge, and the water is evenly lit. Its darkest tones
+   are lifted onto the soft floor (POOL). */
+/** The pool's rows: the output row the waterline is on, and the output frame
+    from a frame decoded at the crop's own height (`h` rows from `crop.h`),
+    each row the area average of the source rows it covers, the meniscus
+    squeezed (POOL.meniscus) and every other row at the band's one scale. */
+function poolRows({ w, h, pool: { crop, waterline, meniscus } }) {
+  const a = waterline - crop.y, b = a + meniscus.rows, squeeze = (meniscus.end - waterline) / meniscus.rows
+  const U = crop.h - (meniscus.end - waterline) + meniscus.rows
+  const src = u => u < a ? u : u < b ? a + (u - a) * squeeze : meniscus.end - crop.y + (u - b)
+  const span = Array.from({ length: h }, (_, y) => [src(y * U / h), src((y + 1) * U / h)])
   return {
-    count: frames.length,
-    graded: (i) => {
-      const f = frames[i], e = exposure[i], out = Buffer.alloc(w * h * 3)
+    line: a * h / U,
+    remap(frame) {
+      const out = Buffer.alloc(w * h * 3), acc = new Float32Array(w * 3)
       for (let y = 0; y < h; y++) {
-        const d = 1 + (depth - 1) * below[y]
+        const [s0, s1] = span[y]
+        acc.fill(0)
+        for (let r = Math.floor(s0); r < Math.min(crop.h, Math.ceil(s1)); r++) {
+          const k = Math.min(s1, r + 1) - Math.max(s0, r), row = r * w * 3
+          for (let i = 0; i < w * 3; i++) acc[i] += frame[row + i] * k
+        }
+        for (let i = 0; i < w * 3; i++) out[y * w * 3 + i] = Math.round(acc[i] / (s1 - s0))
+      }
+      return out
+    },
+  }
+}
+
+function poolGrader(clip, src) {
+  const { w, h, pool: { crop, wall, floor, knee } } = clip
+  const lift = v => v >= knee ? v : floor + (knee - floor) * Math.sqrt(Math.max(0, v) / knee)
+  const median = (a) => { a.sort(); return (a[(a.length - 1) >> 1] + a[a.length >> 1]) / 2 }
+
+  // The white: the wall patch's median, per channel, over every frame.
+  const ww = wall.w / 8, wh = wall.h / 8, patch = decodeAll(src, ww, wh, 0, wall)
+  const white = [0, 1, 2].map(c => { const v = []; for (const f of patch) for (let p = 0; p < ww * wh; p++) v.push(f[p * 3 + c]); return median(Float32Array.from(v)) })
+
+  const rows = poolRows(clip), frames = decodeAll(src, w, crop.h, 0, crop).map(rows.remap)
+  const F = frames.length, n = w * h, exposure = exposures(frames)
+  const still = [0, 1, 2].map(() => new Float32Array(n)), col = new Float32Array(F)
+  for (let c = 0; c < 3; c++) for (let p = 0; p < n; p++) {
+    for (let f = 0; f < F; f++) col[f] = frames[f][p * 3 + c] * exposure[f]
+    still[c][p] = median(col)
+  }
+  // The row profile: the centre third's median, white-balanced on the wall.
+  // Above the waterline everything is pure white, eased in over one row.
+  const x0 = Math.round(w / 3), x1 = Math.round(2 * w / 3)
+  const row = [0, 1, 2].map(c => Float32Array.from({ length: h }, (_, y) =>
+    Math.min(255, median(Float32Array.from({ length: x1 - x0 }, (_, k) => still[c][y * w + x0 + k])) * 255 / white[c])))
+  const water = Float32Array.from({ length: h }, (_, y) => smoothstep(rows.line - 0.5, rows.line + 0.5, y + 0.5))
+  return {
+    count: F,
+    graded: (i) => {
+      const f = frames[i], e = exposure[i], out = Buffer.alloc(n * 3)
+      for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {
           const p = y * w + x
-          for (let c = 0; c < 3; c++) {
-            const v = Math.min(255, f[p * 3 + c] * e * gain[c][p])
-            out[p * 3 + c] = Math.round(lift(Math.min(255, Math.max(0, 255 - (255 - v) * d))))
-          }
-          snapWhite(out, p)
+          // What moves, in luma only: the source's own slight tints would
+          // read as warm blotches on the water's colour.
+          let d = 0, s = 0, t = 0
+          for (let c = 0; c < 3; c++) { d += LUMA[c] * (f[p * 3 + c] * e - still[c][p]); s += LUMA[c] * still[c][p]; t += LUMA[c] * row[c][y] }
+          d *= Math.min(1.6, Math.max(0.8, t / Math.max(1, s)))
+          d += lift(t + d) - (t + d)               // the floor, in luma too: per channel it would grey the water's colour
+          for (let c = 0; c < 3; c++) out[p * 3 + c] = Math.round(255 + (Math.min(255, Math.max(0, row[c][y] + d)) - 255) * water[y])
         }
       }
       return out
@@ -514,12 +566,10 @@ async function buildClip(clip, src) {
     // The transition plays once, start to end.
     for (let i = 0; i < N; i++) await enc.write(graded(i))
   } else if (clip.seamless) {
-    // The source already ends on its first frame: play 0 … N−2 and wrap to 0,
-    // rotated to open on frame `start` (the poster). A cross-fade would blend
-    // two sets of ripples into one ghosted frame.
-    const start = clip.start ?? 0
+    // The source already ends on its first frame: play 0 … N−2 and wrap to 0.
+    // A cross-fade would blend two sets of ripples into one ghosted frame.
     for (let k = 0; k < N - 1; k++) {
-      const g = graded((start + k) % (N - 1)); if (!first) first = g
+      const g = graded(k); if (!first) first = g
       await enc.write(g)
     }
   } else {
@@ -550,7 +600,7 @@ async function buildClip(clip, src) {
   const still = () => sharp(first, { raw: { width: w, height: h, channels: 3 } })
   if (clip.pool) {
     await still().avif({ quality: 60, effort: 9, chromaSubsampling: '4:2:0' }).toFile(join(OUT, `${clip.name}.avif`))
-    await still().webp({ quality: 80, effort: 6 }).toFile(join(OUT, `${clip.name}.webp`))
+    await still().webp({ quality: 90, effort: 6 }).toFile(join(OUT, `${clip.name}.webp`))
   } else if (!clip.once && !clip.card) await still().jpeg({ quality: 90, mozjpeg: true }).toFile(join(OUT, `${clip.name}.jpg`))
   rmSync(mid)
   return { frames: N }
@@ -611,8 +661,9 @@ function checks() {
     }
     // Decoded void luma: signalstats' YHIGH (90th-percentile luma) of the first
     // frame, which is mostly void. Limited range, so 235 is white; ≥ 234 passes.
-    // The pool's frame is mostly water: its void is the wall above the waterline.
-    const wall = clip.pool ? `crop=iw:${Math.floor((clip.pool.waterline - clip.pool.crop.y - 12) * clip.h / clip.pool.crop.h)}:0:0,` : ''
+    // The pool's frame is water from its top: its void is the white rows
+    // above the waterline, less the one the line eases in on.
+    const wall = clip.pool ? `crop=iw:${Math.max(2, Math.floor(poolRows(clip).line) - 1)}:0:0,` : ''
     const stats = run('ffmpeg', ['-v', 'info', '-i', mp4, '-vf', `${wall}signalstats,metadata=print:key=lavfi.signalstats.YHIGH`, '-frames:v', '1', '-f', 'null', '-'])
     const yhigh = Number((stats.match(/YHIGH=(\d+)/) || [])[1])
     // Loop seam: PSNR between the last and first frames (loops only). It
@@ -620,7 +671,7 @@ function checks() {
     // is below that (the BEFORE card's splashes), when the seam is no worse
     // than its median frame step less 1 dB: then it is just another frame.
     // A seamless loop (the pool) is held to the frame steps either side of
-    // its seam instead, its ripples being busiest there.
+    // its seam instead.
     let psnr = null, step = null
     if (!clip.once) {
       const seam = run('ffmpeg', ['-v', 'info', '-sseof', '-0.05', '-i', mp4, '-i', mp4, '-filter_complex', '[0:v]trim=end_frame=1[a];[1:v]trim=end_frame=1[b];[a][b]psnr', '-f', 'null', '-'])
@@ -663,8 +714,8 @@ async function main() {
   // The pool's band: its aspect, and its waterline as a fraction of its
   // height from the top (the footer's layout, e2e/pool.spec.js).
   const pool = () => {
-    const { w, h, pool: { crop, waterline } } = CLIPS.find(c => c.name === 'footer-pool')
-    return { aspect: f(w / h), waterline: f((waterline - crop.y) / crop.h) }
+    const clip = CLIPS.find(c => c.name === 'footer-pool')
+    return { aspect: f(clip.w / clip.h), waterline: f(poolRows(clip).line / clip.h) }
   }
   const transition = r => +(built[`hero-transition-${r}`].frames / FPS).toFixed(2)
   const order = d => ({ $comment: 'Written by scripts/media/build-media.mjs. Do not edit by hand.', hero: d.hero, cards: d.cards, footer: d.footer, stones: d.stones })
