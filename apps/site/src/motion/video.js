@@ -4,13 +4,14 @@
 
 /** A muted inline <video> with both renditions. It gets `is-ready` once it
     presents a frame, so CSS shows it only then and a refused play() leaves
-    whatever is under it. */
+    whatever is under it. `sources.av1` is the WebM's codec string when it
+    is not the default 8-bit one (the footer's pool is 10-bit). */
 export function makeVideo(sources, className, loop = true) {
   const v = document.createElement('video')
   v.className = className
   Object.assign(v, { muted: true, loop, playsInline: true, disablePictureInPicture: true, disableRemotePlayback: true, preload: 'auto' })
   v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true'); v.tabIndex = -1
-  for (const [type, src] of [['video/webm; codecs="av01.0.05M.08"', sources.webm], ['video/mp4', sources.mp4]]) {
+  for (const [type, src] of [[`video/webm; codecs="${sources.av1 ?? 'av01.0.05M.08'}"`, sources.webm], ['video/mp4', sources.mp4]]) {
     const s = document.createElement('source'); s.src = src; s.type = type; v.append(s)
   }
   onFrame(v, () => v.classList.add('is-ready'))

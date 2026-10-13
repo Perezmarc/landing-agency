@@ -44,8 +44,13 @@
   },
   "footer": {
     "pool": {
-      "aspect": 3.6364,
-      "waterline": 0.015
+      "aspect": 3.609,
+      "av1": "av01.0.05M.10",
+      "waterline": 0.015,
+      "narrow": {
+        "aspect": 2.0301,
+        "av1": "av01.0.04M.10"
+      }
     }
   },
   "stones": {

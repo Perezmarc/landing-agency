@@ -45,8 +45,10 @@
    from its waterline down and graded against its own median frame
    (poolGrader): the white above the line goes to pure white, and every
    column takes the same row profile, so the waterline is one flat line and
-   only the moving water is kept. Its poster is written as AVIF and WebP, for
-   the footer's CSS background.
+   only the moving water is kept, made clear and neutral. It is encoded in
+   two renditions, the full band and its centre for phones (buildPool), each
+   as 10-bit AV1, H.264, and a poster as AVIF and WebP for the footer's CSS
+   background.
    Then: the stones, and media.json (the crash's duration, each card clip's
    fit box, the pool's aspect and waterline, the stone counts). The checks also measure the crash's
    two cuts (PSNR of the frames either side of each).
@@ -127,10 +129,22 @@ const CARD = {
    column the centre third's row profile and keeps only what moves (see
    poolGrader). The footer's copy sits on the water, so its darkest tones (a
    drop's outline, a bubble) are lifted onto a soft floor: below `knee`,
-   v → floor + (knee − floor) × √(v / knee). */
+   v → floor + (knee − floor) × √(v / knee).
+   Then the water is made clear: its distance from white is scaled by
+   `clear` (v → 255 − clear × (255 − v): lighter, with the caustics' shape
+   kept), and it is given one colour, a whisper of cool grey: each channel's
+   distance from white is scaled by `tint` (normalised to keep the luma),
+   which lands at Lab a* 0, b* −2 at the water's mean (no green: the source's
+   water is cyan, a* −4.5). The grade is kept in floating point to the
+   encode (a 16-bit intermediate), so the smooth gradients reach the 10-bit
+   AV1 without 8-bit steps, and the posters are dithered to 8 bits.
+   `narrow`: the phone rendition's width, the band's centre at full
+   resolution (the footer is 568px tall on a phone and the band 532 rows,
+   so it is drawn at about its own scale). */
 const POOL = {
   crop: { x: 0, y: 517, w: 1920, h: 554 }, waterline: 525, meniscus: { end: 559, rows: 12 },
   wall: { x: 640, y: 420, w: 640, h: 72 }, floor: 160, knee: 200,
+  clear: 0.65, tint: [1.0688, 0.9942, 0.855], narrow: 1080,
 }
 
 /* The clips: output name (also the source key) and output size. Landscape is
@@ -155,11 +169,14 @@ const CLIPS = [
   // STREAM.y down to the frame's bottom), so it is the same water at the
   // same scale. The page puts it on the hero stream's x (motion/water.js).
   { name: 'card-stream', w: 64, h: 250, cut: 'hero-after-16x9' },   // 64: AV1's least width
-  // The footer's pool: a wide band, from the waterline down. Its source ends
-  // on its first frame, so it loops as it is, with no cross-fade; frame 0,
-  // its poster, is one of its calmest (no drop in the water under the copy).
-  // Every frame is busy with caustics: more compression keeps it light.
-  { name: 'footer-pool', w: 1600, h: 440, pool: POOL, seamless: true, crf: { av1: 42, h264: 29 } },
+  // The footer's pool: a wide band, from the waterline down, at the source's
+  // full width and its own row scale (532 rows: the crop less the squeezed
+  // meniscus). Its source ends on its first frame, so it loops as it is,
+  // with no cross-fade; frame 0, its poster, is one of its calmest (no drop
+  // in the water under the copy). It is shown full-bleed (2880 device
+  // pixels at 1440 on a 2× screen), so it is encoded for quality: 10-bit
+  // AV1, and x264 with its adaptive quantiser biased to the flat water.
+  { name: 'footer-pool', w: 1920, h: 532, pool: POOL, seamless: true, crf: { av1: 16, h264: 20 } },
 ]
 
 /* ── Portrait composition ────────────────────────────────────────────────────
@@ -467,7 +484,8 @@ function gradeCard(frame, w, h, plate, exposure) {
    luma (so the water keeps one colour), scaled by the same correction (bounded, so a splash over the meniscus's
    near-black edge pixels does not blow up). The waterline is then one flat,
    even line edge to edge, and the water is evenly lit. Its darkest tones
-   are lifted onto the soft floor (POOL). */
+   are lifted onto the soft floor, then it is made clear and given its one
+   colour (POOL). Its frames are floating-point RGB (0–255), for buildPool. */
 /** The pool's rows: the output row the waterline is on, and the output frame
     from a frame decoded at the crop's own height (`h` rows from `crop.h`),
     each row the area average of the source rows it covers, the meniscus
@@ -496,8 +514,11 @@ function poolRows({ w, h, pool: { crop, waterline, meniscus } }) {
 }
 
 function poolGrader(clip, src) {
-  const { w, h, pool: { crop, wall, floor, knee } } = clip
+  const { w, h, pool: { crop, wall, floor, knee, clear, tint } } = clip
   const lift = v => v >= knee ? v : floor + (knee - floor) * Math.sqrt(Math.max(0, v) / knee)
+  // The water's one colour: luma v → each channel's distance from white,
+  // made clear and tinted.
+  const k = tint.map(t => clear * t / LUMA.reduce((s, l, c) => s + l * tint[c], 0))
   const median = (a) => { a.sort(); return (a[(a.length - 1) >> 1] + a[a.length >> 1]) / 2 }
 
   // The white: the wall patch's median, per channel, over every frame.
@@ -511,26 +532,27 @@ function poolGrader(clip, src) {
     for (let f = 0; f < F; f++) col[f] = frames[f][p * 3 + c] * exposure[f]
     still[c][p] = median(col)
   }
-  // The row profile: the centre third's median, white-balanced on the wall.
-  // Above the waterline everything is pure white, eased in over one row.
+  // The row profile, in luma: the centre third's median, white-balanced on
+  // the wall. Above the waterline everything is pure white, eased in over one row.
   const x0 = Math.round(w / 3), x1 = Math.round(2 * w / 3)
-  const row = [0, 1, 2].map(c => Float32Array.from({ length: h }, (_, y) =>
-    Math.min(255, median(Float32Array.from({ length: x1 - x0 }, (_, k) => still[c][y * w + x0 + k])) * 255 / white[c])))
+  const row = Float32Array.from({ length: h }, (_, y) => LUMA.reduce((t, l, c) =>
+    t + l * Math.min(255, median(Float32Array.from({ length: x1 - x0 }, (_, i) => still[c][y * w + x0 + i])) * 255 / white[c]), 0))
   const water = Float32Array.from({ length: h }, (_, y) => smoothstep(rows.line - 0.5, rows.line + 0.5, y + 0.5))
   return {
     count: F,
     graded: (i) => {
-      const f = frames[i], e = exposure[i], out = Buffer.alloc(n * 3)
+      const f = frames[i], e = exposure[i], out = new Float32Array(n * 3)
       for (let y = 0; y < h; y++) {
+        const t = row[y]
         for (let x = 0; x < w; x++) {
           const p = y * w + x
           // What moves, in luma only: the source's own slight tints would
-          // read as warm blotches on the water's colour.
-          let d = 0, s = 0, t = 0
-          for (let c = 0; c < 3; c++) { d += LUMA[c] * (f[p * 3 + c] * e - still[c][p]); s += LUMA[c] * still[c][p]; t += LUMA[c] * row[c][y] }
+          // read as blotches on the water's one colour.
+          let d = 0, s = 0
+          for (let c = 0; c < 3; c++) { d += LUMA[c] * (f[p * 3 + c] * e - still[c][p]); s += LUMA[c] * still[c][p] }
           d *= Math.min(1.6, Math.max(0.8, t / Math.max(1, s)))
-          d += lift(t + d) - (t + d)               // the floor, in luma too: per channel it would grey the water's colour
-          for (let c = 0; c < 3; c++) out[p * 3 + c] = Math.round(255 + (Math.min(255, Math.max(0, row[c][y] + d)) - 255) * water[y])
+          const depth = (255 - Math.min(255, lift(t + d))) * water[y]   // the floor, then the distance from white
+          for (let c = 0; c < 3; c++) out[p * 3 + c] = Math.max(0, 255 - depth * k[c])
         }
       }
       return out
@@ -586,7 +608,6 @@ function slabOut({ w, h, card: { slab, crop } }) {
 /** The grader for one clip: frame index (after its head) → graded RGB. */
 function grader(clip, src) {
   const { w, h } = clip
-  if (clip.pool) return poolGrader(clip, src)
   if (clip.card) {
     // The plate is built from every frame, the head included: that is where the slab is dry.
     const all = decodeAll(src, w, h, 0, clip.card.crop), head = clip.head ?? 0
@@ -657,6 +678,7 @@ function encodeWeb(clip, filter, mid) {
 }
 
 async function buildClip(clip, src) {
+  if (clip.pool) return buildPool(clip, src)
   const { w, h } = clip
   const { count: N, graded } = grader(clip, src)
   const L = LOOP_FADE
@@ -666,10 +688,6 @@ async function buildClip(clip, src) {
     if (clip.once) {
       // The transition plays once, start to end.
       for (let i = 0; i < N; i++) yield graded(i)
-    } else if (clip.seamless) {
-      // The source already ends on its first frame: play 0 … N−2 and wrap to 0.
-      // A cross-fade would blend two sets of ripples into one ghosted frame.
-      for (let k = 0; k < N - 1; k++) yield graded(k)
     } else {
       // Order: L … N−L−1, then the cross-fade of the last second into the first.
       // That plays …, N−L−1, blend(N−L, 0) … blend(N−1, L−1), and wraps to L.
@@ -714,13 +732,7 @@ async function buildClip(clip, src) {
   // A hero loop's poster is the first frame it plays. The transition has none:
   // it only ever plays over the BEFORE clip; nor do the card clips, which only
   // ever play over the finished card.
-  // The footer's pool is a CSS background on every page, so its poster is
-  // written ready to serve (AVIF, WebP for the rest), not as a JPEG for Astro.
-  const still = () => sharp(first, { raw: { width: w, height: H, channels: 3 } })
-  if (clip.pool) {
-    await still().avif({ quality: 60, effort: 9, chromaSubsampling: '4:2:0' }).toFile(join(OUT, `${clip.name}.avif`))
-    await still().webp({ quality: 90, effort: 6 }).toFile(join(OUT, `${clip.name}.webp`))
-  } else if (!clip.once && !clip.card) await still().jpeg({ quality: 90, mozjpeg: true }).toFile(join(OUT, `${clip.name}.jpg`))
+  if (!clip.once && !clip.card) await sharp(first, { raw: { width: w, height: H, channels: 3 } }).jpeg({ quality: 90, mozjpeg: true }).toFile(join(OUT, `${clip.name}.jpg`))
   // A clip cut from this one reads its intermediate first.
   for (const cut of CLIPS.filter(c => c.cut === clip.name && (!ONLY || ONLY.has(c.name)))) {
     console.log('·', cut.name)
@@ -728,6 +740,78 @@ async function buildClip(clip, src) {
   }
   rmSync(mid)
   return { frames: clip.once ? N : count }
+}
+
+/* ── the footer's pool: two renditions, poster and clip ────────────────────
+   The graded frames (floating point) go to a 16-bit lossless intermediate,
+   RGB, so nothing is rounded before the encode. From it, two renditions:
+   the full band (1920 wide), and `narrow`, its centre at the same scale,
+   for phones (the footer's CSS and motion/pool.js pick it under 720px).
+   Each is encoded as AV1 in 10 bits (the smooth water keeps its gradient
+   with no 8-bit steps, and its blocks stay under one 8-bit level from the
+   graded frames at CRF 16) and as 8-bit H.264 for the rest, with x264's
+   adaptive quantiser biased to the flat areas (aq-mode 3) and a lighter
+   deblock, so its gradients keep their bits. (A dither in the H.264's
+   8-bit input does not survive its quantiser: tried, it only adds blocky
+   texture.) The YUV conversion is BT.709, as the streams are tagged. The
+   poster is the first frame, dithered to 8 bits, as AVIF (4:4:4) and
+   WebP: it is a CSS background on every page, written ready to serve, not
+   as a JPEG for Astro. */
+const POOL_ENCODE = {
+  color: ['-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709', '-color_range', 'tv'],
+  yuv: (fmt, crop) => `${crop}scale=out_color_matrix=bt709:out_range=tv,format=${fmt}`,
+}
+
+/** An AV1 WebM's codec string (av01.profile.level+tier.depth), read from the file. */
+function av1Codec(file) {
+  const s = Object.fromEntries(run('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=level,pix_fmt', '-of', 'default=nw=1', file]).trim().split('\n').map(l => l.split('=')))
+  return `av01.0.${s.level.padStart(2, '0')}M.${s.pix_fmt.includes('10') ? 10 : '08'}`
+}
+
+/** The pool's renditions: output name suffix and the crop of the band. */
+function poolRenditions({ w, h, pool: { narrow } }) {
+  return [{ suffix: '', w, h, x: 0 }, { suffix: '-narrow', w: narrow, h, x: (w - narrow) / 2 }]
+}
+
+/** A floating-point RGB frame (0–255) to 8 bits, with a fixed triangular
+    dither (two hashes of the pixel's position), so a smooth gradient has
+    no steps and the pattern does not crawl from frame to frame. */
+function dither8(frame) {
+  const out = Buffer.alloc(frame.length)
+  const hash = (i) => { let x = Math.imul(i ^ 0x9e3779b9, 0x85ebca6b); x ^= x >>> 13; x = Math.imul(x, 0xc2b2ae35); return ((x ^ (x >>> 16)) >>> 0) / 4294967296 }
+  for (let i = 0; i < frame.length; i++) out[i] = Math.min(255, Math.max(0, Math.round(frame[i] + hash(i) - hash(i + frame.length))))
+  return out
+}
+
+async function buildPool(clip, src) {
+  const { w, h, name } = clip
+  const { count: N, graded } = poolGrader(clip, src)
+  const mid = join(CACHE, `${name}.graded.mkv`)
+  const enc = encoder(['-f', 'rawvideo', '-pix_fmt', 'rgb48le', '-s', `${w}x${h}`, '-r', String(FPS), '-i', '-', '-c:v', 'ffv1', '-pix_fmt', 'gbrp16le', mid])
+  // The source already ends on its first frame: play 0 … N−2 and wrap to 0.
+  // A cross-fade would blend two sets of ripples into one ghosted frame.
+  let first = null
+  for (let i = 0; i < N - 1; i++) {
+    const g = graded(i), px = new Uint16Array(g.length)
+    for (let k = 0; k < g.length; k++) px[k] = Math.round(g[k] * 257)
+    if (!first) first = dither8(g)
+    await enc.write(Buffer.from(px.buffer))
+  }
+  await enc.close()
+
+  const { color, yuv } = POOL_ENCODE
+  for (const r of poolRenditions(clip)) {
+    const crop = r.x ? `crop=${r.w}:${r.h}:${r.x}:0,` : '', out = join(OUT, `${name}${r.suffix}`)
+    run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-vf', yuv('yuv420p10le', crop), '-c:v', 'libsvtav1', '-crf', String(clip.crf.av1), '-preset', '4', '-g', String(FPS * 5),
+      '-svtav1-params', 'tune=0', ...color, `${out}.webm`])
+    run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-vf', yuv('yuv420p', crop), '-c:v', 'libx264', '-crf', String(clip.crf.h264), '-preset', 'slower', '-profile:v', 'high',
+      '-x264-params', `keyint=${FPS * 5}:open-gop=0:aq-mode=3:deblock=-1,-1`, '-movflags', '+faststart', ...color, `${out}.mp4`])
+    const still = sharp(first, { raw: { width: w, height: h, channels: 3 } }).extract({ left: r.x, top: 0, width: r.w, height: r.h })
+    await still.clone().avif({ quality: 85, effort: 9, chromaSubsampling: '4:4:4' }).toFile(`${out}.avif`)
+    await still.clone().webp({ quality: 92, effort: 6, smartSubsample: true }).toFile(`${out}.webp`)
+  }
+  rmSync(mid)
+  return { frames: N }
 }
 
 /* ── stones ─────────────────────────────────────────────────────────────── */
@@ -822,6 +906,11 @@ function checks() {
       }
     }
     report.push({ clip: clip.name, webmKB: Math.round(statSync(webm).size / 1024), mp4KB: Math.round(statSync(mp4).size / 1024), voidLuma: yhigh, seamPSNR: psnr, stepPSNR: step, cutIn, cutOut, ok: yhigh >= 234 && (clip.once || psnr >= Math.min(30, step - 1)) })
+    // The pool's renditions and posters: their sizes (the frames are the same).
+    if (clip.pool) for (const r of poolRenditions(clip)) {
+      const kb = ext => Math.round(statSync(join(OUT, `${clip.name}${r.suffix}.${ext}`)).size / 1024)
+      report.push({ clip: `${clip.name}${r.suffix} ${r.w}×${r.h}`, webmKB: kb('webm'), mp4KB: kb('mp4'), avifKB: kb('avif'), webpKB: kb('webp') })
+    }
   }
   console.table(report)
   return report
@@ -853,11 +942,13 @@ async function main() {
     const { w, h, card: { fit, crop } } = CLIPS.find(c => c.name === name)
     return { aspect: f(w / h), fit: { left: f((fit.x0 - crop.x) / crop.w), top: f((fit.y0 - crop.y) / crop.h), right: f((fit.x1 - crop.x) / crop.w), bottom: f((fit.y1 - crop.y) / crop.h) } }
   }
-  // The pool's band: its aspect, and its waterline as a fraction of its
-  // height from the top (the footer's layout, e2e/pool.spec.js).
+  // The pool's band: its aspect and its waterline as a fraction of its height
+  // from the top (the footer's layout, e2e/pool.spec.js), and each
+  // rendition's AV1 codec string (10-bit, so the page's <source> says so).
   const pool = () => {
     const clip = CLIPS.find(c => c.name === 'footer-pool')
-    return { aspect: f(clip.w / clip.h), waterline: f(poolRows(clip).line / clip.h) }
+    const [wide, narrow] = poolRenditions(clip).map(r => ({ aspect: f(r.w / r.h), av1: av1Codec(join(OUT, `${clip.name}${r.suffix}.webm`)) }))
+    return { ...wide, waterline: f(poolRows(clip).line / clip.h), narrow }
   }
   const transition = r => +(built[`hero-transition-${r}`].frames / FPS).toFixed(2)
   // Where the AFTER loop's stream leaves the frame (a fraction of its width),

@@ -63,11 +63,16 @@ describe('media.json', () => {
     expect(Math.abs(x - 0.5)).toBeLessThan(0.1)
   })
 
-  it('gives the footer pool its band and waterline', () => {
-    const { aspect, waterline } = media.footer.pool
+  it('gives the footer pool its band, its phone rendition and waterline', () => {
+    const { aspect, waterline, narrow } = media.footer.pool
     // A wide, short band, like the footer.
     expect(aspect).toBeGreaterThan(3)
     expect(aspect).toBeLessThan(5)
+    // The phone rendition: the band's centre, the same rows, narrower.
+    expect(narrow.aspect).toBeGreaterThan(1.5)
+    expect(narrow.aspect).toBeLessThan(aspect)
+    // Both clips are 10-bit AV1, and their <source> type says so.
+    for (const { av1 } of [media.footer.pool, narrow]) expect(av1).toMatch(/^av01\.0\.\d\dM\.10$/)
     // The waterline is the band's top edge: a few rows of white above it
     // (so the line is never cut), the water below.
     expect(waterline).toBeGreaterThan(0)
@@ -81,8 +86,8 @@ describe('media.json', () => {
     }
     for (const r of ['16x9', '9x16']) files.push(`hero-transition-${r}.webm`, `hero-transition-${r}.mp4`)
     for (const which of ['before', 'after', 'stream']) files.push(`card-${which}.webm`, `card-${which}.mp4`)
-    // The pool: its clip, and its poster ready to serve as the footer's background.
-    files.push('footer-pool.webm', 'footer-pool.mp4', 'footer-pool.avif', 'footer-pool.webp')
+    // The pool, in both renditions: its clip, and its poster ready to serve as the footer's background.
+    for (const name of ['footer-pool', 'footer-pool-narrow']) files.push(`${name}.webm`, `${name}.mp4`, `${name}.avif`, `${name}.webp`)
     for (let i = 1; i <= media.stones.raw; i++) files.push(`stones/raw-${i}.webp`)
     for (let i = 1; i <= media.stones.pebble; i++) files.push(`stones/pebble-${i}.webp`)
     files.forEach(f => expect(existsSync(here(f)), f).toBe(true))
