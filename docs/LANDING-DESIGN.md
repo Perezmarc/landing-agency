@@ -10,7 +10,8 @@ crystal shatters, a smooth polished pebble is left, and the water leaves it as
 **one calm stream**. The water lives in the hero; below it the page is calm
 white with still crystal stones. Water comes back further down only as
 dedicated clips attached to specific elements (the calendar's two cards),
-never as a continuous line down the page. At the bottom, the footer is all
+never as a continuous line down the page: the stream that left the hero
+falls onto the AFTER card on the same x, with plain page between. At the bottom, the footer is all
 the water that has fallen: a filled container seen from the side, a flat
 waterline edge to edge and the body of water below it.
 
@@ -51,8 +52,16 @@ the water natural.
 
 ## The hero
 
-A 250svh section with a sticky 100svh stage: the stage stays pinned for 1.5
-screens of scroll (`motion/hero.js` reads the pin from the layout). That is
+A `150svh + 100lvh` section with a sticky 100lvh stage: the stage stays
+pinned for 1.5 screens of scroll (`motion/hero.js` reads the pin from the
+layout). The stage is the large viewport so that when a phone's browser bars
+collapse the screen never shows the page under it (Safari's bars take about
+a fifth of an iPhone's screen; with a 100svh stage the stream stopped that
+far above the bottom, on white). The copy and the pebble are laid out in the
+small viewport (100svh), which is always on screen. **The stream never ends
+in mid-air:** in every layout it leaves through the stage's bottom edge
+(landscape: the 16:9 box covers the 100lvh stage and the stream runs out
+through the frame's bottom; portrait: see below). That is
 long enough that a brisk continuous wheel (2000 px/s) still has the stage on
 screen through the burst, and a normal scroll sees the 3.75 s crash. The
 crash is never scrubbed: the extra length only keeps the stage in view while
@@ -119,10 +128,38 @@ bottom, so nothing around or below the pebble is invented (the old
 composition repeated a strip of each frame down the stream, which stacked
 fragments into squares during the crash). Above the pebble the frame
 feathers into a still, smooth plate that the grade takes to white, so the copy
-sits on white and flying fragments fade out rather than meet a seam. The media
-box is anchored to the stage's bottom: on a phone it is exactly the stage, and
+sits on white and flying fragments fade out rather than meet a seam. The 9:16
+frame is anchored to the bottom of the small viewport (`top: 100svh − frame
+height`, the frame sized from the stage as a size container:
+`max(177.78cqw, 100svh)`): on a phone it is exactly the small viewport, and
 the rock and the pebble sit below the buttons from 375×667 (iPhone SE) to
 430×932.
+
+**The extension.** Every portrait clip runs on 0.4 of its 9:16 height below
+its frame (720×1792; `--hero-extend` from `media.json`, set on the section
+by `Home.astro`), so where the stage is taller than the small viewport (bars
+collapsed: up to about 1.3 small viewports) the stream still reaches the
+stage's bottom. On a desktop browser the extension is simply cropped. The
+landscape source ends at the frame's bottom, so the pipeline makes those
+rows by advection (`EXTEND` in the script): a row r pixels below the frame
+is the frame's own bottom row a moment earlier, the time water takes to
+fall that far (leaving the edge at 9 px a frame, the BEFORE drops' measured
+speed, and gaining 1.5 px a frame, every frame). Whatever crosses the edge
+keeps falling: the stream, a drop, the BEFORE loop's drips (which stretch
+into rain streaks as they speed up). Nothing is tiled and there is no seam:
+each row is a different moment of the same edge, and a loop takes its past
+from itself, wrapping, so its loop seam is untouched. The crash takes the
+past before its first frame from the BEFORE loop, so the drips already
+falling keep falling through the cut; the burst's fragments fade out within
+48 px of the edge instead of being drawn into streaks (the last one crosses
+it before frame 56); its new stream reaches the edge at about frame 66 and
+fills the extension 21 frames later, so the crash ends, like the AFTER
+loop, with the stream running the whole way down. The last 12% of the rows
+fade to white, so a screen taller than all that sees the stream fade, not
+stop. `e2e/stream.spec.js` samples the stream column at the stage's bottom
+edge at 390×844, 430×932, 375×667, 1440×900 and 1920×1080 (poster and AFTER
+loop), and with the small viewport set to 75% of a 390×844 and a 375×667
+screen.
 
 ## The calendar
 
@@ -182,7 +219,8 @@ added, moved or condensed; the empty grid is the message.
   make no stacking context and clip nothing at their edges, so the water can
   splash over the BEFORE card's top border and flow behind and around the
   AFTER card. The section clips sideways only (`overflow-x: clip`), so the
-  water never widens the page.
+  water never widens the page. Stacked (below 1180px) the cards are 64px
+  apart, so the stream falling onto the AFTER card shows between them.
 - **Water** (`motion/water.js`, the media tier only). Once the calendar is
   within half a screen of the viewport (and after `load`), two looping clips
   are created and put in the chosen team's cards; they move with the tabs,
@@ -193,23 +231,51 @@ added, moved or condensed; the empty grid is the message.
   in `media.json`, written by the pipeline) as custom properties, and
   `marketing.css` does the placement, in percentages of the card, so it
   follows every layout:
-  - **BEFORE ("Today"): on the card.** A pale slab with uneven streams
-    splashing over its top edge. The clip is cropped to the slab's width, so
-    the slab spans the card's border box, its top edge on the card's top
-    border; it is multiplied (`mix-blend-mode: multiply`), so its white
-    disappears and only the water shows. A mask keeps 56px of streams above
-    the border and fades the drips out within 100px of it, so no chip label
-    is covered for long.
-  - **AFTER ("With an agent"): behind the card.** One stream lands on a slab,
-    runs down just inside both side edges and leaves below as one stream. The
+  - **BEFORE ("Today"): on the card, the rain.** A pale slab with uneven
+    streams falling onto its top edge and splashing. The clip is cropped to
+    the slab's width and kept from the top of its source frame, so the
+    streams come from above; the slab spans the card's border box, its top
+    edge on the card's top border; it is multiplied (`mix-blend-mode:
+    multiply`), so its white disappears and only the water shows. A mask
+    fades the streams in from the page over 110px above the border (fully
+    there only in the last 28px) and fades the drips out within 100px below
+    it, so no chip label is covered for long.
+  - **AFTER ("With an agent"): behind the card.** The water runs down just
+    inside both side edges of a slab and leaves below as one stream. The
     clip sits at `z-index: -1` inside the card, under its white surface,
     which hides the slab's face and its ripples. Its fit box is the inner
     edges of the two side sheets and the slab's top and bottom, stretched
     onto the card (independent X and Y scale, `object-fit: fill`: the water
     is vertical, so a taller card only lengthens it), so the sheets run just
-    outside the side borders, the stream enters above the card and the two
-    sheets rejoin below it. The mask fades the stream in 140px above and out
-    160px below.
+    outside the side borders and rejoin below it. The clip starts 9 source
+    rows above the slab (the source's own incoming stream is cropped away)
+    and the mask fades the stream out 160px below.
+  - **The stream onto the AFTER card is the hero's.** `card-stream` is cut
+    from the hero AFTER loop's graded frames: the column under the pebble,
+    64×250 of the 1600×900 frame, centred on the stream. It sits behind the
+    AFTER card, its bottom tucked 24px under the top border, and fades in
+    from the page over its top 60%. `motion/water.js` measures where the
+    hero's stream leaves the hero on screen (the hero media box and the
+    stream's x from `media.json`, for the rendition in use) and hands the
+    clip that x and the hero's scale as `--stream-left` / `--stream-w`
+    (measured layout values, redone on resize), held at least 24px inside
+    the card. So the eye follows the same stream, the same width, straight
+    down from the pebble onto the card, with plain page between. Measured
+    (screen x of the hero stream = the card stream; `e2e/stream.spec.js`
+    holds it to 2px):
+
+    | Layout | Viewport | x (share of the screen) | on the card at | old card stream |
+    |---|---|---|---|---|
+    | side by side | 1440×900 | 977 (68%) | 44% of its width | 1023 (+45px) |
+    | side by side | 1920×1080 | 1269 (66%) | 53% | 1263 (−6px) |
+    | side by side | 1180×820 | 825 (70%) | 40% | 887 (+62px) |
+    | side by side | 2560×1440 | 1692 (66%) | 71% | 1583 (−109px) |
+    | stacked weeks | 1024×768 | 732 (72%) | 72% | 526 (−206px) |
+    | stacked weeks | 768×1024 | 378 (49%) | 49% | 394 (+16px) |
+    | one day | 390×844 | 192 (49%) | 49% | 200 (+8px) |
+
+    The old card stream was the card clip's own, about the card's centre
+    (computed from its old fit box); no layout needs the 24px clamp.
   - **Per layout.** Side by side (1180px and up) the AFTER sheets show in
     full: on the right in the page margin, on the left in the 16px gap
     between the cards. Stacked weeks (721-1179px) the card is nearly the
@@ -218,6 +284,9 @@ added, moved or condensed; the empty grid is the message.
     (one day, 720px and below) both clips are kept: the BEFORE splash fits
     the narrow card well, and the AFTER clip is stretched about 2.7 times
     vertically, which the vertical sheets and the long V below carry.
+    Stacked and on a phone the incoming stream shows in the 64px between
+    the cards (above that it is behind the BEFORE card); side by side it
+    falls about 200px through the page above the card, behind the legend.
 - Native radio tabs (`@forge/ui` `Tabs`) work without JavaScript.
 - The weeks are illustrations with no totals, hours or percentages, and the
   page says so on every tab.
@@ -289,8 +358,9 @@ permanent URL in `scripts/media/sources.json`, and only the outputs are
 committed (`apps/site/src/media/`). It does the following:
 
 The hero clips are BEFORE (loop), the transition (once) and AFTER (loop), in
-16:9 and 9:16; the card clips are the calendar's two loops; the footer pool
-is one wide loop.
+16:9 and 9:16 (the 9:16 ones extended below their frame, see "Portrait");
+the card clips are the calendar's two loops and the stream onto the AFTER
+card (cut from the hero AFTER loop); the footer pool is one wide loop.
 
 1. **Grade to white.**
    - The void field is the per-pixel 90th percentile over all frames,
@@ -350,8 +420,9 @@ is one wide loop.
 4. **Write** the hero loops' posters (first frame), the pool's poster (its
    first frame, as AVIF and WebP, served as they are by the footer's CSS),
    the stones and `media.json` (the crash's duration, each card clip's
-   aspect and fit box, the pool's aspect and waterline, and the stone
-   counts). The card clips need no posters: they only play over the
+   aspect and fit box, where the hero AFTER loop's stream leaves each
+   rendition and the card stream's scale, the portrait extension, the pool's
+   aspect and waterline, and the stone counts). The card clips need no posters: they only play over the
    finished card.
 
 `node scripts/media/build-media.mjs --check` reports sizes, decoded void luma,
@@ -359,20 +430,24 @@ the loop-seam PSNR (beside the clip's median frame-to-frame PSNR) and the
 crash's two cuts (PSNR between the BEFORE loop's first frame and the crash's
 first, and between the crash's last frame and the AFTER loop's first).
 `--only card-before,card-after` rebuilds some clips and patches their entries
-in `media.json`. For the pool, the void luma is measured on the white rows
+in `media.json` (`card-stream` needs `hero-after-16x9` in the same run,
+and `hero-transition-9x16` needs `hero-before-9x16`). The card stream's
+seam is the hero loop's own; measured on a narrow column of moving water,
+its frame steps run 21-35 dB, so it is held to the low end of them (the
+5th percentile). For the pool, the void luma is measured on the white rows
 above the waterline (the rest of its frame is water), and as a seamless
 loop its seam is held to the frame steps either side of it.
 
 | Check | Target | Current |
 |---|---|---|
 | Void luma | ≥ 234 | 235 on every clip |
-| Loop-seam PSNR | ≥ 30 dB, or, for water busier than that frame to frame, no worse than its median frame step less 1 dB | hero 33.6–40.4 dB; AFTER card 32.5 dB; BEFORE card 29.5 dB (its splashes step at 30.1 dB) |
+| Loop-seam PSNR | ≥ 30 dB, or, for water busier than that frame to frame, no worse than its median frame step less 1 dB | hero 33.6–41.3 dB; AFTER card 32.1 dB; BEFORE card 29.6 dB (its splashes step at 30.3 dB); card stream 22.7 dB (held to its 5th-percentile step, 22.6 dB) |
 | Crash cut in / out, 16:9 | as close as the BEFORE loop to itself (about 31–33 dB frame to frame, the rain moving) | 29.7 / 32.7 dB |
-| Crash cut in / out, 9:16 | the same | 32.0 / 34.4 dB |
+| Crash cut in / out, 9:16 (whole frame, extension included) | the same | 33.4 / 33.3 dB |
 | Crash clip | starts at the shatter | 3.75 s (first 6 source frames dropped) |
 | Desktop hero media (BEFORE, transition and AFTER, WebM) | ≤ 2.5 MB | about 1.2 MB (661 + 420 + 163 KB; MP4 1.8 MB) |
-| Mobile hero media (WebM) | ≤ 1.2 MB | about 0.57 MB (299 + 211 + 70 KB; MP4 0.72 MB) |
-| Calendar water (WebM, every tier with media) | ≤ 960 wide | 960×402 + 710×680, 195 + 57 KB (MP4 267 + 82 KB) |
+| Mobile hero media (WebM, 720×1792 with the extension) | ≤ 1.2 MB | about 0.63 MB (339 + 228 + 76 KB; MP4 0.86 MB) |
+| Calendar water (WebM, every tier with media) | ≤ 960 wide | 960×510 + 710×556 + 64×250, 233 + 52 + 13 KB (MP4 332 + 77 + 15 KB) |
 | Footer pool: void luma (the white above the line) / seam | ≥ 234 / no worse than the steps either side less 1 dB | 237 / 38.6 dB (steps 38.5 dB) |
 | Footer pool clip (WebM, home, media tier) | ≤ 400 KB, ≤ 1600 wide | 1600×440, 143 frames (5.96 s), 121 KB (MP4 436 KB) |
 | Footer pool poster (every page) | light enough for every page; the clip's first frame | AVIF 3 KB, WebP 13 KB; 2.2 levels from the clip's frame 0 on average |
