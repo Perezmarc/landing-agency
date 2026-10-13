@@ -14,6 +14,9 @@ const media = JSON.parse(readFileSync(new URL('../src/media/media.json', import.
 const HOME = routePath('home', forge.locales.default)
 const HOMES = new Set(forge.locales.published.map(locale => routePath('home', locale)))
 const isPoolClip = url => /footer-pool[^/]*\.(webm|mp4)(\?|$)/.test(url)
+const isNarrow = url => /footer-pool-narrow[^/]*\.(avif|webp|webm|mp4)/.test(url)
+// The footer's phone rendition (marketing.css) is served at this width and under.
+const NARROW = 720
 const isPoolPoster = url => /footer-pool[^/]*\.(avif|webp)(\?|$)/.test(url)
 const toFooter = page => page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
 const SIZES = [[1440, 900], [1024, 768], [375, 812]]
@@ -126,10 +129,14 @@ for (const [width, height] of SIZES) {
       for (let y = line; y < line + Math.ceil(6 * scale); y++) luma(y).forEach((v, x) => { if (v < 245) under[x] = true })
       return { top: Math.min(...luma(0)), waterline: line / scale, span: under.filter(Boolean).length / c.width, height: c.height / scale }
     }, painted.shot)
+    // The rendition the width calls for: the band's centre on a phone.
+    const poster = await page.locator('.mk-footer').evaluate(f => getComputedStyle(f).backgroundImage)
+    expect(isNarrow(poster)).toBe(width <= NARROW)
     // The poster covers the footer from its top: it is drawn at the larger of
     // the width's and the height's scale, so the waterline lands at
     // media.json's fraction of that drawn height.
-    const { aspect, waterline } = media.footer.pool
+    const { waterline } = media.footer.pool
+    const { aspect } = width <= NARROW ? media.footer.pool.narrow : media.footer.pool
     const drawn = Math.max(box.width / aspect, rows.height)
     expect(rows.top).toBeGreaterThanOrEqual(253)
     expect(Math.abs(rows.waterline - waterline * drawn)).toBeLessThanOrEqual(3)
@@ -160,6 +167,9 @@ test('the clip is created only near the footer, covers the poster exactly, plays
   await expect(clip).toHaveCSS('pointer-events', 'none')
   await expect.poll(() => clip.evaluate(v => !v.paused && v.currentTime > 0.5 && v.classList.contains('is-ready'))).toBe(true)
   expect(requests.length).toBeGreaterThan(0)
+  // The full band, as the poster under it; its WebM says it is 10-bit AV1.
+  expect(isNarrow(await clip.evaluate(v => v.currentSrc))).toBe(false)
+  await expect(clip.locator('source[type^="video/webm"]')).toHaveAttribute('type', `video/webm; codecs="${media.footer.pool.av1}"`)
 
   // Placed exactly like the background: the footer's box, cover, the same position.
   const fit = await page.locator('.mk-footer').evaluate((f) => {
@@ -188,6 +198,30 @@ test('the clip is created only near the footer, covers the poster exactly, plays
 
   await page.evaluate(() => window.scrollTo(0, 0))
   await expect.poll(() => clip.evaluate(v => v.paused)).toBe(true)
+})
+
+test('on a phone the clip is the band\'s centre, like the poster, and a resize across the query swaps it', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto(HOME, { waitUntil: 'load' })
+  await toFooter(page)
+  const clip = page.locator('.mk-footer > video.mk-footer-pool')
+  await expect.poll(() => clip.evaluate(v => !v.paused && v.currentTime > 0.5 && v.classList.contains('is-ready'))).toBe(true)
+  expect(isNarrow(await clip.evaluate(v => v.currentSrc))).toBe(true)
+  expect(isNarrow(await page.locator('.mk-footer').evaluate(f => getComputedStyle(f).backgroundImage))).toBe(true)
+  await expect(clip.locator('source[type^="video/webm"]')).toHaveAttribute('type', `video/webm; codecs="${media.footer.pool.narrow.av1}"`)
+  // Covers the footer like its poster, and keeps the text readable.
+  const fit = await page.locator('.mk-footer').evaluate((f) => {
+    const a = f.getBoundingClientRect(), b = f.querySelector('.mk-footer-pool').getBoundingClientRect()
+    return Math.abs(a.left - b.left) + Math.abs(a.right - b.right) + Math.abs(a.top - b.top) + Math.abs(a.bottom - b.bottom)
+  })
+  expect(fit).toBeLessThanOrEqual(2)
+  for (const { text, ratio } of await contrasts(page, await underText(page))) expect(ratio, text).toBeGreaterThanOrEqual(4.5)
+
+  // Wider than the query: the full band replaces it, still one clip.
+  await page.setViewportSize({ width: 1024, height: 768 })
+  await toFooter(page)
+  await expect.poll(() => page.locator('.mk-footer > video.mk-footer-pool').evaluate(v => v.currentSrc)).toMatch(/footer-pool\.[^/]*\.(webm|mp4)/)
+  await expect(page.locator('.mk-footer-pool')).toHaveCount(1)
 })
 
 test.describe('reduced motion', () => {

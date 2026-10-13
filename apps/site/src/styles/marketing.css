@@ -603,9 +603,14 @@
    flat waterline (the meniscus) is the footer's top edge; the copy sits in
    the body of water below it. The grade floors the water's darkest tones,
    and the footer's text is ink with a soft halo of the page's white to lift
-   it off the moving caustics (e2e/pool.spec.js measures its contrast). */
+   it off the moving caustics (e2e/pool.spec.js measures its contrast).
+   Two renditions at the source's own scale: the full band (1920 wide), and
+   on a phone its centre (1080 wide), which is all a narrow footer shows of
+   it. `--pool-clip` tells motion/pool.js which one the poster is, so the
+   clip over it is the same. */
 .mk-footer {
   --pool-at: 50% 0%;
+  --pool-clip: wide;
   position: relative;
   z-index: 1;
   background: var(--bg) url('../media/footer-pool.webp') var(--pool-at) / cover no-repeat;
@@ -628,6 +633,13 @@
   transition: opacity var(--dur-slow) var(--ease-out);
 }
 .mk-footer-pool.is-ready { opacity: 1; }
+@media (max-width: 720px) {
+  .mk-footer {
+    --pool-clip: narrow;
+    background-image: url('../media/footer-pool-narrow.webp');
+    background-image: image-set(url('../media/footer-pool-narrow.avif') type('image/avif'), url('../media/footer-pool-narrow.webp') type('image/webp'));
+  }
+}
 .mk-footer-grid {
   display: grid;
   grid-template-columns: 1.6fr repeat(3, minmax(0, 1fr));

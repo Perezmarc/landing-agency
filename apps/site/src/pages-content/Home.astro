@@ -55,6 +55,8 @@ import cardAfterWebm from '../media/card-after.webm?url'
 import cardAfterMp4 from '../media/card-after.mp4?url'
 import poolWebm from '../media/footer-pool.webm?url'
 import poolMp4 from '../media/footer-pool.mp4?url'
+import poolNarrowWebm from '../media/footer-pool-narrow.webm?url'
+import poolNarrowMp4 from '../media/footer-pool-narrow.mp4?url'
 
 const stoneFiles = import.meta.glob('../media/stones/*.webp', { eager: true, import: 'default' })
 
@@ -98,8 +100,13 @@ const waterData = JSON.stringify({
   after: { webm: cardAfterWebm, mp4: cardAfterMp4, ...media.cards.after },
 })
 
-// The footer's pool (motion/pool.js): the looping clip over its poster.
-const poolData = JSON.stringify({ webm: poolWebm, mp4: poolMp4 })
+// The footer's pool (motion/pool.js): the looping clip over its poster, in
+// its two renditions (the full band, and its centre for phones), each with
+// its WebM's codec string (10-bit AV1).
+const poolData = JSON.stringify({
+  wide: { webm: poolWebm, mp4: poolMp4, av1: media.footer.pool.av1 },
+  narrow: { webm: poolNarrowWebm, mp4: poolNarrowMp4, av1: media.footer.pool.narrow.av1 },
+})
 
 const stone = async (name) => (await getImage({ src: stoneFiles[`../media/stones/${name}.webp`], format: 'webp', width: 160 })).src
 const rawStones = await Promise.all([1, 2, 3, 4, 5, 6, 7].map(i => stone(`raw-${i}`)))
