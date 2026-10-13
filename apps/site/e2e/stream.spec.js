@@ -201,12 +201,14 @@ for (const [width, height, layout] of [[1440, 900, 'side by side'], [1024, 768, 
     // On screen: every 40px down the column, where no opaque box is over the
     // stream (a card, the tabs), the column is darker than the page.
     await page.addStyleTag({ content: '.mk-header { visibility: hidden; }' })
+    // Puts document row y mid-screen and returns its screen y.
+    const centre = y => page.evaluate(async (y) => {
+      window.scrollTo({ top: y - innerHeight / 2, behavior: 'instant' })
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+      return y - scrollY
+    }, y)
     for (let y = heroBottom + 8; y < cardTop - 4; y += 40) {
-      const at = await page.evaluate(async (y) => {
-        window.scrollTo({ top: y - innerHeight / 2, behavior: 'instant' })
-        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
-        return y - scrollY
-      }, y)
+      let at = await centre(y)
       // (The copies take no pointer events, so hit-testing walks down to the
       // body through whatever is over them.)
       const open = await page.evaluate(({ x, at }) => {
@@ -221,6 +223,8 @@ for (const [width, height, layout] of [[1440, 900, 'side by side'], [1024, 768, 
       await expect.poll(() => page.locator('.mk-cal-water--stream').evaluateAll((vs, at) => vs
         .filter(v => { const r = v.getBoundingClientRect(); return r.top <= at && r.bottom >= at })
         .every(v => v.classList.contains('is-ready') && !v.paused && getComputedStyle(v).opacity === '1'), at)).toBe(true)
+      // The page may have scrolled while the clips started: centre the row again.
+      at = await centre(y)
       expect(await darkest(page, { x: Math.round(x - 12), y: Math.round(at - 2), width: 24, height: 4 }), `water at y=${y}`).toBeLessThan(WATER)
     }
   })
