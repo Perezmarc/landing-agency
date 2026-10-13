@@ -6,8 +6,9 @@ in a design session. Change them deliberately, and update this file when you do.
 ## The image
 
 Rain falls on a rough, raw quartz crystal and breaks into messy drops. The
-crystal shatters, a smooth polished pebble is left, and the water leaves it as
-**one calm stream**. The water lives in the hero; below it the page is calm
+crystal shatters, a smooth polished pebble is left, the rain stops, and one
+thin stream runs over the pebble in a smooth film and leaves it as **one calm
+stream**. The water lives in the hero; below it the page is calm
 white with still crystal stones. Water comes back further down only as
 dedicated clips attached to specific elements (the calendar's two cards),
 never as a continuous line down the page: the stream that left the hero
@@ -67,14 +68,14 @@ screen through the burst, and a normal scroll sees the 3.75 s crash. The
 crash is never scrubbed: the extra length only keeps the stage in view while
 the clip plays on its own clock. The layers, bottom to top:
 
-1. the AFTER poster and AFTER loop (the polished pebble, one stream);
+1. the AFTER poster and AFTER loop (the polished pebble, one stream in, one out);
 2. the transition clip, which plays once;
 3. the BEFORE layer (the raw rock in the rain): poster and loop;
 4. the copy.
 
 The transition clip's first frame is the raw rock and its last frame is the
 polished pebble: the rock shatters, its fragments fly out, the pebble is left,
-and the water gathers into one stream. Every swap between layers is therefore
+and the water draws together into the two thin streams. Every swap between layers is therefore
 invisible.
 
 States (`motion/hero-state.js`): `before → crashing → after → reassembling`.
@@ -87,8 +88,8 @@ States (`motion/hero-state.js`): `before → crashing → after → reassembling
 The crash clip is 3.75 s (90 frames). The source holds the unchanged rock for
 its first 7 frames, so the pipeline drops its first 6 (`CRASH_HEAD`): the clip
 opens one frame before the burst, the pebble shows clear of the fragments at
-about 1.25 s, a drop forms under it from about 2 s, and one stream runs from
-about 2.7 s to the end. It runs on this timeline:
+about 1.25 s, the splashes settle from about 2 s, and the two streams run
+from about 2.7 s to the end. It runs on this timeline:
 
 | Time | What happens |
 |---|---|
@@ -490,14 +491,23 @@ hero's BEFORE, crash and AFTER loops, the two card clips and the footer
 pool) is Gemini Omni Flash 1.1 image-to-video:
 
 - **The BEFORE still** (`f59fa925`): the raw rock in visible, splashy rain.
-- **The AFTER still** (`01381381`, `hf_20261012_161912_01381381-...png`): a
-  smooth elliptical polished pebble in the same place, smooth water, one
-  stream.
+- **The AFTER still** (`5df7194f`, `hf_20261013_124113_5df7194f-...png`,
+  FLUX 3 edited from the first AFTER still `01381381`): the same smooth
+  elliptical polished pebble in the same place; one thin stream falls onto
+  its top, spreads into a smooth glassy film and leaves from its lowest point
+  as one stream. No rain, no drops in the air, no beads on the pebble.
 - **The hero loops:** image-to-video with the same still as both start and
-  end frame, the camera locked off and only the water moving.
-- **The transition:** image-to-video from the BEFORE still to the AFTER
-  still: the rock bursts, the pebble is left and the water gathers into one
-  stream.
+  end frame, the camera locked off and only the water moving. The AFTER loop
+  (`1295d48a`) builds its flow for its first 2.5 s, so the loop is cut from
+  frame 60 (`AFTER_HEAD`); from there both streams run and keep moving.
+- **The transition** (`b60be4ea`): image-to-video from the BEFORE still to
+  the AFTER still: the rock bursts, the pebble is left, the rain stops and
+  the water draws together into the two thin streams.
+
+The first AFTER loop (`f9e229e4`) and transition (`f7f9f5f2`) are retired:
+the rain over the pebble and the beads on its top were frozen in the source
+(the mean of all its frames was its first frame), which read as fake, and
+its 1 s loop cross-fade showed. None of their files is referenced any more.
 - **The card clips:** image-to-video of a pale static slab under water: for
   BEFORE, uneven streams splashing over its top edge (horizontal, at about
   40% of the frame) and dripping down its face; for AFTER, one stream

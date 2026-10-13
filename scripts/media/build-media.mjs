@@ -76,6 +76,10 @@ const LOOP_FADE = FPS            // one second
    one frame before it, still on the BEFORE rock, so the cut from the BEFORE
    loop stays invisible and the shatter is immediate. */
 const CRASH_HEAD = 6
+/* The AFTER loop's source spends its first 2.5 s building the flow (the
+   streams start, break and settle); from frame 60 both streams run steadily
+   and keep moving, so the loop is cut from there. */
+const AFTER_HEAD = 60
 const CHECK_ONLY = process.argv.includes('--check')
 const ONLY_AT = process.argv.indexOf('--only')
 const ONLY = ONLY_AT > 0 ? new Set(process.argv[ONLY_AT + 1].split(',')) : null
@@ -152,7 +156,7 @@ const POOL = {
 const CLIPS = [
   { name: 'hero-before-16x9', w: 1600, h: 900 },
   { name: 'hero-transition-16x9', w: 1600, h: 900, once: true, head: CRASH_HEAD },
-  { name: 'hero-after-16x9', w: 1600, h: 900 },
+  { name: 'hero-after-16x9', w: 1600, h: 900, head: AFTER_HEAD },
   // Portrait: all three composed from the landscape clips, so the pebble has
   // exactly the same place and size in each and every cut stays invisible.
   // Each is extended below its 9:16 frame (EXTEND), so the stream runs on to
@@ -160,7 +164,7 @@ const CLIPS = [
   // the BEFORE loop's (`history`), so it is built after it.
   { name: 'hero-before-9x16', w: 720, h: 1280, compose: 'hero-before-16x9', extend: true },
   { name: 'hero-transition-9x16', w: 720, h: 1280, once: true, compose: 'hero-transition-16x9', head: CRASH_HEAD, extend: true, history: 'hero-before-9x16' },
-  { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9', extend: true },
+  { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9', head: AFTER_HEAD, extend: true },
   // The calendar's water: at most 960 wide (they show at about 600).
   { name: 'card-before', w: 960, h: 510, card: CARD.before },
   { name: 'card-after', w: 710, h: 556, card: CARD.after, head: 48 },
