@@ -12,8 +12,10 @@ import forge from '@forge/manifest'
       the small viewport the pebble is placed in (100svh); Chromium has no
       bars, so that case is reproduced by laying the hero out for a small
       viewport shorter than the screen.
-   2. The stream that falls onto the AFTER card lands on the hero stream's x,
-      at the hero's scale, in every calendar layout. */
+   2. The stream carries on from the hero's bottom edge to the AFTER card's
+      top border, on the hero stream's x, at the hero's scale, in every
+      calendar layout: one stream, with no gap (only where a card is over it,
+      on purpose). */
 
 const media = JSON.parse(readFileSync(new URL('../src/media/media.json', import.meta.url), 'utf8'))
 const HOME = routePath('home', forge.locales.default)
@@ -113,26 +115,113 @@ for (const [width, height, layout] of [[1440, 900, 'side by side'], [1920, 1080,
     await page.goto(HOME, { waitUntil: 'load' })
     await page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start' }))
     const stream = page.locator('.mk-day .ui-tabs-panel:visible [data-cal="after"] > .mk-cal-water--stream')
-    await expect(stream).toHaveCount(1)
-    await expect(stream).toHaveAttribute('aria-hidden', 'true')
-    const card = await page.locator('.mk-day .ui-tabs-panel:visible [data-cal="after"]').boundingBox()
-    const clip = await stream.boundingBox()
-    const hero = await heroStream(page, width, height)
+    await expect.poll(() => stream.count()).toBeGreaterThan(1)
     const { x, width: px } = media.cards.stream
-    // The same x, and the same scale.
-    expect(Math.abs(clip.x + x * clip.width - hero.x)).toBeLessThanOrEqual(TOLERANCE)
-    expect(Math.abs(clip.width - px * hero.scale)).toBeLessThanOrEqual(0.5)
-    // It falls onto the card: above it, tucked under its top border.
-    expect(clip.y).toBeLessThan(card.y)
-    expect(clip.y + clip.height).toBeGreaterThan(card.y)
-    expect(clip.y + clip.height).toBeLessThan(card.y + 40)
-    // Behind the card, like the AFTER clip.
-    await expect(stream).toHaveCSS('z-index', '-1')
+    for (const copy of await stream.all()) {
+      await expect(copy).toHaveAttribute('aria-hidden', 'true')
+      await expect(copy).toHaveCSS('z-index', '-1')   // behind the page's text and the cards
+    }
+    // Every copy on the same x, at the same scale (measured in one go, with
+    // the hero and the card).
+    const { card, media: m, copies } = await page.evaluate(() => {
+      const box = el => { const r = el.getBoundingClientRect(); return { x: r.left, y: r.top, width: r.width, height: r.height } }
+      const panel = [...document.querySelectorAll('.mk-day .ui-tabs-panel')].find(p => p.offsetParent)
+      const card = panel.querySelector('[data-cal="after"]')
+      return { card: box(card), media: box(document.querySelector('.mk-hero-media')), copies: [...card.querySelectorAll(':scope > .mk-cal-water--stream')].map(box) }
+    })
+    const s = media.hero[PORTRAIT(width, height) ? '9x16' : '16x9'].stream
+    const hero = { x: m.x + s.x * m.width, scale: s.unit * m.width }
+    for (const clip of copies) {
+      expect(Math.abs(clip.x + x * clip.width - hero.x)).toBeLessThanOrEqual(TOLERANCE)
+      expect(Math.abs(clip.width - px * hero.scale)).toBeLessThanOrEqual(0.5)
+    }
+    // The last one falls onto the card: from above it to under its top
+    // border (its rows below that are behind the card).
+    const last = copies.at(-1)
+    expect(last.y).toBeLessThan(card.y)
+    expect(last.y + last.height).toBeGreaterThan(card.y + 20)
+    expect(last.y + last.height).toBeLessThanOrEqual(card.y + last.height)
     // It follows a resize.
     await page.setViewportSize({ width: width + 40, height })
     await expect.poll(async () => {
-      const c = await stream.boundingBox(), h = await heroStream(page, width + 40, height)
+      const c = await stream.first().boundingBox(), h = await heroStream(page, width + 40, height)
       return Math.abs(c.x + x * c.width - h.x) <= TOLERANCE
     }).toBe(true)
+  })
+}
+
+/** Where the stream is drawn down the page, in document px: each copy's
+    solid rows (below --stream-solid; the rows above it fade in over the copy
+    above), and the cards it passes behind on purpose. */
+const coverage = page => page.evaluate(() => {
+  const doc = r => ({ top: r.top + scrollY, bottom: r.bottom + scrollY })
+  const panel = [...document.querySelectorAll('.mk-day .ui-tabs-panel')].find(p => p.offsetParent)
+  const copies = [...panel.querySelectorAll('[data-cal="after"] > .mk-cal-water--stream')]
+  const x = (() => { const r = copies[0].getBoundingClientRect(); return r.left + r.width / 2 })()
+  const spans = copies.map((v) => {
+    const r = doc(v.getBoundingClientRect())
+    const solid = parseFloat(v.style.getPropertyValue('--stream-solid')) / 100
+    return { top: r.top + solid * (r.bottom - r.top), bottom: r.bottom }
+  })
+  const before = panel.querySelector('[data-cal="before"]').getBoundingClientRect()
+  const behind = x > before.left && x < before.right ? [doc(before)] : []
+  return {
+    x,
+    heroBottom: doc(document.querySelector('.mk-hero').getBoundingClientRect()).bottom,
+    cardTop: doc(panel.querySelector('[data-cal="after"]').getBoundingClientRect()).top,
+    spans, behind,
+  }
+})
+
+/* One stream from the hero to the card: the copies (and the BEFORE card,
+   where the layout stacks it over the stream) cover every row from the
+   hero's bottom edge to the AFTER card's top border, and on screen the
+   column is water wherever the page shows it. */
+const GAP = 3   // px: the most the stream may break anywhere
+for (const [width, height, layout] of [[1440, 900, 'side by side'], [1024, 768, 'stacked weeks'], [390, 844, 'one day']]) {
+  test(`${layout} at ${width}x${height}: the stream is continuous from the hero's bottom to the AFTER card`, async ({ page }) => {
+    await page.setViewportSize({ width, height })
+    await page.goto(HOME, { waitUntil: 'load' })
+    await page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start' }))
+    await expect.poll(() => page.locator('.mk-cal-water--stream').count()).toBeGreaterThan(1)
+    const { x, heroBottom, cardTop, spans, behind } = await coverage(page)
+    // Geometry: the largest stretch between hero and card that nothing covers.
+    const covers = [...spans, ...behind].sort((a, b) => a.top - b.top)
+    let reach = heroBottom, gap = 0
+    for (const s of covers) {
+      if (s.bottom <= reach) continue
+      gap = Math.max(gap, s.top - reach)
+      reach = Math.max(reach, s.bottom)
+    }
+    gap = Math.max(gap, cardTop - reach)
+    test.info().annotations.push({ type: 'stream', description: JSON.stringify({ width, heroBottom, cardTop, copies: spans.length, gap }) })
+    expect(spans[0].top).toBeLessThanOrEqual(heroBottom + GAP)
+    expect(gap).toBeLessThanOrEqual(GAP)
+
+    // On screen: every 40px down the column, where no opaque box is over the
+    // stream (a card, the tabs), the column is darker than the page.
+    await page.addStyleTag({ content: '.mk-header { visibility: hidden; }' })
+    for (let y = heroBottom + 8; y < cardTop - 4; y += 40) {
+      const at = await page.evaluate(async (y) => {
+        window.scrollTo({ top: y - innerHeight / 2, behavior: 'instant' })
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+        return y - scrollY
+      }, y)
+      // (The copies take no pointer events, so hit-testing walks down to the
+      // body through whatever is over them.)
+      const open = await page.evaluate(({ x, at }) => {
+        for (const el of document.elementsFromPoint(x, at)) {
+          if (el === document.body || el === document.documentElement) return true
+          const bg = getComputedStyle(el).backgroundColor
+          if (bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') return false
+        }
+        return true
+      }, { x, at })
+      if (!open) continue
+      await expect.poll(() => page.locator('.mk-cal-water--stream').evaluateAll((vs, at) => vs
+        .filter(v => { const r = v.getBoundingClientRect(); return r.top <= at && r.bottom >= at })
+        .every(v => v.classList.contains('is-ready') && !v.paused && getComputedStyle(v).opacity === '1'), at)).toBe(true)
+      expect(await darkest(page, { x: Math.round(x - 12), y: Math.round(at - 2), width: 24, height: 4 }), `water at y=${y}`).toBeLessThan(WATER)
+    }
   })
 }
