@@ -281,17 +281,44 @@ added, moved or condensed; the empty grid is the message.
     soft. It is retired.)
     - **A 9-slice.** The card's aspect changes with the layout (tall side
       by side, wide stacked, narrow on a phone) and the plate's (about 2:1)
-      does not, so the plate is not stretched: it is cut into ten pieces,
-      all drawn at one scale, 0.4 CSS px per source px (`--rim-k`; 0.8
-      device px a pixel at 2x, 1.2 at 3x, so nothing is upscaled past
-      1.2): the four corners as they are; one strip of each straight edge,
-      stretched along its length only; and the stream coming in at the top
-      and the one leaving the bottom, each in a piece of its own at its own
-      scale. Each piece is a `<div>` that crops one `<video>` of the whole
-      atlas to its rect (`.mk-rim-piece`); the rim, `.mk-rim`, is
-      multiplied over the card (its white disappears) and shown once every
-      piece has a frame. The pieces play as one: they start together and
-      any that drifts more than 0.08 s from the first is put back.
+      does not, so the plate is not stretched. It is cut into eight pieces
+      of one atlas, all drawn at one scale, 0.4 CSS px per source px
+      (`--rim-k`; 0.8 device px a pixel at 2x, 1.2 at 3x, so nothing is
+      upscaled past 1.2): the four corners as they are; one strip of each
+      side, stretched along its length only; and the top and the bottom
+      edge, each ONE piece cut from one band of source rows.
+    - **The junctions.** Where a stream meets the rim the rim is not
+      straight: by the incoming stream its lines sweep up into the flanges
+      the stream spreads into (within about 120 source px of it), and round
+      the outgoing one the whole band dips into the stream's neck (its
+      outer line 17 source px down under it, back on its line about 160 px
+      either side). (The first cut placed separate stream pieces over the
+      straight strips: the rim's line went missing between the flanges,
+      the flanges ended at the piece's sides, and at the bottom the two
+      lines ran a few px apart.) So each edge piece is [a straight stretch
+      | the junction | a straight stretch], side by side on the same rows:
+      the junction is the source as it is, 340 source px wide at the top
+      and 400 at the bottom, centred on its stream, with straight rim to
+      spare at each end; each stretch is the rim just beyond it, averaged
+      along its length. On the page each edge is three views of that one
+      piece (`top-l`, `top-c`, `top-r`; the same for the bottom): the
+      junction unscaled on the page stream's x (`--rim-x`, measured by
+      `motion/water.js`) and the stretches pulled out to the corners, all
+      placed by the same rows, so the rim's line is on one page row from
+      corner to corner. Under the incoming stream the source's water is one
+      clear meniscus with no rim line in it; the pipeline multiplies the
+      straight rim's cross-section in under it (the rim seen through the
+      water), easing out by the flanges, so the line runs on through.
+    - **Joins.** A stretch runs on, opaque, under what it meets, and that
+      piece fades in over it: a corner over 4px (`--rim-join`), the
+      junction over 16px of its straight ends (40 source px, `--jf`). That
+      is a true cross-fade, and only ever over straight, uniform rim, where
+      the two are the same water. Pieces that meet are laid out in the
+      atlas on the same offset, so the browser snaps their videos to the
+      same device pixel; each corner's straight runs ease into its
+      stretches' cross-section; the stretches and sides are one
+      cross-section each (so a speck of dust on the plate is not drawn out
+      into a dash).
     - **On the border.** The pipeline cuts every piece so that the plate's
       outer contour (the centre of its dark outer line) is a straight line
       at a known offset in it, 10 source px of the outside kept beyond it
@@ -299,38 +326,43 @@ added, moved or condensed; the empty grid is the message.
       outer line to an inner one; the face beyond goes to white). CSS puts
       that contour 0.5px inside the card's border box (`--rim-c`), on the
       card's 1px border; the band is 13px deep, inside the padding (14px
-      and up), so nothing changes in the content box. The plate's corners
-      are arcs of about 100 source px, 40 CSS px at this scale where the
-      card's are 16px: the pipeline redraws each to 40 source px (16 CSS
-      px) by moving every point of its band in along the radius by the same
-      amount, so the band keeps its width and only the arc tightens. Each
-      corner's straight runs ease into its strips' cross-section, the
-      strips are one cross-section each (the mean of their length, so a
-      speck of dust on the plate is not drawn out into a dash), and pieces
-      that meet are laid out in the atlas on the same offset, so the
-      browser snaps their videos to the same device pixel; they overlap by
-      4px (`--rim-join`) and cross-fade there.
-    - **The stream lands.** The stream pieces are centred on the page
-      stream's x (`--rim-x`, measured by `motion/water.js`). The incoming
-      stream widens as it meets the rim; the pipeline measures its width on
-      every row over the contour (`media.json` `cards.rim.flare`), and the
-      page hands the page stream over to it on the row where the two are
-      as wide (`landingRow`, unit-tested): the page stream fades out over
-      6px there (`--stream-end`) and the rim's own stream fades in over the
-      same 6px. That row is 8px over the border at 1440 and 1024 and 17px
-      on a phone, so the water is clearly seen landing; the two edges the
-      streams cross fade out under them.
+      and up), so nothing changes in the content box. Once the rim is up
+      its line is the card's border, so the card's own border line goes
+      transparent (it would only show through the clear water at the
+      junctions). The plate's corners are arcs of about 100 source px, 40
+      CSS px at this scale where the card's are 16px: the pipeline redraws
+      each to 40 source px (16 CSS px) by moving every point of its band in
+      along the radius by the same amount, so the band keeps its width and
+      only the arc tightens.
+    - **Playing.** Each view is a `<div>` that crops one `<video>` of the
+      whole atlas to its rect (`.mk-rim-piece`): twelve videos. The rim,
+      `.mk-rim`, is multiplied over the card (its white disappears) and
+      shown once every view has a frame. They play as one: they start
+      together and any that drifts more than 0.08 s from the first is put
+      back.
+    - **The stream lands.** The incoming stream widens as it meets the
+      rim; the pipeline measures its width on every row over the contour
+      (`media.json` `cards.rim.flare`), and the page hands the page stream
+      over to the junction's own on the row where the two are as wide
+      (`landingRow`, unit-tested): the page stream fades out over 6px there
+      (`--stream-end`) and the junction's stream fades in over the same 6px.
+      That row is 8px over the border at 1440 and 1024 and 17px on a
+      phone, so the water is clearly seen landing.
 
     Measured (`e2e/water.spec.js` shoots the page with the rim's videos
-    shown and hidden, and holds the darkest change across each border, its
+    shown and hidden. It holds the darkest change across each border, its
     outer line, to the border's centre within 1px, and no changed pixel in
-    the content box):
+    the content box. Along the whole top and bottom edges, in every device
+    column within 6px of the border, it finds a line (never a gap). Where
+    the rim is straight, it finds one line, which never steps from column
+    to column. Through the junctions, where the streams' own edges converge
+    on it, the water's outer edge never steps):
 
-    | Viewport | Outer line off the border (top / bottom / sides) | In the content box | Over the top / under the bottom / beside |
-    |---|---|---|---|
-    | 1440×900 | 0.27 / 0.17 / 0px | 0 | 7 / 67 / 1px |
-    | 1024×768 | 0.55 / −0.55 / 0px | 0 | 8 / 67 / 1px |
-    | 375×812 | 0.61 / −0.48 / 0px | 0 | 17 / 66 / 1px |
+    | Viewport | Outer line off the border (top / bottom / sides) | Line step, straight / junctions | In the content box | Over the top / under the bottom / beside |
+    |---|---|---|---|---|
+    | 1440×900 | 0.27 / 0.17 / 0px | 0 / 0px | 0 | 7 / 47 / 1px |
+    | 1024×768 | 0.55 / 0.45 / 0px | 0 / 0px | 0 | 8 / 49 / 1px |
+    | 390×844 | −0.22 / 0.69 / 0px | 0 / 0px | 0 | 15 / 54 / 1px |
 
   - **The stream from the hero to the AFTER card: one clip.** It used to
     be drawn with CSS gradients (and before that, stacked copies of a clip
@@ -524,13 +556,17 @@ card's rim atlas; the footer pool is one wide loop.
      outer line): its four edges fitted as lines (it is 5px out of level
      across its width), each corner as the circle tangent to its two edges
      that runs darkest along the arc (radius 93-97px), and the two streams'
-     axes. Then the ten pieces are resampled from every frame so the
+     axes. Then the eight pieces are resampled from every frame so the
      contour is straight and at a fixed offset in each (see "AFTER" above):
-     the corners redrawn to a 40px radius, the strips averaged along their
-     length, the corners' straight runs eased into the strips'. They are
-     packed in a 544×224 atlas, the pieces that meet on the page on the
-     same offset, each with 2px of its own content round it and 4px of
-     white between.
+     the corners redrawn to a 40px radius; the top and bottom each one band
+     of rows, [stretch | junction | stretch], the junction as it is
+     (340 and 400 px wide, centred on the streams) and the stretches the
+     70 px of rim just beyond it, averaged along x; the straight rim's
+     cross-section multiplied in under the incoming stream's meniscus; the
+     sides averaged along their length; the corners' straight runs eased
+     into the stretches'. They are packed in a 640×304 atlas, the pieces
+     that meet on the page on the same offset, each with 2px of its own
+     content round it and 4px of white between.
    - **The splash strip** (`cardPlate`) is cropped to its slab first, then
      divided by a clean plate of the slab and the wall: the wall is the
      90th percentile, low-passed over the wall only with objects iterated
@@ -571,7 +607,7 @@ card's rim atlas; the footer pool is one wide loop.
 2. **Loop:** the last second is cross-faded into the first. The transition is
    not looped. The rim's calm stretch is 54 frames (90-143), so it is
    cross-faded over 18 (0.75 s) into a 36-frame loop: the water there
-   hardly moves (its frame steps are about 40 dB), so the seam is 34.7 dB
+   hardly moves (its frame steps are about 43 dB), so the seam is 36.7 dB
    and a cross-fade cannot ghost anything. The stream below the hero ends
    on its first frame (the same still), so it is not cross-faded: it plays
    frames 0-142 and wraps (`seamless`). The pool's source already ends on its first frame (PSNR 40.3 dB between
@@ -616,14 +652,14 @@ stream below the hero, per rendition).
 | Check | Target | Current |
 |---|---|---|
 | Void luma | ≥ 234 | 235 on every clip |
-| Loop-seam PSNR | ≥ 30 dB, or, for water busier than that frame to frame, no worse than its median frame step less 1 dB | hero 33.6–40 dB; AFTER rim 34.7 dB; BEFORE splash strip 29.3 dB (its splashes step at 30.3 dB) |
+| Loop-seam PSNR | ≥ 30 dB, or, for water busier than that frame to frame, no worse than its median frame step less 1 dB | hero 33.6–40 dB; AFTER rim 36.7 dB; BEFORE splash strip 29.3 dB (its splashes step at 30.3 dB) |
 | Stream below the hero: seam (seamless) | no worse than the steps either side less 1 dB | 16:9 34.1 dB (steps 35.6); 9:16 31.8 dB (steps 32.6) |
 | Crash cut in / out, 16:9 | as close as the BEFORE loop to itself (about 31–33 dB frame to frame, the rain moving) | 29.7 / 32.7 dB |
 | Crash cut in / out, 9:16 (whole frame, extension included) | the same | 33.4 / 33.3 dB |
 | Crash clip | starts at the shatter | 3.75 s (first 6 source frames dropped) |
 | Desktop hero media (BEFORE, transition and AFTER, WebM) | ≤ 2.5 MB | about 1.2 MB (661 + 420 + 163 KB; MP4 1.8 MB) |
 | Mobile hero media (WebM, 720×1792 with the extension) | ≤ 1.2 MB | about 0.63 MB (339 + 228 + 76 KB; MP4 0.86 MB) |
-| Calendar water (WebM, every tier with media) | ≤ 960 wide | splash 960×64, 50 KB (MP4 70 KB); rim atlas 544×224, 24 KB (MP4 34 KB), ten `<video>`s of it on the AFTER card, 1.2 MP decoded a frame in all |
+| Calendar water (WebM, every tier with media) | ≤ 960 wide | splash 960×64, 50 KB (MP4 70 KB); rim atlas 640×304, 25 KB (MP4 35 KB), twelve `<video>`s of it on the AFTER card, 2.3 MP decoded a frame in all |
 | Stream below the hero (WebM) | one copy reaches the AFTER card in every layout | 16:9 128×3200, 85 KB (MP4 99 KB), 0.41 MP a frame; 9:16 64×3600, 50 KB (MP4 51 KB), 0.23 MP; posters AVIF 2-3 KB, WebP 4-5 KB |
 | Footer pool: void luma (the white above the line) / seam | ≥ 234 / no worse than the steps either side less 1 dB | 236 / 42.3 dB (steps 42.1 dB) |
 | Footer pool clip, desktop (WebM, home, media tier) | ≤ 1 MB, the source's full width | 1920×532, 143 frames (5.96 s), 10-bit AV1, 489 KB (MP4 1.47 MB) |

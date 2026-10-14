@@ -42,9 +42,10 @@ test('no card clip until the calendar is near; then the splashes and the rim on 
   await expect.poll(() => strips(page).count()).toBeGreaterThan(1)
   await expect(rim(page)).toHaveCount(1)
   await expect(page.locator('.mk-rim')).toHaveCount(1)
-  // Ten pieces, one <video> of the one atlas clip each, played as one.
-  await expect(rim(page).locator('.mk-rim-piece')).toHaveCount(10)
-  await expect(rim(page).locator('video')).toHaveCount(10)
+  // Twelve views of the one atlas clip (four corners, two sides, three of
+  // each of the top and bottom pieces), a <video> each, played as one.
+  await expect(rim(page).locator('.mk-rim-piece')).toHaveCount(12)
+  await expect(rim(page).locator('video')).toHaveCount(12)
   for (const v of await page.locator('.mk-cal-water, .mk-rim video').all()) {
     await expect(v).toHaveAttribute('aria-hidden', 'true')
     await expect(v).toHaveCSS('pointer-events', 'none')
@@ -102,9 +103,13 @@ const bring = (page, which, edge) => page.locator(`${visible} [data-cal="${which
 
 /** What the clips change: every changed pixel measured against the card
     (how far above, under, below and beside it, and how many inside its
-    content box), and, along the given lines, where the change is darkest
-    (the rim's outer line). */
-const footprint = (page, { shown, hidden }, box, lines = []) => page.evaluate(async ({ shown, hidden, box: { card, content }, lines }) => {
+    content box); along the given lines, where the change is darkest (the
+    rim's outer line); and, along `row` (a border row, from x0 to x1), the
+    line in every device column within 6px of it: the columns with no line
+    (a gap), the columns with two (a second line), and, for the line
+    nearest the row in each column, how far it strays from the row and how
+    far it steps from one column to the next. */
+const footprint = (page, { shown, hidden }, box, lines = [], row = null) => page.evaluate(async ({ shown, hidden, box: { card, content }, lines, row }) => {
   const read = async (src) => {
     const img = new Image(); img.src = `data:image/png;base64,${src}`; await img.decode()
     const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight
@@ -138,11 +143,27 @@ const footprint = (page, { shown, hidden }, box, lines = []) => page.evaluate(as
     }
     return { at, axis, from, to, where, dark: Math.round(best) }
   })
+  if (row) {
+    // Per device column: its lines (where the change peaks over LINE, in px
+    // from the row) and whether two of them are apart (a second peak over
+    // PEAK, with a valley under half of the lesser between them).
+    const LINE = 25, PEAK = 40, y0 = Math.round((row.y - 6) * k), y1 = Math.round((row.y + 6) * k)
+    out.row = []
+    for (let x = Math.round(row.x0 * k); x <= Math.round(row.x1 * k); x++) {
+      const dark = []
+      for (let y = y0; y <= y1; y++) { const i = (y * a.w + x) * 4; dark.push(luma(b.d, i) - luma(a.d, i)) }
+      const peak = i => (i === 0 || dark[i] >= dark[i - 1]) && (i === dark.length - 1 || dark[i] >= dark[i + 1])
+      const max = Math.max(...dark), at = dark.indexOf(max)
+      const lines = dark.map((v, i) => v >= LINE && peak(i) ? +((y0 + i + 0.5) / k - row.y).toFixed(2) : null).filter(v => v !== null)
+      const two = dark.some((v, i) => v >= PEAK && peak(i) && i !== at && Math.min(...dark.slice(Math.min(i, at), Math.max(i, at) + 1)) < Math.min(v, max) / 2)
+      out.row.push({ x: +((x + 0.5) / k).toFixed(2), lines, two })
+    }
+  }
   return out
-}, { shown, hidden, box, lines })
+}, { shown, hidden, box, lines, row })
 
 /* Side by side, stacked weeks and one day: the same placement rules. */
-for (const [width, height] of [[1440, 900], [1024, 768], [375, 812]]) {
+for (const [width, height] of [[1440, 900], [1024, 768], [390, 844]]) {
   test(`at ${width}px the BEFORE strip sits on the top border, every copy in a row along it`, async ({ page }) => {
     await page.setViewportSize({ width, height })
     await page.goto(HOME, { waitUntil: 'load' })
@@ -211,7 +232,7 @@ for (const [width, height] of [[1440, 900], [1024, 768], [375, 812]]) {
       const s = document.querySelector('.mk-day-stream').getBoundingClientRect()
       const piece = k => document.querySelector(`.mk-rim-piece[data-piece="${k}"]`)
       const centre = el => { const r = el.getBoundingClientRect(); return (r.left + r.right) / 2 }
-      return { stream: s.left + sx * s.width, in: centre(piece('in')), out: centre(piece('out')) }
+      return { stream: s.left + sx * s.width, in: centre(piece('top-c')), out: centre(piece('bottom-c')) }
     }, { sx: media.stream.x })
     expect(Math.abs(x.in - x.stream), 'stream in on the page stream').toBeLessThanOrEqual(1)
     expect(Math.abs(x.out - x.stream), 'stream out under it').toBeLessThanOrEqual(1)
@@ -227,7 +248,9 @@ for (const [width, height] of [[1440, 900], [1024, 768], [375, 812]]) {
         { at: (card.top + card.bottom) / 2 + (edge === 'top' ? -150 : 150), axis: 'x', from: card.left - 8, to: card.left + 8 },
         { at: (card.top + card.bottom) / 2 + (edge === 'top' ? -150 : 150), axis: 'x', from: card.right - 8, to: card.right + 8 },
       ].filter(l => l.axis === 'y' || (l.at > 20 && l.at < height - 20))
-      const f = await footprint(page, await shots(page, `${visible} .mk-rim video`), box, lines)
+      // The rim's line along the whole edge, through the junction.
+      const row = { y: edge === 'top' ? card.top + 0.5 : card.bottom - 0.5, x0: card.left + 20, x1: card.right - 20 }
+      const f = await footprint(page, await shots(page, `${visible} .mk-rim video`), box, lines, row)
       test.info().annotations.push({ type: 'rim', description: JSON.stringify({ width, edge, ...f, card }) })
       expect(f.changed).toBeGreaterThan(0)
       // Nothing inside the content box.
@@ -239,6 +262,32 @@ for (const [width, height] of [[1440, 900], [1024, 768], [375, 812]]) {
         expect(l.dark, `a line of water at ${JSON.stringify(l)}`).toBeGreaterThan(30)
         expect(Math.abs(l.where - border), `on the border at ${JSON.stringify(l)}`).toBeLessThanOrEqual(1)
       }
+      // One line, unbroken, from corner to corner, through the stream's
+      // junction, in every column within 6px of the border: never a gap;
+      // where the rim is straight, never two lines, and the one line never
+      // stepping from one column to the next. Inside the junctions the
+      // streams' own water meets the rim (the incoming one's flanges sweep
+      // into it from over the border, the outgoing one's neck dips under
+      // it), their edges converging on the rim's line from either side.
+      const flanges = (RIM.junction[edge] / 2 - RIM.fade) * k
+      const inFlanges = c => Math.abs(c.x - x.stream) <= flanges
+      const near = c => c.lines.reduce((a, b) => Math.abs(b) < Math.abs(a) ? b : a, Infinity)
+      expect(f.row.length).toBeGreaterThan(200)
+      expect(f.row.filter(c => !c.lines.length).map(c => c.x), `${edge}: columns with no line`).toEqual([])
+      const straight = f.row.filter(c => !inFlanges(c))
+      expect(straight.filter(c => c.two).map(c => +(c.x - x.stream).toFixed(1)), `${edge}: columns with a second line`).toEqual([])
+      const steps = straight.slice(1).map((c, i) => Math.abs(c.x - straight[i].x) < 1 ? Math.abs(near(c) - near(straight[i])) : 0)
+      const strays = f.row.map(c => Math.abs(near(c)))
+      test.info().annotations.push({ type: 'rim-line', description: JSON.stringify({ width, edge, step: Math.max(...steps), stray: Math.max(...strays) }) })
+      expect(Math.max(...steps), `${edge}: the line steps`).toBeLessThanOrEqual(1.5)
+      // Through the junction, the water's outer edge (its outermost line:
+      // the flanges' over the top border, the neck's under the bottom one)
+      // runs on with no step.
+      const outer = c => edge === 'top' ? Math.min(...c.lines) : Math.max(...c.lines)
+      const junction = f.row.filter(inFlanges)
+      const edgeSteps = junction.slice(1).map((c, i) => Math.abs(c.x - junction[i].x) < 1 ? Math.abs(outer(c) - outer(junction[i])) : 0)
+      test.info().annotations.push({ type: 'rim-junction', description: JSON.stringify({ width, edge, step: Math.max(...edgeSteps), lines: junction.filter((_, i) => i % 4 === 0).map(c => `${(c.x - x.stream).toFixed(0)}:${c.lines.join('/')}`) }) })
+      expect(Math.max(...edgeSteps), `${edge}: the water's outer edge steps in the junction`).toBeLessThanOrEqual(1.5)
       // A thin band round the border: a few px outside the sides; the
       // streams' pieces above and below.
       expect(f.left).toBeLessThanOrEqual(Math.ceil(RIM.out * k) + 1)

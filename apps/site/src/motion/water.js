@@ -17,9 +17,12 @@
                              time, cross-faded into each other.
      AFTER ("With an agent") a line of water on the card's border, the
                              stream landing on its top and leaving its
-                             bottom: ten pieces of one atlas clip (card-rim),
-                             laid round the card by CSS like a 9-slice
-                             (.mk-rim), played as one.
+                             bottom: one atlas clip (card-rim) laid round the
+                             card by CSS like a 9-slice (.mk-rim), twelve
+                             views of it played as one: four corners, two
+                             sides, and three of each of the top and bottom
+                             pieces (the junction where the stream meets the
+                             rim, and a stretch either side of it).
 
    Media tier only (index.js). The stream's clip is created once the stream
    is in view (its still is already there), the cards' clips once the
@@ -67,6 +70,20 @@ export function landingRow(flare, width) {
   return (rows.find(([, w]) => w >= width) ?? rows.at(-1))[0]
 }
 
+/* The rim's views of its atlas (media.json `cards.rim`): each corner and
+   side piece as it is, and the top and bottom pieces three times each, as
+   their left stretch (`-l`), their junction (`-c`) and their right stretch
+   (`-r`): [x, y, width, height] in the atlas. */
+export function rimViews({ pieces, stretch, junction }) {
+  const views = {}
+  for (const [k, [x, y, w, h]] of Object.entries(pieces)) {
+    if (!(k in junction)) { views[k] = [x, y, w, h]; continue }
+    const j = junction[k]
+    Object.assign(views, { [`${k}-l`]: [x, y, stretch, h], [`${k}-c`]: [x + stretch, y, j, h], [`${k}-r`]: [x + stretch + j, y, stretch, h] })
+  }
+  return views
+}
+
 /** @param {HTMLElement} root the [data-day] wrapper, carrying data-water */
 export function initWater(root) {
   const data = JSON.parse(root.dataset.water)
@@ -111,19 +128,19 @@ export function initWater(root) {
     sight.observe(flow)
   }
 
-  /* The rim: one piece per entry of the atlas, each a <video> of the whole
-     atlas showing its rect; shown once every piece has a frame. */
+  /* The rim: a <video> of the whole atlas for each view of it (rimViews),
+     each showing its rect; shown once every one has a frame. */
   function makeRim() {
-    const { webm, mp4, size: [aw, ah], pieces } = data.rim
+    const { webm, mp4, size: [aw, ah], junction } = data.rim
     const el = document.createElement('div')
     el.className = 'mk-rim'
     el.dataset.water = 'rim'
     vars(el, {
       '--aw': aw, '--ah': ah, '--rim-out': data.rim.out, '--rim-in': data.rim.in, '--rim-corner': data.rim.corner,
-      '--rim-above': data.rim.above, '--rim-below': data.rim.below, '--stream-w': pieces.in[2],
+      '--rim-above': data.rim.above, '--rim-below': data.rim.below, '--jt': junction.top, '--jb': junction.bottom, '--jf': data.rim.fade,
     })
     let waiting = 0
-    for (const [k, [px, py, pw, ph]] of Object.entries(pieces)) {
+    for (const [k, [px, py, pw, ph]] of Object.entries(rimViews(data.rim))) {
       const piece = document.createElement('div')
       piece.className = 'mk-rim-piece'
       piece.dataset.piece = k
