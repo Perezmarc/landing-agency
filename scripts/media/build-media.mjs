@@ -88,12 +88,15 @@ const LOOP_FADE = FPS            // one second
 const CRASH_HEAD = 6
 /* The AFTER loop's source spends its first 2.5 s building the flow (the
    streams start, break and settle); from frame 60 both streams run steadily
-   and keep moving, so the loop is cut from there. It then plays on to the
-   source's last frame (its still), and AFTER_BRIDGE motion-interpolated
-   frames carry the water from that frame back to frame 60. A cross-fade there
-   blended two streams in different places into one doubled, ghosted stream
-   for a whole second; the bridge moves the one stream instead. */
+   and keep moving, so the loop is cut from there. Its last second (from
+   frame 119) thins the stream to half its width to land on the still, so
+   the loop ends before it (AFTER_END), where the stream is as wide as at
+   frame 60, and AFTER_BRIDGE motion-interpolated frames carry the water from
+   frame 118 back to frame 60. A cross-fade there blended two streams in
+   different places into one doubled, ghosted stream for a whole second; the
+   bridge moves the one stream instead. */
 const AFTER_HEAD = 60
+const AFTER_END = 119
 const AFTER_BRIDGE = 12
 const CHECK_ONLY = process.argv.includes('--check')
 const ONLY_AT = process.argv.indexOf('--only')
@@ -165,7 +168,7 @@ const POOL = {
 const CLIPS = [
   { name: 'hero-before-16x9', w: 1600, h: 900 },
   { name: 'hero-transition-16x9', w: 1600, h: 900, once: true, head: CRASH_HEAD },
-  { name: 'hero-after-16x9', w: 1600, h: 900, head: AFTER_HEAD, bridge: AFTER_BRIDGE },
+  { name: 'hero-after-16x9', w: 1600, h: 900, head: AFTER_HEAD, end: AFTER_END, bridge: AFTER_BRIDGE },
   // Portrait: all three composed from the landscape clips, so the pebble has
   // exactly the same place and size in each and every cut stays invisible.
   // Each is extended below its 9:16 frame (EXTEND), so the stream runs on to
@@ -173,7 +176,7 @@ const CLIPS = [
   // the BEFORE loop's (`history`), so it is built after it.
   { name: 'hero-before-9x16', w: 720, h: 1280, compose: 'hero-before-16x9', extend: true },
   { name: 'hero-transition-9x16', w: 720, h: 1280, once: true, compose: 'hero-transition-16x9', head: CRASH_HEAD, extend: true, history: 'hero-before-9x16' },
-  { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9', head: AFTER_HEAD, bridge: AFTER_BRIDGE, extend: true },
+  { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9', head: AFTER_HEAD, end: AFTER_END, bridge: AFTER_BRIDGE, extend: true },
   // The calendar's water. The BEFORE card's splash strip is cut from the
   // card-before source (its own output name: `source`), and shows at about
   // 300 CSS px (2–4 copies along the border). The AFTER card's rim is an
@@ -397,9 +400,9 @@ function blur(src, w, h, r) {
 
 /** Every frame of a clip as raw RGB at (w, h), less the first `head` frames,
     optionally cropped first ({ x, y, w, h } in source pixels). */
-function decodeAll(path, w, h, head = 0, crop = null, bridge = 0) {
+function decodeAll(path, w, h, head = 0, crop = null, bridge = 0, end = 0) {
   const cut = crop ? `crop=${crop.w}:${crop.h}:${crop.x}:${crop.y},` : ''
-  const raw = spawnSync('ffmpeg', ['-v', 'error', '-i', path, '-vf', `trim=start_frame=${head},setpts=PTS-STARTPTS,${cut}scale=${w}:${h}:flags=area`, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], { maxBuffer: 2 ** 31 })
+  const raw = spawnSync('ffmpeg', ['-v', 'error', '-i', path, '-vf', `trim=start_frame=${head}${end ? `:end_frame=${end}` : ''},setpts=PTS-STARTPTS,${cut}scale=${w}:${h}:flags=area`, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], { maxBuffer: 2 ** 31 })
   if (raw.status !== 0) throw new Error(raw.stderr.toString())
   const frames = splitFrames(raw.stdout, w * h * 3)
   return bridge ? frames.concat(bridgeFrames(frames.at(-1), frames[0], w, h, bridge)) : frames
@@ -714,9 +717,9 @@ function encoder(args) {
    wide, so no rain streak or fragment is ever stretched. The grade then takes
    that plate to white (keepMap). Written as a lossless intermediate the grade
    then reads. */
-async function composePortrait(src, out, { w, h, head = 0, bridge = 0 }) {
+async function composePortrait(src, out, { w, h, head = 0, bridge = 0, end = 0 }) {
   const { sw, sh, left, top, feather } = portraitPlacement(w, h)
-  const frames = decodeAll(src, sw, sh, head, null, bridge)
+  const frames = decodeAll(src, sw, sh, head, null, bridge, end)
   const rows = Math.round(sh * 0.04), plate = new Float32Array(sw * 3)
   for (let x = 0; x < sw; x++) for (let c = 0; c < 3; c++) {
     let acc = 0, n = 0
@@ -755,11 +758,11 @@ function grader(clip, src) {
     return { count: all.length - head, graded: i => gradeCard(all[head + i], w, h, plate, exposure[head + i], keep, clip.card.crisp) }
   }
   // A composed source is already trimmed and bridged (composePortrait drops
-  // the head and adds the bridge).
-  const lw = Math.round(w / 4), lh = Math.round(h / 4), head = clip.compose ? 0 : clip.head ?? 0, bridge = clip.compose ? 0 : clip.bridge ?? 0
-  const { field: low, exposure } = voidField(decodeAll(src, lw, lh, head, null, bridge), lw, lh)
+  // the head and tail and adds the bridge).
+  const lw = Math.round(w / 4), lh = Math.round(h / 4), head = clip.compose ? 0 : clip.head ?? 0, bridge = clip.compose ? 0 : clip.bridge ?? 0, end = clip.compose ? 0 : clip.end ?? 0
+  const { field: low, exposure } = voidField(decodeAll(src, lw, lh, head, null, bridge, end), lw, lh)
   const gain = low.map(ch => { const up = upsample(ch, lw, lh, w, h); for (let i = 0; i < up.length; i++) up[i] = 255 / Math.max(120, up[i]); return up })
-  const frames = decodeAll(src, w, h, head, null, bridge), keep = keepMap(clip)
+  const frames = decodeAll(src, w, h, head, null, bridge, end), keep = keepMap(clip)
   return { count: frames.length, graded: i => gradeFrame(frames[i], w, h, gain, exposure[Math.min(i, exposure.length - 1)], keep) }
 }
 

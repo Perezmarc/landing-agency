@@ -231,6 +231,7 @@ for (const [width, height, scale] of [[1440, 900, 2], [1024, 768, 2], [390, 844,
     await expect(page.locator('video.mk-hero-video--after.is-ready')).toHaveCount(1)
     await page.addStyleTag({ content: '.mk-header { visibility: hidden; }' })
     const g = await geometry(page, width, height)
+    const widths = []
     for (const moment of [0, 1, 2]) {
       await page.evaluate(() => document.querySelectorAll('video').forEach(v => v.play()))
       await page.waitForTimeout(moment ? 1300 : 300)
@@ -264,7 +265,7 @@ for (const [width, height, scale] of [[1440, 900, 2], [1024, 768, 2], [390, 844,
       const x = g.hero.x - Math.round(g.hero.x - 30) - 30
       const below = rows.filter(r => r.y >= 0), mean = k => below.reduce((s, r) => s + r[k], 0) / below.length
       expect(Math.abs(mean('centre') - x), 'centre under the hero\'s edge').toBeLessThanOrEqual(1.5)
-      expect(Math.abs(mean('width') - g.hero.width), 'width under the hero\'s edge').toBeLessThanOrEqual(3)
+      widths.push(...below.map(r => r.width))
       for (const [i, r] of rows.entries()) {
         expect(r.min, `water at ${r.y}px from the hero's bottom`).toBeLessThan(WATER)
         if (r.y < -64) continue
@@ -273,6 +274,11 @@ for (const [width, height, scale] of [[1440, 900, 2], [1024, 768, 2], [390, 844,
         expect(Math.abs(r.width - rows[i - 1].width), `width step at ${r.y}px`).toBeLessThanOrEqual(5)
       }
     }
+    // Drawn at the hero's width: the median under the edge over every row and
+    // moment, so a swell travelling down the stream (it widens by a third for
+    // a few dozen px, as falling water does) does not stand in for the scale.
+    widths.sort((a, b) => a - b)
+    expect(Math.abs(widths[widths.length >> 1] - g.hero.width), 'width under the hero\'s edge').toBeLessThanOrEqual(3)
     await context.close()
   })
 }
