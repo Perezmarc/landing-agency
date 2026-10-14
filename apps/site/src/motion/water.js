@@ -1,6 +1,13 @@
-/* The calendar's water: an accent on the chosen team's two cards' borders,
-   and the hero's stream carried down to the AFTER card set flowing.
+/* The calendar's water: the stream below the hero set flowing, and an
+   accent on the chosen team's two cards' borders.
 
+     STREAM                  the hero's stream, from the hero's bottom edge
+                             down to the AFTER card: a clip of one falling
+                             stream (day-stream), placed by CSS
+                             (.mk-day-stream). The server HTML has its first
+                             frame as a still; this lays the playing clip
+                             over it (the rendition the layout uses), and
+                             plays it while it is near the viewport.
      BEFORE ("Today")        small splashes sitting on the card's top border:
                              a thin strip clip (card-splash, the slab's top
                              edge where the rain lands), drawn small, ON the
@@ -8,31 +15,33 @@
                              edge row on the border, repeated along it: 1–4
                              copies (by the card's width), each at its own
                              time, cross-faded into each other.
-     AFTER ("With an agent") a thin edge of water runs down just outside both
-                             sides and leaves below: the clip sits BEHIND the
-                             card, whose white surface hides the rest.
-     STREAM                  the hero's stream, from the hero's bottom edge
-                             down to the AFTER card, is drawn in the server
-                             HTML and placed by CSS (.mk-day-stream), still;
-                             this sets it flowing (`is-flowing`: glints and
-                             ripples drifting down it) while it is near the
-                             viewport.
+     AFTER ("With an agent") a line of water on the card's border, the
+                             stream landing on its top and leaving its
+                             bottom: ten pieces of one atlas clip (card-rim),
+                             laid round the card by CSS like a 9-slice
+                             (.mk-rim), played as one.
 
-   Media tier only (index.js), and only once the calendar is near the
-   viewport: nothing is requested before. The server HTML has no video and
-   the CSS default is the finished calendar without water, so a refused
+   Media tier only (index.js). The stream's clip is created once the stream
+   is in view (its still is already there), the cards' clips once the
+   calendar is near: nothing is requested before, and nothing before
+   `load`. The CSS default is the
+   finished calendar without water and the stream's still, so a refused
    play() just leaves the page as it is. Placement is CSS (marketing.css):
-   this only hands each card clip what media.json says about it (the AFTER
-   clip's `fit` box, the strip's source `width` and `edge` row) as custom
-   properties, and each strip its measured place (align). The clips follow
-   the chosen tab, and each plays only while it is on screen, in a visible
-   tab. */
+   this only hands each clip what media.json says about it as custom
+   properties, and measures what CSS cannot know: where each splash strip
+   goes along its border, and where the page stream meets the AFTER card
+   (its x, and the row over the border where the rim's own stream, widening
+   into the rim, is as wide as it: there the page stream fades out and the
+   rim's fades in). The card clips follow the chosen tab, and every clip
+   plays only near the viewport, in a visible tab. */
 
-import { makeVideo, play } from './video.js'
+import { makeVideo, onFrame, play } from './video.js'
 
-const NEAR = '100% 0px'   // create the clips a screen before the calendar
-const SIGHT = '50% 0px'   // and play each one (and the stream flow) from half a screen before it is in view
+const NEAR = '100% 0px'   // create the clips a screen before they are in view
+const SIGHT = '50% 0px'   // and play each one from half a screen before
 const GOLDEN = 0.618     // copies of one clip start this far apart in its loop, so they never repeat
+const PORTRAIT = '(max-aspect-ratio: 1/1)'
+const DRIFT = 0.08       // s: how far a rim piece may drift from the first before it is put back
 
 /* The BEFORE strip's copies along a border `span` px long, each `copy` px
    wide (its CSS scale): as few as cover it with neighbours overlapping by at
@@ -48,41 +57,97 @@ export function stripPlaces(span, copy) {
   return { places: Array.from({ length: n }, (_, i) => i / (n - 1)), overlap: 1 - (span - copy) / (n - 1) / copy }
 }
 
+/* Where the page stream hands over to the rim's: the incoming stream's
+   width (source px) on rows `up` source px over the rim's contour
+   (`flare`, from the top down, widening as it meets the rim). The row, from
+   the top, where it is first at least `width` source px wide; the lowest
+   measured row if it never is. */
+export function landingRow(flare, width) {
+  const rows = [...flare].sort((a, b) => b[0] - a[0])
+  return (rows.find(([, w]) => w >= width) ?? rows.at(-1))[0]
+}
+
 /** @param {HTMLElement} root the [data-day] wrapper, carrying data-water */
 export function initWater(root) {
   const data = JSON.parse(root.dataset.water)
   const tabs = root.querySelector('[data-ui-tabs]')
   const panel = () => root.querySelector(`.ui-tabs-panel[data-value="${tabs.querySelector('.ui-tabs-input:checked')?.value}"]`)
+  const stream = document.querySelector('[data-stream]')
+  const portrait = matchMedia(PORTRAIT)
   const seen = new WeakSet()
   const refused = new Set()
-  let clips = null
+  let clips = null, flow = null, rim = null
 
   // Each clip plays from a little before it scrolls into view, so it has
-  // its first frame up before it is seen.
+  // its first frame up before it is seen. The rim's pieces play as one, so
+  // the rim itself is watched.
   const sight = new IntersectionObserver((entries) => {
     for (const e of entries) {
-      if (e.isIntersecting) { seen.add(e.target); resume(e.target) } else { seen.delete(e.target); e.target.pause() }
+      if (e.isIntersecting) { seen.add(e.target); resume(e.target) } else { seen.delete(e.target); videos(e.target).forEach(v => v.pause()) }
     }
   }, { rootMargin: SIGHT })
-  function clip(which) {
-    const { webm, mp4 } = data[which]
-    const v = makeVideo({ webm, mp4 }, `mk-cal-water mk-cal-water--${which}`)
+  const videos = el => el.tagName === 'VIDEO' ? [el] : [...el.querySelectorAll('video')]
+  function clip(which, sources, className) {
+    const v = makeVideo(sources, className)
     v.dataset.water = which
-    sight.observe(v)
     return v
   }
-  function drop(v) { sight.unobserve(v); seen.delete(v); v.pause(); v.remove() }
+  function drop(el) { sight.unobserve(el); seen.delete(el); videos(el).forEach(v => v.pause()); el.remove() }
   // A copy that starts `i` golden steps into the loop.
   function offset(v, i) {
     v.addEventListener('loadedmetadata', () => { v.currentTime = (i * GOLDEN % 1) * v.duration }, { once: true })
   }
+  const vars = (el, values) => { for (const [k, v] of Object.entries(values)) el.style.setProperty(k, v) }
+
+  /* The stream: the clip for the rendition the layout uses, over its still;
+     a layout change across the query swaps it. */
+  function flowing() {
+    const r = portrait.matches ? 'p' : 'l'
+    if (refused.has('stream') || flow?.dataset.rendition === r) return
+    if (flow) drop(flow)
+    flow = clip('stream', data.stream[r], 'mk-day-stream-video')
+    flow.dataset.rendition = r
+    stream.append(flow)
+    sight.observe(flow)
+  }
+
+  /* The rim: one piece per entry of the atlas, each a <video> of the whole
+     atlas showing its rect; shown once every piece has a frame. */
+  function makeRim() {
+    const { webm, mp4, size: [aw, ah], pieces } = data.rim
+    const el = document.createElement('div')
+    el.className = 'mk-rim'
+    el.dataset.water = 'rim'
+    vars(el, {
+      '--aw': aw, '--ah': ah, '--rim-out': data.rim.out, '--rim-in': data.rim.in, '--rim-corner': data.rim.corner,
+      '--rim-above': data.rim.above, '--rim-below': data.rim.below, '--stream-w': pieces.in[2],
+    })
+    let waiting = 0
+    for (const [k, [px, py, pw, ph]] of Object.entries(pieces)) {
+      const piece = document.createElement('div')
+      piece.className = 'mk-rim-piece'
+      piece.dataset.piece = k
+      vars(piece, { '--px': px, '--py': py, '--pw': pw, '--ph': ph })
+      const v = clip('rim', { webm, mp4 }, 'mk-rim-video')
+      waiting++
+      onFrame(v, () => { if (--waiting === 0) el.classList.add('is-ready') })
+      piece.append(v)
+      el.append(piece)
+    }
+    // Played as one: every piece follows the first.
+    const [lead, ...rest] = videos(el)
+    lead.addEventListener('timeupdate', () => {
+      for (const v of rest) {
+        const d = Math.abs(v.currentTime - lead.currentTime)
+        if (!v.paused && Math.min(d, lead.duration - d) > DRIFT) v.currentTime = lead.currentTime
+      }
+    })
+    return el
+  }
 
   function create() {
-    clips = { before: [], after: null }
-    const { aspect, fit } = data.after
-    const v = clip('after')
-    for (const [k, value] of Object.entries({ ar: aspect, l: fit.left, t: fit.top, r: fit.right, b: fit.bottom })) v.style.setProperty(`--water-${k}`, value)
-    clips.after = v
+    clips = { before: [] }
+    if (!refused.has('rim')) { rim = makeRim(); sight.observe(rim) }
     place()
   }
 
@@ -92,9 +157,10 @@ export function initWater(root) {
   function strips(card) {
     if (!card || refused.has('before')) return
     const add = () => {
-      const i = clips.before.length, v = clip('before')
-      for (const [k, value] of Object.entries({ ar: data.before.aspect, src: data.before.width, edge: data.before.edge })) v.style.setProperty(`--water-${k}`, value)
+      const i = clips.before.length, v = clip('before', data.before, 'mk-cal-water mk-cal-water--before')
+      vars(v, { '--water-ar': data.before.aspect, '--water-src': data.before.width, '--water-edge': data.before.edge })
       offset(v, i)
+      sight.observe(v)
       clips.before.push(v)
     }
     if (!clips.before.length) add()
@@ -108,52 +174,80 @@ export function initWater(root) {
     // ends fade at the card's corners, the others over their overlap).
     clips.before.forEach((v, i) => {
       if (v.parentNode !== card) card.append(v)
-      v.style.setProperty('--water-at', places[i])
-      v.style.setProperty('--water-overlap', `${(overlap * 100).toFixed(2)}%`)
+      vars(v, { '--water-at': places[i], '--water-overlap': `${(overlap * 100).toFixed(2)}%` })
     })
   }
 
-  // The strips are laid out for the card's width, so they are redone when
-  // the layout changes.
+  /* Where the page stream meets the AFTER card: the rim's streams on its x,
+     and the hand-over row, where the page stream fades out. */
+  function landing(card) {
+    if (!rim || !card) return
+    const s = stream.getBoundingClientRect(), c = card.getBoundingClientRect()
+    const k = parseFloat(getComputedStyle(rim).getPropertyValue('--rim-k'))
+    const x = s.left + data.stream.x * s.width, width = data.stream.width * s.width
+    const land = landingRow(data.rim.flare, width / k)
+    vars(rim, { '--rim-x': `${(x - c.left).toFixed(2)}px`, '--rim-land': land })
+    // The row the rim's stream fades in from, in the stream's own box; the
+    // page stream has faded out by the end of the same --rim-fade.
+    const fade = parseFloat(getComputedStyle(rim).getPropertyValue('--rim-fade'))
+    stream.style.setProperty('--stream-end', `${(c.top + 0.5 - land * k - s.top + fade).toFixed(2)}px`)
+  }
+
+  // The strips and the landing are laid out for the layout, so they are
+  // redone when it changes.
   function align() {
-    if (clips) strips(panel()?.querySelector('[data-cal="before"]'))
+    if (!clips) return
+    const p = panel()
+    strips(p?.querySelector('[data-cal="before"]'))
+    landing(rim?.parentNode)
   }
   // Into the chosen team's two cards (a move, so nothing is fetched again);
   // align() moves the strips.
   function place() {
-    const p = panel()
-    if (!clips || !p) return
-    const after = p.querySelector('[data-cal="after"]')
-    if (clips.after && after && clips.after.parentNode !== after) after.append(clips.after)
+    const after = panel()?.querySelector('[data-cal="after"]')
+    if (rim && after && rim.parentNode !== after) after.append(rim)
     align()
   }
-  function resume(v) {
-    if (!v.isConnected || !seen.has(v) || document.hidden || !v.paused) return
-    play(v, () => {
-      const which = v.dataset.water
-      refused.add(which)
-      if (which === 'after') { drop(v); clips.after = null } else { clips.before.forEach(drop); clips.before = [] }
-    })
+  function resume(el) {
+    if (!el.isConnected || !seen.has(el) || document.hidden) return
+    const vs = videos(el).filter(v => v.paused)
+    if (!vs.length) return
+    // The rim's pieces start together, from the first one's time.
+    if (el === rim) vs.forEach((v) => { v.currentTime = vs[0].currentTime })
+    vs.forEach(v => play(v, () => refuse(el)))
   }
-  const all = () => clips ? [...clips.before, clips.after].filter(Boolean) : []
+  function refuse(el) {
+    const which = el.dataset.water
+    if (refused.has(which)) return
+    refused.add(which)
+    if (which === 'before') { clips.before.forEach(drop); clips.before = [] }
+    if (which === 'rim') { drop(rim); rim = null; stream.style.removeProperty('--stream-end') }
+    if (which === 'stream') { drop(flow); flow = null }
+  }
+  const all = () => [...(clips?.before ?? []), rim, flow].filter(Boolean)
 
   const near = new IntersectionObserver(([e]) => {
     if (!e.isIntersecting) return
     near.disconnect()
     create()
   }, { rootMargin: NEAR })
+  // The stream's clip only once the stream is in view: its first frame is
+  // already there as the still, so it can come late, and it never competes
+  // with the hero's crash, which plays a screen above.
+  const nearStream = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return
+    nearStream.disconnect()
+    flowing()
+  })
   tabs.addEventListener('change', place)
+  portrait.addEventListener('change', () => { if (flow) flowing() })
   // Redone whenever the page's box changes (a resize, fonts, a taller week).
   new ResizeObserver(() => align()).observe(document.body)
-  // The drawn stream flows only while it is near the viewport (it is CSS
-  // only, so it needs nothing loaded).
-  const stream = document.querySelector('[data-stream]')
-  if (stream) new IntersectionObserver(([e]) => stream.classList.toggle('is-flowing', e.isIntersecting), { rootMargin: SIGHT }).observe(stream)
-  document.addEventListener('visibilitychange', () => all().forEach(v => document.hidden ? v.pause() : resume(v)))
-  addEventListener('pagehide', () => all().forEach(v => v.pause()))
+  document.addEventListener('visibilitychange', () => all().forEach(el => document.hidden ? videos(el).forEach(v => v.pause()) : resume(el)))
+  addEventListener('pagehide', () => all().forEach(el => videos(el).forEach(v => v.pause())))
   addEventListener('pageshow', (e) => { if (e.persisted) all().forEach(resume) })
 
   // After load, like the hero's clips, so they never compete with the page.
-  const start = () => near.observe(root)
+  const start = () => { near.observe(root); if (stream) nearStream.observe(stream) }
   if (document.readyState === 'complete') start(); else addEventListener('load', start, { once: true })
 }

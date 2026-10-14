@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { stripPlaces } from './water.js'
+import { stripPlaces, landingRow } from './water.js'
 
 /* The BEFORE card's splash strip is repeated along the card's top border
    (motion/water.js): as few copies as cover it, overlapping, cross-faded. */
@@ -42,5 +42,26 @@ describe('stripPlaces', () => {
 
   it('never divides by a copy it has not measured', () => {
     expect(stripPlaces(572, 0).places).toEqual([0.5])
+  })
+})
+
+/* Where the page stream hands over to the rim's own (motion/water.js): the
+   row over the rim where the incoming stream, widening as it meets the rim,
+   is first as wide as the page stream. */
+describe('landingRow', () => {
+  const flare = [[30, 60], [34, 40], [40, 28], [60, 22], [100, 20], [120, 19]]
+  it('is the highest row at least that wide', () => {
+    expect(landingRow(flare, 21)).toBe(60)
+    expect(landingRow(flare, 26)).toBe(40)
+    expect(landingRow(flare, 51)).toBe(30)
+  })
+  it('is the top row for a stream no wider than the incoming one', () => {
+    expect(landingRow(flare, 10)).toBe(120)
+  })
+  it('is the lowest row for a stream wider than the flare gets', () => {
+    expect(landingRow(flare, 90)).toBe(30)
+  })
+  it('does not depend on the order it is given', () => {
+    expect(landingRow([...flare].reverse(), 26)).toBe(40)
   })
 })

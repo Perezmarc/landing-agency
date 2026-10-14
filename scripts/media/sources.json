@@ -3,7 +3,9 @@
     "Every source the landing page's media is built from, by permanent URL.",
     "Generated on Higgsfield (see docs/LANDING-DESIGN.md). Loops start and end on the same still; the transition starts on the BEFORE still (the raw rock) and ends on the AFTER still (the polished pebble).",
     "The three portrait hero clips are composed from these landscape clips by composePortrait() in build-media.mjs.",
-    "The card clips are pale slabs under water, for the calendar's two cards; the grade takes the slab to white.",
+    "card-before is a pale slab under water (the BEFORE card's splashes); the grade takes the slab to white.",
+    "day-stream is one thin clear stream falling straight down a white void, 9:16; its first and last frames are the same still (hf_20261014_073635_03ffb99e-4b69-4775-bf59-29cf811c22a7.png), so it loops as it is.",
+    "card-rim is a pale rounded plate seen face-on with a stream landing on its top edge, a line of water round its rim and one stream leaving below; it starts and ends on hf_20261014_073742_e0bcb48b-75ca-4488-b237-901e9f22235d.png, and only its calm last 2.25 s are used.",
     "The footer pool is a filled container seen from the side, white above a flat waterline; its still (hf_20261013_063135_a383150c-1491-43f3-b5cd-d8e84a44614c.png) is its start and end frame."
   ],
   "base": "https://d8j0ntlcm91z4.cloudfront.net/user_3KPWI2SA8VZRk23pt1M0vYBFVxJ/",
@@ -12,7 +14,8 @@
     "hero-transition-16x9": "hf_20261013_124855_b60be4ea-41ab-42af-8fc2-2a1f22d6e32e.mp4",
     "hero-after-16x9": "hf_20261013_124850_1295d48a-fce9-4157-a669-148811cf8520.mp4",
     "card-before": "hf_20261012_164245_33ec8f80-69db-4312-9bcb-57d10d47da21.mp4",
-    "card-after": "hf_20261012_164252_33dfadd7-c418-4676-b848-743b0a04ae79.mp4",
+    "day-stream": "hf_20261014_085939_5c653f12-2faf-476f-9590-a5ee06214f9f.mp4",
+    "card-rim": "hf_20261014_090030_3aaeac68-6612-4d4a-aa65-b03978cf07cf.mp4",
     "footer-pool": "hf_20261013_082257_62dfd87a-e8fd-438d-9e16-418c6673c9c8.mp4"
   },
   "stills": {
