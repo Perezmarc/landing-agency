@@ -88,8 +88,13 @@ const LOOP_FADE = FPS            // one second
 const CRASH_HEAD = 6
 /* The AFTER loop's source spends its first 2.5 s building the flow (the
    streams start, break and settle); from frame 60 both streams run steadily
-   and keep moving, so the loop is cut from there. */
+   and keep moving, so the loop is cut from there. It then plays on to the
+   source's last frame (its still), and AFTER_BRIDGE motion-interpolated
+   frames carry the water from that frame back to frame 60. A cross-fade there
+   blended two streams in different places into one doubled, ghosted stream
+   for a whole second; the bridge moves the one stream instead. */
 const AFTER_HEAD = 60
+const AFTER_BRIDGE = 12
 const CHECK_ONLY = process.argv.includes('--check')
 const ONLY_AT = process.argv.indexOf('--only')
 const ONLY = ONLY_AT > 0 ? new Set(process.argv[ONLY_AT + 1].split(',')) : null
@@ -160,7 +165,7 @@ const POOL = {
 const CLIPS = [
   { name: 'hero-before-16x9', w: 1600, h: 900 },
   { name: 'hero-transition-16x9', w: 1600, h: 900, once: true, head: CRASH_HEAD },
-  { name: 'hero-after-16x9', w: 1600, h: 900, head: AFTER_HEAD },
+  { name: 'hero-after-16x9', w: 1600, h: 900, head: AFTER_HEAD, bridge: AFTER_BRIDGE },
   // Portrait: all three composed from the landscape clips, so the pebble has
   // exactly the same place and size in each and every cut stays invisible.
   // Each is extended below its 9:16 frame (EXTEND), so the stream runs on to
@@ -168,7 +173,7 @@ const CLIPS = [
   // the BEFORE loop's (`history`), so it is built after it.
   { name: 'hero-before-9x16', w: 720, h: 1280, compose: 'hero-before-16x9', extend: true },
   { name: 'hero-transition-9x16', w: 720, h: 1280, once: true, compose: 'hero-transition-16x9', head: CRASH_HEAD, extend: true, history: 'hero-before-9x16' },
-  { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9', head: AFTER_HEAD, extend: true },
+  { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9', head: AFTER_HEAD, bridge: AFTER_BRIDGE, extend: true },
   // The calendar's water. The BEFORE card's splash strip is cut from the
   // card-before source (its own output name: `source`), and shows at about
   // 300 CSS px (2–4 copies along the border). The AFTER card's rim is an
@@ -392,13 +397,30 @@ function blur(src, w, h, r) {
 
 /** Every frame of a clip as raw RGB at (w, h), less the first `head` frames,
     optionally cropped first ({ x, y, w, h } in source pixels). */
-function decodeAll(path, w, h, head = 0, crop = null) {
+function decodeAll(path, w, h, head = 0, crop = null, bridge = 0) {
   const cut = crop ? `crop=${crop.w}:${crop.h}:${crop.x}:${crop.y},` : ''
   const raw = spawnSync('ffmpeg', ['-v', 'error', '-i', path, '-vf', `trim=start_frame=${head},setpts=PTS-STARTPTS,${cut}scale=${w}:${h}:flags=area`, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], { maxBuffer: 2 ** 31 })
   if (raw.status !== 0) throw new Error(raw.stderr.toString())
-  const size = w * h * 3, frames = []
-  for (let i = 0; i + size <= raw.stdout.length; i += size) frames.push(raw.stdout.subarray(i, i + size))
+  const frames = splitFrames(raw.stdout, w * h * 3)
+  return bridge ? frames.concat(bridgeFrames(frames.at(-1), frames[0], w, h, bridge)) : frames
+}
+
+function splitFrames(buf, size) {
+  const frames = []
+  for (let i = 0; i + size <= buf.length; i += size) frames.push(buf.subarray(i, i + size))
   return frames
+}
+
+/** `n` motion-interpolated frames from frame `a` to frame `b` (both left
+    out), so a loop that ends on `a` wraps to `b` with the water moved rather
+    than cross-faded. minterpolate needs a frame after `b` to settle, so `b`
+    goes in twice. */
+function bridgeFrames(a, b, w, h, n) {
+  const out = spawnSync('ffmpeg', ['-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', `${w}x${h}`, '-r', '1', '-i', '-',
+    '-vf', `minterpolate=fps=${n + 1}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1`, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
+  { input: Buffer.concat([a, b, b]), maxBuffer: 2 ** 31 })
+  if (out.status !== 0) throw new Error(out.stderr.toString())
+  return splitFrames(out.stdout, w * h * 3).slice(1, n + 1)
 }
 
 /* ── 1. the void field ──────────────────────────────────────────────────── */
@@ -692,9 +714,9 @@ function encoder(args) {
    wide, so no rain streak or fragment is ever stretched. The grade then takes
    that plate to white (keepMap). Written as a lossless intermediate the grade
    then reads. */
-async function composePortrait(src, out, { w, h, head = 0 }) {
+async function composePortrait(src, out, { w, h, head = 0, bridge = 0 }) {
   const { sw, sh, left, top, feather } = portraitPlacement(w, h)
-  const frames = decodeAll(src, sw, sh, head)
+  const frames = decodeAll(src, sw, sh, head, null, bridge)
   const rows = Math.round(sh * 0.04), plate = new Float32Array(sw * 3)
   for (let x = 0; x < sw; x++) for (let c = 0; c < 3; c++) {
     let acc = 0, n = 0
@@ -732,11 +754,12 @@ function grader(clip, src) {
     const { plate, exposure } = cardPlate(all, w, h, slabOut(clip)), keep = cardKeep(clip)
     return { count: all.length - head, graded: i => gradeCard(all[head + i], w, h, plate, exposure[head + i], keep, clip.card.crisp) }
   }
-  // A composed source is already trimmed (composePortrait drops the head).
-  const lw = Math.round(w / 4), lh = Math.round(h / 4), head = clip.compose ? 0 : clip.head ?? 0
-  const { field: low, exposure } = voidField(decodeAll(src, lw, lh, head), lw, lh)
+  // A composed source is already trimmed and bridged (composePortrait drops
+  // the head and adds the bridge).
+  const lw = Math.round(w / 4), lh = Math.round(h / 4), head = clip.compose ? 0 : clip.head ?? 0, bridge = clip.compose ? 0 : clip.bridge ?? 0
+  const { field: low, exposure } = voidField(decodeAll(src, lw, lh, head, null, bridge), lw, lh)
   const gain = low.map(ch => { const up = upsample(ch, lw, lh, w, h); for (let i = 0; i < up.length; i++) up[i] = 255 / Math.max(120, up[i]); return up })
-  const frames = decodeAll(src, w, h, head), keep = keepMap(clip)
+  const frames = decodeAll(src, w, h, head, null, bridge), keep = keepMap(clip)
   return { count: frames.length, graded: i => gradeFrame(frames[i], w, h, gain, exposure[Math.min(i, exposure.length - 1)], keep) }
 }
 
@@ -806,8 +829,9 @@ async function buildClip(clip, src) {
 
   // The frames in playing order.
   function* sequence() {
-    if (clip.once) {
-      // The transition plays once, start to end.
+    if (clip.once || clip.bridge) {
+      // The transition plays once, start to end; a bridged loop already
+      // ends on the way back to its first frame, so it just wraps.
       for (let i = 0; i < N; i++) yield graded(i)
     } else {
       // Order: L … N−L−1, then the cross-fade of the last second into the first.
@@ -1343,7 +1367,7 @@ function checks() {
     // passes at 30 dB, or, for water busy enough that one ordinary frame step
     // is below that (the BEFORE card's splashes), when the seam is no worse
     // than its median frame step less 1 dB: then it is just another frame.
-    // A seamless loop (the pool) is held to the frame steps either side of
+    // A seamless or bridged loop (the pool, the AFTER loop) is held to the frame steps either side of
     // its seam instead.
     let psnr = null, step = null
     if (!clip.once) {
@@ -1351,9 +1375,10 @@ function checks() {
       psnr = +Number((seam.match(/average:([\d.]+|inf)/) || [])[1]).toFixed(1)
       // A seamless loop's seam is one of its own frame steps: it is held to
       // the steps either side of it (the last two frames, the first two).
-      const at = clip.seamless ? [-2, 0] : [10, 30, 50]
+      const wraps = clip.seamless || clip.bridge
+      const at = wraps ? [-2, 0] : [10, 30, 50]
       const steps = at.map(k => k < 0 ? lastStep(mp4) : framePSNR(mp4, k, mp4, k + 1)).sort((a, b) => a - b)
-      step = +(clip.seamless ? steps[0] : steps[1]).toFixed(1)
+      step = +(wraps ? steps[0] : steps[1]).toFixed(1)
     }
     report.push({ clip: clip.name, webmKB: Math.round(statSync(webm).size / 1024), mp4KB: Math.round(statSync(mp4).size / 1024), voidLuma: yhigh, seamPSNR: psnr, stepPSNR: step, cutIn, cutOut, ok: yhigh >= 234 && (clip.once || psnr >= Math.min(30, step - 1)) })
     // The pool's renditions and posters: their sizes (the frames are the same).

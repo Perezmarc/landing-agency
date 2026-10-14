@@ -645,7 +645,15 @@ and the AFTER card's rim are image-to-video from their own stills:
 - **The hero loops:** image-to-video with the same still as both start and
   end frame, the camera locked off and only the water moving. The AFTER loop
   (`1295d48a`) builds its flow for its first 2.5 s, so the loop is cut from
-  frame 60 (`AFTER_HEAD`); from there both streams run and keep moving.
+  frame 60 (`AFTER_HEAD`); from there both streams run and keep moving. It
+  plays on to the source's last frame (the still) and wraps back to frame 60
+  through 12 motion-interpolated frames (`AFTER_BRIDGE`, ffmpeg
+  `minterpolate`): 96 frames, 4 s. A cross-fade there blended two streams in
+  different places into one doubled, ghosted stream for a whole second; the
+  bridge moves the one stream instead (seam 42.4 dB against 35.8 dB frame
+  steps). Two regenerations with the still as both ends and a prompt for a
+  flow already running (`591c091c`, `f14dce69`) built the flow up again from
+  nothing and then all but froze, so neither is used.
 - **The transition** (`b60be4ea`): image-to-video from the BEFORE still to
   the AFTER still: the rock bursts, the pebble is left, the rain stops and
   the water draws together into the two thin streams.
