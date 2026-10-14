@@ -46,8 +46,9 @@
    and only the water is left, and only where the page shows it (cardKeep).
    The AFTER card's rim (buildRim) is cut from a plate whose rim carries a
    line of water into pieces, packed in one small atlas: its four corners
-   (redrawn to the card's radius), a strip of each straight edge, and the
-   stream landing on its top and leaving its bottom. The page lays them
+   (redrawn to the card's radius), a strip of each side, and the top and
+   bottom edges each as one band of rows: a straight stretch, the junction
+   where its stream meets the rim, another stretch. The page lays them
    round the card like a 9-slice. No posters: the card clips only ever play
    over the finished card.
    The footer's pool (water seen from the side) is cropped to a wide band
@@ -294,10 +295,24 @@ const DAY_STREAM = {
    px per source px: marketing.css --rim-k), crisp at 2x (0.8 device px a
    pixel) and at 3x (1.2). The card's aspect changes with the layout and
    the plate's does not, so the rim is cut into pieces the page places like
-   a 9-slice, all at that one scale: the four corners, one strip of each
-   straight edge (stretched along its length only), and the stream coming
-   in at the top and the one leaving the bottom, each in a piece of its
-   own. Every piece is resampled so that the plate's outer contour (the
+   a 9-slice, all at that one scale: the four corners, a strip of each
+   side (stretched along its length only), and one piece for each of the
+   top and bottom edges. Near the streams the rim is not straight: by the
+   incoming stream its lines curve up into the flanges the stream spreads
+   into (within about 120 px of it), and round the outgoing one the whole
+   band dips into the stream's neck (its outer line 17 px down under it,
+   back on its line about 160 px either side). So the top and bottom
+   pieces are each cut from ONE band of rows round the contour, in three
+   parts side by side: a straight stretch, the junction (`junction` px
+   wide, centred on its stream, everything that bends inside it with
+   20 px of straight rim to spare at each end), and another straight
+   stretch, each stretch sampled (`sample` px of rim) right beside the
+   junction. The page draws the junction unscaled on the page stream's x
+   and the stretches pulled out to the corners, all three from the same
+   rows of the same piece, so the rim's line is on one page row from
+   corner to corner; the junction cross-fades into the stretches only
+   over its straight ends (`fadeIn` px), where the two are the same rim.
+   Every piece is resampled so that the plate's outer contour (the
    centre of its dark outer line, measured on the median frame) is a
    straight line at a known offset in it: `out` px of the outside kept
    beyond it, `in` px of the inside (the line of water is the 26 px band
@@ -307,9 +322,9 @@ const DAY_STREAM = {
    about 100 px, or 40 CSS px at the page's scale, where the card's corner
    is 16): each corner is redrawn to `radius` (40 px, so 16 CSS px) by
    moving every point of its band in along the radius by the same amount,
-   so the band keeps its width and only the arc tightens. The stream pieces
-   are centred on their stream (measured) and run `above` px over the top
-   contour and `below` under the bottom one. The incoming stream widens as
+   so the band keeps its width and only the arc tightens. The top piece
+   runs `above` px over the contour (the incoming stream), the bottom one
+   `below` under it (the outgoing one). The incoming stream widens as
    it meets the rim; its width on each row above the contour (`flare`) lets
    the page hand the stream over from its own at the row where the two are
    as wide. Pieces are packed into one atlas with `margin` px of their own
@@ -318,7 +333,7 @@ const DAY_STREAM = {
 const RIM = {
   head: 90, fade: 18,
   out: 10, in: 32, radius: 40, corner: 64, strip: 32, margin: 2, gutter: 4,
-  above: 120, below: 176, streamWidth: 160,
+  above: 80, below: 140, junction: { top: 340, bottom: 400 }, sample: 70, fadeIn: 40, through: [40, 90],
   guess: { top: 329, bottom: 898, left: 404, right: 1523, r: 100, inX: 965, outX: 961 },
   crf: { av1: 30, h264: 20 },
 }
@@ -1127,7 +1142,7 @@ function rimGeometry(L, w, h) {
     point in it (pixel centres) to a point of the source frame and how much
     of it is kept. Every piece's contour is at a known offset (see RIM). */
 function rimPieces(G) {
-  const { out: O, in: I, radius: Rt, corner: S, strip: Ls, above: A, below: B, streamWidth: Ws } = RIM
+  const { out: O, in: I, radius: Rt, corner: S, strip: Ls, above: A, below: B, sample } = RIM
   // Kept across the band: all of it inside to `in` (the face beyond goes
   // white), to `out` outside; `d` is the distance in from the contour.
   const band = d => d >= 0 ? 1 - smoothstep(I - 5, I, d) : 1 - smoothstep(O - 4, O, -d)
@@ -1150,47 +1165,53 @@ function rimPieces(G) {
   })
   pieces.tl = corner(G.corners.tl, 1, 1); pieces.tr = corner(G.corners.tr, -1, 1)
   pieces.bl = corner(G.corners.bl, 1, -1); pieces.br = corner(G.corners.br, -1, -1)
-  // The straight edges: 160 source px of each, clear of the streams and
-  // the corners, sampled into a strip `strip` long, the contour `out` in
-  // from the outside.
-  const x0 = Math.round(G.corners.tl.cx + 60), y0 = Math.round((G.corners.tl.cy + G.corners.bl.cy) / 2 - 80)
-  // Each is averaged along its length in every frame (`along`), so it is
-  // one cross-section that stretches cleanly (and a speck of dust on the
-  // plate is not drawn out into a dash).
-  const span = 160 / Ls
-  pieces.top = { w: Ls, h: T, along: 'x', map: (px, py) => { const x = x0 + px * span, d = py - O; return [x, G.top(x) + d, band(d)] } }
-  pieces.bottom = { w: Ls, h: T, along: 'x', map: (px, py) => { const x = x0 + px * span, d = T - O - py; return [x, G.bottom(x) - d, band(d)] } }
-  pieces.left = { w: T, h: Ls, along: 'y', map: (px, py) => { const y = y0 + py * span, d = px - O; return [G.left(y) + d, y, band(d)] } }
-  pieces.right = { w: T, h: Ls, along: 'y', map: (px, py) => { const y = y0 + py * span, d = T - O - px; return [G.right(y) - d, y, band(d)] } }
-  // The streams: centred on their axis; the one coming in `above` px over
-  // the top contour, the one leaving `below` px under the bottom one.
-  pieces.in = { w: Ws, h: A + I, map: (px, py) => { const x = G.inX - Ws / 2 + px, d = py - A; return [x, G.top(x) + d, inside(d)] } }
-  pieces.out = { w: Ws, h: I + B, map: (px, py) => { const x = G.outX - Ws / 2 + px, d = I - py; return [x, G.bottom(x) - d, inside(d)] } }
+  // The sides: 160 source px of each, clear of the corners, sampled into
+  // a strip `strip` long, the contour `out` in from the outside. Each is
+  // averaged along its length in every frame (`along`), so it is one
+  // cross-section that stretches cleanly (and a speck of dust on the plate
+  // is not drawn out into a dash).
+  const y0 = Math.round((G.corners.tl.cy + G.corners.bl.cy) / 2 - 80), span = 160 / Ls
+  pieces.left = { w: T, h: Ls, along: [['y', -Infinity, Infinity]], map: (px, py) => { const y = y0 + py * span, d = px - O; return [G.left(y) + d, y, band(d)] } }
+  pieces.right = { w: T, h: Ls, along: [['y', -Infinity, Infinity]], map: (px, py) => { const y = y0 + py * span, d = T - O - px; return [G.right(y) - d, y, band(d)] } }
+  // The top and bottom edges: [stretch | junction | stretch] on one band of
+  // rows (the top's contour `above` rows down, the bottom's `in`). The
+  // junction is the source as it is, centred on its stream; each stretch
+  // is the `sample` px of rim just beyond it, averaged along x.
+  const edge = (axis, J, line, rowOf, h) => ({
+    w: 2 * Ls + J, h, along: [['x', -Infinity, Ls], ['x', Ls + J, Infinity]],
+    map(px, py) {
+      const x = px < Ls ? axis - J / 2 - sample * (1 - px / Ls)
+        : px < Ls + J ? axis - J / 2 + (px - Ls)
+          : axis + J / 2 + sample * (px - Ls - J) / Ls
+      const d = rowOf(py), junction = px >= Ls && px < Ls + J
+      return [x, line(x, d), junction ? inside(d) : band(d)]
+    },
+  })
+  pieces.top = edge(G.inX, RIM.junction.top, (x, d) => G.top(x) + d, py => py - A, A + I)
+  pieces.bottom = edge(G.outX, RIM.junction.bottom, (x, d) => G.bottom(x) - d, py => I - py, I + B)
   return pieces
 }
 
 /** Lays the pieces out in the atlas (each grown by `margin`, `gutter` px
-    apart) like the card they go round: the corners and strips of one side
-    share their offset across that side (the top corners and the top strip
+    apart) like the card they go round: the corners and edges of one side
+    share their offset across that side (the top corners and the top piece
     one top row, the left corners and the left strip one left column, the
     bottom and right ones their bottom row and right column), so where two
     meet on the page their <video>s are offset by the same amount and the
-    browser snaps them to the same device pixel. The streams go beside
-    them. Returns each piece's inner rect and the atlas's size. */
+    browser snaps them to the same device pixel. Returns each piece's inner
+    rect and the atlas's size. */
 function packAtlas(pieces) {
   const { margin: m, gutter: g } = RIM, step = 2 * m + g
-  const C = pieces.tl.w, T = pieces.top.h, Ls = pieces.top.w
-  const x1 = g + m, x2 = x1 + C + step, x3 = x2 + Ls + step, x4 = x3 + C + step, x5 = x4 + pieces.in.w + step
-  const y1 = g + m, y2 = y1 + C + step, y3 = y2 + Ls + step, bottom = y3 + C
+  const C = pieces.tl.w, T = pieces.left.w, top = pieces.top, bottom = pieces.bottom
+  const x1 = g + m, x2 = x1 + C + step, x3 = x2 + Math.max(top.w, bottom.w) + step
+  const y1 = g + m, end = Math.max(y1 + top.h + step + bottom.h, y1 + 2 * C + pieces.left.h + 2 * step)
   const rect = (k, x, y) => ({ x, y, w: pieces[k].w, h: pieces[k].h })
   const rects = {
     tl: rect('tl', x1, y1), top: rect('top', x2, y1), tr: rect('tr', x3, y1),
-    left: rect('left', x1, y2), right: rect('right', x3 + C - T, y2),
-    bl: rect('bl', x1, y3), bottom: rect('bottom', x2, bottom - T), br: rect('br', x3, y3),
-    in: rect('in', x4, y1), out: rect('out', x5, y1),
+    left: rect('left', x1, y1 + C + step), right: rect('right', x3 + C - T, y1 + C + step),
+    bl: rect('bl', x1, end - C), bottom: rect('bottom', x2, end - bottom.h), br: rect('br', x3, end - C),
   }
-  const w = x5 + pieces.out.w + m + g, h = Math.max(bottom, y1 + pieces.in.h, y1 + pieces.out.h) + m + g
-  return { rects, w: Math.ceil(w / 8) * 8, h: Math.ceil(h / 8) * 8 }
+  return { rects, w: Math.ceil((x3 + C + m + g) / 8) * 8, h: Math.ceil((end + m + g) / 8) * 8 }
 }
 
 async function buildRim(clip, src) {
@@ -1221,30 +1242,53 @@ async function buildRim(clip, src) {
       const [p, sx, sy, keep] = [maps[i], maps[i + 1], maps[i + 2], maps[i + 3]]
       for (let c = 0; c < 3; c++) out[p * 3 + c] = Math.round(255 - (255 - s(sx, sy, c)) * keep)
     }
-    // The strips: every line across one is the mean of its length.
+    // The stretches: every line across one is the mean of its length.
     for (const [k, pc] of Object.entries(pieces)) {
-      if (!pc.along) continue
-      const r = atlas.rects[k], X = pc.along === 'x', len = (X ? pc.w : pc.h) + 2 * m, across = (X ? pc.h : pc.w) + 2 * m
-      for (let a = 0; a < across; a++) for (let c = 0; c < 3; c++) {
-        const p = t => X ? ((r.y - m + a) * atlas.w + r.x - m + t) * 3 + c : ((r.y - m + t) * atlas.w + r.x - m + a) * 3 + c
-        let s = 0
-        for (let t = 0; t < len; t++) s += out[p(t)]
-        for (let t = 0; t < len; t++) out[p(t)] = Math.round(s / len)
+      for (const [axis, from, to] of pc.along ?? []) {
+        const r = atlas.rects[k], X = axis === 'x', t0 = Math.max(-m, from), t1 = Math.min((X ? pc.w : pc.h) + m, to), across = (X ? pc.h : pc.w) + 2 * m
+        for (let a = 0; a < across; a++) for (let c = 0; c < 3; c++) {
+          const p = t => X ? ((r.y - m + a) * atlas.w + r.x + t) * 3 + c : ((r.y + t) * atlas.w + r.x - m + a) * 3 + c
+          let s = 0
+          for (let t = t0; t < t1; t++) s += out[p(t)]
+          for (let t = t0; t < t1; t++) out[p(t)] = Math.round(s / (t1 - t0))
+        }
       }
     }
     // The corners' straight runs ease into their strips' cross-section by
     // the corner piece's inner end, so a corner meets its strips exactly
     // (the band is a px or two wider mid-edge than by the corners).
-    const { out: O, in: I, radius: Rt, corner: S } = RIM, P = O + S, T = O + I
-    const profile = (k, d, c) => {
-      const r = atlas.rects[k], X = pieces[k].along === 'x'
-      const pos = Math.min(T - 1, Math.max(0, (k === 'top' || k === 'left' ? d + O : T - O - d) - 0.5))
-      const i0 = Math.floor(pos), i1 = Math.min(T - 1, i0 + 1), f = pos - i0
-      const at = i => out[(X ? (r.y + i) * atlas.w + r.x : r.y * atlas.w + r.x + i) * 3 + c]
+    const { out: O, in: I, radius: Rt, corner: S, above: A } = RIM, P = O + S, T = O + I
+    // A stretch's cross-section at `d` in from the contour: the top or
+    // bottom piece's left (`end` false) or right stretch, or a side strip.
+    const profile = ([k, end], d, c) => {
+      const r = atlas.rects[k], pc = pieces[k], X = k === 'top' || k === 'bottom'
+      const row = { top: A + d, bottom: I - d, left: d + O, right: T - O - d }[k] - 0.5, n = X ? pc.h : pc.w
+      const pos = Math.min(n - 1, Math.max(0, row)), i0 = Math.floor(pos), i1 = Math.min(n - 1, i0 + 1), f = pos - i0
+      const col = end ? pc.w - 1 : 0
+      const at = i => out[(X ? (r.y + i) * atlas.w + r.x + col : r.y * atlas.w + r.x + i) * 3 + c]
       return at(i0) * (1 - f) + at(i1) * f
     }
+    // Under the incoming stream the source's rim line is gone: the water
+    // there is one clear meniscus. The straight rim's cross-section is
+    // multiplied in under it (the rim seen through the water), easing out
+    // by the flanges, so the line runs on through the junction.
+    {
+      const r = atlas.rects.top, Jt = RIM.junction.top, Ls = RIM.strip, { through } = RIM
+      for (let px = Ls; px < Ls + Jt; px++) {
+        const t = 1 - smoothstep(through[0], through[1], Math.abs(px + 0.5 - Ls - Jt / 2))
+        if (t <= 0) continue
+        for (let py = 0; py < pieces.top.h; py++) {
+          const d = py + 0.5 - A, p = ((r.y + py) * atlas.w + r.x + px) * 3
+          if (d < -O || d > I) continue
+          for (let c = 0; c < 3; c++) {
+            const line = (profile(['top', false], d, c) + profile(['top', true], d, c)) / 2
+            out[p + c] = Math.round(out[p + c] * (1 - t + t * line / 255))
+          }
+        }
+      }
+    }
     for (const [k, ix, iy] of [['tl', 1, 1], ['tr', -1, 1], ['bl', 1, -1], ['br', -1, -1]]) {
-      const r = atlas.rects[k], h = iy > 0 ? 'top' : 'bottom', v = ix > 0 ? 'left' : 'right'
+      const r = atlas.rects[k], h = [iy > 0 ? 'top' : 'bottom', ix < 0], v = [ix > 0 ? 'left' : 'right', false]
       for (let py = -m; py < P + m; py++) for (let px = -m; px < P + m; px++) {
         const u = (ix > 0 ? px + 0.5 : P - px - 0.5) - O, w = (iy > 0 ? py + 0.5 : P - py - 0.5) - O
         let strip = null, t = 0
@@ -1260,9 +1304,9 @@ async function buildRim(clip, src) {
 
   // The flare: the incoming stream's width on each row above the top
   // contour, on the median frame's piece.
-  const flare = [], at = sampler(Lm, w, h)
+  const flare = [], at = sampler(Lm, w, h), mid0 = RIM.strip + RIM.junction.top / 2 - 80
   for (let up = 2; up <= RIM.above; up += 2) {
-    const e = streamEdges(grey(Array.from({ length: pieces.in.w }, (_, px) => { const [sx, sy] = pieces.in.map(px + 0.5, RIM.above - up + 0.5); return at(sx, sy) })), pieces.in.w, 0, 40)
+    const e = streamEdges(grey(Array.from({ length: 160 }, (_, px) => { const [sx, sy] = pieces.top.map(mid0 + px + 0.5, RIM.above - up + 0.5); return at(sx, sy) })), 160, 0, 40)
     flare.push([up, +(e.right - e.left).toFixed(1)])
   }
   // Only the stream itself: from the top down while it widens; closer to
@@ -1292,7 +1336,7 @@ async function buildRim(clip, src) {
     frames: count,
     rim: {
       size: [atlas.w, atlas.h], out: RIM.out, in: RIM.in, radius: RIM.radius, corner: RIM.corner,
-      above: RIM.above, below: RIM.below,
+      above: RIM.above, below: RIM.below, stretch: RIM.strip, junction: RIM.junction, fade: RIM.fadeIn,
       pieces: Object.fromEntries(Object.keys(pieces).map(k => [k, rect(atlas.rects[k])])),
       flare: clean,
     },

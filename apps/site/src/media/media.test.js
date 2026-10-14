@@ -63,10 +63,11 @@ describe('media.json', () => {
     expect(width).toBeGreaterThan(900)
     expect(edge).toBeGreaterThan(0.7)
     expect(edge).toBeLessThan(0.9)
-    // AFTER: ten pieces, inside the atlas and apart, at the sizes the page
-    // assumes (the corners square, the strips the band deep).
+    // AFTER: eight pieces, inside the atlas and apart, at the sizes the page
+    // assumes (the corners square, the sides the band deep; the top and
+    // bottom each one band of rows: a stretch, the junction, a stretch).
     const rim = media.cards.rim, [W, H] = rim.size
-    expect(Object.keys(rim.pieces).sort()).toEqual(['bl', 'bottom', 'br', 'in', 'left', 'out', 'right', 'tl', 'top', 'tr'])
+    expect(Object.keys(rim.pieces).sort()).toEqual(['bl', 'bottom', 'br', 'left', 'right', 'tl', 'top', 'tr'])
     const rects = Object.values(rim.pieces)
     for (const [x, y, w, h] of rects) {
       expect(x).toBeGreaterThanOrEqual(2); expect(y).toBeGreaterThanOrEqual(2)
@@ -76,18 +77,21 @@ describe('media.json', () => {
       const apart = a[0] + a[2] + 4 <= b[0] || b[0] + b[2] + 4 <= a[0] || a[1] + a[3] + 4 <= b[1] || b[1] + b[3] + 4 <= a[1]
       expect(apart).toBe(true)
     }
-    for (const k of ['tl', 'tr', 'bl', 'br']) expect(rim.pieces[k].slice(2)).toEqual([rim.out + rim.corner, rim.out + rim.corner])
-    expect(rim.pieces.top[3]).toBe(rim.out + rim.in)
-    expect(rim.pieces.left[2]).toBe(rim.out + rim.in)
-    // Where meeting pieces share their offset (the browser snaps them alike).
     const p = rim.pieces
+    for (const k of ['tl', 'tr', 'bl', 'br']) expect(p[k].slice(2)).toEqual([rim.out + rim.corner, rim.out + rim.corner])
+    expect(p.left[2]).toBe(rim.out + rim.in)
+    for (const k of ['top', 'bottom']) {
+      expect(p[k][2], k).toBe(2 * rim.stretch + rim.junction[k])
+      // Room for the junction to fade in over straight rim at each end.
+      expect(rim.junction[k] / 2 - rim.fade, k).toBeGreaterThan(100)
+    }
+    expect(p.top[3]).toBe(rim.above + rim.in)
+    expect(p.bottom[3]).toBe(rim.in + rim.below)
+    // Where meeting pieces share their offset (the browser snaps them alike).
     expect(p.top[1]).toBe(p.tl[1]); expect(p.tr[1]).toBe(p.tl[1])
     expect(p.left[0]).toBe(p.tl[0]); expect(p.bl[0]).toBe(p.tl[0])
     expect(p.right[0] + p.right[2]).toBe(p.tr[0] + p.tr[2]); expect(p.br[0] + p.br[2]).toBe(p.tr[0] + p.tr[2])
     expect(p.bottom[1] + p.bottom[3]).toBe(p.bl[1] + p.bl[3]); expect(p.br[1] + p.br[3]).toBe(p.bl[1] + p.bl[3])
-    // The streams' pieces run `above` over the contour and `below` under it.
-    expect(p.in[3]).toBe(rim.above + rim.in)
-    expect(p.out[3]).toBe(rim.below + rim.in)
     // The corner is redrawn to the card's radius at the page's scale (0.4).
     expect(rim.radius * 0.4).toBe(16)
     // The flare widens toward the rim, from the incoming stream's width.

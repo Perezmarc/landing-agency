@@ -418,7 +418,12 @@
   background: var(--surface);
   border: 1px solid var(--line);
   box-shadow: var(--elev-1);
+  transition: border-color var(--dur-slow) var(--ease-out);
 }
+/* Once the AFTER card's rim is up, its line of water is the card's border
+   (it runs on it all the way round): the card's own line would only show
+   through the clear water where a stream meets the rim. */
+.mk-cal:has(> .mk-rim.is-ready) { border-color: transparent; }
 .mk-cal-title { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
 .mk-cal-grid { display: grid; grid-template-columns: var(--hours-w) repeat(5, minmax(0, 1fr)); column-gap: 6px; margin-top: 10px; }
 .mk-cal-hours { position: relative; margin-top: var(--head-h); }
@@ -528,32 +533,38 @@
 .mk-cal-water--before:last-of-type { --water-fr: var(--water-end); }
 
 /* AFTER ("With an agent"): a line of water on the card's border, the
-   stream landing on its top border and leaving its bottom one. Ten pieces
-   of one atlas clip (card-rim), laid out like a 9-slice, all at one scale,
-   --rim-k CSS px per source px (0.4: 0.8 device px a pixel at 2x, 1.2 at
-   3x): the four corners (the pipeline redrew their arc to 40 source px,
-   the card's 16px radius at this scale), the four straight edges (one
-   cross-section each, stretched along the edge only), and the stream in
-   (top) and out (bottom), centred on the page stream's x (--rim-x, measured
-   by motion/water.js). Every piece is cut so the plate's outer contour is
-   --rim-out source px in from its outer edge (and its band, the line of
-   water, runs --rim-in px inside it, the face beyond already white); each
-   is placed so that contour is --rim-c inside the card's border box, on
-   the 1px border. The band is 13px deep, inside the card's padding (14px
-   and up), so no piece changes a pixel of the content box.
+   stream landing on its top border and leaving its bottom one. One atlas
+   clip (card-rim), laid out like a 9-slice, all at one scale, --rim-k CSS
+   px per source px (0.4: 0.8 device px a pixel at 2x, 1.2 at 3x):
+   - the four corners (the pipeline redrew their arc to 40 source px, the
+     card's 16px radius at this scale);
+   - the two sides, one cross-section each, stretched along the side;
+   - the top and the bottom edge, each ONE piece of the atlas cut from one
+     band of source rows: a straight stretch, the junction where the stream
+     meets the rim (the stream and the rim curving into it, unscaled), and
+     another straight stretch. Each edge is three videos of that piece: the
+     junction (`-c`) centred on the page stream's x (--rim-x, measured by
+     motion/water.js), and the stretches (`-l`, `-r`) pulled out from it to
+     the corners. All three show the same rows, placed the same way, so
+     the rim's line is on one page row from corner to corner.
+   Every piece is cut so the plate's outer contour is a straight line at a
+   known offset in it, and placed so that contour is --rim-c inside the
+   card's border box, on the 1px border. The band is 13px deep, inside the
+   card's padding (14px and up), so nothing changes in the content box.
+   Joins: a stretch runs on, opaque, under what it meets (the corners, the
+   junction), and that piece fades in over it (--rim-join at a corner,
+   the junction's straight ends, --jf source px, at the junction): a true
+   cross-fade, and only ever over straight, uniform rim, where the two
+   pieces are the same water.
    The rim is multiplied over the card, so its white disappears; out in
-   the page (whose white it matches) it shows its water. Where the
-   stream lands, the page stream fades out (.mk-day-stream --stream-end) and
-   the stream-in piece fades in over --rim-fade, from --rim-land source
+   the page (whose white it matches) it shows its water. Where the stream
+   lands, the page stream fades out (.mk-day-stream --stream-end) and the
+   junction's own stream fades in over --rim-fade, from --rim-land source
    rows over the contour: the row where the incoming stream, widening into
-   the rim, is as wide as the page stream (media.json `flare`). The two
-   straight edges the streams cross fade out under them over the same
-   --rim-fade. Each corner and its two strips overlap by --rim-join and
-   cross-fade there: the pipeline made the corner's runs end on the strips'
-   very cross-section, and the fade hides the up-to-one-device-pixel
-   difference in where the browser snaps each piece. Each piece's <video> shows its rect of the atlas (--px, --py,
-   --pw, --ph, in an atlas --aw × --ah), stretched to the piece's box. The
-   rim is shown once every piece has a frame. */
+   the rim, is as wide as the page stream (media.json `flare`). Each
+   piece's <video> shows its rect of the atlas (--px, --py, --pw, --ph, in
+   an atlas --aw × --ah), stretched to the piece's box. The rim is shown
+   once every piece has a frame. */
 .mk-rim {
   --rim-k: 0.4;
   --rim-c: 0.5px;
@@ -563,6 +574,7 @@
   --inset: calc(var(--rim-c) - var(--rim-out) * var(--u));
   --cs: calc((var(--rim-out) + var(--rim-corner)) * var(--u));
   --band: calc((var(--rim-out) + var(--rim-in)) * var(--u));
+  --ends: calc(var(--inset) + var(--cs) - var(--rim-join));   /* a stretch runs on under its corner */
   position: absolute;
   inset: -1px;              /* the card's border box */
   z-index: 1;
@@ -582,50 +594,40 @@
   left: calc(-100% * var(--px) / var(--pw));
   top: calc(-100% * var(--py) / var(--ph));
 }
+/* The corners, over the stretches, fading out at their inner ends. */
 .mk-rim-piece[data-piece="tl"], .mk-rim-piece[data-piece="tr"],
-.mk-rim-piece[data-piece="bl"], .mk-rim-piece[data-piece="br"] { width: var(--cs); height: var(--cs); mask-composite: intersect; }
+.mk-rim-piece[data-piece="bl"], .mk-rim-piece[data-piece="br"] { z-index: 1; width: var(--cs); height: var(--cs); mask-composite: intersect; }
 .mk-rim-piece[data-piece="tl"] { left: var(--inset); top: var(--inset); mask-image: linear-gradient(to left, transparent, #000 var(--rim-join)), linear-gradient(to top, transparent, #000 var(--rim-join)); }
 .mk-rim-piece[data-piece="tr"] { right: var(--inset); top: var(--inset); mask-image: linear-gradient(to right, transparent, #000 var(--rim-join)), linear-gradient(to top, transparent, #000 var(--rim-join)); }
 .mk-rim-piece[data-piece="bl"] { left: var(--inset); bottom: var(--inset); mask-image: linear-gradient(to left, transparent, #000 var(--rim-join)), linear-gradient(to bottom, transparent, #000 var(--rim-join)); }
 .mk-rim-piece[data-piece="br"] { right: var(--inset); bottom: var(--inset); mask-image: linear-gradient(to right, transparent, #000 var(--rim-join)), linear-gradient(to bottom, transparent, #000 var(--rim-join)); }
-.mk-rim-piece[data-piece="top"], .mk-rim-piece[data-piece="bottom"] {
-  --a: calc(var(--rim-x) - var(--stream-w) * var(--u) / 2 - var(--inset) - var(--cs) + var(--rim-join));
-  --b: calc(var(--a) + var(--stream-w) * var(--u));
-  left: calc(var(--inset) + var(--cs) - var(--rim-join));
-  right: calc(var(--inset) + var(--cs) - var(--rim-join));
-  height: var(--band);
-  mask-image: linear-gradient(to right, transparent, #000 var(--rim-join), #000 var(--a), transparent calc(var(--a) + var(--rim-fade)),
-    transparent calc(var(--b) - var(--rim-fade)), #000 var(--b), #000 calc(100% - var(--rim-join)), transparent);
-}
-.mk-rim-piece[data-piece="top"] { top: var(--inset); }
-.mk-rim-piece[data-piece="bottom"] { bottom: var(--inset); }
-.mk-rim-piece[data-piece="left"], .mk-rim-piece[data-piece="right"] {
-  top: calc(var(--inset) + var(--cs) - var(--rim-join));
-  bottom: calc(var(--inset) + var(--cs) - var(--rim-join));
-  width: var(--band);
-  mask-image: linear-gradient(to bottom, transparent, #000 var(--rim-join), #000 calc(100% - var(--rim-join)), transparent);
-}
+/* The sides. */
+.mk-rim-piece[data-piece="left"], .mk-rim-piece[data-piece="right"] { top: var(--ends); bottom: var(--ends); width: var(--band); }
 .mk-rim-piece[data-piece="left"] { left: var(--inset); }
 .mk-rim-piece[data-piece="right"] { right: var(--inset); }
-.mk-rim-piece[data-piece="in"], .mk-rim-piece[data-piece="out"] {
-  left: calc(var(--rim-x) - var(--pw) * var(--u) / 2);
-  width: calc(var(--pw) * var(--u));
-  height: calc(var(--ph) * var(--u));
+/* The top and bottom edges: the same rows of one piece, so one line. The
+   top's contour is --rim-above rows down its piece, the bottom's --rim-in. */
+.mk-rim-piece[data-piece^="top-"] { top: calc(var(--rim-c) - var(--rim-above) * var(--u)); height: calc((var(--rim-above) + var(--rim-in)) * var(--u)); --j: var(--jt); }
+.mk-rim-piece[data-piece^="bottom-"] { bottom: calc(var(--rim-c) - var(--rim-below) * var(--u)); height: calc((var(--rim-in) + var(--rim-below)) * var(--u)); --j: var(--jb); }
+/* The stretches run from under the corner to under the junction's opaque middle. */
+.mk-rim-piece[data-piece$="-l"] { left: var(--ends); right: calc(100% - var(--rim-x) + (var(--j) / 2 - var(--jf)) * var(--u)); }
+.mk-rim-piece[data-piece$="-r"] { left: calc(var(--rim-x) + (var(--j) / 2 - var(--jf)) * var(--u)); right: var(--ends); }
+/* The junction, unscaled on the stream's x, over the stretches: it fades in
+   over its straight ends; its incoming stream fades in from the hand-over
+   row, its outgoing one fades out over the lower half of what is below. */
+.mk-rim-piece[data-piece$="-c"] {
+  --side: linear-gradient(to right, transparent, #000 calc(var(--jf) * var(--u)), #000 calc(100% - var(--jf) * var(--u)), transparent);
+  z-index: 1;
+  left: calc(var(--rim-x) - var(--j) * var(--u) / 2);
+  width: calc(var(--j) * var(--u));
   mask-composite: intersect;
 }
-.mk-rim-piece[data-piece="in"] {
+.mk-rim-piece[data-piece="top-c"] {
   --land: calc((var(--rim-above) - var(--rim-land)) * var(--u));
-  top: calc(var(--rim-c) - var(--rim-above) * var(--u));
-  mask-image:
-    linear-gradient(to bottom, transparent var(--land), #000 calc(var(--land) + var(--rim-fade))),
-    linear-gradient(to right, transparent, #000 var(--rim-fade), #000 calc(100% - var(--rim-fade)), transparent);
+  mask-image: linear-gradient(to bottom, transparent var(--land), #000 calc(var(--land) + var(--rim-fade))), var(--side);
 }
-/* The stream leaving below fades out over the lower half of its piece. */
-.mk-rim-piece[data-piece="out"] {
-  bottom: calc(var(--rim-c) - var(--rim-below) * var(--u));
-  mask-image:
-    linear-gradient(to bottom, #000 45%, transparent),
-    linear-gradient(to right, transparent, #000 var(--rim-fade), #000 calc(100% - var(--rim-fade)), transparent);
+.mk-rim-piece[data-piece="bottom-c"] {
+  mask-image: linear-gradient(to bottom, #000 calc((var(--rim-in) + var(--rim-below) * 0.35) * var(--u)), transparent), var(--side);
 }
 
 /* The hero's stream, carried on from the hero's bottom edge down to the
