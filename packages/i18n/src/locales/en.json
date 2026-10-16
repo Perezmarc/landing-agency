@@ -273,6 +273,18 @@
         "body": "Every decision and change is logged, so your team and your auditors can see what happened and why."
       }
     ],
+    "about": {
+      "eyebrow": "Who we are",
+      "headingLead": "More than 20 years in software.",
+      "heading": "Building AI since before ChatGPT.",
+      "body": [
+        "I lead the agency. Before ChatGPT, I founded an AI company that built models of every kind to automate fraud and security work. A company in San Francisco acquired it, and I went on to work there.",
+        "There we built AI, and the processes around it, where it had the most impact. We adopted new advances while they were still at an early stage and reached very high levels of automation.",
+        "The agency brings that experience to your operations. We've worked on processes of every kind, and each engagement starts the same way: finding out how the work really runs."
+      ],
+      "photoAlt": "Portrait of the person who leads the agency",
+      "ctaButton": "Book a demo"
+    },
     "faqEyebrow": "FAQ",
     "faqHeading": "Questions we hear on first calls",
     "faqs": [

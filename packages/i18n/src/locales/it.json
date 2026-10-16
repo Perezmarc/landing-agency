@@ -273,6 +273,18 @@
         "body": "Ogni decisione e ogni modifica vengono registrate, così il tuo team e i tuoi revisori possono vedere cosa è successo e perché."
       }
     ],
+    "about": {
+      "eyebrow": "Chi siamo",
+      "headingLead": "Più di 20 anni nel software.",
+      "heading": "Costruiamo AI da prima di ChatGPT.",
+      "body": [
+        "Guido l'agenzia. Prima di ChatGPT ho fondato un'azienda di AI che sviluppava modelli di ogni tipo per automatizzare il rilevamento delle frodi e la sicurezza. L'ha acquisita un'azienda di San Francisco, dove poi ho continuato a lavorare.",
+        "Lì abbiamo sviluppato l'AI, e i processi che la accompagnano, dove aveva più impatto. Adottavamo i progressi più avanzati quando erano ancora in fase iniziale e abbiamo raggiunto livelli di automazione molto alti.",
+        "L'agenzia porta questa esperienza nelle tue operations. Abbiamo lavorato su processi di ogni tipo, e ogni progetto comincia allo stesso modo: capire come si svolge davvero il lavoro."
+      ],
+      "photoAlt": "Ritratto della persona che guida l'agenzia",
+      "ctaButton": "Prenota una demo"
+    },
     "faqEyebrow": "Domande frequenti",
     "faqHeading": "Le domande che ci fanno alla prima call",
     "faqs": [

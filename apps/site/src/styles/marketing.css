@@ -372,6 +372,29 @@
   .mk-glass-card { background: var(--glass-bg-solid); }
 }
 
+/* ═══════════ WHO WE ARE ═══════════
+   A vertical portrait beside the copy; stacked on phones, photo first. The
+   photo's backdrop is graded to the page's white, so it has no frame: the
+   person stands on the page, and the crop at the waist fades into it. */
+.mk-about-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 7fr);
+  gap: clamp(40px, 6vw, 88px);
+  align-items: center;
+}
+.mk-about-photo { margin: 0; justify-self: center; width: min(100%, 460px); }
+.mk-about-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-mask-image: linear-gradient(to bottom, #000 76%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 76%, transparent 100%);
+}
+.mk-about-copy { max-width: 58ch; }
+.mk-about-p { font-size: clamp(15.5px, 1.4vw, 17px); color: var(--mute); line-height: 1.65; margin-top: 18px; }
+.mk-about-copy .mk-h2 + .mk-about-p { margin-top: 24px; }
+.mk-about-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+
 /* ═══════════ A WEEK, BEFORE AND AFTER ═══════════
    Two calendars on one time scale: BEFORE with every task, AFTER with the
    kept ones in the same slots and empty space where the rest were.
@@ -946,7 +969,9 @@
   .mk-footer-grid > :first-child { grid-column: 1 / -1; }
   /* Hero and final CTAs stack: full width comes from the column, NOT from
      <Button block> (a block button inside a flex row crushes its siblings). */
-  .mk-hero-actions, .mk-final-actions { flex-direction: column; align-items: stretch; }
+  .mk-hero-actions, .mk-final-actions, .mk-about-actions { flex-direction: column; align-items: stretch; }
+  .mk-about-inner { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .mk-about-photo { justify-self: start; width: min(100%, 360px); }
   /* The calendars become one day: the first column (Monday) on a wider axis. */
   .mk-day { --slot: 16px; }
   .mk-day-tabs .ui-tabs-strip { width: auto; }
