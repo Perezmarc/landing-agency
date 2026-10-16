@@ -7,7 +7,7 @@
 
        node scripts/media/build-media.mjs            # everything
        node scripts/media/build-media.mjs --check    # only the checks
-       node scripts/media/build-media.mjs --only card-before,card-after
+       node scripts/media/build-media.mjs --only day-stream,card-rim
                                                      # some clips (patches media.json)
 
    Needs ffmpeg (libsvtav1, libx264) on PATH; sharp comes from the workspace.
@@ -35,12 +35,22 @@
    hero clips are composed here from the landscape ones (composePortrait), so
    the pebble sits in the same place in each and the cuts stay invisible,
    and run on below their 9:16 frame (EXTEND), so the stream reaches the
-   bottom of a phone screen taller than its small viewport. The stream that
-   falls onto the calendar's AFTER card (card-stream) is cut from the hero
-   AFTER loop's graded frames.
-   The card clips (the calendar's water) are cropped to their slab and graded
-   against a clean plate of it (cardPlate): the slab goes to white and only
-   the water is left. No posters: they only ever play over the finished card.
+   bottom of a phone screen taller than its small viewport. Where the AFTER
+   loops' stream leaves the frame (its x and width at the bottom edge) is
+   measured, so the page can carry it on down to the calendar's AFTER card.
+   That stream below the hero is its own clip (buildDayStream): a narrow
+   column cut round one falling stream, graded to white, run on below its
+   frame by advection, in two renditions with their posters.
+   The BEFORE card's splashes are a thin strip along a slab's top edge,
+   graded against a clean plate of it (cardPlate): the slab goes to white
+   and only the water is left, and only where the page shows it (cardKeep).
+   The AFTER card's rim (buildRim) is cut from a plate whose rim carries a
+   line of water into pieces, packed in one small atlas: its four corners
+   (redrawn to the card's radius), a strip of each side, and the top and
+   bottom edges each as one band of rows: a straight stretch, the junction
+   where its stream meets the rim, another stretch. The page lays them
+   round the card like a 9-slice. No posters: the card clips only ever play
+   over the finished card.
    The footer's pool (water seen from the side) is cropped to a wide band
    from its waterline down and graded against its own median frame
    (poolGrader): the white above the line goes to pure white, and every
@@ -49,8 +59,9 @@
    two renditions, the full band and its centre for phones (buildPool), each
    as 10-bit AV1, H.264, and a poster as AVIF and WebP for the footer's CSS
    background.
-   Then: the stones, and media.json (the crash's duration, each card clip's
-   fit box, the pool's aspect and waterline, the stone counts). The checks also measure the crash's
+   Then: the stones, and media.json (the crash's duration, the splash
+   strip's scale and edge, the rim atlas's pieces, the stream clip's x and
+   width, the pool's aspect and waterline, the stone counts). The checks also measure the crash's
    two cuts (PSNR of the frames either side of each).
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -76,36 +87,42 @@ const LOOP_FADE = FPS            // one second
    one frame before it, still on the BEFORE rock, so the cut from the BEFORE
    loop stays invisible and the shatter is immediate. */
 const CRASH_HEAD = 6
+/* The AFTER loop's source spends its first 2.5 s building the flow (the
+   streams start, break and settle); from frame 60 both streams run steadily
+   and keep moving, so the loop is cut from there. Its last second (from
+   frame 119) thins the stream to half its width to land on the still, so
+   the loop ends before it (AFTER_END), where the stream is as wide as at
+   frame 60, and AFTER_BRIDGE motion-interpolated frames carry the water from
+   frame 118 back to frame 60. A cross-fade there blended two streams in
+   different places into one doubled, ghosted stream for a whole second; the
+   bridge moves the one stream instead. */
+const AFTER_HEAD = 60
+const AFTER_END = 119
+const AFTER_BRIDGE = 12
 const CHECK_ONLY = process.argv.includes('--check')
 const ONLY_AT = process.argv.indexOf('--only')
 const ONLY = ONLY_AT > 0 ? new Set(process.argv[ONLY_AT + 1].split(',')) : null
 
-/* The calendar's card clips, in their 1280×720 sources (pixels): `slab` is
+/* The BEFORE card's splash strip, in its 1280×720 source (pixels): `slab` is
    the pale slab's box, measured on the per-pixel median frame (the plate is
-   built around it), `crop` what is kept of the frame, and `fit` the box the
-   page fits to the card's edges (media.json → marketing.css).
-   BEFORE: cropped to the slab's own width, so the slab spans the card; the
-   crop keeps the streams above its top edge from the top of the frame (the
-   rain falls onto the card from the page) and the drips a short way down
-   its face, and `fit` is the slab (its top edge on the card's top border).
-   AFTER: the water runs down the slab's face just inside its left and right
-   edges and leaves below as one stream. `fit` is the inner edges of those
-   two sheets (measured on the graded clip) and the slab's top and bottom, so
-   the card hides the face and the sheets run just outside its sides. The
-   crop starts 9 rows above the slab: the stream that comes in from above is
-   not this clip's but the hero's own (`card-stream`, below), placed by the
-   page on the hero stream's x. Its
-   first 48 frames build the flow up from a dry slab, so the loop starts
-   after them (they still feed the plate: that is where the edges are dry). */
-const CARD = {
-  before: {
-    slab: { x0: 131, y0: 284, x1: 1157, y1: 720 }, crop: { x: 131, y: 0, w: 1026, h: 544 },
-    fit: { x0: 131, y0: 284, x1: 1157, y1: 720 },
-  },
-  after: {
-    slab: { x0: 345, y0: 173, x1: 935, y1: 577 }, crop: { x: 285, y: 164, w: 710, h: 556 },
-    fit: { x0: 377, y0: 173, x1: 897, y1: 577 },
-  },
+   built around it), and `crop` what is kept of the frame.
+   SPLASH (the BEFORE card's top border, from the `card-before` source): a
+   thin strip along the slab's top edge only, over its full width. The
+   slab's silhouette starts on row `edge` (285; the rows under it, to 293,
+   are its wet top face seen from just above, then its front face). Six
+   streams fall onto that edge and burst in crowns on it, up to about 50
+   rows above it. The strip keeps `above` rows over the edge (the crowns
+   whole, rims included, and the last of each stream) and `below` under it
+   (the top face and where the drips start), and grades everything else to
+   white: the streams fade in from `above` to `solid` rows over the edge (so
+   only their last few rows show, where they hit) and the face fades out
+   over the last 4 of `below`. The crop is 68 rows (AV1's least height is
+   64), so its top rows are white. The page draws it small (0.3 CSS px per
+   source px) and repeats it along the border, its `edge` row on the card's
+   top border (media.json `edge`, `width` → marketing.css, motion/water.js). */
+const SPLASH = {
+  slab: { x0: 131, y0: 285, x1: 1157, y1: 720 }, crop: { x: 131, y: 229, w: 1026, h: 68 },
+  edge: 285, keep: { above: 52, solid: 26, below: 10 },
 }
 
 /* The footer's pool, in its 1920×1080 source (pixels): a filled container
@@ -152,7 +169,7 @@ const POOL = {
 const CLIPS = [
   { name: 'hero-before-16x9', w: 1600, h: 900 },
   { name: 'hero-transition-16x9', w: 1600, h: 900, once: true, head: CRASH_HEAD },
-  { name: 'hero-after-16x9', w: 1600, h: 900 },
+  { name: 'hero-after-16x9', w: 1600, h: 900, head: AFTER_HEAD, end: AFTER_END, bridge: AFTER_BRIDGE },
   // Portrait: all three composed from the landscape clips, so the pebble has
   // exactly the same place and size in each and every cut stays invisible.
   // Each is extended below its 9:16 frame (EXTEND), so the stream runs on to
@@ -160,15 +177,17 @@ const CLIPS = [
   // the BEFORE loop's (`history`), so it is built after it.
   { name: 'hero-before-9x16', w: 720, h: 1280, compose: 'hero-before-16x9', extend: true },
   { name: 'hero-transition-9x16', w: 720, h: 1280, once: true, compose: 'hero-transition-16x9', head: CRASH_HEAD, extend: true, history: 'hero-before-9x16' },
-  { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9', extend: true },
-  // The calendar's water: at most 960 wide (they show at about 600).
-  { name: 'card-before', w: 960, h: 510, card: CARD.before },
-  { name: 'card-after', w: 710, h: 556, card: CARD.after, head: 48 },
-  // The stream that comes into the AFTER card: the hero AFTER loop's own
-  // stream, cut from its graded frames (the column under the pebble, from
-  // STREAM.y down to the frame's bottom), so it is the same water at the
-  // same scale. The page puts it on the hero stream's x (motion/water.js).
-  { name: 'card-stream', w: 64, h: 250, cut: 'hero-after-16x9' },   // 64: AV1's least width
+  { name: 'hero-after-9x16', w: 720, h: 1280, compose: 'hero-after-16x9', head: AFTER_HEAD, end: AFTER_END, bridge: AFTER_BRIDGE, extend: true },
+  // The calendar's water. The BEFORE card's splash strip is cut from the
+  // card-before source (its own output name: `source`), and shows at about
+  // 300 CSS px (2–4 copies along the border). The AFTER card's rim is an
+  // atlas of pieces (RIM, buildRim), sized by its pieces.
+  { name: 'card-splash', source: 'card-before', w: 960, h: 64, card: SPLASH },
+  { name: 'card-rim', rim: true },
+  // The stream from the hero down to the AFTER card: a column round one
+  // falling stream, run on below its frame (DAY_STREAM, buildDayStream), in
+  // a landscape and a portrait rendition like the hero's.
+  { name: 'day-stream', dayStream: true },
   // The footer's pool: a wide band, from the waterline down, at the source's
   // full width and its own row scale (532 rows: the crop less the squeezed
   // meniscus). Its source ends on its first frame, so it loops as it is,
@@ -225,10 +244,102 @@ function portraitPlacement(w, h) {
    shows past them the stream fades rather than stops. */
 const EXTEND = { rows: 512, speed: 9, gravity: 1.5, fade: 0.12, clean: 56, fragments: 48 }
 
-/* The stream under the pebble, at the bottom of the AFTER loop's frame: the
-   card-stream clip is cut from STREAM.y down (1600×900 frame pixels), and the
-   stream's x is measured on the frame's last STREAM.rows rows (media.json). */
-const STREAM = { y: 650, rows: 8 }
+/* The stream under the pebble, where it leaves the AFTER loop's frame: on
+   the frame's bottom row, its two edges are the first and last columns
+   darker than `water` (luma) within `reach` px of the row's darkest one
+   (one of the stream's dark refractive edges; the rest of the row is
+   white). The page carries the stream on below the hero from there (the
+   day-stream clip, scaled so its stream has this width: marketing.css
+   .mk-day-stream), so both edges matter, not just its darkest line. */
+const STREAM = { reach: 24, water: 240 }
+
+/* The stream from the hero down to the AFTER card (`day-stream`, a 1080×1920
+   source: one thin stream falling straight down a white void, centred; it
+   starts and ends on the same still, so it loops as it is, `seamless`).
+   `crop` is a column round the stream at the source's scale: its top rows
+   are left out (the stream is wider there, about 64 px at row 0 against 30
+   from row 600 down, measured edge to edge), so the stream has one width
+   from the clip's top, where it meets the hero's, down. The page scales the
+   column so its stream is exactly the hero stream's width (media.json
+   `stream`), which is 0.26–0.33 CSS px per source px on a phone and up to
+   0.8 on a desktop, so the clip must run a long way: from the hero's
+   bottom to the AFTER card is 630–1500 CSS px. The source's 1320 rows are
+   run on below the frame by advection, as the portrait hero clips are
+   (EXTEND): row r under the frame is its bottom row (r + 1) / `speed`
+   frames earlier, interpolated between frames, wrapping round the loop, so
+   the extension is as seamless as the loop and nothing is tiled. The
+   stream's ripples move too fast to track from frame to frame (they shift
+   80–160 px a frame), so `speed` (96 px a frame, 2300 px/s) is chosen to
+   read as fast water. Two renditions, like the hero: `16x9` the first
+   `rows` of the column at the source's scale, and `9x16` all of it at half
+   scale (a phone draws it at 0.26–0.33 CSS px per source px, so half scale
+   is still 0.8–1 device px per pixel at 3x, and its height stays under
+   4096, the most a hardware decoder is sure to take). The source's stream
+   is drawn harder than the hero's (its edge lines graded near-black, the
+   hero's about luma 110 where its stream leaves the frame), so its
+   distance from white is scaled by `clear` (0.62, measured on the page:
+   the two streams' darkest line and their summed darkness across the
+   join), and the two meet in the same tone. */
+const DAY_STREAM = {
+  crop: { x: 477, y: 600, w: 128, h: 1320 }, speed: 96, clear: 0.62,
+  renditions: { '16x9': { rows: 3200, scale: 1 }, '9x16': { rows: 7200, scale: 0.5 } },
+  join: 240,     // the rows at the clip's top where its stream width is measured (where it meets the hero's)
+  crf: { av1: 34, h264: 24 },
+}
+
+/* The AFTER card's rim (`card-rim`, a 1920×1080 source: a pale plate seen
+   face-on, about 2:1, with rounded corners; a thin stream lands on the
+   middle of its top edge, a line of water runs round its contour, and one
+   stream leaves the middle of its bottom edge). In its first 2.6 s the
+   water also runs over the face and drips off the corners; from frame 90
+   (`head`, 3.75 s) to the end it is calm, so only those 54 frames are
+   used, looped with an 18-frame cross-fade (`fade`).
+   The page lays the rim round the card's border at a fixed scale (0.4 CSS
+   px per source px: marketing.css --rim-k), crisp at 2x (0.8 device px a
+   pixel) and at 3x (1.2). The card's aspect changes with the layout and
+   the plate's does not, so the rim is cut into pieces the page places like
+   a 9-slice, all at that one scale: the four corners, a strip of each
+   side (stretched along its length only), and one piece for each of the
+   top and bottom edges. Near the streams the rim is not straight: by the
+   incoming stream its lines curve up into the flanges the stream spreads
+   into (within about 120 px of it), and round the outgoing one the whole
+   band dips into the stream's neck (its outer line 17 px down under it,
+   back on its line about 160 px either side). So the top and bottom
+   pieces are each cut from ONE band of rows round the contour, in three
+   parts side by side: a straight stretch, the junction (`junction` px
+   wide, centred on its stream, everything that bends inside it with
+   20 px of straight rim to spare at each end), and another straight
+   stretch, each stretch sampled (`sample` px of rim) right beside the
+   junction. The page draws the junction unscaled on the page stream's x
+   and the stretches pulled out to the corners, all three from the same
+   rows of the same piece, so the rim's line is on one page row from
+   corner to corner; the junction cross-fades into the stretches only
+   over its straight ends (`fadeIn` px), where the two are the same rim.
+   Every piece is resampled so that the plate's outer contour (the
+   centre of its dark outer line, measured on the median frame) is a
+   straight line at a known offset in it: `out` px of the outside kept
+   beyond it, `in` px of the inside (the line of water is the 26 px band
+   from the outer line to an inner one; the face beyond it goes to white).
+   The edges are fitted as lines (the plate is 5 px out of level across
+   its width) and each corner as a circle tangent to its two edges (radius
+   about 100 px, or 40 CSS px at the page's scale, where the card's corner
+   is 16): each corner is redrawn to `radius` (40 px, so 16 CSS px) by
+   moving every point of its band in along the radius by the same amount,
+   so the band keeps its width and only the arc tightens. The top piece
+   runs `above` px over the contour (the incoming stream), the bottom one
+   `below` under it (the outgoing one). The incoming stream widens as
+   it meets the rim; its width on each row above the contour (`flare`) lets
+   the page hand the stream over from its own at the row where the two are
+   as wide. Pieces are packed into one atlas with `margin` px of their own
+   content round them (so the codec's bleed never reaches a piece's edge)
+   and `gutter` px of white between them. */
+const RIM = {
+  head: 90, fade: 18,
+  out: 10, in: 32, radius: 40, corner: 64, strip: 32, margin: 2, gutter: 4,
+  above: 80, below: 140, junction: { top: 340, bottom: 400 }, sample: 70, fadeIn: 40, through: [40, 90],
+  guess: { top: 329, bottom: 898, left: 404, right: 1523, r: 100, inX: 965, outX: 961 },
+  crf: { av1: 30, h264: 20 },
+}
 
 /* How far a pixel must stand out from the void field to count as an object
    (stone, water, rain) and keep its tone: the weight ramps from lo to hi. */
@@ -304,13 +415,30 @@ function blur(src, w, h, r) {
 
 /** Every frame of a clip as raw RGB at (w, h), less the first `head` frames,
     optionally cropped first ({ x, y, w, h } in source pixels). */
-function decodeAll(path, w, h, head = 0, crop = null) {
+function decodeAll(path, w, h, head = 0, crop = null, bridge = 0, end = 0) {
   const cut = crop ? `crop=${crop.w}:${crop.h}:${crop.x}:${crop.y},` : ''
-  const raw = spawnSync('ffmpeg', ['-v', 'error', '-i', path, '-vf', `trim=start_frame=${head},setpts=PTS-STARTPTS,${cut}scale=${w}:${h}:flags=area`, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], { maxBuffer: 2 ** 31 })
+  const raw = spawnSync('ffmpeg', ['-v', 'error', '-i', path, '-vf', `trim=start_frame=${head}${end ? `:end_frame=${end}` : ''},setpts=PTS-STARTPTS,${cut}scale=${w}:${h}:flags=area`, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], { maxBuffer: 2 ** 31 })
   if (raw.status !== 0) throw new Error(raw.stderr.toString())
-  const size = w * h * 3, frames = []
-  for (let i = 0; i + size <= raw.stdout.length; i += size) frames.push(raw.stdout.subarray(i, i + size))
+  const frames = splitFrames(raw.stdout, w * h * 3)
+  return bridge ? frames.concat(bridgeFrames(frames.at(-1), frames[0], w, h, bridge)) : frames
+}
+
+function splitFrames(buf, size) {
+  const frames = []
+  for (let i = 0; i + size <= buf.length; i += size) frames.push(buf.subarray(i, i + size))
   return frames
+}
+
+/** `n` motion-interpolated frames from frame `a` to frame `b` (both left
+    out), so a loop that ends on `a` wraps to `b` with the water moved rather
+    than cross-faded. minterpolate needs a frame after `b` to settle, so `b`
+    goes in twice. */
+function bridgeFrames(a, b, w, h, n) {
+  const out = spawnSync('ffmpeg', ['-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', `${w}x${h}`, '-r', '1', '-i', '-',
+    '-vf', `minterpolate=fps=${n + 1}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1`, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
+  { input: Buffer.concat([a, b, b]), maxBuffer: 2 ** 31 })
+  if (out.status !== 0) throw new Error(out.stderr.toString())
+  return splitFrames(out.stdout, w * h * 3).slice(1, n + 1)
 }
 
 /* ── 1. the void field ──────────────────────────────────────────────────── */
@@ -464,10 +592,40 @@ function cardPlate(frames, w, h, slab) {
   return { plate, exposure }
 }
 
-function gradeCard(frame, w, h, plate, exposure) {
+/** How much of the splash strip's water is kept on each output row (1 all,
+    0 graded to white), in its source's pixels (SPLASH): the rows around the
+    edge (`keep`). */
+function cardKeep({ w, h, card: { crop, edge, keep } }) {
+  const out = new Float32Array(w * h)
+  for (let y = 0; y < h; y++) {
+    const sy = crop.y + (y + 0.5) * crop.h / h
+    out.fill(smoothstep(edge - keep.above, edge - keep.solid, sy) * (1 - smoothstep(edge + keep.below - 4, edge + keep.below, sy)), y * w, (y + 1) * w)
+  }
+  return out
+}
+
+function gradeCard(frame, w, h, plate, exposure, keep, crisp) {
   const n = w * h, out = Buffer.alloc(n * 3)
   for (let p = 0; p < n; p++) {
-    for (let c = 0; c < 3; c++) out[p * 3 + c] = Math.min(255, Math.max(0, Math.round(frame[p * 3 + c] * exposure * 255 / Math.max(60, plate[c][p]))))
+    for (let c = 0; c < 3; c++) out[p * 3 + c] = Math.min(255, Math.max(0, Math.round(255 - (255 - frame[p * 3 + c] * exposure * 255 / Math.max(60, plate[c][p])) * keep[p])))
+    if (!crisp) snapWhite(out, p)
+  }
+  return crisp ? crispen(out, w, h, crisp) : out
+}
+
+/* The splash strip is drawn at about 0.4 of its scale, where a crown's
+   translucent sheet (the grey of the slab seen through it) reads as a flat
+   grey patch. So its water is kept by its edges: each pixel's distance from
+   white less `flat` of its neighbourhood's (a blur of radius `r`), times
+   `gain`, so a drop's outline, a crown's rim and a stream stay crisp and
+   their flat insides go pale. In luma, applied to every channel alike. */
+function crispen(img, w, h, { r, flat, gain }) {
+  const n = w * h, d = new Float32Array(n)
+  for (let p = 0; p < n; p++) d[p] = 255 - (LUMA[0] * img[p * 3] + LUMA[1] * img[p * 3 + 1] + LUMA[2] * img[p * 3 + 2])
+  const s = blur(d, w, h, r), out = Buffer.alloc(n * 3)
+  for (let p = 0; p < n; p++) {
+    const k = d[p] > 0.5 ? Math.max(0, Math.min(255, (d[p] - flat * s[p]) * gain)) / d[p] : 0
+    for (let c = 0; c < 3; c++) out[p * 3 + c] = Math.round(255 - (255 - img[p * 3 + c]) * k)
     snapWhite(out, p)
   }
   return out
@@ -574,9 +732,9 @@ function encoder(args) {
    wide, so no rain streak or fragment is ever stretched. The grade then takes
    that plate to white (keepMap). Written as a lossless intermediate the grade
    then reads. */
-async function composePortrait(src, out, { w, h, head = 0 }) {
+async function composePortrait(src, out, { w, h, head = 0, bridge = 0, end = 0 }) {
   const { sw, sh, left, top, feather } = portraitPlacement(w, h)
-  const frames = decodeAll(src, sw, sh, head)
+  const frames = decodeAll(src, sw, sh, head, null, bridge, end)
   const rows = Math.round(sh * 0.04), plate = new Float32Array(sw * 3)
   for (let x = 0; x < sw; x++) for (let c = 0; c < 3; c++) {
     let acc = 0, n = 0
@@ -611,31 +769,42 @@ function grader(clip, src) {
   if (clip.card) {
     // The plate is built from every frame, the head included: that is where the slab is dry.
     const all = decodeAll(src, w, h, 0, clip.card.crop), head = clip.head ?? 0
-    const { plate, exposure } = cardPlate(all, w, h, slabOut(clip))
-    return { count: all.length - head, graded: i => gradeCard(all[head + i], w, h, plate, exposure[head + i]) }
+    const { plate, exposure } = cardPlate(all, w, h, slabOut(clip)), keep = cardKeep(clip)
+    return { count: all.length - head, graded: i => gradeCard(all[head + i], w, h, plate, exposure[head + i], keep, clip.card.crisp) }
   }
-  // A composed source is already trimmed (composePortrait drops the head).
-  const lw = Math.round(w / 4), lh = Math.round(h / 4), head = clip.compose ? 0 : clip.head ?? 0
-  const { field: low, exposure } = voidField(decodeAll(src, lw, lh, head), lw, lh)
+  // A composed source is already trimmed and bridged (composePortrait drops
+  // the head and tail and adds the bridge).
+  const lw = Math.round(w / 4), lh = Math.round(h / 4), head = clip.compose ? 0 : clip.head ?? 0, bridge = clip.compose ? 0 : clip.bridge ?? 0, end = clip.compose ? 0 : clip.end ?? 0
+  const { field: low, exposure } = voidField(decodeAll(src, lw, lh, head, null, bridge, end), lw, lh)
   const gain = low.map(ch => { const up = upsample(ch, lw, lh, w, h); for (let i = 0; i < up.length; i++) up[i] = 255 / Math.max(120, up[i]); return up })
-  const frames = decodeAll(src, w, h, head), keep = keepMap(clip)
+  const frames = decodeAll(src, w, h, head, null, bridge, end), keep = keepMap(clip)
   return { count: frames.length, graded: i => gradeFrame(frames[i], w, h, gain, exposure[Math.min(i, exposure.length - 1)], keep) }
 }
 
-/** Where the stream crosses the bottom of a frame: the darkness-weighted
-    centre of the darkest column and its neighbours, over the last
-    STREAM.rows rows above row `bottom`, as a fraction of the width. */
-function streamX(frame, w, bottom) {
-  const dark = new Float32Array(w)
-  for (let y = bottom - STREAM.rows; y < bottom; y++) for (let x = 0; x < w; x++) {
-    const p = (y * w + x) * 3
-    dark[x] += 255 - (LUMA[0] * frame[p] + LUMA[1] * frame[p + 1] + LUMA[2] * frame[p + 2])
-  }
+/** The stream's two edges on row `y` of a frame, in px from the frame's
+    left edge, sub-pixel: where the luma crosses STREAM.water between the
+    pixel centres either side of each edge, within `reach` px of the row's
+    darkest pixel. */
+function streamEdges(frame, w, y, reach = STREAM.reach) {
+  const luma = x => { const p = (y * w + x) * 3; return LUMA[0] * frame[p] + LUMA[1] * frame[p + 1] + LUMA[2] * frame[p + 2] }
+  const row = Float32Array.from({ length: w }, (_, x) => luma(x))
   let peak = 0
-  for (let x = 1; x < w; x++) if (dark[x] > dark[peak]) peak = x
-  let sum = 0, at = 0
-  for (let x = Math.max(0, peak - 12); x <= Math.min(w - 1, peak + 12); x++) if (dark[x] > dark[peak] * 0.1) { sum += dark[x]; at += dark[x] * (x + 0.5) }
-  return at / sum / w
+  for (let x = 1; x < w; x++) if (row[x] < row[peak]) peak = x
+  let l = -1, r = -1
+  for (let x = Math.max(0, peak - reach); x <= Math.min(w - 1, peak + reach); x++) if (row[x] < STREAM.water) { if (l < 0) l = x; r = x }
+  return {
+    left: l > 0 ? l - 0.5 + (row[l - 1] - STREAM.water) / (row[l - 1] - row[l]) : l,
+    right: r < w - 1 ? r + 0.5 + (STREAM.water - row[r]) / (row[r + 1] - row[r]) : r + 1,
+  }
+}
+
+/** Where a loop's stream leaves its frame: the median of each frame's two
+    edges over the whole loop (the water wobbles a few px), as the stream's
+    centre and width, fractions of the frame's width. */
+function streamExit(edges, w) {
+  const median = a => { const s = [...a].sort((p, q) => p - q), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2 }
+  const left = median(edges.map(e => e.left)), right = median(edges.map(e => e.right))
+  return { x: (left + right) / 2 / w, width: (right - left) / w }
 }
 
 /** The EXTEND rows under frame `k` of a sequence, from its bottom rows
@@ -660,33 +829,27 @@ function extension(rows, k, w, past, clean = 0) {
 const BOTTOMS = {}   // a portrait loop's bottom rows, for the crash's past
 const MEASURED = {}  // where each hero AFTER loop's stream leaves its frame
 
-/* A clip cut from another's graded intermediate: the card stream, the
-   column under the AFTER loop's pebble, centred on its stream. */
-function cutClip(clip, mid) {
-  const x = Math.round(MEASURED[clip.cut].x * 1600 - clip.w / 2)
-  MEASURED[clip.name] = { x: (MEASURED[clip.cut].x * 1600 - x) / clip.w }
-  encodeWeb(clip, ['-vf', `crop=${clip.w}:${clip.h}:${x}:${STREAM.y}`], mid)
-  return { frames: null }
-}
-
-function encodeWeb(clip, filter, mid) {
+function encodeWeb(clip, mid) {
   const crf = { av1: 40, h264: 27, ...clip.crf }
   const color = ['-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709', '-color_range', 'tv']
-  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, ...filter, '-an', '-c:v', 'libsvtav1', '-crf', String(crf.av1), '-preset', '5', '-g', String(FPS * 5), '-pix_fmt', 'yuv420p', ...color, join(OUT, `${clip.name}.webm`)])
-  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, ...filter, '-an', '-c:v', 'libx264', '-crf', String(crf.h264), '-preset', 'slow', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
+  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libsvtav1', '-crf', String(crf.av1), '-preset', '5', '-g', String(FPS * 5), '-pix_fmt', 'yuv420p', ...color, join(OUT, `${clip.name}.webm`)])
+  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', '-c:v', 'libx264', '-crf', String(crf.h264), '-preset', 'slow', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
     '-x264-params', `keyint=${FPS * 5}:open-gop=0`, '-movflags', '+faststart', ...color, join(OUT, `${clip.name}.mp4`)])
 }
 
 async function buildClip(clip, src) {
   if (clip.pool) return buildPool(clip, src)
+  if (clip.rim) return buildRim(clip, src)
+  if (clip.dayStream) return buildDayStream(clip, src)
   const { w, h } = clip
   const { count: N, graded } = grader(clip, src)
   const L = LOOP_FADE
 
   // The frames in playing order.
   function* sequence() {
-    if (clip.once) {
-      // The transition plays once, start to end.
+    if (clip.once || clip.bridge) {
+      // The transition plays once, start to end; a bridged loop already
+      // ends on the way back to its first frame, so it just wraps.
       for (let i = 0; i < N; i++) yield graded(i)
     } else {
       // Order: L … N−L−1, then the cross-fade of the last second into the first.
@@ -705,6 +868,9 @@ async function buildClip(clip, src) {
   const mid = join(CACHE, `${clip.name}.graded.mkv`)
   const enc = encoder(['-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', `${w}x${H}`, '-r', String(FPS), '-i', '-', '-c:v', 'libx264', '-qp', '0', '-preset', 'veryfast', '-pix_fmt', 'yuv444p', mid])
   let first = null, count = 0
+  // A hero AFTER loop's stream, where it leaves the frame (its last row,
+  // above the extension), in every frame it plays.
+  const exits = clip.name.startsWith('hero-after-') ? [] : null
   if (clip.extend) {
     // Every frame first (the extension reads the bottom rows around it).
     const frames = [...sequence()], rows = frames.map(f => Buffer.from(f.subarray((h - 1) * w * 3)))
@@ -717,27 +883,23 @@ async function buildClip(clip, src) {
     }
     if (!clip.once) BOTTOMS[clip.name] = rows
     for (const [k, f] of frames.entries()) {
+      exits?.push(streamEdges(f, w, h - 1))
       const g = Buffer.concat([f, extension(rows, k, w, past, clip.once ? EXTEND.clean : 0)])
       if (!first) first = g
       await enc.write(g)
     }
     count = M
   } else {
-    for (const g of sequence()) { if (!first) first = g; await enc.write(g); count++ }
+    for (const g of sequence()) { if (!first) first = g; exits?.push(streamEdges(g, w, h - 1)); await enc.write(g); count++ }
   }
   await enc.close()
-  if (clip.name.startsWith('hero-after-')) MEASURED[clip.name] = { x: streamX(first, w, h) }
+  if (exits) MEASURED[clip.name] = streamExit(exits, w)
 
-  encodeWeb(clip, [], mid)
+  encodeWeb(clip, mid)
   // A hero loop's poster is the first frame it plays. The transition has none:
   // it only ever plays over the BEFORE clip; nor do the card clips, which only
   // ever play over the finished card.
   if (!clip.once && !clip.card) await sharp(first, { raw: { width: w, height: H, channels: 3 } }).jpeg({ quality: 90, mozjpeg: true }).toFile(join(OUT, `${clip.name}.jpg`))
-  // A clip cut from this one reads its intermediate first.
-  for (const cut of CLIPS.filter(c => c.cut === clip.name && (!ONLY || ONLY.has(c.name)))) {
-    console.log('·', cut.name)
-    cutClip(cut, mid)
-  }
   rmSync(mid)
   return { frames: clip.once ? N : count }
 }
@@ -814,6 +976,376 @@ async function buildPool(clip, src) {
   return { frames: N }
 }
 
+/* ── shared by the stream and the rim ──────────────────────────────────── */
+
+/** The grader for a clip whose whole frame is void but its water: the
+    hero's grade with none of the light kept, so everything that is not
+    water (the wall, the plate's face) goes to white. Frames are decoded at
+    (w, h) from `crop` (source pixels), less `head`. */
+function voidGrader(src, w, h, head, crop = null) {
+  const lw = Math.max(16, Math.round(w / 4)), lh = Math.max(16, Math.round(h / 4))
+  const { field: low, exposure } = voidField(decodeAll(src, lw, lh, head, crop), lw, lh)
+  const gain = low.map(ch => { const up = upsample(ch, lw, lh, w, h); for (let i = 0; i < up.length; i++) up[i] = 255 / Math.max(120, up[i]); return up })
+  const frames = decodeAll(src, w, h, head, crop), keep = new Float32Array(w * h)
+  return { count: frames.length, graded: i => gradeFrame(frames[i], w, h, gain, exposure[i], keep) }
+}
+
+/** A web encode (AV1 WebM, H.264 MP4) of a lossless intermediate, through
+    an optional filter. */
+function encodeTo(mid, out, { vf = null, crf }) {
+  const color = ['-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709', '-color_range', 'tv']
+  const filter = vf ? ['-vf', vf] : []
+  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', ...filter, '-c:v', 'libsvtav1', '-crf', String(crf.av1), '-preset', '5', '-g', String(FPS * 5), '-pix_fmt', 'yuv420p', ...color, `${out}.webm`])
+  run('ffmpeg', ['-v', 'error', '-y', '-i', mid, '-an', ...filter, '-c:v', 'libx264', '-crf', String(crf.h264), '-preset', 'slow', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
+    '-x264-params', `keyint=${FPS * 5}:open-gop=0`, '-movflags', '+faststart', ...color, `${out}.mp4`])
+}
+
+const median = (a) => { const s = Float32Array.from(a).sort(); return s.length % 2 ? s[s.length >> 1] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2 }
+/** A row of luma values as one grey RGB row, for streamEdges. */
+const grey = (values) => Buffer.from(values.flatMap(v => { const g = Math.round(Math.min(255, Math.max(0, v))); return [g, g, g] }))
+
+/* ── the stream below the hero ─────────────────────────────────────────────
+   The column (DAY_STREAM.crop), graded to white, every frame of the
+   seamless loop but its last (its first again), run on below its frame by
+   advection to the 9:16 rendition's length; then the two renditions (the
+   16:9 one the top `rows`, the 9:16 one all of it at half scale) and their
+   posters (the first frame, AVIF and WebP, which the page shows with no
+   JavaScript and under the clip). Measured: the stream's centre and width
+   at the clip's top (the `join` rows, where it meets the hero's stream),
+   as fractions of the column's width, the same in both renditions. */
+async function buildDayStream(clip, src) {
+  const { crop, speed, renditions, join: joinRows, clear, crf } = DAY_STREAM
+  const { w } = crop, R = Math.max(...Object.values(renditions).map(r => r.rows)), E = R - crop.h
+  const { count, graded } = voidGrader(src, w, crop.h, 0, crop)
+  const N = count - 1
+  const frames = Array.from({ length: N }, (_, i) => graded(i).map(v => Math.round(255 - (255 - v) * clear)))
+  const rows = frames.map(f => f.subarray((crop.h - 1) * w * 3))
+  const at = i => rows[((i % N) + N) % N]
+
+  const edges = []
+  // The darkest pixel is one of its edges, and it is about 30 px across.
+  for (const f of frames) for (let y = 0; y < joinRows; y += 8) edges.push(streamEdges(f, w, y, 48))
+  const bottom = frames.map(f => streamEdges(f, w, crop.h - 1, 48))
+
+  const mid = join(CACHE, `${clip.name}.graded.mkv`)
+  const enc = encoder(['-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', `${w}x${R}`, '-r', String(FPS), '-i', '-', '-c:v', 'libx264', '-qp', '0', '-preset', 'veryfast', '-pix_fmt', 'yuv444p', mid])
+  let first = null
+  for (const [k, f] of frames.entries()) {
+    const ext = Buffer.alloc(E * w * 3)
+    for (let r = 0; r < E; r++) {
+      const t = k - (r + 1) / speed, i0 = Math.floor(t), a = at(i0), b = at(i0 + 1), m = t - i0
+      for (let i = 0; i < w * 3; i++) ext[r * w * 3 + i] = Math.round(a[i] * (1 - m) + b[i] * m)
+    }
+    const g = Buffer.concat([f, ext])
+    if (!first) first = g
+    await enc.write(g)
+  }
+  await enc.close()
+
+  const out = {}
+  for (const [r, { rows: H, scale }] of Object.entries(renditions)) {
+    const ow = Math.round(w * scale), oh = Math.round(H * scale), name = join(OUT, `${clip.name}-${r}`)
+    const vf = `crop=${w}:${H}:0:0${scale !== 1 ? `,scale=${ow}:${oh}:flags=area` : ''}`
+    encodeTo(mid, name, { vf, crf })
+    const still = sharp(first, { raw: { width: w, height: R, channels: 3 } }).extract({ left: 0, top: 0, width: w, height: H }).resize(ow, oh, { kernel: 'lanczos3' })
+    await still.clone().avif({ quality: 80, effort: 9, chromaSubsampling: '4:4:4' }).toFile(`${name}.avif`)
+    await still.clone().webp({ quality: 92, effort: 6 }).toFile(`${name}.webp`)
+    out[r] = { aspect: +(ow / oh).toFixed(5) }
+  }
+  rmSync(mid)
+  const exit = streamExit(edges, w), foot = streamExit(bottom, w)
+  console.log(`  stream: x ${(exit.x * w).toFixed(2)} px, width ${(exit.width * w).toFixed(2)} px at the top; width ${(foot.width * w).toFixed(2)} px on the source's last row`)
+  return { frames: N, stream: { x: exit.x, width: exit.width, ...out } }
+}
+
+/* ── the AFTER card's rim ──────────────────────────────────────────────────
+   The calm frames, graded to white; the plate's geometry, measured on
+   their per-pixel median (rimGeometry); every piece resampled from each
+   frame into the atlas (rimPieces, packAtlas); the loop cross-faded. */
+
+/** Bilinear sample of a luma plane or an RGB buffer (channel c), pixel
+    centres on integers, clamped to the frame. */
+function sampler(buf, w, h, ch = 1) {
+  return (x, y, c = 0) => {
+    x = Math.min(w - 1, Math.max(0, x)); y = Math.min(h - 1, Math.max(0, y))
+    const x0 = Math.min(w - 2, Math.floor(x)), y0 = Math.min(h - 2, Math.floor(y)), tx = x - x0, ty = y - y0
+    const p = (xx, yy) => buf[(yy * w + xx) * ch + c]
+    return (p(x0, y0) * (1 - tx) + p(x0 + 1, y0) * tx) * (1 - ty) + (p(x0, y0 + 1) * (1 - tx) + p(x0 + 1, y0 + 1) * tx) * ty
+  }
+}
+
+/** Where a profile is darkest, to a fraction of a pixel (a parabola through
+    the darkest sample and its neighbours): `at(t)` for t in [from, to]. */
+function darkestAt(at, from, to) {
+  let best = from
+  for (let t = from; t <= to; t++) if (at(t) < at(best)) best = t
+  const a = at(best - 1), b = at(best), c = at(best + 1), d = a - 2 * b + c
+  return best + (d > 1e-6 ? Math.max(-0.5, Math.min(0.5, (a - c) / (2 * d))) : 0)
+}
+
+/** A least-squares line v = a + b·t through points [t, v]. */
+function fitLine(points) {
+  const n = points.length, st = points.reduce((s, [t]) => s + t, 0), sv = points.reduce((s, [, v]) => s + v, 0)
+  const stt = points.reduce((s, [t]) => s + t * t, 0), stv = points.reduce((s, [t, v]) => s + t * v, 0)
+  const b = (n * stv - st * sv) / (n * stt - st * st), a = (sv - b * st) / n
+  return t => a + b * t
+}
+
+/** The plate's outer contour on the median frame `L` (luma, 1920×1080): its
+    four edges as lines (the centre of the dark outer line), each corner as
+    the circle tangent to its two edges that runs darkest along the arc,
+    and the two streams' axes. */
+function rimGeometry(L, w, h) {
+  const { guess: g, above } = RIM, at = sampler(L, w, h)
+  const away = (x, s) => Math.abs(x - s) > 110
+  const range = (a, b, step) => Array.from({ length: Math.floor((b - a) / step) + 1 }, (_, i) => a + i * step)
+  const xs = range(g.left + g.r + 20, g.right - g.r - 20, 4), ys = range(g.top + g.r + 20, g.bottom - g.r - 20, 4)
+  const top = fitLine(xs.filter(x => away(x, g.inX)).map(x => [x, darkestAt(y => at(x, y), g.top - 12, g.top + 12)]))
+  const bottom = fitLine(xs.filter(x => away(x, g.outX)).map(x => [x, darkestAt(y => at(x, y), g.bottom - 12, g.bottom + 12)]))
+  const left = fitLine(ys.map(y => [y, darkestAt(x => at(x, y), g.left - 12, g.left + 12)]))
+  const right = fitLine(ys.map(y => [y, darkestAt(x => at(x, y), g.right - 12, g.right + 12)]))
+
+  // A corner: ix, iy are its inward signs; its circle touches the corner's
+  // horizontal edge (hline, a function of x) and vertical edge (vline, of y).
+  const corner = (ix, iy, hline, vline) => {
+    const fit = (r) => {
+      let cx = vline(hline(vline(0)) + iy * r) + ix * r, cy = hline(cx) + iy * r
+      cx = vline(cy) + ix * r; cy = hline(cx) + iy * r
+      return { cx, cy, r }
+    }
+    let best = null
+    for (let r = 70; r <= 130; r += 0.25) {
+      const c = fit(r)
+      let s = 0
+      for (let k = 0; k <= 30; k++) { const a = (15 + 60 * k / 30) * Math.PI / 180; s += at(c.cx - ix * r * Math.cos(a), c.cy - iy * r * Math.sin(a)) }
+      if (!best || s < best.s) best = { ...c, s }
+    }
+    return best
+  }
+  const corners = {
+    tl: corner(1, 1, top, left), tr: corner(-1, 1, top, right),
+    bl: corner(1, -1, bottom, left), br: corner(-1, -1, bottom, right),
+  }
+  // The streams' axes: the median centre of their edges, over rows well
+  // clear of the rim.
+  const axis = (y0, y1, x) => {
+    const c = []
+    for (let y = y0; y <= y1; y += 2) {
+      const e = streamEdges(grey(Array.from({ length: 121 }, (_, i) => at(x - 60 + i, y))), 121, 0, 40)
+      if (e.left >= 0) c.push(x - 60 + (e.left + e.right) / 2 - 0.5)
+    }
+    return median(c)
+  }
+  const inX = axis(Math.round(top(g.inX)) - above, Math.round(top(g.inX)) - 40, g.inX)
+  const outX = axis(Math.round(bottom(g.outX)) + 40, Math.round(bottom(g.outX)) + 150, g.outX)
+  return { top, bottom, left, right, corners, inX, outX }
+}
+
+/** The pieces: each a size (inner, without its margin) and a map from a
+    point in it (pixel centres) to a point of the source frame and how much
+    of it is kept. Every piece's contour is at a known offset (see RIM). */
+function rimPieces(G) {
+  const { out: O, in: I, radius: Rt, corner: S, strip: Ls, above: A, below: B, sample } = RIM
+  // Kept across the band: all of it inside to `in` (the face beyond goes
+  // white), to `out` outside; `d` is the distance in from the contour.
+  const band = d => d >= 0 ? 1 - smoothstep(I - 5, I, d) : 1 - smoothstep(O - 4, O, -d)
+  const inside = d => d >= 0 ? 1 - smoothstep(I - 5, I, d) : 1
+  const P = O + S, T = O + I, pieces = {}
+  // A corner, `ix`/`iy` its inward signs; in the piece, (u, v) is the
+  // distance in from its two edges, and its arc's centre is (Rt, Rt).
+  const corner = (c, ix, iy) => ({
+    w: P, h: P,
+    map(px, py) {
+      const u = (ix > 0 ? px : P - px) - O, v = (iy > 0 ? py : P - py) - O
+      const dx = u - Rt, dy = v - Rt, shift = c.r - Rt
+      let ex, ey, d
+      if (dx < 0 && dy < 0) { const rho = Math.max(1e-6, Math.hypot(dx, dy)), f = (rho + shift) / rho; ex = dx * f; ey = dy * f; d = Rt - rho }
+      else if (dy < 0) { ex = dx; ey = dy - shift; d = v }
+      else if (dx < 0) { ex = dx - shift; ey = dy; d = u }
+      else { ex = dx; ey = dy; d = Math.min(u, v) }
+      return [c.cx + ix * ex, c.cy + iy * ey, band(d)]
+    },
+  })
+  pieces.tl = corner(G.corners.tl, 1, 1); pieces.tr = corner(G.corners.tr, -1, 1)
+  pieces.bl = corner(G.corners.bl, 1, -1); pieces.br = corner(G.corners.br, -1, -1)
+  // The sides: 160 source px of each, clear of the corners, sampled into
+  // a strip `strip` long, the contour `out` in from the outside. Each is
+  // averaged along its length in every frame (`along`), so it is one
+  // cross-section that stretches cleanly (and a speck of dust on the plate
+  // is not drawn out into a dash).
+  const y0 = Math.round((G.corners.tl.cy + G.corners.bl.cy) / 2 - 80), span = 160 / Ls
+  pieces.left = { w: T, h: Ls, along: [['y', -Infinity, Infinity]], map: (px, py) => { const y = y0 + py * span, d = px - O; return [G.left(y) + d, y, band(d)] } }
+  pieces.right = { w: T, h: Ls, along: [['y', -Infinity, Infinity]], map: (px, py) => { const y = y0 + py * span, d = T - O - px; return [G.right(y) - d, y, band(d)] } }
+  // The top and bottom edges: [stretch | junction | stretch] on one band of
+  // rows (the top's contour `above` rows down, the bottom's `in`). The
+  // junction is the source as it is, centred on its stream; each stretch
+  // is the `sample` px of rim just beyond it, averaged along x.
+  const edge = (axis, J, line, rowOf, h) => ({
+    w: 2 * Ls + J, h, along: [['x', -Infinity, Ls], ['x', Ls + J, Infinity]],
+    map(px, py) {
+      const x = px < Ls ? axis - J / 2 - sample * (1 - px / Ls)
+        : px < Ls + J ? axis - J / 2 + (px - Ls)
+          : axis + J / 2 + sample * (px - Ls - J) / Ls
+      const d = rowOf(py), junction = px >= Ls && px < Ls + J
+      return [x, line(x, d), junction ? inside(d) : band(d)]
+    },
+  })
+  pieces.top = edge(G.inX, RIM.junction.top, (x, d) => G.top(x) + d, py => py - A, A + I)
+  pieces.bottom = edge(G.outX, RIM.junction.bottom, (x, d) => G.bottom(x) - d, py => I - py, I + B)
+  return pieces
+}
+
+/** Lays the pieces out in the atlas (each grown by `margin`, `gutter` px
+    apart) like the card they go round: the corners and edges of one side
+    share their offset across that side (the top corners and the top piece
+    one top row, the left corners and the left strip one left column, the
+    bottom and right ones their bottom row and right column), so where two
+    meet on the page their <video>s are offset by the same amount and the
+    browser snaps them to the same device pixel. Returns each piece's inner
+    rect and the atlas's size. */
+function packAtlas(pieces) {
+  const { margin: m, gutter: g } = RIM, step = 2 * m + g
+  const C = pieces.tl.w, T = pieces.left.w, top = pieces.top, bottom = pieces.bottom
+  const x1 = g + m, x2 = x1 + C + step, x3 = x2 + Math.max(top.w, bottom.w) + step
+  const y1 = g + m, end = Math.max(y1 + top.h + step + bottom.h, y1 + 2 * C + pieces.left.h + 2 * step)
+  const rect = (k, x, y) => ({ x, y, w: pieces[k].w, h: pieces[k].h })
+  const rects = {
+    tl: rect('tl', x1, y1), top: rect('top', x2, y1), tr: rect('tr', x3, y1),
+    left: rect('left', x1, y1 + C + step), right: rect('right', x3 + C - T, y1 + C + step),
+    bl: rect('bl', x1, end - C), bottom: rect('bottom', x2, end - bottom.h), br: rect('br', x3, end - C),
+  }
+  return { rects, w: Math.ceil((x3 + C + m + g) / 8) * 8, h: Math.ceil((end + m + g) / 8) * 8 }
+}
+
+async function buildRim(clip, src) {
+  const { head, fade: L, margin: m, crf } = RIM, w = 1920, h = 1080
+  const { count: N, graded } = voidGrader(src, w, h, head)
+  const frames = Array.from({ length: N }, (_, i) => graded(i))
+  // The median frame's luma, where the geometry is measured.
+  const n = w * h, Lm = new Float32Array(n), col = new Float32Array(N)
+  for (let p = 0; p < n; p++) {
+    for (let f = 0; f < N; f++) col[f] = LUMA[0] * frames[f][p * 3] + LUMA[1] * frames[f][p * 3 + 1] + LUMA[2] * frames[f][p * 3 + 2]
+    Lm[p] = median(col)
+  }
+  const G = rimGeometry(Lm, w, h), pieces = rimPieces(G), atlas = packAtlas(pieces)
+  console.log('  rim:', JSON.stringify({ corners: Object.fromEntries(Object.entries(G.corners).map(([k, c]) => [k, { cx: +c.cx.toFixed(1), cy: +c.cy.toFixed(1), r: c.r }])), inX: +G.inX.toFixed(2), outX: +G.outX.toFixed(2) }))
+
+  // Every piece's sampling map, computed once: (atlas index, source x, y, kept).
+  const maps = []
+  for (const [k, pc] of Object.entries(pieces)) {
+    const r = atlas.rects[k]
+    for (let py = -m; py < pc.h + m; py++) for (let px = -m; px < pc.w + m; px++) {
+      const [sx, sy, keep] = pc.map(px + 0.5, py + 0.5)
+      maps.push((r.y + py) * atlas.w + r.x + px, sx, sy, keep)
+    }
+  }
+  const compose = (f) => {
+    const out = Buffer.alloc(atlas.w * atlas.h * 3, 255), s = sampler(f, w, h, 3)
+    for (let i = 0; i < maps.length; i += 4) {
+      const [p, sx, sy, keep] = [maps[i], maps[i + 1], maps[i + 2], maps[i + 3]]
+      for (let c = 0; c < 3; c++) out[p * 3 + c] = Math.round(255 - (255 - s(sx, sy, c)) * keep)
+    }
+    // The stretches: every line across one is the mean of its length.
+    for (const [k, pc] of Object.entries(pieces)) {
+      for (const [axis, from, to] of pc.along ?? []) {
+        const r = atlas.rects[k], X = axis === 'x', t0 = Math.max(-m, from), t1 = Math.min((X ? pc.w : pc.h) + m, to), across = (X ? pc.h : pc.w) + 2 * m
+        for (let a = 0; a < across; a++) for (let c = 0; c < 3; c++) {
+          const p = t => X ? ((r.y - m + a) * atlas.w + r.x + t) * 3 + c : ((r.y + t) * atlas.w + r.x - m + a) * 3 + c
+          let s = 0
+          for (let t = t0; t < t1; t++) s += out[p(t)]
+          for (let t = t0; t < t1; t++) out[p(t)] = Math.round(s / (t1 - t0))
+        }
+      }
+    }
+    // The corners' straight runs ease into their strips' cross-section by
+    // the corner piece's inner end, so a corner meets its strips exactly
+    // (the band is a px or two wider mid-edge than by the corners).
+    const { out: O, in: I, radius: Rt, corner: S, above: A } = RIM, P = O + S, T = O + I
+    // A stretch's cross-section at `d` in from the contour: the top or
+    // bottom piece's left (`end` false) or right stretch, or a side strip.
+    const profile = ([k, end], d, c) => {
+      const r = atlas.rects[k], pc = pieces[k], X = k === 'top' || k === 'bottom'
+      const row = { top: A + d, bottom: I - d, left: d + O, right: T - O - d }[k] - 0.5, n = X ? pc.h : pc.w
+      const pos = Math.min(n - 1, Math.max(0, row)), i0 = Math.floor(pos), i1 = Math.min(n - 1, i0 + 1), f = pos - i0
+      const col = end ? pc.w - 1 : 0
+      const at = i => out[(X ? (r.y + i) * atlas.w + r.x + col : r.y * atlas.w + r.x + i) * 3 + c]
+      return at(i0) * (1 - f) + at(i1) * f
+    }
+    // Under the incoming stream the source's rim line is gone: the water
+    // there is one clear meniscus. The straight rim's cross-section is
+    // multiplied in under it (the rim seen through the water), easing out
+    // by the flanges, so the line runs on through the junction.
+    {
+      const r = atlas.rects.top, Jt = RIM.junction.top, Ls = RIM.strip, { through } = RIM
+      for (let px = Ls; px < Ls + Jt; px++) {
+        const t = 1 - smoothstep(through[0], through[1], Math.abs(px + 0.5 - Ls - Jt / 2))
+        if (t <= 0) continue
+        for (let py = 0; py < pieces.top.h; py++) {
+          const d = py + 0.5 - A, p = ((r.y + py) * atlas.w + r.x + px) * 3
+          if (d < -O || d > I) continue
+          for (let c = 0; c < 3; c++) {
+            const line = (profile(['top', false], d, c) + profile(['top', true], d, c)) / 2
+            out[p + c] = Math.round(out[p + c] * (1 - t + t * line / 255))
+          }
+        }
+      }
+    }
+    for (const [k, ix, iy] of [['tl', 1, 1], ['tr', -1, 1], ['bl', 1, -1], ['br', -1, -1]]) {
+      const r = atlas.rects[k], h = [iy > 0 ? 'top' : 'bottom', ix < 0], v = [ix > 0 ? 'left' : 'right', false]
+      for (let py = -m; py < P + m; py++) for (let px = -m; px < P + m; px++) {
+        const u = (ix > 0 ? px + 0.5 : P - px - 0.5) - O, w = (iy > 0 ? py + 0.5 : P - py - 0.5) - O
+        let strip = null, t = 0
+        if (u > Rt && w < Rt) { strip = [h, w]; t = smoothstep(Rt, S, u) } else if (w > Rt && u < Rt) { strip = [v, u]; t = smoothstep(Rt, S, w) }
+        if (!strip || t <= 0) continue
+        const p = ((r.y + py) * atlas.w + r.x + px) * 3
+        for (let c = 0; c < 3; c++) out[p + c] = Math.round(out[p + c] * (1 - t) + profile(strip[0], strip[1], c) * t)
+      }
+    }
+    return out
+  }
+  const tiles = frames.map(compose)
+
+  // The flare: the incoming stream's width on each row above the top
+  // contour, on the median frame's piece.
+  const flare = [], at = sampler(Lm, w, h), mid0 = RIM.strip + RIM.junction.top / 2 - 80
+  for (let up = 2; up <= RIM.above; up += 2) {
+    const e = streamEdges(grey(Array.from({ length: 160 }, (_, px) => { const [sx, sy] = pieces.top.map(mid0 + px + 0.5, RIM.above - up + 0.5); return at(sx, sy) })), 160, 0, 40)
+    flare.push([up, +(e.right - e.left).toFixed(1)])
+  }
+  // Only the stream itself: from the top down while it widens; closer to
+  // the contour the meniscus's curves are not one stream any more.
+  const clean = []
+  for (const [up, width] of [...flare].reverse()) {
+    if (!(width > 0) || (clean.length && width < clean.at(-1)[1] - 1)) break
+    clean.push([up, width])
+  }
+  clean.reverse()
+
+  // Loop: L … N−L−1, then the last L frames cross-faded into the first L.
+  const mid = join(CACHE, `${clip.name}.graded.mkv`)
+  const enc = encoder(['-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', `${atlas.w}x${atlas.h}`, '-r', String(FPS), '-i', '-', '-c:v', 'libx264', '-qp', '0', '-preset', 'veryfast', '-pix_fmt', 'yuv444p', mid])
+  let count = 0
+  for (let i = L; i < N - L; i++) { await enc.write(tiles[i]); count++ }
+  for (let j = 0; j < L; j++) {
+    const a = tiles[N - L + j], b = tiles[j], t = (j + 0.5) / L, mix = Buffer.alloc(a.length)
+    for (let k = 0; k < a.length; k++) mix[k] = Math.round(a[k] * (1 - t) + b[k] * t)
+    await enc.write(mix); count++
+  }
+  await enc.close()
+  encodeTo(mid, join(OUT, clip.name), { crf })
+  rmSync(mid)
+  const rect = r => [r.x, r.y, r.w, r.h]
+  return {
+    frames: count,
+    rim: {
+      size: [atlas.w, atlas.h], out: RIM.out, in: RIM.in, radius: RIM.radius, corner: RIM.corner,
+      above: RIM.above, below: RIM.below, stretch: RIM.strip, junction: RIM.junction, fade: RIM.fadeIn,
+      pieces: Object.fromEntries(Object.keys(pieces).map(k => [k, rect(atlas.rects[k])])),
+      flare: clean,
+    },
+  }
+}
+
 /* ── stones ─────────────────────────────────────────────────────────────── */
 
 async function stones(sheet, prefix, keep) {
@@ -849,15 +1381,6 @@ function framePSNR(fileA, a, fileB, b) {
   return Number((out.match(/average:([\d.]+|inf)/) || [])[1])
 }
 
-/** Every frame step's PSNR (frame n against n + 1), sorted. */
-function allSteps(file) {
-  const stats = join(CACHE, 'steps.psnr.txt')
-  run('ffmpeg', ['-v', 'error', '-i', file, '-i', file, '-filter_complex', `[0:v]trim=start_frame=1,setpts=PTS-STARTPTS[a];[1:v]setpts=PTS-STARTPTS[b];[a][b]psnr=stats_file=${stats}`, '-f', 'null', '-'])
-  const out = readFileSync(stats, 'utf8').split('\n').map(l => Number((l.match(/psnr_avg:([\d.]+)/) || [])[1])).filter(Number.isFinite)
-  rmSync(stats)
-  return out.sort((a, b) => a - b)
-}
-
 /** PSNR between the last two frames of a clip. */
 function lastStep(file) {
   const n = Number(run('ffprobe', ['-v', 'error', '-count_frames', '-select_streams', 'v:0', '-show_entries', 'stream=nb_read_frames', '-of', 'csv=p=0', file]).trim())
@@ -866,7 +1389,11 @@ function lastStep(file) {
 
 function checks() {
   const report = []
-  for (const clip of CLIPS.filter(c => !ONLY || ONLY.has(c.name))) {
+  // The stream below the hero is checked per rendition, as a seamless loop.
+  const outputs = CLIPS.filter(c => !ONLY || ONLY.has(c.name)).flatMap(c => c.dayStream
+    ? Object.keys(DAY_STREAM.renditions).map(r => ({ ...c, name: `${c.name}-${r}`, seamless: true }))
+    : [c])
+  for (const clip of outputs) {
     const webm = join(OUT, `${clip.name}.webm`), mp4 = join(OUT, `${clip.name}.mp4`)
     // The crash's two cuts: BEFORE poster (the loop's first frame) → the
     // transition's first frame, and its last frame → the AFTER loop's first.
@@ -887,7 +1414,7 @@ function checks() {
     // passes at 30 dB, or, for water busy enough that one ordinary frame step
     // is below that (the BEFORE card's splashes), when the seam is no worse
     // than its median frame step less 1 dB: then it is just another frame.
-    // A seamless loop (the pool) is held to the frame steps either side of
+    // A seamless or bridged loop (the pool, the AFTER loop) is held to the frame steps either side of
     // its seam instead.
     let psnr = null, step = null
     if (!clip.once) {
@@ -895,15 +1422,10 @@ function checks() {
       psnr = +Number((seam.match(/average:([\d.]+|inf)/) || [])[1]).toFixed(1)
       // A seamless loop's seam is one of its own frame steps: it is held to
       // the steps either side of it (the last two frames, the first two).
-      // A cut clip (the card stream: a narrow column of moving water, which
-      // its steps measure alone) is its parent's loop, seam included: it is
-      // held to the low end of its own frame steps (the 5th percentile).
-      if (clip.cut) step = +allSteps(mp4)[Math.floor(0.05 * allSteps(mp4).length)].toFixed(1)
-      else {
-        const at = clip.seamless ? [-2, 0] : [10, 30, 50]
-        const steps = at.map(k => k < 0 ? lastStep(mp4) : framePSNR(mp4, k, mp4, k + 1)).sort((a, b) => a - b)
-        step = +(clip.seamless ? steps[0] : steps[1]).toFixed(1)
-      }
+      const wraps = clip.seamless || clip.bridge
+      const at = wraps ? [-2, 0] : [10, 30, 50]
+      const steps = at.map(k => k < 0 ? lastStep(mp4) : framePSNR(mp4, k, mp4, k + 1)).sort((a, b) => a - b)
+      step = +(wraps ? steps[0] : steps[1]).toFixed(1)
     }
     report.push({ clip: clip.name, webmKB: Math.round(statSync(webm).size / 1024), mp4KB: Math.round(statSync(mp4).size / 1024), voidLuma: yhigh, seamPSNR: psnr, stepPSNR: step, cutIn, cutOut, ok: yhigh >= 234 && (clip.once || psnr >= Math.min(30, step - 1)) })
     // The pool's renditions and posters: their sizes (the frames are the same).
@@ -924,24 +1446,27 @@ async function main() {
 
   const src = async (kind, key) => fetchTo(SOURCES.base + SOURCES[kind][key], join(CACHE, SOURCES[kind][key]))
   const built = {}
-  if (ONLY?.has('card-stream') && !ONLY.has('hero-after-16x9')) throw new Error('card-stream is cut from hero-after-16x9: rebuild both')
   if (ONLY?.has('hero-transition-9x16') && !ONLY.has('hero-before-9x16')) throw new Error('the 9:16 crash extends from hero-before-9x16: rebuild both')
   for (const clip of CLIPS) {
     if (ONLY && !ONLY.has(clip.name)) continue
-    if (clip.cut) continue           // built from its source clip's intermediate
     console.log('·', clip.name)
     const source = clip.compose
       ? await composePortrait(await src('clips', clip.compose), join(CACHE, `${clip.name}.composed.mkv`), clip)
-      : await src('clips', clip.name)
+      : await src('clips', clip.source ?? clip.name)
     built[clip.name] = await buildClip(clip, source)
   }
-  // The box in each card clip that the page fits to its card, as fractions
-  // of the clip's frame (motion/water.js, marketing.css).
+  // What the page needs to place the card clips (motion/water.js,
+  // marketing.css): the splash strip's source width (its scale on the page
+  // is CSS px per source px) and its edge row, as a fraction of its height;
+  // the rim atlas's pieces and the offsets they are cut to (buildRim).
   const f = v => +v.toFixed(4)
-  const card = (name) => {
-    const { w, h, card: { fit, crop } } = CLIPS.find(c => c.name === name)
-    return { aspect: f(w / h), fit: { left: f((fit.x0 - crop.x) / crop.w), top: f((fit.y0 - crop.y) / crop.h), right: f((fit.x1 - crop.x) / crop.w), bottom: f((fit.y1 - crop.y) / crop.h) } }
+  const splash = () => {
+    const { w, h, card: { crop, edge } } = CLIPS.find(c => c.name === 'card-splash')
+    return { aspect: f(w / h), width: crop.w, edge: f((edge - crop.y) / crop.h) }
   }
+  // The stream below the hero: its centre and width at the clip's top, as
+  // fractions of the clip's width, and each rendition's aspect.
+  const dayStream = () => { const { x, width, ...r } = built['day-stream'].stream; return { x: f(x), width: f(width), ...r } }
   // The pool's band: its aspect and its waterline as a fraction of its height
   // from the top (the footer's layout, e2e/pool.spec.js), and each
   // rendition's AV1 codec string (10-bit, so the page's <source> says so).
@@ -951,24 +1476,17 @@ async function main() {
     return { ...wide, waterline: f(poolRows(clip).line / clip.h), narrow }
   }
   const transition = r => +(built[`hero-transition-${r}`].frames / FPS).toFixed(2)
-  // Where the AFTER loop's stream leaves the frame (a fraction of its width),
-  // and one card-stream pixel as a fraction of that width, so the page can
-  // draw the card's stream on the hero's x at the hero's scale. The portrait
-  // frame's extension is a fraction of its 9:16 height.
-  const stream = r => {
-    const unit = r === '16x9' ? 1 / 1600 : portraitPlacement(720, 1280).sw / 1600 / 720
-    return { x: f(MEASURED[`hero-after-${r}`].x), unit: +unit.toPrecision(4) }
-  }
+  // Where the AFTER loop's stream leaves the frame: its centre and width, as
+  // fractions of the frame's width, so the page can draw it on below the
+  // hero on the same x at the same width. The portrait frame's extension is
+  // a fraction of its 9:16 height.
+  const stream = r => ({ x: f(MEASURED[`hero-after-${r}`].x), width: f(MEASURED[`hero-after-${r}`].width) })
   const hero = (r, prev = {}) => ({
     transition: built[`hero-transition-${r}`] ? transition(r) : prev.transition,
     stream: MEASURED[`hero-after-${r}`] ? stream(r) : prev.stream,
     ...(r === '9x16' ? { extend: f(EXTEND.rows / 1280) } : {}),
   })
-  const cardStream = () => {
-    const { w, h } = CLIPS.find(c => c.name === 'card-stream')
-    return { aspect: f(w / h), width: w, x: f(MEASURED['card-stream'].x) }
-  }
-  const order = d => ({ $comment: 'Written by scripts/media/build-media.mjs. Do not edit by hand.', hero: d.hero, cards: d.cards, footer: d.footer, stones: d.stones })
+  const order = d => ({ $comment: 'Written by scripts/media/build-media.mjs. Do not edit by hand.', hero: d.hero, stream: d.stream, cards: d.cards, footer: d.footer, stones: d.stones })
 
   let doc
   if (ONLY) {
@@ -976,17 +1494,20 @@ async function main() {
     doc = JSON.parse(readFileSync(join(OUT, 'media.json'), 'utf8'))
     for (const name of Object.keys(built)) {
       if (name.startsWith('hero-')) doc.hero[name.slice(-4)] = hero(name.slice(-4), doc.hero[name.slice(-4)])
-      if (name === 'card-before' || name === 'card-after') doc.cards[name.slice(5)] = card(name)
+      if (name === 'card-splash') doc.cards.before = splash()
+      if (name === 'card-rim') doc.cards.rim = built[name].rim
+      if (name === 'day-stream') doc.stream = dayStream()
       if (name === 'footer-pool') doc.footer = { pool: pool() }
     }
-    if (MEASURED['card-stream']) doc.cards.stream = cardStream()
+    doc.cards = { before: doc.cards.before, rim: doc.cards.rim }
     doc = order(doc)
   } else {
     const raw = await stones(await src('stills', 'fragments-cutout'), 'raw', 7)
     const pebbles = await stones(await src('stills', 'pebbles-cutout'), 'pebble', 4)
     doc = order({
       hero: { '16x9': hero('16x9'), '9x16': hero('9x16') },
-      cards: { before: card('card-before'), after: card('card-after'), stream: cardStream() },
+      stream: dayStream(),
+      cards: { before: splash(), rim: built['card-rim'].rim },
       footer: { pool: pool() },
       stones: { raw, pebble: pebbles },
     })

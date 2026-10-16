@@ -12,8 +12,12 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ═══════════ LAYOUT PRIMITIVES ═══════════ */
-.mk-wrap { width: min(1160px, 100% - 40px); margin-inline: auto; }
-.mk-section { position: relative; z-index: 1; padding: 112px 0; }
+/* --wrap-w and --section-pad are also read by the stream carried on below
+   the hero (.mk-day-stream), which lands inside the wrap and ends in the
+   section's last card. */
+.mk-wrap, .mk-day-stream { --wrap-w: min(1160px, 100% - 40px); }
+.mk-wrap { width: var(--wrap-w); margin-inline: auto; }
+.mk-section { --section-pad: 112px; position: relative; z-index: 1; padding: var(--section-pad) 0; }
 /* Content paints above the stones in its section. */
 .mk-section > .mk-wrap, .mk-final-inner { position: relative; z-index: 1; }
 .mk-eyebrow {
@@ -115,7 +119,14 @@
    page under it when a phone's browser bars collapse; the copy, and the
    pebble, are laid out in the SMALL viewport (100svh), which is always on
    screen. The pebble's stream runs down to the stage's bottom edge in every
-   layout. The stage is the size container the portrait box is sized from. */
+   layout. The stage is the size container the portrait box is sized from.
+   --hero-w is the media box's width, also read by the calendar section
+   below, where the stream is carried on from the hero's bottom edge
+   (.mk-day-stream): % is the full-width parent's width in both. */
+.mk-hero, .mk-day { --hero-w: max(100%, 177.78lvh); }
+@media (max-aspect-ratio: 1/1) {
+  .mk-hero, .mk-day { --hero-w: max(100%, 56.25svh); }
+}
 .mk-hero { position: relative; height: calc(150svh + 100lvh); overflow: clip; }
 .mk-hero-stage {
   position: sticky;
@@ -131,7 +142,7 @@
   /* The clip covers the stage: 16:9, at least the stage's width, centred.
      The stream runs out through the frame's bottom edge, so it leaves
      through the stage's. */
-  width: max(100%, 177.78lvh);
+  width: var(--hero-w);
   aspect-ratio: 16 / 9;
   translate: -50% -50%;
 }
@@ -146,7 +157,6 @@
      its bottom edge. --hero-extend comes from media.json (Home.astro). */
   .mk-hero-media {
     --frame-h: max(177.78cqw, 100svh);
-    width: max(100%, 56.25svh);
     height: calc(var(--frame-h) * (1 + var(--hero-extend)));
     aspect-ratio: auto;
     top: calc(100svh - var(--frame-h));
@@ -377,10 +387,11 @@
 
    Both cards are position: relative, make no stacking context and clip
    nothing at their edges, so the water (below) can sit over the BEFORE
-   card's top border and behind and around the AFTER card. Keep it that way:
-   no overflow, clip-path, mask, z-index, transform, opacity or isolation on
-   .mk-cal or the ancestors inside the section. The section itself clips
-   sideways only, so the AFTER water never widens the page. */
+   card's top border and round the AFTER card's border, multiplied over the
+   card's content. Keep it that way: no overflow, clip-path, mask, z-index,
+   transform, opacity or isolation on .mk-cal or the ancestors inside the
+   section. The section itself clips sideways only, so the water never
+   widens the page. */
 .mk-day { --slot: 14px; --day-slots: 38; --head-h: 24px; --hours-w: 40px; overflow-x: clip; }
 .mk-day-tabs .ui-tabs-strip { width: max-content; }
 .mk-day-meta { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px; margin-top: 8px; }
@@ -394,7 +405,10 @@
   border-radius: 3px;
   background: linear-gradient(to right, var(--cat) 0 4px, var(--task-chip) 4px);
 }
-.mk-day-cals { display: grid; gap: 20px; margin-top: 20px; }
+/* The cards sit clear of the note and legend by more than the BEFORE
+   water's band over its top border (under 16px; below), so the water never
+   reaches them. */
+.mk-day-cals { display: grid; gap: 20px; margin-top: 24px; }
 
 .mk-cal {
   position: relative;
@@ -404,7 +418,12 @@
   background: var(--surface);
   border: 1px solid var(--line);
   box-shadow: var(--elev-1);
+  transition: border-color var(--dur-slow) var(--ease-out);
 }
+/* Once the AFTER card's rim is up, its line of water is the card's border
+   (it runs on it all the way round): the card's own line would only show
+   through the clear water where a stream meets the rim. */
+.mk-cal:has(> .mk-rim.is-ready) { border-color: transparent; }
 .mk-cal-title { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
 .mk-cal-grid { display: grid; grid-template-columns: var(--hours-w) repeat(5, minmax(0, 1fr)); column-gap: 6px; margin-top: 10px; }
 .mk-cal-hours { position: relative; margin-top: var(--head-h); }
@@ -467,30 +486,24 @@
    AFTER card for the length of the animation, then removed. */
 .mk-task--ghost { pointer-events: none; transform-origin: 50% 50%; }
 
-/* The water (motion/water.js, media tier only): a looping clip in each card,
-   created by JS, so the CSS default is the calendar without it. Each clip
-   carries, as custom properties from media.json, its aspect (--water-ar) and
-   the box in its frame that is fitted to the card (--water-l/t/r/b,
-   fractions of the frame). Both are graded to white.
-   BEFORE: ON the card, multiplied, so only the water shows. The fit box is
-   the slab the water falls on: it spans the card's border box with its top
-   edge on the card's top border. A percentage margin is a fraction of the
-   card's width, which is how the clip's top is set from its own height. The
-   mask shows the rain falling onto the border: it fades in from the page
-   over --water-above (opaque only in its last 40%), and fades the drips
-   out within --water-below, clear of the chips' labels.
-   AFTER: BEHIND the card (z-index -1 in a card that makes no stacking
-   context, so it paints under the card's white). The fit box (the inner
-   edges of the two sheets running down the slab, and the slab's top and
-   bottom) is stretched onto the card's box, widened by --water-gap each
-   side, so the sheets run just outside the side borders. The clip starts at
-   the card's top edge and the mask fades the stream out below the card.
-   STREAM: the stream coming into the AFTER card is the hero's own (the
-   card-stream clip is cut from the hero AFTER loop), also behind the card.
-   motion/water.js measures where the hero's stream is on screen and hands
-   it --stream-left (from the card's left) and --stream-w (the hero's
-   scale), so it falls on the same x, at the same width; its bottom is
-   tucked under the card's top border, and it fades in from the page. */
+/* The water (motion/water.js, media tier only): an accent on the cards'
+   borders, never over their content. The clips are created by JS, so the
+   CSS default is the calendar without them. All are graded to white.
+   BEFORE: a thin strip of the slab's top edge where the rain lands
+   (card-splash), ON the card, multiplied, so only the water shows. It
+   carries its aspect (--water-ar) from media.json and is drawn small,
+   --water-k CSS px per source px (its source width is --water-src), so the
+   drops are a few px, and its edge row (--water-edge, a fraction of its
+   height) is the card's top border. The pipeline already graded everything
+   but a band around that row to white (52 source rows above, 10 below), so
+   the strip is the band: at 0.3, under 16px over the border and 3px under
+   it (inside the card's padding). motion/water.js repeats it along the
+   border as each width needs and hands each copy its place (--water-at: 0
+   at the left, 1 at the right) and how much of it its neighbour overlaps
+   (--water-overlap): each fades in and out linearly over that
+   (--water-fl/--water-fr), so two neighbours add up to one strip, and over
+   --water-end at the card's corners.
+   AFTER: the rim (.mk-rim, below). */
 .mk-cal-water {
   position: absolute;
   max-width: none;          /* base.css caps media at its container */
@@ -499,61 +512,203 @@
   opacity: 0;
   transition: opacity var(--dur-slow) var(--ease-out);
 }
-.mk-cal-water.is-ready { opacity: 1; }
+.mk-cal-water.is-ready { opacity: var(--water-alpha, 1); }
 .mk-cal-water--before {
-  --water-above: 110px;
-  --water-below: 100px;
-  --w: calc((100% + 2px) / (var(--water-r) - var(--water-l)));
+  --water-alpha: 0.75;
+  --water-k: 0.3;
+  --water-end: 8%;
+  --water-fl: var(--water-overlap);
+  --water-fr: var(--water-overlap);
+  --sw: calc(var(--water-src) * var(--water-k) * 1px);
   z-index: 1;
-  top: -1px;
-  left: calc(-1px - var(--water-l) * var(--w));
-  width: var(--w);
+  top: calc(-1px - var(--water-edge) * var(--sw) / var(--water-ar));
+  left: calc(-1px + var(--water-at) * (100% + 2px - var(--sw)));
+  width: var(--sw);
   aspect-ratio: var(--water-ar);
-  margin-top: calc(-1 * var(--water-t) * var(--w) / var(--water-ar));
   mix-blend-mode: multiply;
-  mask-image: linear-gradient(to bottom,
-    transparent calc(var(--water-t) * 100% - var(--water-above)),
-    rgb(0 0 0 / 0.55) calc(var(--water-t) * 100% - var(--water-above) * 0.6),
-    black calc(var(--water-t) * 100% - var(--water-above) * 0.25),
-    black calc(var(--water-t) * 100% + var(--water-below) * 0.25),
-    transparent calc(var(--water-t) * 100% + var(--water-below)));
+  filter: brightness(1.04);  /* the source's near-white haze to white, so the strip has no edge */
+  mask-image: linear-gradient(to right, transparent, black var(--water-fl), black calc(100% - var(--water-fr)), transparent);
 }
-.mk-cal-water--after {
-  --water-gap: 0px;
-  --water-below: 160px;
-  --w: calc((100% + 2 * var(--water-gap)) / (var(--water-r) - var(--water-l)));
-  --h: calc(100% / (var(--water-b) - var(--water-t)));
-  z-index: -1;
-  left: calc(-1 * var(--water-gap) - var(--water-l) * var(--w));
+.mk-cal-water--before:first-of-type { --water-fl: var(--water-end); }
+.mk-cal-water--before:last-of-type { --water-fr: var(--water-end); }
+
+/* AFTER ("With an agent"): a line of water on the card's border, the
+   stream landing on its top border and leaving its bottom one. One atlas
+   clip (card-rim), laid out like a 9-slice, all at one scale, --rim-k CSS
+   px per source px (0.4: 0.8 device px a pixel at 2x, 1.2 at 3x):
+   - the four corners (the pipeline redrew their arc to 40 source px, the
+     card's 16px radius at this scale);
+   - the two sides, one cross-section each, stretched along the side;
+   - the top and the bottom edge, each ONE piece of the atlas cut from one
+     band of source rows: a straight stretch, the junction where the stream
+     meets the rim (the stream and the rim curving into it, unscaled), and
+     another straight stretch. Each edge is three videos of that piece: the
+     junction (`-c`) centred on the page stream's x (--rim-x, measured by
+     motion/water.js), and the stretches (`-l`, `-r`) pulled out from it to
+     the corners. All three show the same rows, placed the same way, so
+     the rim's line is on one page row from corner to corner.
+   Every piece is cut so the plate's outer contour is a straight line at a
+   known offset in it, and placed so that contour is --rim-c inside the
+   card's border box, on the 1px border. The band is 13px deep, inside the
+   card's padding (14px and up), so nothing changes in the content box.
+   Joins: a stretch runs on, opaque, under what it meets (the corners, the
+   junction), and that piece fades in over it (--rim-join at a corner,
+   the junction's straight ends, --jf source px, at the junction): a true
+   cross-fade, and only ever over straight, uniform rim, where the two
+   pieces are the same water.
+   The rim is multiplied over the card, so its white disappears; out in
+   the page (whose white it matches) it shows its water. Where the stream
+   lands, the page stream fades out (.mk-day-stream --stream-end) and the
+   junction's own stream fades in over --rim-fade, from --rim-land source
+   rows over the contour: the row where the incoming stream, widening into
+   the rim, is as wide as the page stream (media.json `flare`). Each
+   piece's <video> shows its rect of the atlas (--px, --py, --pw, --ph, in
+   an atlas --aw × --ah), stretched to the piece's box. The rim is shown
+   once every piece has a frame. */
+.mk-rim {
+  --rim-k: 0.4;
+  --rim-c: 0.5px;
+  --rim-fade: 6px;
+  --rim-join: 4px;
+  --u: calc(var(--rim-k) * 1px);
+  --inset: calc(var(--rim-c) - var(--rim-out) * var(--u));
+  --cs: calc((var(--rim-out) + var(--rim-corner)) * var(--u));
+  --band: calc((var(--rim-out) + var(--rim-in)) * var(--u));
+  --ends: calc(var(--inset) + var(--cs) - var(--rim-join));   /* a stretch runs on under its corner */
+  position: absolute;
+  inset: -1px;              /* the card's border box */
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: multiply; /* the rim as a whole: its z-index makes it a group of its own */
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+.mk-rim.is-ready { opacity: 1; }
+.mk-rim-piece { position: absolute; overflow: hidden; }
+.mk-rim-piece > video {
+  position: absolute;
+  max-width: none;
+  object-fit: fill;
+  width: calc(100% * var(--aw) / var(--pw));
+  height: calc(100% * var(--ah) / var(--ph));
+  left: calc(-100% * var(--px) / var(--pw));
+  top: calc(-100% * var(--py) / var(--ph));
+}
+/* The corners, over the stretches, fading out at their inner ends. */
+.mk-rim-piece[data-piece="tl"], .mk-rim-piece[data-piece="tr"],
+.mk-rim-piece[data-piece="bl"], .mk-rim-piece[data-piece="br"] { z-index: 1; width: var(--cs); height: var(--cs); mask-composite: intersect; }
+.mk-rim-piece[data-piece="tl"] { left: var(--inset); top: var(--inset); mask-image: linear-gradient(to left, transparent, #000 var(--rim-join)), linear-gradient(to top, transparent, #000 var(--rim-join)); }
+.mk-rim-piece[data-piece="tr"] { right: var(--inset); top: var(--inset); mask-image: linear-gradient(to right, transparent, #000 var(--rim-join)), linear-gradient(to top, transparent, #000 var(--rim-join)); }
+.mk-rim-piece[data-piece="bl"] { left: var(--inset); bottom: var(--inset); mask-image: linear-gradient(to left, transparent, #000 var(--rim-join)), linear-gradient(to bottom, transparent, #000 var(--rim-join)); }
+.mk-rim-piece[data-piece="br"] { right: var(--inset); bottom: var(--inset); mask-image: linear-gradient(to right, transparent, #000 var(--rim-join)), linear-gradient(to bottom, transparent, #000 var(--rim-join)); }
+/* The sides. */
+.mk-rim-piece[data-piece="left"], .mk-rim-piece[data-piece="right"] { top: var(--ends); bottom: var(--ends); width: var(--band); }
+.mk-rim-piece[data-piece="left"] { left: var(--inset); }
+.mk-rim-piece[data-piece="right"] { right: var(--inset); }
+/* The top and bottom edges: the same rows of one piece, so one line. The
+   top's contour is --rim-above rows down its piece, the bottom's --rim-in. */
+.mk-rim-piece[data-piece^="top-"] { top: calc(var(--rim-c) - var(--rim-above) * var(--u)); height: calc((var(--rim-above) + var(--rim-in)) * var(--u)); --j: var(--jt); }
+.mk-rim-piece[data-piece^="bottom-"] { bottom: calc(var(--rim-c) - var(--rim-below) * var(--u)); height: calc((var(--rim-in) + var(--rim-below)) * var(--u)); --j: var(--jb); }
+/* The stretches run from under the corner to under the junction's opaque middle. */
+.mk-rim-piece[data-piece$="-l"] { left: var(--ends); right: calc(100% - var(--rim-x) + (var(--j) / 2 - var(--jf)) * var(--u)); }
+.mk-rim-piece[data-piece$="-r"] { left: calc(var(--rim-x) + (var(--j) / 2 - var(--jf)) * var(--u)); right: var(--ends); }
+/* The junction, unscaled on the stream's x, over the stretches: it fades in
+   over its straight ends; its incoming stream fades in from the hand-over
+   row, its outgoing one fades out over the lower half of what is below. */
+.mk-rim-piece[data-piece$="-c"] {
+  --side: linear-gradient(to right, transparent, #000 calc(var(--jf) * var(--u)), #000 calc(100% - var(--jf) * var(--u)), transparent);
+  z-index: 1;
+  left: calc(var(--rim-x) - var(--j) * var(--u) / 2);
+  width: calc(var(--j) * var(--u));
+  mask-composite: intersect;
+}
+.mk-rim-piece[data-piece="top-c"] {
+  --land: calc((var(--rim-above) - var(--rim-land)) * var(--u));
+  mask-image: linear-gradient(to bottom, transparent var(--land), #000 calc(var(--land) + var(--rim-fade))), var(--side);
+}
+.mk-rim-piece[data-piece="bottom-c"] {
+  mask-image: linear-gradient(to bottom, #000 calc((var(--rim-in) + var(--rim-below) * 0.35) * var(--u)), transparent), var(--side);
+}
+
+/* The hero's stream, carried on from the hero's bottom edge down to the
+   AFTER card: a clip of one falling stream (day-stream), the same water as
+   the hero's, graded to the page's white. In the server HTML it is the
+   clip's first frame (a <picture>, AVIF or WebP, in both renditions), so
+   with no JavaScript, reduced motion or Save-Data the page still shows a
+   stream there; on the media tier motion/water.js lays the playing clip
+   over it, which starts on that very frame.
+   Across: on the hero stream's own x at its own width where it leaves the
+   hero (media.json hero.*.stream: its centre --sx and width --sw, fractions
+   of the hero's media box, --hero-w, centred on the page like this
+   full-width section). The clip is a column round its stream (its centre
+   --cx and width --cw, fractions of the column's width: media.json
+   `stream`), so the column is scaled to make the two streams the same
+   width and placed to put them on the same x, with no JavaScript and no
+   re-measuring on a layout shift. It is held --edge inside the wrap, where
+   the AFTER card is in every layout (only a screen over about 3400 CSS px
+   wide needs it).
+   Down: from --join above the section's top (which is the hero's bottom
+   edge) to 32px above the section's content bottom (the AFTER card's
+   bottom), so it runs on behind the card (and behind the BEFORE card where
+   the weeks are stacked), whose white hides it. The clip is long enough
+   for every layout (the pipeline runs it on below its frame), so it is
+   always ONE copy. Its top --join overlaps the hero's own stream and fades
+   in over it (an alpha mask, the clip opaque: a true cross-fade), so the
+   hero's bottom edge, where its stream is cut, never shows. Its sides fade
+   too, so the column's white never shows as a box. On the media tier,
+   once the AFTER card's rim is up, it fades out where the rim's own
+   stream takes over (--stream-end). It paints under the section's content
+   (.mk-wrap is z-index 1), like the stones. */
+.mk-day-stream {
+  --join: 64px;
+  --edge: 24px;
+  --sx: var(--stream-lx);
+  --sw: var(--stream-lw);
+  --car: var(--clip-lar);
+  --half: calc(var(--sw) * var(--hero-w) / 2);
+  --at: 50% + (var(--sx) - 0.5) * var(--hero-w);   /* the hero stream's centre */
+  --mid: clamp(50% - var(--wrap-w) / 2 + var(--edge) + var(--half), var(--at), 50% + var(--wrap-w) / 2 - var(--edge) - var(--half));
+  --w: calc(2 * var(--half) / var(--cw));
+  position: absolute;
+  top: calc(-1 * var(--join));
+  bottom: calc(var(--section-pad) + 32px);
+  left: calc(var(--mid) - var(--cx) * var(--w));
   width: var(--w);
-  top: calc(-1 * var(--water-t) * var(--h));
-  height: var(--h);
-  mask-image: linear-gradient(to bottom,
-    transparent calc(var(--water-t) * 100% - 6px),
-    black calc(var(--water-t) * 100% + 2px),
-    black calc(var(--water-b) * 100% + var(--water-below) * 0.4),
-    transparent calc(var(--water-b) * 100% + var(--water-below)));
+  overflow: hidden;
+  pointer-events: none;
+  mask-image:
+    linear-gradient(to bottom, transparent, #000 var(--join), #000 calc(var(--stream-end, 200%) - var(--rim-fade, 6px)), transparent var(--stream-end, 200%)),
+    linear-gradient(to right, transparent 22%, #000 36%, #000 76%, transparent 90%);
+  mask-composite: intersect;
 }
-.mk-cal-water--stream {
-  --stream-tuck: 24px;
-  z-index: -1;
-  left: var(--stream-left);
-  width: var(--stream-w);
-  aspect-ratio: var(--stream-ar);
-  bottom: calc(100% - var(--stream-tuck));
-  mask-image: linear-gradient(to bottom, transparent, black 60%);
+@media (max-aspect-ratio: 1/1) {
+  .mk-day-stream { --sx: var(--stream-px); --sw: var(--stream-pw); --car: var(--clip-par); }
 }
-/* Stacked weeks: the card is nearly the page's width, with 20px either
-   side, and the sheets scale with it. Tuck them half under the card, so what
-   shows outside fits the margin instead of running off the screen. */
-@media (min-width: 721px) and (max-width: 1179px) {
-  .mk-cal-water--after { --water-gap: -2%; }
+.mk-day-stream-poster img, .mk-day-stream-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  max-width: none;
+  aspect-ratio: var(--car);
 }
+.mk-day-stream-video { object-fit: fill; opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); }
+.mk-day-stream-video.is-ready { opacity: 1; }
+/* The stream passes behind the section's intro and the note and legend
+   (on a phone, through the middle of the paragraph): a halo of the page's
+   white keeps every glyph clear of it, and is invisible anywhere else. */
+.mk-day .mk-section-head, .mk-day-meta { text-shadow: 0 0 2px var(--bg), 0 0 4px var(--bg); }
 /* Stacked (below 1180px) the BEFORE card is right above the AFTER one, so
    the stream coming into the AFTER card shows only between them: a wider
    gap lets it be seen falling onto the card. */
 @media (max-width: 1179px) {
   .mk-day-cals { row-gap: 64px; }
+}
+/* One day: a narrower card and smaller drops (one strip nearly spans it). */
+@media (max-width: 720px) {
+  .mk-day-cals { margin-top: 20px; }
+  .mk-cal-water--before { --water-k: 0.28; }
 }
 
 /* Side by side: BEFORE left, AFTER right, the same width and the same hour
@@ -778,7 +933,7 @@
 
 /* ═══════════ RESPONSIVE ═══════════ */
 @media (max-width: 900px) {
-  .mk-section { padding: 80px 0; }
+  .mk-section { --section-pad: 80px; }
   .mk-footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
 }
 @media (max-width: 720px) {

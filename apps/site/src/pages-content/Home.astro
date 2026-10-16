@@ -49,12 +49,18 @@ import transitionLWebm from '../media/hero-transition-16x9.webm?url'
 import transitionLMp4 from '../media/hero-transition-16x9.mp4?url'
 import transitionPWebm from '../media/hero-transition-9x16.webm?url'
 import transitionPMp4 from '../media/hero-transition-9x16.mp4?url'
-import cardBeforeWebm from '../media/card-before.webm?url'
-import cardBeforeMp4 from '../media/card-before.mp4?url'
-import cardAfterWebm from '../media/card-after.webm?url'
-import cardAfterMp4 from '../media/card-after.mp4?url'
-import cardStreamWebm from '../media/card-stream.webm?url'
-import cardStreamMp4 from '../media/card-stream.mp4?url'
+import cardSplashWebm from '../media/card-splash.webm?url'
+import cardSplashMp4 from '../media/card-splash.mp4?url'
+import cardRimWebm from '../media/card-rim.webm?url'
+import cardRimMp4 from '../media/card-rim.mp4?url'
+import streamLWebm from '../media/day-stream-16x9.webm?url'
+import streamLMp4 from '../media/day-stream-16x9.mp4?url'
+import streamLAvif from '../media/day-stream-16x9.avif?url'
+import streamLWebp from '../media/day-stream-16x9.webp?url'
+import streamPWebm from '../media/day-stream-9x16.webm?url'
+import streamPMp4 from '../media/day-stream-9x16.mp4?url'
+import streamPAvif from '../media/day-stream-9x16.avif?url'
+import streamPWebp from '../media/day-stream-9x16.webp?url'
 import poolWebm from '../media/footer-pool.webm?url'
 import poolMp4 from '../media/footer-pool.mp4?url'
 import poolNarrowWebm from '../media/footer-pool-narrow.webm?url'
@@ -95,17 +101,25 @@ const heroData = JSON.stringify({
   transition: { l: { webm: transitionLWebm, mp4: transitionLMp4 }, p: { webm: transitionPWebm, mp4: transitionPMp4 } },
   duration: media.hero['16x9'].transition,
 })
-// The calendar's water (motion/water.js): each clip and the box in it that
-// the page fits to its card; and the stream coming into the AFTER card, with
-// where the hero's stream leaves each hero rendition, so it lands on its x.
+// The calendar's water (motion/water.js): the BEFORE card's splash strip
+// (its source width and edge row), the AFTER card's rim atlas (its pieces),
+// and the stream below the hero (its two renditions, and where its stream
+// is in the column, which the rim lands on).
 const waterData = JSON.stringify({
-  before: { webm: cardBeforeWebm, mp4: cardBeforeMp4, ...media.cards.before },
-  after: { webm: cardAfterWebm, mp4: cardAfterMp4, ...media.cards.after },
-  stream: { webm: cardStreamWebm, mp4: cardStreamMp4, ...media.cards.stream },
-  hero: { l: media.hero['16x9'].stream, p: media.hero['9x16'].stream },
+  before: { webm: cardSplashWebm, mp4: cardSplashMp4, ...media.cards.before },
+  rim: { webm: cardRimWebm, mp4: cardRimMp4, ...media.cards.rim },
+  stream: { l: { webm: streamLWebm, mp4: streamLMp4 }, p: { webm: streamPWebm, mp4: streamPMp4 }, x: media.stream.x, width: media.stream.width },
 })
 // How far the portrait clips run on below their 9:16 frame (marketing.css).
 const heroStyle = `--hero-extend: ${media.hero['9x16'].extend}`
+// Where the hero's stream leaves each rendition (its centre and width, as
+// fractions of the hero's media box), and where the stream clip below the
+// hero has its stream (fractions of its column) and each rendition's
+// aspect, so the clip (.mk-day-stream, marketing.css) takes up exactly
+// where the hero's stream is cut off.
+const [streamL, streamP] = [media.hero['16x9'].stream, media.hero['9x16'].stream]
+const dayStyle = `--stream-lx: ${streamL.x}; --stream-lw: ${streamL.width}; --stream-px: ${streamP.x}; --stream-pw: ${streamP.width}; ` +
+  `--cx: ${media.stream.x}; --cw: ${media.stream.width}; --clip-lar: ${media.stream['16x9'].aspect}; --clip-par: ${media.stream['9x16'].aspect}`
 
 // The footer's pool (motion/pool.js): the looping clip over its poster, in
 // its two renditions (the full band, and its centre for phones), each with
@@ -159,7 +173,15 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
     </div>
   </section>
 
-  <section class="mk-section mk-day" id="day">
+  <section class="mk-section mk-day" id="day" style={dayStyle}>
+    <div class="mk-day-stream" data-stream aria-hidden="true">
+      <picture class="mk-day-stream-poster">
+        <source media={PORTRAIT} srcset={streamPAvif} type="image/avif" />
+        <source media={PORTRAIT} srcset={streamPWebp} type="image/webp" />
+        <source srcset={streamLAvif} type="image/avif" />
+        <img src={streamLWebp} alt="" width={128} height={3200} loading="lazy" decoding="async" />
+      </picture>
+    </div>
     <div class="mk-wrap">
       <div class="mk-section-head" data-reveal>
         <h2 class="mk-h2">

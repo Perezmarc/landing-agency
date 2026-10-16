@@ -191,7 +191,7 @@ test('after the animation settles, the calendar matches the no-JS markup', async
     // The water (motion/water.js) is a layer on top of the cards, not their markup.
     const html = await panel(page).evaluate((el) => {
       const copy = el.cloneNode(true)
-      copy.querySelectorAll('.mk-cal-water').forEach(v => v.remove())
+      copy.querySelectorAll('.mk-cal-water, .mk-rim').forEach(v => v.remove())
       return copy.outerHTML
     })
     await page.close()
