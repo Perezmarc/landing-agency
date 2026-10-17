@@ -373,22 +373,25 @@
 }
 
 /* ═══════════ WHO WE ARE ═══════════
-   A vertical portrait beside the copy; stacked on phones, photo first. The
-   photo's backdrop is graded to the page's white, so it has no frame: the
-   person stands on the page, and the crop at the waist fades into it. */
+   A portrait beside the copy; stacked on phones, photo first. The photo is a
+   cutout on a transparent background, so it has no frame: the person stands
+   on the page, and from the chest down it fades into it, slowly: the stops
+   ease out, so there is no line where the fade starts. */
 .mk-about-inner {
   display: grid;
-  grid-template-columns: minmax(0, 6fr) minmax(0, 7fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: clamp(40px, 6vw, 88px);
   align-items: center;
 }
-.mk-about-photo { margin: 0; justify-self: center; width: min(100%, 460px); }
+.mk-about-photo { margin: 0; justify-self: center; width: min(100%, 560px); }
 .mk-about-photo img {
+  --fade: linear-gradient(to bottom, #000 42%, rgb(0 0 0 / 0.9) 52%, rgb(0 0 0 / 0.7) 62%,
+    rgb(0 0 0 / 0.45) 72%, rgb(0 0 0 / 0.22) 82%, rgb(0 0 0 / 0.07) 91%, transparent 100%);
   display: block;
   width: 100%;
   height: auto;
-  -webkit-mask-image: linear-gradient(to bottom, #000 76%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 76%, transparent 100%);
+  -webkit-mask-image: var(--fade);
+  mask-image: var(--fade);
 }
 .mk-about-copy { max-width: 58ch; }
 .mk-about-p { font-size: clamp(15.5px, 1.4vw, 17px); color: var(--mute); line-height: 1.65; margin-top: 18px; }
@@ -971,7 +974,7 @@
      <Button block> (a block button inside a flex row crushes its siblings). */
   .mk-hero-actions, .mk-final-actions, .mk-about-actions { flex-direction: column; align-items: stretch; }
   .mk-about-inner { grid-template-columns: minmax(0, 1fr); gap: 40px; }
-  .mk-about-photo { justify-self: start; width: min(100%, 360px); }
+  .mk-about-photo { justify-self: start; width: min(100%, 420px); }
   /* The calendars become one day: the first column (Monday) on a wider axis. */
   .mk-day { --slot: 16px; }
   .mk-day-tabs .ui-tabs-strip { width: auto; }

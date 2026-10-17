@@ -105,7 +105,7 @@ From the owner (2026-10-16), and on the homepage as "Who we are":
 - Before ChatGPT, founded an AI company that built models of every kind to automate fraud and security work.
 - That company was acquired by a San Francisco company, where the owner then worked: building AI and the processes around it where it had the most impact, adopting new advances at a very early stage, and reaching very high levels of automation.
 - The agency has worked on processes of every kind.
-- Say "since before ChatGPT"; never a number of years in AI. The acquirer is not named on the page. The portrait (`apps/site/src/media/founder.jpg`) was generated with Nano Banana Pro from three of the owner's own photos, at the owner's request, and its backdrop graded to white.
+- Say "since before ChatGPT"; never a number of years in AI. The acquirer is not named on the page. The portrait (`apps/site/src/media/founder.webp`) was generated with Nano Banana Pro from three of the owner's own photos, at the owner's request: looking through a small quartz crystal, a nod to the hero's crystal. It is a cutout on a transparent background.
 
 ## Proof Points
 **Metrics:** [NEED: none yet. Do not publish numbers until a client result exists]

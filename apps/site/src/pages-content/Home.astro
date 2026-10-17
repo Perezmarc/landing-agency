@@ -65,7 +65,7 @@ import poolWebm from '../media/footer-pool.webm?url'
 import poolMp4 from '../media/footer-pool.mp4?url'
 import poolNarrowWebm from '../media/footer-pool-narrow.webm?url'
 import poolNarrowMp4 from '../media/footer-pool-narrow.mp4?url'
-import founderPhoto from '../media/founder.jpg'
+import founderPhoto from '../media/founder.webp'
 
 const stoneFiles = import.meta.glob('../media/stones/*.webp', { eager: true, import: 'default' })
 
@@ -134,7 +134,7 @@ const poolData = JSON.stringify({
 const stone = async (name) => (await getImage({ src: stoneFiles[`../media/stones/${name}.webp`], format: 'webp', width: 160 })).src
 const rawStones = await Promise.all([1, 2, 3, 4, 5, 6, 7].map(i => stone(`raw-${i}`)))
 const pebbleStones = await Promise.all([1, 2, 3, 4].map(i => stone(`pebble-${i}`)))
-// The portrait in "who we are", its backdrop graded to the page's white.
+// The portrait in "who we are": a cutout on a transparent background.
 const founder = await getImage({ src: founderPhoto, format: 'avif', widths: [480, 960], quality: 70 })
 
 const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
@@ -321,8 +321,8 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
   <section class="mk-section mk-about" id="about">
     <div class="mk-wrap mk-about-inner">
       <figure class="mk-about-photo" data-reveal>
-        <img src={founder.src} srcset={founder.srcSet.attribute} sizes="(max-width: 720px) min(100vw - 40px, 360px), 460px"
-             alt={t('home.about.photoAlt')} width={1280} height={1589} loading="lazy" decoding="async" />
+        <img src={founder.src} srcset={founder.srcSet.attribute} sizes="(max-width: 720px) min(100vw - 40px, 420px), 560px"
+             alt={t('home.about.photoAlt')} width={1280} height={1437} loading="lazy" decoding="async" />
       </figure>
       <div class="mk-about-copy" data-reveal>
         <span class="mk-eyebrow">{t('home.about.eyebrow')}</span>
