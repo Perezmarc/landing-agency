@@ -1,6 +1,6 @@
 # Product Marketing Context
 
-**Document version:** v7
+**Document version:** v8
 **Last updated:** 2026-10-17
 
 > Auto-drafted from the founder's brief ("an AI consulting agency, almost exactly
@@ -126,6 +126,7 @@ From the owner (2026-10-16), and on the homepage as "Who we are":
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v8 (2026-10-17): After a CRO comparison with varickagents.com and Varick's talk: the hero leads with the value, "Hand the repetitive work to AI agents." / "Free up more than half of your team's time." (the method moves to the lead paragraph), a line under the hero buttons says the agency is led by the founder of an AI company built before ChatGPT and acquired in San Francisco (linking to "Who we are"), and every booking button now reads "Book a discovery call" (the "Book a demo" label is gone: there is no demo to show).
 - v7 (2026-10-17): The final CTA leads with the value instead of the method: "Free up more than half of your team's time.", agents taking the repetitive work and people keeping the decisions. The figure is the owner's claim, chosen knowingly over a number-free version; see Proof Points.
 - v6 (2026-10-16): A "Who we are" section before the FAQ: the owner's background (20+ years in software, an AI company founded before ChatGPT and acquired by a San Francisco company, very early adoption and high automation there) with a portrait and a "Book a demo" CTA. It is the owner's own track record, not client proof.
 - v5 (2026-10-13): The hero headline becomes the owner's two lines, "Understand your processes." / "Then automate them with AI agents.": the method in its order, understand first, automate second. It replaces the time-saving claim of v4.

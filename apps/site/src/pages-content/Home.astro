@@ -1,8 +1,8 @@
 ---
 /* The landing page.
  *
- * Section order is the argument: the hero (understand your processes,
- * then automate them with AI agents) → a week, before and after → the
+ * Section order is the argument: the hero (hand the repetitive work to AI
+ * agents, free up more than half of the team's time) → a week, before and after → the
  * problem (the documented process is not the real one) → how we find the real
  * process → sort every step → one process sorted, as an illustration → how an
  * engagement works → built on your systems → who we are (the person who
@@ -173,6 +173,7 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
             {t('home.ctaSecondary')}
           </Button>
         </div>
+        <a class="mk-hero-note" href="#about">{t('home.founderNote')}</a>
       </div>
     </div>
   </section>
@@ -334,7 +335,7 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
         {aboutBody.map(paragraph => <p class="mk-about-p">{paragraph}</p>)}
         <div class="mk-about-actions">
           <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill iconRightName="arrowRight">
-            {t('home.about.ctaButton')}
+            {t('home.ctaPrimary')}
           </Button>
         </div>
       </div>

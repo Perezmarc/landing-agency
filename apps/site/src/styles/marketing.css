@@ -210,10 +210,10 @@
   text-wrap: balance;
 }
 /* The headline follows the image: over the raw rock the first line (the
-   claim: how much time the team could be saving) is black; once the polished
-   pebble shows, the second ("then hand the steps to agents") is. The
-   default is the AFTER, like the poster. During the clip the switch waits for
-   the pebble to appear. */
+   action: hand the repetitive work to agents) is black; once the polished
+   pebble shows, the second (the result: more than half of the team's time
+   back) is. The default is the AFTER, like the poster. During the clip the
+   switch waits for the pebble to appear. */
 .mk-hero-line { transition: color var(--dur-hero-fade) var(--ease-out); }
 .mk-hero-line--lead { color: var(--title-off); }
 .mk-hero-line--main { color: var(--ink); }
@@ -227,6 +227,19 @@
   margin-top: 24px;
 }
 .mk-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 34px; }
+/* Who leads the agency, in one line under the buttons; it links to "who we
+   are". Dropped where the stage is too short to hold it. */
+.mk-hero-note {
+  display: block;
+  margin-top: 22px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--mute);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 3px;
+}
+.mk-hero-note:hover { color: var(--ink); text-decoration-color: currentColor; }
 
 @media (max-aspect-ratio: 1/1) {
   /* Portrait: the copy sits in the white upper part of the stage, the pebble
@@ -236,6 +249,9 @@
   .mk-hero h1 { font-size: clamp(30px, 7.6vw, 52px); margin-top: 14px; }
   .mk-hero-lead { font-size: 15.5px; margin-top: 16px; }
   .mk-hero-actions { margin-top: 22px; }
+  /* On portrait the line reaches the top of the rock: a halo of the page's
+     white keeps it legible over the rain, like the calendar's head. */
+  .mk-hero-note { margin-top: 16px; text-shadow: 0 0 2px var(--bg), 0 0 4px var(--bg), 0 0 8px var(--bg); }
 }
 /* Short phones (iPhone SE and the like): tighten the copy so the pebble
    still shows below the buttons. */
@@ -244,6 +260,7 @@
   .mk-hero h1 { font-size: clamp(26px, 6.6vw, 40px); margin-top: 10px; }
   .mk-hero-lead { font-size: 14.5px; line-height: 1.5; margin-top: 12px; }
   .mk-hero-actions { margin-top: 16px; }
+  .mk-hero-note { display: none; }
 }
 /* Short landscape screens (a phone on its side, a small laptop window): the
    stage is sticky and clips, so the copy must fit between the header and the
@@ -257,7 +274,7 @@
   .mk-hero-actions { margin-top: 18px; }
 }
 @media (min-aspect-ratio: 1/1) and (max-height: 440px) {
-  .mk-hero-lead { display: none; }
+  .mk-hero-lead, .mk-hero-note { display: none; }
   .mk-hero h1 { font-size: clamp(22px, 3vw, 30px); }
 }
 

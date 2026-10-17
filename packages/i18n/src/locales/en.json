@@ -17,9 +17,10 @@
   },
   "home": {
     "eyebrow": "AI agents for business operations",
-    "headingLead": "Understand your processes.",
-    "heading": "Then automate them with AI agents.",
+    "headingLead": "Hand the repetitive work to AI agents.",
+    "heading": "Free up more than half of your team's time.",
     "lead": "We map how the work actually moves through your team, delete the steps that shouldn't exist, and run AI agents inside the tools you already use. The decisions stay with your people.",
+    "founderNote": "Led by the founder of an AI company built before ChatGPT and acquired by a San Francisco firm.",
     "ctaPrimary": "Book a discovery call",
     "ctaSecondary": "See how it works",
     "day": {
@@ -282,8 +283,7 @@
         "There we built AI, and the processes around it, where it had the most impact. We adopted new advances while they were still at an early stage and reached very high levels of automation.",
         "The agency brings that experience to your operations. We've worked on processes of every kind, and each engagement starts the same way: finding out how the work really runs."
       ],
-      "photoAlt": "Portrait of the person who leads the agency",
-      "ctaButton": "Book a demo"
+      "photoAlt": "Portrait of the person who leads the agency"
     },
     "faqEyebrow": "FAQ",
     "faqHeading": "Questions we hear on first calls",
