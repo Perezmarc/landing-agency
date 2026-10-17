@@ -121,7 +121,7 @@ From the owner (2026-10-16), and on the homepage as "Who we are":
 
 ## Goals
 **Business goal:** Win the first engagements.
-**Conversion action:** Book a discovery call (currently an email to the hello@ address; swap `brand.bookingUrl` in the manifest for a scheduling link).
+**Conversion action:** Book a discovery call, by email to the hello@ address. Email is the owner's choice (2026-10-17), not a placeholder for a scheduling link.
 **Current metrics:** None yet.
 
 ## Changelog
