@@ -1,7 +1,7 @@
 # Product Marketing Context
 
-**Document version:** v5
-**Last updated:** 2026-10-12
+**Document version:** v8
+**Last updated:** 2026-10-17
 
 > Auto-drafted from the founder's brief ("an AI consulting agency, almost exactly
 > like varickagents.com") before the agency had a name, customers or proof.
@@ -99,8 +99,16 @@
 **Style:** Plain language, concrete examples, no hype.
 **Personality:** Practical, precise, trustworthy, hands-on.
 
+## Who leads it
+From the owner (2026-10-16), and on the homepage as "Who we are":
+- Leads the agency; more than 20 years in the software industry.
+- Before ChatGPT, founded an AI company that built models of every kind to automate fraud and security work.
+- That company was acquired by a San Francisco company, where the owner then worked: building AI and the processes around it where it had the most impact, adopting new advances at a very early stage, and reaching very high levels of automation.
+- The agency has worked on processes of every kind.
+- Say "since before ChatGPT"; never a number of years in AI. The acquirer is not named on the page. The portrait (`apps/site/src/media/founder.webp`) was generated with Nano Banana Pro from three of the owner's own photos, at the owner's request: looking through a small quartz crystal, a nod to the hero's crystal. It is a cutout on a transparent background.
+
 ## Proof Points
-**Metrics:** [NEED: none yet. Do not publish numbers until a client result exists]
+**Metrics:** The final CTA says agents free up "more than half of your team's time". That is the owner's claim (2026-10-17), from the automation levels reached at the company they worked for after the acquisition; it is not yet a client result. [NEED: a measured time-saved figure from an engagement to back it.] No other numbers until a client result exists.
 **Illustrations on the page (not proof):** "A week, before and after" (six team weeks: every task today, then the same week with only the decisions left) and "Supplier invoices, step by step" are labelled illustrations of the method, with no totals, hours or results. Replace or support them with real ones when a client result exists.
 **Customers:** [NEED]
 **Testimonials:** [NEED]
@@ -113,11 +121,14 @@
 
 ## Goals
 **Business goal:** Win the first engagements.
-**Conversion action:** Book a discovery call (currently an email to the hello@ address; swap `brand.bookingUrl` in the manifest for a scheduling link).
+**Conversion action:** Book a discovery call, by email to the hello@ address. Email is the owner's choice (2026-10-17), not a placeholder for a scheduling link.
 **Current metrics:** None yet.
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v8 (2026-10-17): After a CRO comparison with varickagents.com and Varick's talk: the hero leads with the value, "Hand the repetitive work to AI agents." / "Free up more than half of your team's time." (the method moves to the lead paragraph), a line under the hero buttons says the agency is led by the founder of an AI company built before ChatGPT and acquired in San Francisco (linking to "Who we are"), and every booking button now reads "Book a discovery call" (the "Book a demo" label is gone: there is no demo to show).
+- v7 (2026-10-17): The final CTA leads with the value instead of the method: "Free up more than half of your team's time.", agents taking the repetitive work and people keeping the decisions. The figure is the owner's claim, chosen knowingly over a number-free version; see Proof Points.
+- v6 (2026-10-16): A "Who we are" section before the FAQ: the owner's background (20+ years in software, an AI company founded before ChatGPT and acquired by a San Francisco company, very early adoption and high automation there) with a portrait and a "Book a demo" CTA. It is the owner's own track record, not client proof.
 - v5 (2026-10-13): The hero headline becomes the owner's two lines, "Understand your processes." / "Then automate them with AI agents.": the method in its order, understand first, automate second. It replaces the time-saving claim of v4.
 - v4 (2026-10-12): The hero's first line becomes the owner's claim, "Find out how much time your whole team could be saving.", an invitation to measure rather than a promised figure; "Then hand the repetitive steps to AI agents." stays as the second line. [NEED: a real time-saved figure from an engagement before any number appears on the page.]
 - v3 (2026-10-12): The homepage calendar becomes a week (one day on phones) whose AFTER is the BEFORE minus the eliminated tasks, to say "we take tasks off your week"; the "what the agent prepared" list was dropped. Still an illustration, with no figures.

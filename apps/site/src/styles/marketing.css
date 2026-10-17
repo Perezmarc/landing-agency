@@ -210,10 +210,10 @@
   text-wrap: balance;
 }
 /* The headline follows the image: over the raw rock the first line (the
-   claim: how much time the team could be saving) is black; once the polished
-   pebble shows, the second ("then hand the steps to agents") is. The
-   default is the AFTER, like the poster. During the clip the switch waits for
-   the pebble to appear. */
+   action: hand the repetitive work to agents) is black; once the polished
+   pebble shows, the second (the result: more than half of the team's time
+   back) is. The default is the AFTER, like the poster. During the clip the
+   switch waits for the pebble to appear. */
 .mk-hero-line { transition: color var(--dur-hero-fade) var(--ease-out); }
 .mk-hero-line--lead { color: var(--title-off); }
 .mk-hero-line--main { color: var(--ink); }
@@ -227,6 +227,19 @@
   margin-top: 24px;
 }
 .mk-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 34px; }
+/* Who leads the agency, in one line under the buttons; it links to "who we
+   are". Dropped where the stage is too short to hold it. */
+.mk-hero-note {
+  display: block;
+  margin-top: 22px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--mute);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 3px;
+}
+.mk-hero-note:hover { color: var(--ink); text-decoration-color: currentColor; }
 
 @media (max-aspect-ratio: 1/1) {
   /* Portrait: the copy sits in the white upper part of the stage, the pebble
@@ -236,6 +249,9 @@
   .mk-hero h1 { font-size: clamp(30px, 7.6vw, 52px); margin-top: 14px; }
   .mk-hero-lead { font-size: 15.5px; margin-top: 16px; }
   .mk-hero-actions { margin-top: 22px; }
+  /* On portrait the line reaches the top of the rock: a halo of the page's
+     white keeps it legible over the rain, like the calendar's head. */
+  .mk-hero-note { margin-top: 16px; text-shadow: 0 0 2px var(--bg), 0 0 4px var(--bg), 0 0 8px var(--bg); }
 }
 /* Short phones (iPhone SE and the like): tighten the copy so the pebble
    still shows below the buttons. */
@@ -244,6 +260,7 @@
   .mk-hero h1 { font-size: clamp(26px, 6.6vw, 40px); margin-top: 10px; }
   .mk-hero-lead { font-size: 14.5px; line-height: 1.5; margin-top: 12px; }
   .mk-hero-actions { margin-top: 16px; }
+  .mk-hero-note { display: none; }
 }
 /* Short landscape screens (a phone on its side, a small laptop window): the
    stage is sticky and clips, so the copy must fit between the header and the
@@ -257,7 +274,7 @@
   .mk-hero-actions { margin-top: 18px; }
 }
 @media (min-aspect-ratio: 1/1) and (max-height: 440px) {
-  .mk-hero-lead { display: none; }
+  .mk-hero-lead, .mk-hero-note { display: none; }
   .mk-hero h1 { font-size: clamp(22px, 3vw, 30px); }
 }
 
@@ -371,6 +388,32 @@
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .mk-glass-card { background: var(--glass-bg-solid); }
 }
+
+/* ═══════════ WHO WE ARE ═══════════
+   A portrait beside the copy; stacked on phones, photo first. The photo is a
+   cutout on a transparent background, so it has no frame: the person stands
+   on the page, and from the chest down it fades into it, slowly: the stops
+   ease out, so there is no line where the fade starts. */
+.mk-about-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(40px, 6vw, 88px);
+  align-items: center;
+}
+.mk-about-photo { margin: 0; justify-self: center; width: min(100%, 560px); }
+.mk-about-photo img {
+  --fade: linear-gradient(to bottom, #000 42%, rgb(0 0 0 / 0.9) 52%, rgb(0 0 0 / 0.7) 62%,
+    rgb(0 0 0 / 0.45) 72%, rgb(0 0 0 / 0.22) 82%, rgb(0 0 0 / 0.07) 91%, transparent 100%);
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-mask-image: var(--fade);
+  mask-image: var(--fade);
+}
+.mk-about-copy { max-width: 58ch; }
+.mk-about-p { font-size: clamp(15.5px, 1.4vw, 17px); color: var(--mute); line-height: 1.65; margin-top: 18px; }
+.mk-about-copy .mk-h2 + .mk-about-p { margin-top: 24px; }
+.mk-about-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
 
 /* ═══════════ A WEEK, BEFORE AND AFTER ═══════════
    Two calendars on one time scale: BEFORE with every task, AFTER with the
@@ -946,7 +989,9 @@
   .mk-footer-grid > :first-child { grid-column: 1 / -1; }
   /* Hero and final CTAs stack: full width comes from the column, NOT from
      <Button block> (a block button inside a flex row crushes its siblings). */
-  .mk-hero-actions, .mk-final-actions { flex-direction: column; align-items: stretch; }
+  .mk-hero-actions, .mk-final-actions, .mk-about-actions { flex-direction: column; align-items: stretch; }
+  .mk-about-inner { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .mk-about-photo { justify-self: start; width: min(100%, 420px); }
   /* The calendars become one day: the first column (Monday) on a wider axis. */
   .mk-day { --slot: 16px; }
   .mk-day-tabs .ui-tabs-strip { width: auto; }
