@@ -17,9 +17,10 @@
   },
   "home": {
     "eyebrow": "Agenti AI per le operations aziendali",
-    "headingLead": "Comprendi i tuoi processi.",
-    "heading": "Poi automatizzali con agenti AI.",
+    "headingLead": "Affida il lavoro ripetitivo agli agenti AI.",
+    "heading": "Libera più della metà del tempo del tuo team.",
     "lead": "Mappiamo come il lavoro si muove davvero nel tuo team, eliminiamo i passaggi che non dovrebbero esistere e gestiamo agenti AI dentro gli strumenti che usi già. Le decisioni restano alle tue persone.",
+    "founderNote": "A guidare l'agenzia è chi ha fondato un'azienda di AI prima di ChatGPT, poi acquisita da una società di San Francisco.",
     "ctaPrimary": "Prenota una call conoscitiva",
     "ctaSecondary": "Scopri come lavoriamo",
     "day": {
@@ -273,6 +274,17 @@
         "body": "Ogni decisione e ogni modifica vengono registrate, così il tuo team e i tuoi revisori possono vedere cosa è successo e perché."
       }
     ],
+    "about": {
+      "eyebrow": "Chi siamo",
+      "headingLead": "Più di 20 anni nel software.",
+      "heading": "Costruiamo AI da prima di ChatGPT.",
+      "body": [
+        "Guido l'agenzia. Prima di ChatGPT ho fondato un'azienda di AI che sviluppava modelli di ogni tipo per automatizzare il rilevamento delle frodi e la sicurezza. L'ha acquisita un'azienda di San Francisco, dove poi ho continuato a lavorare.",
+        "Lì abbiamo sviluppato l'AI, e i processi che la accompagnano, dove aveva più impatto. Adottavamo i progressi più avanzati quando erano ancora in fase iniziale e abbiamo raggiunto livelli di automazione molto alti.",
+        "L'agenzia porta questa esperienza nelle tue operations. Abbiamo lavorato su processi di ogni tipo, e ogni progetto comincia allo stesso modo: capire come si svolge davvero il lavoro."
+      ],
+      "photoAlt": "Ritratto della persona che guida l'agenzia"
+    },
     "faqEyebrow": "Domande frequenti",
     "faqHeading": "Le domande che ci fanno alla prima call",
     "faqs": [
@@ -309,8 +321,8 @@
         "a": "Dipendono dalla complessità del processo, dai sistemi coinvolti e dall'ampiezza del progetto. Dopo la call conoscitiva ti inviamo una proposta scritta."
       }
     ],
-    "ctaHeading": "Scopri com'è davvero il tuo processo.",
-    "ctaLead": "Prenota una call e porta un processo. Lo mappiamo insieme e ti mostriamo dove sono le attese.",
+    "ctaHeading": "Libera più della metà del tempo del tuo team.",
+    "ctaLead": "Gli agenti si occupano del lavoro ripetitivo: ricopiare dati, rincorrere risposte, riconciliare registri. Le decisioni restano alle tue persone. Porta un processo in una call e ti mostriamo quanto può prenderne in carico un agente.",
     "ctaButton": "Prenota una call conoscitiva"
   },
   "contact": {

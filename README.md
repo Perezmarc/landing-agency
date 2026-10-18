@@ -54,10 +54,12 @@ English is written first; `es.json` and `it.json` follow in the same change or
 ## Before launch
 
 1. **Identity** — real `name`, `domain` and `legal` in the manifest.
-2. **Booking link** — set `brand.bookingUrl` to a Cal.com/Calendly link. Until
-   then every "Book a call" button opens an email to `hello@<domain>`.
-3. **Claims** — the FAQ quotes 6–12 weeks to production and about 20 hours of
-   client time. Confirm them or change them.
+2. **Booking** — every "Book a call" button opens an email to
+   `hello@<domain>`, on purpose: calls are booked by email. Nothing to set
+   beyond the domain.
+3. **Claims** — the hero and the final CTA say agents free up "more than half
+   of your team's time". It is the owner's claim; back it with a client result
+   as soon as one exists (see `.agents/product-marketing.md`).
 4. **Legal** — fill the bracketed values in the privacy and terms templates and
    have them reviewed.
 5. **Brand** — palette in `tokens.css`, mark in `apps/site/public/favicon.svg`

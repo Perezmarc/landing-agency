@@ -17,9 +17,10 @@
   },
   "home": {
     "eyebrow": "AI agents for business operations",
-    "headingLead": "Understand your processes.",
-    "heading": "Then automate them with AI agents.",
+    "headingLead": "Hand the repetitive work to AI agents.",
+    "heading": "Free up more than half of your team's time.",
     "lead": "We map how the work actually moves through your team, delete the steps that shouldn't exist, and run AI agents inside the tools you already use. The decisions stay with your people.",
+    "founderNote": "Led by the founder of an AI company built before ChatGPT and acquired by a San Francisco firm.",
     "ctaPrimary": "Book a discovery call",
     "ctaSecondary": "See how it works",
     "day": {
@@ -273,6 +274,17 @@
         "body": "Every decision and change is logged, so your team and your auditors can see what happened and why."
       }
     ],
+    "about": {
+      "eyebrow": "Who we are",
+      "headingLead": "More than 20 years in software.",
+      "heading": "Building AI since before ChatGPT.",
+      "body": [
+        "I lead the agency. Before ChatGPT, I founded an AI company that built models of every kind to automate fraud and security work. A company in San Francisco acquired it, and I went on to work there.",
+        "There we built AI, and the processes around it, where it had the most impact. We adopted new advances while they were still at an early stage and reached very high levels of automation.",
+        "The agency brings that experience to your operations. We've worked on processes of every kind, and each engagement starts the same way: finding out how the work really runs."
+      ],
+      "photoAlt": "Portrait of the person who leads the agency"
+    },
     "faqEyebrow": "FAQ",
     "faqHeading": "Questions we hear on first calls",
     "faqs": [
@@ -309,8 +321,8 @@
         "a": "It depends on the complexity of the workflow, the systems involved and the scope of the deployment. After the discovery call we send you a written proposal."
       }
     ],
-    "ctaHeading": "Find out what your process really looks like.",
-    "ctaLead": "Book a call and bring one process. We'll map it with you and show you where the waiting is.",
+    "ctaHeading": "Free up more than half of your team's time.",
+    "ctaLead": "Agents take over the repetitive work: re-keying, chasing, matching. Your people keep the decisions. Bring one process to a call and we'll show you how much of it an agent can take.",
     "ctaButton": "Book a discovery call"
   },
   "contact": {

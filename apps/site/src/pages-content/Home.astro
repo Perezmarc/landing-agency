@@ -1,12 +1,12 @@
 ---
 /* The landing page.
  *
- * Section order is the argument: the hero (understand your processes,
- * then automate them with AI agents) → a week, before and after → the
+ * Section order is the argument: the hero (hand the repetitive work to AI
+ * agents, free up more than half of the team's time) → a week, before and after → the
  * problem (the documented process is not the real one) → how we find the real
  * process → sort every step → one process sorted, as an illustration → how an
- * engagement works → built on your systems → FAQ → final CTA. Every CTA books
- * a call.
+ * engagement works → built on your systems → who we are (the person who
+ * leads the agency) → FAQ → final CTA. Every CTA books a call.
  *
  * The art direction is one image: rain on a raw crystal that shatters into a
  * polished pebble, with the water leaving it as one calm stream; the calendar
@@ -65,6 +65,7 @@ import poolWebm from '../media/footer-pool.webm?url'
 import poolMp4 from '../media/footer-pool.mp4?url'
 import poolNarrowWebm from '../media/footer-pool-narrow.webm?url'
 import poolNarrowMp4 from '../media/footer-pool-narrow.mp4?url'
+import founderPhoto from '../media/founder.webp'
 
 const stoneFiles = import.meta.glob('../media/stones/*.webp', { eager: true, import: 'default' })
 
@@ -77,6 +78,7 @@ const exampleSteps = list('home.exampleSteps')
 const steps = list('home.steps')
 const systems = list('home.systems')
 const faqs = list('home.faqs')
+const aboutBody = list('home.about.body')
 const day = (CATALOGS[locale] ?? CATALOGS.en).home.day
 
 // The FAQ nodes are built from the SAME list the page renders. Emitting FAQ
@@ -132,6 +134,8 @@ const poolData = JSON.stringify({
 const stone = async (name) => (await getImage({ src: stoneFiles[`../media/stones/${name}.webp`], format: 'webp', width: 160 })).src
 const rawStones = await Promise.all([1, 2, 3, 4, 5, 6, 7].map(i => stone(`raw-${i}`)))
 const pebbleStones = await Promise.all([1, 2, 3, 4].map(i => stone(`pebble-${i}`)))
+// The portrait in "who we are": a cutout on a transparent background.
+const founder = await getImage({ src: founderPhoto, format: 'avif', widths: [480, 960], quality: 70 })
 
 const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
 ---
@@ -169,6 +173,7 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
             {t('home.ctaSecondary')}
           </Button>
         </div>
+        <a class="mk-hero-note" href="#about">{t('home.founderNote')}</a>
       </div>
     </div>
   </section>
@@ -311,6 +316,29 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
           </li>
         ))}
       </ul>
+    </div>
+  </section>
+
+  <section class="mk-section mk-about" id="about">
+    <div class="mk-wrap mk-about-inner">
+      <figure class="mk-about-photo" data-reveal>
+        <img src={founder.src} srcset={founder.srcSet.attribute} sizes="(max-width: 720px) min(100vw - 40px, 420px), 560px"
+             alt={t('home.about.photoAlt')} width={1280} height={1437} loading="lazy" decoding="async" />
+      </figure>
+      <div class="mk-about-copy" data-reveal>
+        <span class="mk-eyebrow">{t('home.about.eyebrow')}</span>
+        <h2 class="mk-h2">
+          <span class="mk-line mk-line--grey">{t('home.about.headingLead')}</span>
+          {' '}
+          <span class="mk-line">{t('home.about.heading')}</span>
+        </h2>
+        {aboutBody.map(paragraph => <p class="mk-about-p">{paragraph}</p>)}
+        <div class="mk-about-actions">
+          <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill iconRightName="arrowRight">
+            {t('home.ctaPrimary')}
+          </Button>
+        </div>
+      </div>
     </div>
   </section>
 

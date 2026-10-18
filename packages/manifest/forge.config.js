@@ -38,8 +38,8 @@ export default defineForge({
        url        → https://example.com
        email      → hello@ / sales@ / privacy@ / legal@ example.com
        bookingUrl → mailto:hello@example.com
-       Override any of them below — bookingUrl is the one to change first, to
-       a Cal.com or Calendly link. */
+       Override any of them below. Calls are booked by email on purpose, so
+       bookingUrl stays derived. */
     domain: 'example.com',
 
     legal: {
