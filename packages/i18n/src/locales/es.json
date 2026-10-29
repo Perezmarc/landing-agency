@@ -1,5 +1,6 @@
 {
   "nav": {
+    "useCases": "Casos de uso",
     "blog": "Blog",
     "contact": "Contacto",
     "bookCall": "Reserva una llamada",
@@ -323,7 +324,497 @@
     ],
     "ctaHeading": "Libera más de la mitad del tiempo de tu equipo.",
     "ctaLead": "Los agentes se encargan del trabajo repetitivo: volver a teclear datos, perseguir respuestas, cuadrar registros. Las decisiones siguen en manos de tu gente. Trae un proceso a una llamada y te enseñamos cuánto puede asumir un agente.",
-    "ctaButton": "Reserva una llamada de diagnóstico"
+    "ctaButton": "Reserva una llamada de diagnóstico",
+    "useCasesLink": "Ver casos de uso por sector",
+    "exampleMoreLink": "Más ejemplos, sector por sector"
+  },
+  "useCases": {
+    "eyebrow": "Casos de uso",
+    "headingLead": "El mismo trabajo repetitivo aparece en todos los sectores.",
+    "heading": "Aquí es donde lo asumen los agentes.",
+    "lead": "Cada sector tiene sus sistemas, sus normas y su papeleo, pero el trabajo que se acumula se parece: documentos tecleados a mano, gente persiguiendo a otra gente para obtener respuestas, casos esperando en una cola. A continuación, los procesos que miramos primero en cada sector y un ejemplo por sector, ordenado con nuestro método.",
+    "markets": "Trabajamos para empresas de España, Italia, el Reino Unido y Estados Unidos, en español, inglés e italiano.",
+    "indexLabel": "Sectores",
+    "legendLead": "Cada paso de un ejemplo acaba en uno de estos cuatro grupos, revisados en este orden:",
+    "casesHeading": "Dónde ayudan los agentes",
+    "exampleEyebrow": "Ejemplo",
+    "exampleNote": "Ejemplo ilustrativo del método, no un proyecto con un cliente.",
+    "ctaHeading": "Trae un proceso de tu propia empresa.",
+    "ctaLead": "¿Tu sector no aparece en esta página? El método es el mismo. En la llamada de diagnóstico mapeamos uno de tus procesos y te mostramos qué pasos eliminar, cuáles puede asumir un agente y cuáles se quedan con tu equipo.",
+    "industries": [
+      {
+        "anchor": "industria",
+        "name": "Industria",
+        "lead": "La producción funciona sobre el ERP, pero los pedidos de clientes, las confirmaciones de proveedores y los registros de calidad siguen llegando en correos, PDF y hojas de cálculo que alguien tiene que teclear.",
+        "cases": [
+          {
+            "title": "Entrada de pedidos de clientes",
+            "body": "Un agente lee los pedidos que llegan por correo, comprueba precios y plazos en el ERP y crea el pedido de venta. Los que no cuadran pasan a una persona con la diferencia señalada."
+          },
+          {
+            "title": "Confirmaciones y retrasos de proveedores",
+            "body": "Los agentes leen cada confirmación de pedido, comparan fechas y cantidades con lo pedido y señalan las que ponen en riesgo el plan de producción."
+          },
+          {
+            "title": "Calidad y no conformidades",
+            "body": "Un agente convierte las notas de inspección y las reclamaciones de clientes en informes de no conformidad estructurados, adjunta las pruebas y los envía al responsable de calidad."
+          },
+          {
+            "title": "Facturas de proveedores",
+            "body": "Las facturas que llegan en papel, en PDF o por redes de facturación electrónica, como el SDI italiano, se cruzan con el pedido y el albarán. Solo las excepciones llegan a cuentas a pagar."
+          }
+        ],
+        "example": {
+          "title": "Un pedido de cliente que llega por correo",
+          "lead": "Cómo ordena el método la entrada de pedidos en un fabricante de componentes.",
+          "steps": [
+            {
+              "step": "Imprimir el pedido y archivarlo en una carpeta",
+              "bucket": "Eliminar"
+            },
+            {
+              "step": "Leer el pedido en PDF y extraer artículos, cantidades y fechas",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Traducir las referencias del cliente a las tuyas",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Comprobar los precios con la tarifa del cliente",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Comprobar stock y plazos en el ERP",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Pedir a un compañero que revise el pedido a ojo",
+              "bucket": "Eliminar"
+            },
+            {
+              "step": "Crear el pedido de venta y enviar la confirmación",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Aceptar una fecha de entrega que la planta solo cumple con horas extra",
+              "bucket": "Una persona"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "distribucion-logistica",
+        "name": "Distribución y logística",
+        "lead": "Los márgenes son estrechos y los volúmenes altos, así que cada incidencia de envío, factura de transporte o consulta de cliente gestionada a mano se come el día.",
+        "cases": [
+          {
+            "title": "Incidencias de envío",
+            "body": "Los agentes siguen las actualizaciones de los transportistas, detectan los envíos que llegarán tarde, proponen cómo recuperarlos y avisan a atención al cliente antes de que llame el cliente."
+          },
+          {
+            "title": "Revisión de facturas de transporte",
+            "body": "Código simple comprueba cada factura del transportista con las tarifas pactadas. Cuando un cargo no coincide, un agente averigua por qué y prepara la reclamación."
+          },
+          {
+            "title": "Reclamaciones de entregas",
+            "body": "Para un paquete dañado o perdido, un agente reúne el albarán de entrega, las fotos y los mensajes del transportista, y redacta la reclamación."
+          },
+          {
+            "title": "Documentación aduanera",
+            "body": "En los envíos internacionales, como entre el Reino Unido y la UE, un agente prepara la factura comercial y propone los códigos arancelarios. Una persona da el visto bueno."
+          }
+        ],
+        "example": {
+          "title": "Un envío que llegará tarde",
+          "lead": "Cómo ordena el método la gestión de una entrega retrasada en un distribuidor.",
+          "steps": [
+            {
+              "step": "Copiar cada número de seguimiento en una hoja de estado diaria",
+              "bucket": "Eliminar"
+            },
+            {
+              "step": "Consultar el estado del envío en cada transportista",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Detectar los envíos que no llegarán en la fecha prometida",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Leer el mensaje del transportista y averiguar la causa",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Proponer las opciones: esperar, desviar o volver a enviar",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Redactar el mensaje al cliente con la nueva fecha",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Enviar al gestor de cuenta una copia de cada actualización",
+              "bucket": "Eliminar"
+            },
+            {
+              "step": "Aprobar el pago de un transporte urgente",
+              "bucket": "Una persona"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "retail-ecommerce",
+        "name": "Retail y comercio electrónico",
+        "lead": "Pedidos, devoluciones y catálogos de proveedores se mueven rápido, y las personas detrás pasan el día copiando datos entre la tienda, los marketplaces y el ERP.",
+        "cases": [
+          {
+            "title": "Devoluciones y reembolsos",
+            "body": "Un agente lee la solicitud de devolución, la compara con la política y el historial del pedido y prepara el reembolso. Los casos fuera de la política pasan a una persona."
+          },
+          {
+            "title": "Datos de producto de proveedores",
+            "body": "Los catálogos de proveedores llegan en todos los formatos. Un agente los lleva a tus campos de producto, escribe las descripciones que faltan en cada idioma y señala los huecos antes de publicar un producto."
+          },
+          {
+            "title": "Clasificación de atención al cliente",
+            "body": "Los agentes clasifican los mensajes entrantes, buscan el pedido en tus sistemas y responden a las preguntas rutinarias, como dónde está un paquete. El resto llega a tu equipo con el pedido ya localizado."
+          },
+          {
+            "title": "Liquidaciones de marketplaces",
+            "body": "Código simple cruza cada liquidación de un marketplace con sus pedidos, comisiones y reembolsos. Un agente investiga las que no cuadran."
+          }
+        ],
+        "example": {
+          "title": "Una solicitud de devolución",
+          "lead": "Cómo ordena el método una devolución en una tienda online.",
+          "steps": [
+            {
+              "step": "Pedir al cliente que rellene un segundo formulario con los mismos datos",
+              "bucket": "Eliminar"
+            },
+            {
+              "step": "Leer el mensaje y las fotos del cliente",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Localizar el pedido y comprobar el plazo de devolución",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Contrastar el motivo y las fotos con la política de devoluciones",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Generar la etiqueta de devolución",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Emitir el reembolso cuando el artículo vuelve al almacén",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Aprobar un reembolso fuera de la política para un cliente de muchos años",
+              "bucket": "Una persona"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "servicios-financieros-seguros",
+        "name": "Servicios financieros y seguros",
+        "lead": "El trabajo regulado vive de documentos y comprobaciones: expedientes de alta, siniestros, cambios de póliza. Buena parte del esfuerzo se va en reunir pruebas y copiarlas de un sistema a otro.",
+        "cases": [
+          {
+            "title": "Alta de clientes y KYC",
+            "body": "Un agente reúne los documentos, comprueba que estén completos y sean coherentes, lanza el cribado con tus proveedores y prepara el expediente para el responsable de cumplimiento."
+          },
+          {
+            "title": "Apertura de siniestros",
+            "body": "Los agentes leen la primera comunicación del siniestro, recuperan la póliza, piden los documentos que faltan y preparan el caso para un tramitador, que decide."
+          },
+          {
+            "title": "Cambios de póliza y de cuenta",
+            "body": "Cambios de dirección, de beneficiarios y peticiones parecidas llegan por correo. Un agente completa las comprobaciones de identidad que exiges y actualiza el sistema central."
+          },
+          {
+            "title": "Pruebas para informes regulatorios",
+            "body": "Un agente reúne los extractos y las pruebas de cada informe, y una persona lo revisa antes de presentar nada."
+          }
+        ],
+        "example": {
+          "title": "Un siniestro de automóvil",
+          "lead": "Cómo ordena el método los primeros días de un siniestro en una aseguradora.",
+          "steps": [
+            {
+              "step": "Leer el correo y los adjuntos del siniestro y darlo de alta",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Imprimir los documentos para un expediente en papel",
+              "bucket": "Eliminar"
+            },
+            {
+              "step": "Comprobar que la póliza estaba en vigor el día del accidente",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Averiguar qué documentos faltan y pedírselos al cliente",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Enviar recordatorios hasta que lleguen los documentos",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Contrastar las fotos y el presupuesto de reparación con la descripción",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Enviar al tramitador una hoja semanal de siniestros abiertos",
+              "bucket": "Eliminar"
+            },
+            {
+              "step": "Decidir si se acepta el siniestro y por qué importe",
+              "bucket": "Una persona"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "servicios-profesionales",
+        "name": "Servicios profesionales",
+        "lead": "Asesorías, despachos de abogados y consultoras venden horas de expertos, pero muchas de esas horas se van en pedir documentos a los clientes, rellenar partes de horas y preparar facturas.",
+        "cases": [
+          {
+            "title": "Recogida de documentos de clientes",
+            "body": "Un agente pide a cada cliente lo que falta, revisa lo que llega, lo archiva en su sitio y persigue el resto. Tu equipo solo trabaja con expedientes completos."
+          },
+          {
+            "title": "Contabilidad de clientes",
+            "body": "En una asesoría, los agentes clasifican movimientos bancarios y facturas de compra, proponen los asientos y dejan los dudosos al contable."
+          },
+          {
+            "title": "Conflictos de interés y hojas de encargo",
+            "body": "Un agente busca conflictos en asuntos y contactos anteriores y redacta la hoja de encargo con tus plantillas. Un socio aprueba ambas cosas."
+          },
+          {
+            "title": "Registro de horas y facturación",
+            "body": "Un agente propone las entradas de horas a partir del calendario, el correo y los documentos, para que cada persona revise su semana en lugar de reconstruirla, y prepara la factura para su aprobación."
+          }
+        ],
+        "example": {
+          "title": "La declaración trimestral de IVA de un cliente",
+          "lead": "Cómo ordena el método la preparación del IVA trimestral en una asesoría.",
+          "steps": [
+            {
+              "step": "Recordar al cliente qué documentos faltan todavía",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Leer las facturas y los tiques que envía el cliente, en cualquier formato",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Clasificar cada uno y proponer el asiento contable",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Conciliar los asientos con el extracto bancario",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Copiar los totales en una hoja de comprobación aparte",
+              "bucket": "Eliminar"
+            },
+            {
+              "step": "Revisar las partidas inusuales y la declaración",
+              "bucket": "Una persona"
+            },
+            {
+              "step": "Presentar la declaración y enviar un resumen al cliente",
+              "bucket": "Código simple"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "inmobiliario",
+        "name": "Inmobiliario y gestión de propiedades",
+        "lead": "Los administradores de fincas e inmuebles coordinan inquilinos, propietarios, proveedores y facturas en muchos edificios, y casi todo su día es coordinación.",
+        "cases": [
+          {
+            "title": "Avisos de mantenimiento",
+            "body": "Un agente lee el mensaje y las fotos del inquilino, valora la urgencia y el gremio que hace falta, reserva un proveedor de tu lista aprobada y mantiene informado al inquilino."
+          },
+          {
+            "title": "Cobro de alquileres e impagos",
+            "body": "Código simple cruza los pagos con los contratos. Un agente hace el seguimiento de los impagos con el tono que marca tu política, y una persona decide los planes de pago."
+          },
+          {
+            "title": "Facturas de proveedores",
+            "body": "Cada factura se cruza con su orden de trabajo y el precio pactado, y se imputa al edificio y al propietario correctos."
+          },
+          {
+            "title": "Liquidaciones a propietarios",
+            "body": "Un agente prepara la liquidación mensual de cada propietario y el resumen de obras, para que el equipo las revise en lugar de construirlas."
+          }
+        ],
+        "example": {
+          "title": "Una fuga de agua que avisa un inquilino",
+          "lead": "Cómo ordena el método una reparación en una administración de fincas.",
+          "steps": [
+            {
+              "step": "Leer el mensaje y las fotos del inquilino",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Valorar la urgencia y qué gremio hace falta",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Apuntar el aviso en una segunda hoja de seguimiento",
+              "bucket": "Eliminar"
+            },
+            {
+              "step": "Reservar un proveedor de la lista aprobada",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Informar al inquilino sobre la visita",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Aprobar una reparación que supera el límite de gasto",
+              "bucket": "Una persona"
+            },
+            {
+              "step": "Cruzar la factura del proveedor con la orden de trabajo",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Escribir al propietario por separado por cada pequeña reparación",
+              "bucket": "Eliminar"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "hosteleria-turismo",
+        "name": "Hostelería y turismo",
+        "lead": "Hoteles, turoperadores y agencias de viajes gestionan reservas, cambios y facturas de proveedores en picos de temporada, y el back office tiene que seguir el ritmo.",
+        "cases": [
+          {
+            "title": "Solicitudes de grupos y eventos",
+            "body": "Un agente lee la solicitud, comprueba disponibilidad y tarifas y redacta la propuesta para que el equipo comercial la envíe."
+          },
+          {
+            "title": "Cambios y cancelaciones de reservas",
+            "body": "Los agentes aplican tus condiciones a cada cambio, actualizan la reserva en el channel manager y en el PMS y pasan las excepciones a una persona."
+          },
+          {
+            "title": "Conciliación de proveedores y comisiones",
+            "body": "Código simple cruza las facturas de proveedores y las comisiones de los canales de reserva con las reservas. Un agente investiga las diferencias."
+          },
+          {
+            "title": "Reseñas y quejas",
+            "body": "Un agente clasifica reseñas y quejas por tema y establecimiento, redacta las respuestas y envía los problemas recurrentes al responsable que puede resolverlos."
+          }
+        ],
+        "example": {
+          "title": "Una solicitud de reserva de grupo",
+          "lead": "Cómo ordena el método una solicitud de grupo en un hotel.",
+          "steps": [
+            {
+              "step": "Leer la solicitud y extraer fechas, habitaciones y necesidades",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Comprobar la disponibilidad y las reglas de tarifa",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Copiar la solicitud en la hoja de seguimiento del equipo comercial",
+              "bucket": "Eliminar"
+            },
+            {
+              "step": "Redactar la propuesta con tus plantillas",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Fijar el precio para un grupo grande en temporada alta",
+              "bucket": "Una persona"
+            },
+            {
+              "step": "Enviar recordatorios hasta que el cliente confirme",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Crear la reserva y la factura del depósito",
+              "bucket": "Código simple"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "sanidad",
+        "name": "Sanidad privada",
+        "lead": "Clínicas y consultas pierden horas de su personal en el papeleo de las aseguradoras, los volantes y la facturación. Los agentes trabajan solo en esa parte administrativa, nunca en decisiones clínicas.",
+        "cases": [
+          {
+            "title": "Autorizaciones de aseguradoras",
+            "body": "Un agente prepara la solicitud de autorización con los documentos que pide la aseguradora, la envía y hace el seguimiento. Una persona gestiona las denegaciones."
+          },
+          {
+            "title": "Volantes y peticiones de cita",
+            "body": "Los agentes leen volantes y peticiones, comprueban qué necesita cada una y proponen un hueco, para que recepción confirme en lugar de teclear."
+          },
+          {
+            "title": "Facturación a aseguradoras",
+            "body": "Código simple genera las facturas a partir de las citas. Cuando una aseguradora rechaza una, un agente averigua por qué y prepara la corrección."
+          },
+          {
+            "title": "Mensajes administrativos de pacientes",
+            "body": "Los agentes responden a las preguntas rutinarias sobre citas, documentos y facturas, y pasan cualquier cuestión clínica directamente a tu equipo."
+          }
+        ],
+        "example": {
+          "title": "Una factura rechazada por una aseguradora",
+          "lead": "Cómo ordena el método un rechazo en una clínica privada.",
+          "steps": [
+            {
+              "step": "Leer el aviso de rechazo y su motivo",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Localizar la cita y los documentos de la factura",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Imprimir el rechazo para la carpeta de facturación",
+              "bucket": "Eliminar"
+            },
+            {
+              "step": "Averiguar qué falta o qué está mal",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Preparar la factura corregida",
+              "bucket": "Un agente"
+            },
+            {
+              "step": "Volver a enviarla y seguir el cobro",
+              "bucket": "Código simple"
+            },
+            {
+              "step": "Decidir si recurrir o darla por perdida",
+              "bucket": "Una persona"
+            }
+          ]
+        }
+      }
+    ]
   },
   "contact": {
     "eyebrow": "Contacto",
@@ -359,6 +850,10 @@
     "home": {
       "title": "{{name}} | Agentes de IA a medida para las operaciones de tu empresa",
       "description": "Mapeamos cómo funcionan de verdad tus procesos de back office, eliminamos los pasos que sobran y operamos agentes de IA dentro de tus herramientas."
+    },
+    "useCases": {
+      "title": "Casos de uso de agentes de IA por sector | {{name}}",
+      "description": "Dónde los agentes de IA asumen el trabajo repetitivo de back office en ocho sectores, con un ejemplo para cada uno: qué eliminar, qué automatizar y qué se queda con una persona."
     },
     "blog": {
       "title": "Blog: agentes de IA en operaciones reales | {{name}}",

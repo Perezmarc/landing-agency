@@ -1,5 +1,6 @@
 {
   "nav": {
+    "useCases": "Use cases",
     "blog": "Blog",
     "contact": "Contact",
     "bookCall": "Book a call",
@@ -323,7 +324,497 @@
     ],
     "ctaHeading": "Free up more than half of your team's time.",
     "ctaLead": "Agents take over the repetitive work: re-keying, chasing, matching. Your people keep the decisions. Bring one process to a call and we'll show you how much of it an agent can take.",
-    "ctaButton": "Book a discovery call"
+    "ctaButton": "Book a discovery call",
+    "useCasesLink": "See use cases by industry",
+    "exampleMoreLink": "More worked examples, by industry"
+  },
+  "useCases": {
+    "eyebrow": "Use cases",
+    "headingLead": "The same repetitive work shows up in every industry.",
+    "heading": "This is where agents take it over.",
+    "lead": "Every sector has its own systems, rules and paperwork, but the work that piles up looks alike: documents typed in by hand, people chasing each other for answers, cases waiting in a queue. Below are the processes we look at first in each industry, and one worked example per industry, sorted with our method.",
+    "markets": "We serve companies in Spain, Italy, the United Kingdom and the United States, in English, Spanish and Italian.",
+    "indexLabel": "Industries",
+    "legendLead": "Each step of a worked example lands in one of four buckets, checked in this order:",
+    "casesHeading": "Where agents help",
+    "exampleEyebrow": "Worked example",
+    "exampleNote": "Illustration of the method, not a client engagement.",
+    "ctaHeading": "Bring one process from your own business.",
+    "ctaLead": "Your industry isn't on this page? The method is the same. On the discovery call we map one of your processes and show you which steps to delete, which an agent can take and which stay with your team.",
+    "industries": [
+      {
+        "anchor": "manufacturing",
+        "name": "Manufacturing",
+        "lead": "Production runs on the ERP, but customer orders, supplier confirmations and quality records still arrive as emails, PDFs and spreadsheets that someone has to type in.",
+        "cases": [
+          {
+            "title": "Customer order entry",
+            "body": "An agent reads purchase orders that arrive by email, checks prices and lead times against the ERP and creates the sales order. Orders that don't match go to a person with the difference marked."
+          },
+          {
+            "title": "Supplier confirmations and delays",
+            "body": "Agents read each order confirmation, compare dates and quantities with what was ordered, and flag the ones that put the production plan at risk."
+          },
+          {
+            "title": "Quality and non-conformance records",
+            "body": "An agent turns inspection notes and customer complaints into structured non-conformance reports, attaches the evidence and sends them to the quality lead."
+          },
+          {
+            "title": "Supplier invoices",
+            "body": "Invoices arriving on paper, as PDFs or through e-invoicing networks such as Italy's SDI are matched to the order and the goods receipt. Only the exceptions reach accounts payable."
+          }
+        ],
+        "example": {
+          "title": "A customer order that arrives by email",
+          "lead": "How the method sorts order entry at a components manufacturer.",
+          "steps": [
+            {
+              "step": "Print the order and file it in a binder",
+              "bucket": "Delete"
+            },
+            {
+              "step": "Read the PDF order and extract items, quantities and dates",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Map the customer's part numbers to your own",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Check prices against the customer's price list",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Check stock and lead times in the ERP",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Ask a colleague to re-check the order by eye",
+              "bucket": "Delete"
+            },
+            {
+              "step": "Create the sales order and send the confirmation",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Accept a delivery date the plant can only meet with overtime",
+              "bucket": "A person"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "distribution-logistics",
+        "name": "Distribution and logistics",
+        "lead": "Margins are thin and volumes are high, so every shipment exception, freight invoice and customer query handled by hand eats into the day.",
+        "cases": [
+          {
+            "title": "Shipment exceptions",
+            "body": "Agents follow carrier updates, spot the shipments that will arrive late, propose a way to recover them and warn customer service before the customer calls."
+          },
+          {
+            "title": "Freight invoice checks",
+            "body": "Plain code checks every carrier invoice against the agreed rates. When a charge differs, an agent works out why and prepares the dispute."
+          },
+          {
+            "title": "Delivery claims",
+            "body": "For a damaged or missing parcel, an agent collects the delivery note, the photos and the carrier's messages, and drafts the claim."
+          },
+          {
+            "title": "Customs paperwork",
+            "body": "For cross-border shipments, such as between the UK and the EU, an agent prepares the commercial invoice and proposes the commodity codes. A person signs off."
+          }
+        ],
+        "example": {
+          "title": "A shipment that will arrive late",
+          "lead": "How the method sorts the handling of one delayed delivery at a distributor.",
+          "steps": [
+            {
+              "step": "Copy every tracking number into a daily status spreadsheet",
+              "bucket": "Delete"
+            },
+            {
+              "step": "Pull the tracking status from each carrier",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Spot shipments that will miss the promised date",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Read the carrier's message and work out the cause",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Propose the options: wait, reroute or ship again",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Draft the message to the customer with the new date",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Email the account manager a copy of every update",
+              "bucket": "Delete"
+            },
+            {
+              "step": "Approve paying for express freight",
+              "bucket": "A person"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "retail-ecommerce",
+        "name": "Retail and e-commerce",
+        "lead": "Orders, returns and supplier catalogues move fast, and the people behind them spend their days copying data between the shop, the marketplaces and the ERP.",
+        "cases": [
+          {
+            "title": "Returns and refunds",
+            "body": "An agent reads the return request, checks it against the policy and the order history and prepares the refund. Cases outside the policy go to a person."
+          },
+          {
+            "title": "Product data from suppliers",
+            "body": "Supplier catalogues arrive in every format. An agent maps them to your product fields, writes the missing descriptions in each language and flags gaps before a product goes live."
+          },
+          {
+            "title": "Customer service triage",
+            "body": "Agents sort incoming messages, look up the order across your systems and answer the routine questions, such as where a parcel is. The rest reach your team with the order already looked up."
+          },
+          {
+            "title": "Marketplace payouts",
+            "body": "Plain code matches each marketplace payout to its orders, fees and refunds. An agent investigates the payouts that don't add up."
+          }
+        ],
+        "example": {
+          "title": "A return request",
+          "lead": "How the method sorts a return at an online shop.",
+          "steps": [
+            {
+              "step": "Ask the customer to fill in a second form with the same details",
+              "bucket": "Delete"
+            },
+            {
+              "step": "Read the customer's message and photos",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Find the order and check the return window",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Check the reason and the photos against the returns policy",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Create the return label",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Issue the refund once the item is back in the warehouse",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Approve a refund outside the policy for a long-standing customer",
+              "bucket": "A person"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "financial-services-insurance",
+        "name": "Financial services and insurance",
+        "lead": "Regulated work runs on documents and checks: onboarding files, claims, policy changes. Much of the effort goes into collecting evidence and copying it from one system to the next.",
+        "cases": [
+          {
+            "title": "Client onboarding and KYC",
+            "body": "An agent collects the documents, checks that they are complete and consistent, runs the screening through your providers and prepares the file for the compliance officer."
+          },
+          {
+            "title": "Claims intake",
+            "body": "Agents read the first notice of a claim, pull the policy, ask for the missing documents and prepare the case for a handler, who decides."
+          },
+          {
+            "title": "Policy and account changes",
+            "body": "Address changes, beneficiary updates and similar requests arrive by email. An agent completes the identity checks you require and updates the core system."
+          },
+          {
+            "title": "Evidence for regulatory reports",
+            "body": "An agent gathers the extracts and supporting evidence for each report, and a person reviews it before anything is filed."
+          }
+        ],
+        "example": {
+          "title": "A motor insurance claim",
+          "lead": "How the method sorts the first days of a claim at an insurer.",
+          "steps": [
+            {
+              "step": "Read the claim email and attachments and register the claim",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Print the documents for a paper file",
+              "bucket": "Delete"
+            },
+            {
+              "step": "Check that the policy was active on the date of the accident",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Work out which documents are missing and ask the customer for them",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Send reminders until the documents arrive",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Check the photos and the repair estimate against the description",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Send the handler a weekly spreadsheet of open claims",
+              "bucket": "Delete"
+            },
+            {
+              "step": "Decide whether to accept the claim, and for how much",
+              "bucket": "A person"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "professional-services",
+        "name": "Professional services",
+        "lead": "Accounting, law and consulting firms sell expert hours, yet many of those hours go into collecting documents from clients, filling in timesheets and preparing invoices.",
+        "cases": [
+          {
+            "title": "Collecting client documents",
+            "body": "An agent asks each client for what is missing, checks what arrives, files it in the right place and chases the rest. Your team works only on complete files."
+          },
+          {
+            "title": "Bookkeeping for clients",
+            "body": "In an accounting firm, agents classify bank movements and purchase invoices, propose the entries and leave the uncertain ones to the accountant."
+          },
+          {
+            "title": "Conflict checks and engagement letters",
+            "body": "An agent searches past matters and contacts for conflicts and drafts the engagement letter from your templates. A partner approves both."
+          },
+          {
+            "title": "Time capture and billing",
+            "body": "An agent drafts time entries from calendars, email and documents, so people review their week instead of reconstructing it, and prepares the invoice for approval."
+          }
+        ],
+        "example": {
+          "title": "A client's quarterly VAT return",
+          "lead": "How the method sorts quarterly VAT preparation at an accounting firm.",
+          "steps": [
+            {
+              "step": "Remind the client which documents are still missing",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Read the invoices and receipts the client sends, in any format",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Classify each one and propose the accounting entry",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Reconcile the entries with the bank statement",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Copy the totals into a separate checking spreadsheet",
+              "bucket": "Delete"
+            },
+            {
+              "step": "Review the unusual items and the return",
+              "bucket": "A person"
+            },
+            {
+              "step": "File the return and send the client a summary",
+              "bucket": "Plain code"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "real-estate",
+        "name": "Real estate and property management",
+        "lead": "Property managers juggle tenants, owners, contractors and invoices across many buildings, and most of their day is coordination.",
+        "cases": [
+          {
+            "title": "Maintenance requests",
+            "body": "An agent reads the tenant's message and photos, works out how urgent it is and which trade it needs, books a contractor from your approved list and keeps the tenant informed."
+          },
+          {
+            "title": "Rent collection and arrears",
+            "body": "Plain code matches payments to leases. An agent follows up on missed payments in the tone your policy sets, and a person decides on payment plans."
+          },
+          {
+            "title": "Contractor invoices",
+            "body": "Each invoice is matched to its work order and the agreed price, and charged to the right building and owner."
+          },
+          {
+            "title": "Owner statements",
+            "body": "An agent prepares each owner's monthly statement and summary of works, so the team reviews them instead of building them."
+          }
+        ],
+        "example": {
+          "title": "A leak reported by a tenant",
+          "lead": "How the method sorts one repair at a property manager.",
+          "steps": [
+            {
+              "step": "Read the tenant's message and photos",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Decide how urgent it is and which trade is needed",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Log the request in a second spreadsheet for tracking",
+              "bucket": "Delete"
+            },
+            {
+              "step": "Book a contractor from the approved list",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Send the tenant updates on the visit",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Approve repair work above the spending limit",
+              "bucket": "A person"
+            },
+            {
+              "step": "Match the contractor's invoice to the work order",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Email the owner separately about every small repair",
+              "bucket": "Delete"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "hospitality-travel",
+        "name": "Hospitality and travel",
+        "lead": "Hotels, tour operators and travel agencies handle bookings, changes and supplier invoices in seasonal peaks, and the back office has to keep up with the season.",
+        "cases": [
+          {
+            "title": "Group and event requests",
+            "body": "An agent reads the request, checks availability and rates and drafts the proposal for the sales team to send."
+          },
+          {
+            "title": "Booking changes and cancellations",
+            "body": "Agents apply your conditions to each change, update the booking in the channel manager and the property system, and pass the exceptions to a person."
+          },
+          {
+            "title": "Supplier and commission reconciliation",
+            "body": "Plain code matches supplier invoices and booking-channel commissions to the bookings. An agent investigates the differences."
+          },
+          {
+            "title": "Reviews and complaints",
+            "body": "An agent sorts reviews and complaints by topic and property, drafts the replies and sends recurring problems to the manager who can fix them."
+          }
+        ],
+        "example": {
+          "title": "A group booking request",
+          "lead": "How the method sorts a group request at a hotel.",
+          "steps": [
+            {
+              "step": "Read the request and pull out the dates, rooms and needs",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Check availability and the rate rules",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Copy the request into the sales team's tracking sheet",
+              "bucket": "Delete"
+            },
+            {
+              "step": "Draft the proposal from your templates",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Set the price for a large group in high season",
+              "bucket": "A person"
+            },
+            {
+              "step": "Send reminders until the client confirms",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Create the booking and the deposit invoice",
+              "bucket": "Plain code"
+            }
+          ]
+        }
+      },
+      {
+        "anchor": "healthcare",
+        "name": "Private healthcare",
+        "lead": "Clinics and practices lose staff time to insurer paperwork, referrals and billing. Agents work only on that administrative side, never on clinical decisions.",
+        "cases": [
+          {
+            "title": "Insurer authorisations",
+            "body": "An agent prepares the authorisation request with the documents the insurer asks for, submits it and follows it up. A person handles refusals."
+          },
+          {
+            "title": "Referrals and appointment requests",
+            "body": "Agents read referral letters and requests, check what each one needs and propose a slot, so reception confirms instead of typing."
+          },
+          {
+            "title": "Billing to insurers",
+            "body": "Plain code builds the claims from the appointments. When an insurer rejects one, an agent works out why and prepares the correction."
+          },
+          {
+            "title": "Administrative messages from patients",
+            "body": "Agents answer routine questions about appointments, documents and invoices, and pass anything clinical straight to your team."
+          }
+        ],
+        "example": {
+          "title": "A claim rejected by an insurer",
+          "lead": "How the method sorts a rejected claim at a private clinic.",
+          "steps": [
+            {
+              "step": "Read the rejection notice and its reason",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Find the appointment and the documents behind the claim",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Print the rejection for the billing binder",
+              "bucket": "Delete"
+            },
+            {
+              "step": "Work out what is missing or wrong",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Prepare the corrected claim",
+              "bucket": "An agent"
+            },
+            {
+              "step": "Resubmit it and track the payment",
+              "bucket": "Plain code"
+            },
+            {
+              "step": "Decide whether to appeal or write it off",
+              "bucket": "A person"
+            }
+          ]
+        }
+      }
+    ]
   },
   "contact": {
     "eyebrow": "Contact",
@@ -359,6 +850,10 @@
     "home": {
       "title": "{{name}} | Custom AI agents for business operations",
       "description": "We map how your back-office processes really run, delete the steps that shouldn't exist and run AI agents inside your existing tools."
+    },
+    "useCases": {
+      "title": "AI agent use cases by industry | {{name}}",
+      "description": "Where AI agents take over repetitive back-office work in eight industries, with a worked example for each: what to delete, what to automate and what stays with a person."
     },
     "blog": {
       "title": "Blog: AI agents in real operations | {{name}}",

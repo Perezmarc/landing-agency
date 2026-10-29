@@ -4,7 +4,8 @@
  * Section order is the argument: the hero (hand the repetitive work to AI
  * agents, free up more than half of the team's time) → a week, before and after → the
  * problem (the documented process is not the real one) → how we find the real
- * process → sort every step → one process sorted, as an illustration → how an
+ * process → sort every step → one process sorted, as an illustration (both
+ * the week and the walkthrough link on to the use cases page) → how an
  * engagement works → built on your systems → who we are (the person who
  * leads the agency) → FAQ → final CTA. Every CTA books a call.
  *
@@ -31,6 +32,7 @@ import { Button, Ico } from '@forge/ui'
 import forge from '@forge/manifest'
 import { CATALOGS, useTranslations, useList } from '@forge/i18n'
 import { pageMeta } from '@forge/seo/meta'
+import { routePath } from '@forge/seo/routes'
 import media from '../media/media.json'
 
 import beforeL from '../media/hero-before-16x9.jpg'
@@ -84,6 +86,7 @@ const day = (CATALOGS[locale] ?? CATALOGS.en).home.day
 // The FAQ nodes are built from the SAME list the page renders. Emitting FAQ
 // markup for questions a visitor cannot see is a search policy violation.
 const meta = pageMeta('home', locale, { faqs })
+const useCasesPath = routePath('useCases', locale)
 
 /* ── Media ──
    Posters are art-directed: the 9:16 rendition below 1:1 aspect, 16:9 above,
@@ -195,6 +198,7 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
           <span class="mk-line">{day.heading}</span>
         </h2>
         <p class="mk-lead">{day.lead}</p>
+        <a class="mk-more-link" href={useCasesPath}>{t('home.useCasesLink')}<Ico name="arrowRight" size={16} /></a>
       </div>
       <div data-day data-water={waterData}>
         <WeekCompare copy={day} locale={locale} />
@@ -269,6 +273,7 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
           ))}
         </ol>
         <p class="mk-illustration-note">{t('home.exampleNote')}</p>
+        <a class="mk-more-link" href={useCasesPath}>{t('home.exampleMoreLink')}<Ico name="arrowRight" size={16} /></a>
       </div>
     </div>
   </section>

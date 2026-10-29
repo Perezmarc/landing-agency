@@ -42,6 +42,7 @@ const socials = Object.entries(forge.brand.social).filter(([, handle]) => handle
 
       <div class="mk-footer-col">
         <strong>{t('footer.company')}</strong>
+        <a href={link('useCases').href}>{link('useCases').label}</a>
         <a href={link('blog').href}>{link('blog').label}</a>
         <a href={link('contact').href}>{link('contact').label}</a>
         <a href={forge.brand.bookingUrl}>{t('nav.bookCall')}</a>

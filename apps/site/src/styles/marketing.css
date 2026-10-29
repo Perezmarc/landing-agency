@@ -974,10 +974,60 @@
 .mk-post-excerpt { font-size: 14.5px; color: var(--mute); line-height: 1.65; margin-top: 8px; max-width: 62ch; }
 .mk-post-meta { font-size: 12.5px; color: var(--mute); margin-top: 10px; }
 
+/* ═══════════ USE CASES ═══════════
+   The industry page: an intro with an index of in-page anchors and the
+   bucket legend, then one band per industry, its use cases beside a worked
+   example card (the homepage walkthrough's list and tags), stacked below
+   900px. Anchors land below the fixed header. */
+.mk-uc-intro { padding-bottom: 48px; }
+.mk-uc-intro .mk-section-head { margin-bottom: 36px; }
+.mk-uc-markets { font-size: 14.5px; color: var(--ink-2); margin-top: 14px; max-width: 58ch; }
+.mk-uc-index { display: flex; flex-wrap: wrap; gap: 8px; }
+.mk-uc-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 36px; font-size: 14px; color: var(--mute); }
+.mk-uc-buckets { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.mk-uc-industry { position: relative; z-index: 1; padding: 72px 0; border-top: 1px solid var(--line-2); scroll-margin-top: 68px; }
+.mk-uc-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+.mk-uc-name {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 2.8vw, 36px);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+.mk-uc-lead { font-size: 16px; color: var(--mute); line-height: 1.6; margin-top: 14px; max-width: 54ch; }
+.mk-uc-label { font-family: var(--font-mono); font-size: 11.5px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mute); margin-top: 36px; }
+.mk-uc-cases { list-style: none; padding: 0; margin-top: 8px; }
+.mk-uc-cases li { padding: 16px 0; border-bottom: 1px solid var(--line-2); }
+.mk-uc-cases h4 { font-size: 16.5px; font-weight: 500; letter-spacing: -0.015em; }
+.mk-uc-cases p { font-size: 14.5px; color: var(--mute); line-height: 1.65; margin-top: 6px; }
+.mk-uc-example {
+  min-width: 0;
+  padding: 28px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.mk-uc-example h3 { font-size: 19px; font-weight: 500; letter-spacing: -0.02em; margin-top: 10px; }
+.mk-uc-example-lead { font-size: 14.5px; color: var(--mute); line-height: 1.6; margin: 6px 0 20px; }
+.mk-uc-example .mk-steps-list li { font-size: 14.5px; }
+
+/* A text link that leads on from a homepage section to the use cases page. */
+.mk-more-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; font-size: 15px; color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; }
+.mk-more-link:hover { color: var(--ink); }
+
 /* ═══════════ RESPONSIVE ═══════════ */
 @media (max-width: 900px) {
   .mk-section { --section-pad: 80px; }
   .mk-footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .mk-uc-grid { grid-template-columns: minmax(0, 1fr); }
+  .mk-uc-industry { padding: 56px 0; }
 }
 @media (max-width: 720px) {
   .mk-nav, .mk-header-actions { display: none; }
@@ -990,6 +1040,9 @@
   /* Hero and final CTAs stack: full width comes from the column, NOT from
      <Button block> (a block button inside a flex row crushes its siblings). */
   .mk-hero-actions, .mk-final-actions, .mk-about-actions { flex-direction: column; align-items: stretch; }
+  .mk-uc-example { padding: 22px 18px; }
+  .mk-uc-example .mk-steps-list li { grid-template-columns: 28px minmax(0, 1fr); }
+  .mk-uc-example .mk-steps-list .mk-tag { grid-column: 2; justify-self: start; }
   .mk-about-inner { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .mk-about-photo { justify-self: start; width: min(100%, 420px); }
   /* The calendars become one day: the first column (Monday) on a wider axis. */

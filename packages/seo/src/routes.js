@@ -44,6 +44,7 @@ import forge from '@forge/manifest'
  */
 export const ROUTES = [
   { key: 'home',    paths: { en: '/',         es: '/es',             it: '/it' },            priority: 1.0, changefreq: 'weekly' },
+  { key: 'useCases', paths: { en: '/use-cases', es: '/es/casos-de-uso', it: '/it/casi-d-uso' }, priority: 0.8, changefreq: 'monthly' },
   { key: 'blog',    paths: { en: '/blog',     es: '/es/blog',        it: '/it/blog' },       priority: 0.8, changefreq: 'weekly' },
   { key: 'contact', paths: { en: '/contact',  es: '/es/contacto',    it: '/it/contatti' },   priority: 0.5, changefreq: 'yearly' },
   { key: 'privacy', paths: { en: '/privacy',  es: '/es/privacidad',  it: '/it/privacy' },    priority: 0.3, changefreq: 'yearly' },

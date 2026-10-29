@@ -9,7 +9,8 @@ The website of an AI consulting agency: we design, build and run custom AI
 agents that take over repetitive back-office workflows (finance, revenue ops,
 procurement, compliance, customer ops, logistics) inside the client's existing
 tools. The site's one job is to get a qualified visitor to **book a discovery
-call**. It is a landing page, a blog, a contact page and legal pages, in
+call**. It is a landing page, a use cases page (by industry), a blog, a contact
+page and legal pages, in
 English, Spanish and Italian.
 
 The name and domain live in the manifest (`packages/manifest/forge.config.js`).
@@ -128,7 +129,7 @@ time, so they ship no JavaScript; never add a `client:` directive.
 
 The landing page has motion (the hero crash, the calendar, the reveals), and
 all of it lives in ONE vanilla ES module, `apps/site/src/motion/`, loaded by a
-single bare `<script>` in `Home.astro`. Blog, contact and legal ship none. The
+single bare `<script>` in `Home.astro`. Use cases, blog, contact and legal ship none. The
 e2e suite enforces both, and the CSP (`script-src 'self'`) blocks anything else.
 
 - **The CSS default is the final, no-JS state.** The HTML must read and look

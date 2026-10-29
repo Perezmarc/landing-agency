@@ -1,0 +1,108 @@
+---
+/* Use cases, industry by industry.
+ *
+ * The long form of what the homepage only sketches (a week per team, one
+ * invoice walkthrough): for each industry, where the repetitive work piles
+ * up, the processes we look at first, and one worked example sorted into the
+ * four buckets with the same tags as the homepage's walkthrough.
+ *
+ * The worked examples are illustrations of the method and say so on the
+ * page. No client, result or figure appears here until a real one exists.
+ *
+ * Static HTML with no script: the industry index is in-page anchors, and
+ * every CTA books a call. Every string comes from @forge/i18n.
+ */
+import Base from '../layouts/Base.astro'
+import { Button } from '@forge/ui'
+import forge from '@forge/manifest'
+import { useTranslations, useList } from '@forge/i18n'
+import { pageMeta } from '@forge/seo/meta'
+
+const { locale } = Astro.props
+const t = useTranslations(locale)
+const list = useList(locale)
+const meta = pageMeta('useCases', locale)
+
+const buckets = list('home.buckets')
+const industries = list('useCases.industries')
+// A step's tag is its bucket's position (1 Delete … 4 A person), as on the homepage.
+const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
+---
+<Base meta={meta} locale={locale} current="useCases">
+  <section class="mk-section mk-uc-intro">
+    <div class="mk-wrap">
+      <div class="mk-section-head">
+        <span class="mk-eyebrow">{t('useCases.eyebrow')}</span>
+        <h1 class="mk-h2">
+          <span class="mk-line mk-line--grey">{t('useCases.headingLead')}</span>
+          {' '}
+          <span class="mk-line">{t('useCases.heading')}</span>
+        </h1>
+        <p class="mk-lead">{t('useCases.lead')}</p>
+        <p class="mk-uc-markets">{t('useCases.markets')}</p>
+      </div>
+
+      <nav class="mk-uc-index" aria-label={t('useCases.indexLabel')}>
+        {industries.map(industry => (
+          <Button as="a" href={`#${industry.anchor}`} variant="glass" size="compact" pill>{industry.name}</Button>
+        ))}
+      </nav>
+
+      <div class="mk-uc-legend">
+        <p>{t('useCases.legendLead')}</p>
+        <ol class="mk-uc-buckets">
+          {buckets.map((bucket, i) => <li class={`mk-tag mk-tag--${i + 1}`}>{bucket.title}</li>)}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  {industries.map(industry => (
+    <section class="mk-uc-industry" id={industry.anchor} aria-labelledby={`${industry.anchor}-title`}>
+      <div class="mk-wrap mk-uc-grid">
+        <div class="mk-uc-copy">
+          <h2 class="mk-uc-name" id={`${industry.anchor}-title`}>{industry.name}</h2>
+          <p class="mk-uc-lead">{industry.lead}</p>
+          <h3 class="mk-uc-label">{t('useCases.casesHeading')}</h3>
+          <ul class="mk-uc-cases">
+            {industry.cases.map(item => (
+              <li>
+                <h4>{item.title}</h4>
+                <p>{item.body}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <article class="mk-uc-example">
+          <span class="mk-eyebrow">{t('useCases.exampleEyebrow')}</span>
+          <h3>{industry.example.title}</h3>
+          <p class="mk-uc-example-lead">{industry.example.lead}</p>
+          <ol class="mk-steps-list">
+            {industry.example.steps.map(item => (
+              <li>
+                <span>{item.step}</span>
+                <span class={`mk-tag mk-tag--${bucketOf[item.bucket] ?? 0}`}>{item.bucket}</span>
+              </li>
+            ))}
+          </ol>
+          <p class="mk-illustration-note">{t('useCases.exampleNote')}</p>
+        </article>
+      </div>
+    </section>
+  ))}
+
+  <section class="mk-final">
+    <div class="mk-wrap mk-final-inner">
+      <div class="mk-final-copy">
+        <h2>{t('useCases.ctaHeading')}</h2>
+        <p>{t('useCases.ctaLead')}</p>
+        <div class="mk-final-actions">
+          <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill iconRightName="arrowRight">
+            {t('home.ctaPrimary')}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,7 +1,7 @@
 # Agency
 
 The website of an AI consulting agency that designs, builds and runs custom AI
-agents for finance, revenue and operations teams. A landing page, a blog,
+agents for finance, revenue and operations teams. A landing page, a use cases page, a blog,
 contact and legal pages, in English, Spanish and Italian.
 
 It was generated from the factory and stripped down to the marketing site: a
