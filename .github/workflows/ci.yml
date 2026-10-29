@@ -45,7 +45,9 @@ jobs:
 
   e2e:
     name: E2E tests (Playwright)
-    runs-on: ubuntu-latest
+    # Playwright 1.56 has no browser build for Ubuntu 26.04 (ubuntu-latest
+    # since late 2026); pinned until Playwright is bumped deliberately.
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
