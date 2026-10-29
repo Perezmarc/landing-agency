@@ -72,6 +72,29 @@ test.describe('with motion, in two columns', () => {
   })
 })
 
+test.describe('the side menu, on a wide screen', () => {
+  test.use({ viewport: { width: 1600, height: 900 } })
+
+  test('links every industry and marks the one in the middle of the screen', async ({ page }) => {
+    await page.goto(PATH)
+    const industries = page.locator('.mk-uc-industry')
+    const links = page.locator('.mk-uc-side a')
+    const anchors = await industries.evaluateAll(els => els.map(el => `#${el.id}`))
+    expect(await links.evaluateAll(els => els.map(el => el.getAttribute('href')))).toEqual(anchors)
+    const colour = locator => locator.evaluate(el => getComputedStyle(el).color)
+    await centre(industries.nth(2).locator('.mk-uc-how').nth(1))
+    await expect(links.nth(2)).toBeVisible()
+    await expect.poll(() => colour(links.nth(2))).not.toBe(await colour(links.nth(3)))
+    await links.nth(5).click()
+    await expect(page).toHaveURL(new RegExp(`${anchors[5]}$`))
+  })
+
+  test('is hidden while the intro is on screen', async ({ page }) => {
+    await page.goto(PATH)
+    await expect(page.locator('.mk-uc-side')).toBeHidden()
+  })
+})
+
 test.describe('with motion, in one column', () => {
   test.use({ viewport: { width: 390, height: 844 } })
 

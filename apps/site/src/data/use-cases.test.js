@@ -60,6 +60,10 @@ describe('the use cases', () => {
     }
   })
 
+  it('list eight industries, the number of side menu timelines the stylesheet names', () => {
+    expect(SOURCE.useCases.industries).toHaveLength(8)
+  })
+
   it('give every industry four use cases, the number of panel timelines the stylesheet names', () => {
     SOURCE.useCases.industries.forEach(industry => expect(industry.cases).toHaveLength(4))
   })

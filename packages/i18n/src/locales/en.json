@@ -335,6 +335,7 @@
     "lead": "Every sector has its own systems, rules and paperwork, but the work that piles up looks alike: documents typed in by hand, people chasing each other for answers, cases waiting in a queue. Below are the processes we look at first in each industry and, for each one, how an agent handles it, sorted with our method.",
     "markets": "We serve companies in Spain, Italy, the United Kingdom and the United States, in English, Spanish and Italian.",
     "indexLabel": "Industries",
+    "sideLabel": "Jump to an industry",
     "legendLead": "Each step below lands in one of four buckets, checked in this order:",
     "casesHeading": "Where agents help",
     "howEyebrow": "How the agent does it",

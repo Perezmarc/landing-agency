@@ -335,6 +335,7 @@
     "lead": "Cada sector tiene sus sistemas, sus normas y su papeleo, pero el trabajo que se acumula se parece: documentos tecleados a mano, gente persiguiendo a otra gente para obtener respuestas, casos esperando en una cola. A continuación, los procesos que miramos primero en cada sector y, para cada uno, cómo lo resuelve un agente, ordenado con nuestro método.",
     "markets": "Trabajamos para empresas de España, Italia, el Reino Unido y Estados Unidos, en español, inglés e italiano.",
     "indexLabel": "Sectores",
+    "sideLabel": "Ir a un sector",
     "legendLead": "Cada paso acaba en uno de estos cuatro grupos, revisados en este orden:",
     "casesHeading": "Dónde ayudan los agentes",
     "howEyebrow": "Cómo lo hace el agente",
