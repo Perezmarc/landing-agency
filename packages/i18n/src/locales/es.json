@@ -20,7 +20,7 @@
     "headingLead": "Deja el trabajo repetitivo en manos de agentes de IA.",
     "heading": "Libera más de la mitad del tiempo de tu equipo.",
     "lead": "Trazamos cómo avanza de verdad el trabajo en tu equipo, eliminamos los pasos que no deberían existir y operamos agentes de IA dentro de las herramientas que ya usas. Las decisiones siguen en manos de tu gente.",
-    "founderNote": "Dirige la agencia quien fundó una empresa de IA antes de ChatGPT, adquirida después por una compañía de San Francisco.",
+    "founderNote": "Dirige la agencia quien fundó una empresa de IA antes de ChatGPT.",
     "ctaPrimary": "Reserva una llamada de diagnóstico",
     "ctaSecondary": "Cómo trabajamos",
     "day": {
@@ -277,11 +277,11 @@
     "about": {
       "eyebrow": "Quiénes somos",
       "headingLead": "Más de 20 años en el software.",
-      "heading": "Construyendo IA desde antes de ChatGPT.",
+      "heading": "Trabajando con IA desde antes de ChatGPT.",
       "body": [
-        "Dirijo la agencia. Antes de ChatGPT fundé una empresa de IA que desarrollaba todo tipo de modelos para automatizar la detección de fraude y la seguridad. La compró una empresa de San Francisco, en la que después seguí trabajando.",
-        "Allí desarrollamos IA, y los procesos que la acompañan, donde más impacto tenía. Adoptábamos los avances más punteros cuando aún estaban en fases muy tempranas y llegamos a niveles de automatización muy altos.",
-        "La agencia trae esa experiencia a tus operaciones. Hemos trabajado con procesos de todo tipo, y cada proyecto empieza igual: entendiendo cómo funciona de verdad el trabajo."
+        "Dirijo la agencia. Bastante antes de ChatGPT monté una empresa de IA que automatizaba trabajo de fraude y seguridad, y después seguí desarrollando IA en una empresa de San Francisco.",
+        "De esos años viene casi todo lo que sabemos: cómo funciona un proceso cuando lo miras de cerca, qué pasos conviene dejar en manos de una persona y qué sigue funcionando meses después del lanzamiento. Probamos cosas nuevas muy pronto, y muchas no salieron bien a la primera.",
+        "Eso es lo que traemos a tu equipo. Hemos visto procesos de todo tipo, y cada proyecto empieza igual: sentarnos con quienes hacen el trabajo y entender cómo funciona de verdad."
       ],
       "photoAlt": "Retrato de la persona que dirige la agencia"
     },
