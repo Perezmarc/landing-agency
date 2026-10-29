@@ -9,9 +9,9 @@ static Astro build with no backend, one small motion module on the landing
 page (and no JavaScript anywhere else), and every string in a translated
 catalog.
 
-> **Placeholder identity.** The name (`Agency`) and domain (`example.com`) are
-> placeholders. Set the real ones in `packages/manifest/forge.config.js` and
-> every page, address and canonical URL follows.
+> **Identity.** The name, domain and legal entity live in
+> `packages/manifest/forge.config.js`; every page, address and canonical URL
+> follows from there.
 
 ---
 

@@ -22,12 +22,10 @@ import { defineForge } from '@forge/config'
 
 export default defineForge({
   brand: {
-    // TODO: placeholder identity. Set the real name, domain and legal entity
-    // before launch; every page, address and canonical URL follows.
     /** Full name — page titles, OG tags, legal copy, the nav brand mark. */
-    name: 'Agency',
+    name: 'Levaia',
     /** Compact name for tight spots (tab titles, the web manifest). */
-    shortName: 'Agency',
+    shortName: 'Levaia',
     /** One line, under ~60 chars, English. The OG image subtitle. Page copy lives in @forge/i18n. */
     tagline: 'Custom AI agents for business operations',
     /** ~150 chars, English. The fallback meta description. */
@@ -35,15 +33,15 @@ export default defineForge({
       'We design, build and run custom AI agents that take over repetitive work in finance, revenue and operations, inside the tools you already use.',
 
     /* The bare host. Everything else about identity derives from it:
-       url        → https://example.com
-       email      → hello@ / sales@ / privacy@ / legal@ example.com
-       bookingUrl → mailto:hello@example.com
+       url        → https://levaia.ai
+       email      → hello@ / sales@ / privacy@ / legal@ levaia.ai
+       bookingUrl → mailto:hello@levaia.ai
        Override any of them below. Calls are booked by email on purpose, so
        bookingUrl stays derived. */
-    domain: 'example.com',
+    domain: 'levaia.ai',
 
     legal: {
-      entity: 'Agency',
+      entity: 'Levaia',
       /** Where the entity is registered. Shown on the contact and legal pages once set. */
       jurisdiction: '',
       /** Year the business started — the footer renders "© {since}–{now}". */
