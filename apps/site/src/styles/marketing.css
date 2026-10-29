@@ -980,8 +980,9 @@
 
 /* ═══════════ USE CASES ═══════════
    The industry page: an intro with an index of in-page anchors and the
-   bucket legend, then one band per industry. The industry's name and lead
-   stay pinned on the left while its use cases and its worked example card
+   bucket legend, then one band per industry. The industry's name, lead and
+   the use cases' label stay pinned on the left while its use cases and its
+   worked example card
    (the homepage walkthrough's list and tags) scroll past on the right.
    Below 900px it is one column and only the name stays pinned, as a band
    under the header. Anchors land below the fixed header. */
@@ -1008,8 +1009,8 @@
   text-wrap: balance;
 }
 .mk-uc-lead { font-size: 16px; color: var(--mute); line-height: 1.6; margin-top: 14px; max-width: 54ch; }
-.mk-uc-label { font-family: var(--font-mono); font-size: 11.5px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mute); }
-.mk-uc-cases { list-style: none; padding: 0; margin-top: 8px; }
+.mk-uc-label { font-family: var(--font-mono); font-size: 11.5px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mute); margin-top: 36px; }
+.mk-uc-cases { list-style: none; padding: 0; }
 .mk-uc-cases li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line-2); }
 .mk-uc-glyph { display: block; margin-top: 1px; color: var(--mute); }
 .mk-uc-glyph .g-move { color: var(--accent); }
@@ -1049,10 +1050,10 @@
       animation-range: cover 0% cover 100%;
     }
     @keyframes mk-uc-focus {
-      0%   { opacity: 0.14; translate: 0 8px; }
+      0%   { opacity: 0.07; translate: 0 8px; }
       40%  { opacity: 1; translate: 0 0; }
       60%  { opacity: 1; }
-      100% { opacity: 0.28; }
+      100% { opacity: 0.14; }
     }
 
     /* A use case's glyph draws itself and moves as the use case comes into
@@ -1155,7 +1156,8 @@
     border-bottom: 1px solid var(--line-2);
   }
   .mk-uc-lead { margin-top: 6px; }
-  .mk-uc-body { margin-top: 32px; }
+  .mk-uc-label { margin-top: 32px; }
+  .mk-uc-body { margin-top: 4px; }
 }
 @media (max-width: 720px) {
   .mk-nav, .mk-header-actions { display: none; }

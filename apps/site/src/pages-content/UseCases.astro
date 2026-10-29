@@ -81,10 +81,10 @@ const pad = n => String(n).padStart(2, '0')
           <p class="mk-uc-count" aria-hidden="true">{pad(n + 1)} / {pad(industries.length)}</p>
           <h2 class="mk-uc-name" id={`${industry.anchor}-title`}>{industry.name}</h2>
           <p class="mk-uc-lead">{industry.lead}</p>
+          <h3 class="mk-uc-label">{t('useCases.casesHeading')}</h3>
         </div>
 
         <div class="mk-uc-body">
-          <h3 class="mk-uc-label">{t('useCases.casesHeading')}</h3>
           <ul class="mk-uc-cases">
             {industry.cases.map((item, i) => (
               <li class="mk-uc-focus">
