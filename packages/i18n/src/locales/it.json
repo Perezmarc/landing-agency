@@ -20,7 +20,7 @@
     "headingLead": "Affida il lavoro ripetitivo agli agenti AI.",
     "heading": "Libera più della metà del tempo del tuo team.",
     "lead": "Mappiamo come il lavoro si muove davvero nel tuo team, eliminiamo i passaggi che non dovrebbero esistere e gestiamo agenti AI dentro gli strumenti che usi già. Le decisioni restano alle tue persone.",
-    "founderNote": "A guidare l'agenzia è chi ha fondato un'azienda di AI prima di ChatGPT, poi acquisita da una società di San Francisco.",
+    "founderNote": "A guidare l'agenzia è chi ha fondato un'azienda di AI prima di ChatGPT.",
     "ctaPrimary": "Prenota una call conoscitiva",
     "ctaSecondary": "Scopri come lavoriamo",
     "day": {
@@ -277,11 +277,11 @@
     "about": {
       "eyebrow": "Chi siamo",
       "headingLead": "Più di 20 anni nel software.",
-      "heading": "Costruiamo AI da prima di ChatGPT.",
+      "heading": "Lavoriamo con l'AI da prima di ChatGPT.",
       "body": [
-        "Guido l'agenzia. Prima di ChatGPT ho fondato un'azienda di AI che sviluppava modelli di ogni tipo per automatizzare il rilevamento delle frodi e la sicurezza. L'ha acquisita un'azienda di San Francisco, dove poi ho continuato a lavorare.",
-        "Lì abbiamo sviluppato l'AI, e i processi che la accompagnano, dove aveva più impatto. Adottavamo i progressi più avanzati quando erano ancora in fase iniziale e abbiamo raggiunto livelli di automazione molto alti.",
-        "L'agenzia porta questa esperienza nelle tue operations. Abbiamo lavorato su processi di ogni tipo, e ogni progetto comincia allo stesso modo: capire come si svolge davvero il lavoro."
+        "Ben prima di ChatGPT abbiamo avviato un'azienda di AI che automatizzava il lavoro su frodi e sicurezza, e poi abbiamo continuato a sviluppare AI in un'azienda di San Francisco.",
+        "Da quegli anni viene quasi tutto quello che sappiamo: come funziona un processo quando lo guardi da vicino, quali passaggi conviene lasciare a una persona e cosa funziona ancora mesi dopo il lancio. Abbiamo provato cose nuove molto presto, e molte non sono andate bene al primo colpo.",
+        "È quello che portiamo al tuo team. Abbiamo visto processi di ogni tipo, e ogni progetto comincia allo stesso modo: sederci con chi fa il lavoro e capire come si svolge davvero."
       ],
       "photoAlt": "Ritratto della persona che guida l'agenzia"
     },
