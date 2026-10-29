@@ -2,11 +2,12 @@ import { describe, it, expect } from 'vitest'
 import { CATALOGS, DEFAULT_LOCALE } from '@forge/i18n'
 import { GLYPHS, GLYPH_NAMES } from './use-case-glyphs.js'
 
-/* The use cases page (pages-content/UseCases.astro) is all catalog copy. Its
-   worked examples are illustrations, so these tests guard that the copy and
-   the page stay in step: every step's tag is a real bucket, every language
-   sorts each step into the same bucket, the anchors work as URL fragments,
-   and no result-shaped number sneaks in. */
+/* The use cases page (pages-content/UseCases.astro) is all catalog copy. Each
+   use case carries a short "how the agent does it", an illustration of the
+   method, so these tests guard that the copy and the page stay in step:
+   every step's tag is a real bucket, every language sorts each step into
+   the same bucket, the anchors work as URL fragments, and no result-shaped
+   number sneaks in. */
 
 const SOURCE = CATALOGS[DEFAULT_LOCALE]
 
@@ -15,18 +16,17 @@ const strings = value => typeof value === 'string' ? [value]
   : Array.isArray(value) ? value.flatMap(strings)
     : value && typeof value === 'object' ? Object.values(value).flatMap(strings) : []
 
-/** Each industry's example as bucket positions (1 Delete … 4 A person). */
+/** Each use case's steps as bucket positions (1 Delete … 4 A person), by industry. */
 const positions = catalog => {
   const titles = catalog.home.buckets.map(b => b.title)
-  return catalog.useCases.industries.map(industry => industry.example.steps.map(s => titles.indexOf(s.bucket) + 1))
+  return catalog.useCases.industries.map(industry =>
+    industry.cases.map(item => item.how.map(s => titles.indexOf(s.bucket) + 1)))
 }
 
 describe('the use cases', () => {
-  it('tag every example step with one of the four buckets, in every language', () => {
+  it('tag every step with one of the four buckets, in every language', () => {
     for (const [locale, catalog] of Object.entries(CATALOGS)) {
-      positions(catalog).forEach((list, i) => {
-        list.forEach((position, j) => expect(position, `${locale} industry ${i} step ${j}`).toBeGreaterThan(0))
-      })
+      positions(catalog).flat(2).forEach(position => expect(position, locale).toBeGreaterThan(0))
     }
   })
 
@@ -36,10 +36,10 @@ describe('the use cases', () => {
     }
   })
 
-  it('delete at least one step and keep at least one decision with a person in each example', () => {
-    positions(SOURCE).forEach((list, i) => {
-      expect(list, `industry ${i}`).toContain(1)
-      expect(list, `industry ${i}`).toContain(4)
+  it('leave a decision with a person in every use case, and delete a step somewhere in every industry', () => {
+    positions(SOURCE).forEach((industry, i) => {
+      industry.forEach((steps, j) => expect(steps, `industry ${i} case ${j}`).toContain(4))
+      expect(industry.flat(), `industry ${i}`).toContain(1)
     })
   })
 
@@ -52,12 +52,16 @@ describe('the use cases', () => {
   })
 
   it('carry no figures in any language', () => {
-    // The examples are illustrations, not results. A number here would read as a claim.
+    // The steps are illustrations, not results. A number here would read as a claim.
     for (const [locale, catalog] of Object.entries(CATALOGS)) {
       for (const text of strings(catalog.useCases)) {
         expect(text, `${locale}: "${text}"`).not.toMatch(/\d/)
       }
     }
+  })
+
+  it('give every industry four use cases, the number of panel timelines the stylesheet names', () => {
+    SOURCE.useCases.industries.forEach(industry => expect(industry.cases).toHaveLength(4))
   })
 
   it('give every use case a glyph the page knows how to draw', () => {

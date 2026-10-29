@@ -332,12 +332,12 @@
     "eyebrow": "Casi d'uso",
     "headingLead": "Lo stesso lavoro ripetitivo si ritrova in ogni settore.",
     "heading": "Ecco dove se ne fanno carico gli agenti.",
-    "lead": "Ogni settore ha i suoi sistemi, le sue regole e le sue carte, ma il lavoro che si accumula si somiglia: documenti ribattuti a mano, persone che si rincorrono per avere risposte, pratiche ferme in coda. Qui sotto trovi i processi che guardiamo per primi in ogni settore e un esempio per settore, ordinato con il nostro metodo.",
+    "lead": "Ogni settore ha i suoi sistemi, le sue regole e le sue carte, ma il lavoro che si accumula si somiglia: documenti ribattuti a mano, persone che si rincorrono per avere risposte, pratiche ferme in coda. Qui sotto trovi i processi che guardiamo per primi in ogni settore e, per ciascuno, come lo gestisce un agente, ordinato con il nostro metodo.",
     "markets": "Lavoriamo per aziende in Spagna, Italia, Regno Unito e Stati Uniti, in italiano, inglese e spagnolo.",
     "indexLabel": "Settori",
-    "legendLead": "Ogni passaggio di un esempio finisce in una di queste quattro categorie, valutate in quest'ordine:",
+    "legendLead": "Ogni passaggio finisce in una di queste quattro categorie, valutate in quest'ordine:",
     "casesHeading": "Dove aiutano gli agenti",
-    "exampleEyebrow": "Esempio",
+    "howEyebrow": "Come lo fa l'agente",
     "exampleNote": "Esempio illustrativo del metodo, non un progetto per un cliente.",
     "ctaHeading": "Porta un processo della tua azienda.",
     "ctaLead": "Il tuo settore non è in questa pagina? Il metodo è lo stesso. Nella call conoscitiva mappiamo uno dei tuoi processi e ti mostriamo quali passaggi eliminare, quali può prendere un agente e quali restano al tuo team.",
@@ -349,59 +349,93 @@
         "cases": [
           {
             "title": "Inserimento degli ordini clienti",
-            "body": "Un agente legge gli ordini che arrivano via email, controlla prezzi e tempi di consegna nell'ERP e crea l'ordine di vendita. Quelli che non tornano passano a una persona con la differenza evidenziata."
+            "body": "Un agente legge gli ordini che arrivano via email, controlla prezzi e tempi di consegna nell'ERP e crea l'ordine di vendita. Quelli che non tornano passano a una persona con la differenza evidenziata.",
+            "how": [
+              {
+                "step": "Leggere l'ordine in PDF ed estrarre articoli, quantità e date",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Controllare prezzi, giacenze e tempi di consegna nell'ERP",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Chiedere a un collega di ricontrollare l'ordine a occhio",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Accettare una data di consegna che lo stabilimento rispetta solo con gli straordinari",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Conferme e ritardi dei fornitori",
-            "body": "Gli agenti leggono ogni conferma d'ordine, confrontano date e quantità con quanto ordinato e segnalano quelle che mettono a rischio il piano di produzione."
+            "body": "Gli agenti leggono ogni conferma d'ordine, confrontano date e quantità con quanto ordinato e segnalano quelle che mettono a rischio il piano di produzione.",
+            "how": [
+              {
+                "step": "Leggere ogni conferma e confrontarla con l'ordine di acquisto",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Aggiornare le date previste nell'ERP",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Tenere un foglio di calcolo a parte con i fornitori in ritardo",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Decidere se spostare la produzione o cercare un altro fornitore",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Qualità e non conformità",
-            "body": "Un agente trasforma le note di collaudo e i reclami dei clienti in rapporti di non conformità strutturati, allega le prove e li invia al responsabile qualità."
+            "body": "Un agente trasforma le note di collaudo e i reclami dei clienti in rapporti di non conformità strutturati, allega le prove e li invia al responsabile qualità.",
+            "how": [
+              {
+                "step": "Trasformare le note di ispezione e i reclami in un rapporto strutturato",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Recuperare dai tuoi sistemi i dati del lotto e dei collaudi",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Ribattere a mano il rapporto nel sistema qualità",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Stabilire la causa principale e l'azione correttiva",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Fatture dei fornitori",
-            "body": "Le fatture che arrivano su carta, in PDF o tramite lo SDI vengono abbinate all'ordine e al documento di entrata merci. Solo le eccezioni arrivano alla contabilità fornitori."
+            "body": "Le fatture che arrivano su carta, in PDF o tramite lo SDI vengono abbinate all'ordine e al documento di entrata merci. Solo le eccezioni arrivano alla contabilità fornitori.",
+            "how": [
+              {
+                "step": "Leggere la fattura, che arrivi su carta, in PDF o tramite SDI",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Abbinarla all'ordine e al documento di entrata merci",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Stampare la fattura per raccogliere le firme di approvazione",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Approvare le fatture che non quadrano",
+                "bucket": "Una persona"
+              }
+            ]
           }
-        ],
-        "example": {
-          "title": "Un ordine cliente che arriva via email",
-          "lead": "Come il metodo ordina l'inserimento ordini in un produttore di componenti.",
-          "steps": [
-            {
-              "step": "Stampare l'ordine e archiviarlo in un raccoglitore",
-              "bucket": "Eliminare"
-            },
-            {
-              "step": "Leggere l'ordine in PDF ed estrarre articoli, quantità e date",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Convertire i codici articolo del cliente nei tuoi",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Controllare i prezzi sul listino del cliente",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Controllare giacenze e tempi di consegna nell'ERP",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Chiedere a un collega di ricontrollare l'ordine a occhio",
-              "bucket": "Eliminare"
-            },
-            {
-              "step": "Creare l'ordine di vendita e inviare la conferma",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Accettare una data di consegna che lo stabilimento rispetta solo con gli straordinari",
-              "bucket": "Una persona"
-            }
-          ]
-        }
+        ]
       },
       {
         "anchor": "distribuzione-logistica",
@@ -410,59 +444,93 @@
         "cases": [
           {
             "title": "Anomalie di spedizione",
-            "body": "Gli agenti seguono gli aggiornamenti dei vettori, individuano le spedizioni che arriveranno in ritardo, propongono come recuperarle e avvisano il servizio clienti prima che chiami il cliente."
+            "body": "Gli agenti seguono gli aggiornamenti dei vettori, individuano le spedizioni che arriveranno in ritardo, propongono come recuperarle e avvisano il servizio clienti prima che chiami il cliente.",
+            "how": [
+              {
+                "step": "Recuperare lo stato della spedizione da ogni corriere",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Leggere il messaggio del corriere e capire la causa",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Scrivere la bozza del messaggio al cliente con la nuova data",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Approvare il costo di una spedizione espressa",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Controllo delle fatture di trasporto",
-            "body": "Il codice semplice confronta ogni fattura del vettore con le tariffe concordate. Quando un addebito non torna, un agente capisce il perché e prepara la contestazione."
+            "body": "Il codice semplice confronta ogni fattura del vettore con le tariffe concordate. Quando un addebito non torna, un agente capisce il perché e prepara la contestazione.",
+            "how": [
+              {
+                "step": "Controllare ogni addebito sulle tariffe concordate",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Capire perché un addebito non torna",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Preparare la contestazione con le prove allegate",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Decidere quali contestazioni vale la pena aprire",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Reclami sulle consegne",
-            "body": "Per un collo danneggiato o smarrito, un agente raccoglie la bolla di consegna, le foto e i messaggi del vettore e prepara il reclamo."
+            "body": "Per un collo danneggiato o smarrito, un agente raccoglie la bolla di consegna, le foto e i messaggi del vettore e prepara il reclamo.",
+            "how": [
+              {
+                "step": "Raccogliere la bolla, le foto e i messaggi del corriere",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Copiare gli stessi dati in un foglio di calcolo dei reclami",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Preparare il reclamo e inviarlo al corriere",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Accettare o rifiutare l'offerta del corriere",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Documenti doganali",
-            "body": "Per le spedizioni internazionali, come quelle tra Regno Unito e UE, un agente prepara la fattura commerciale e propone i codici doganali. Una persona dà l'approvazione."
+            "body": "Per le spedizioni internazionali, come quelle tra Regno Unito e UE, un agente prepara la fattura commerciale e propone i codici doganali. Una persona dà l'approvazione.",
+            "how": [
+              {
+                "step": "Recuperare dall'ERP le righe dell'ordine e i pesi",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Preparare la fattura commerciale e proporre i codici doganali",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Far girare la bozza per email per raccogliere commenti",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Firmare la dichiarazione",
+                "bucket": "Una persona"
+              }
+            ]
           }
-        ],
-        "example": {
-          "title": "Una spedizione che arriverà in ritardo",
-          "lead": "Come il metodo ordina la gestione di una consegna in ritardo presso un distributore.",
-          "steps": [
-            {
-              "step": "Copiare ogni numero di tracking in un foglio di stato giornaliero",
-              "bucket": "Eliminare"
-            },
-            {
-              "step": "Recuperare lo stato della spedizione da ogni vettore",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Individuare le spedizioni che non rispetteranno la data promessa",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Leggere il messaggio del vettore e capire la causa",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Proporre le opzioni: aspettare, deviare o rispedire",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Preparare il messaggio al cliente con la nuova data",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Mandare al responsabile cliente una copia di ogni aggiornamento",
-              "bucket": "Eliminare"
-            },
-            {
-              "step": "Approvare il costo di un trasporto espresso",
-              "bucket": "Una persona"
-            }
-          ]
-        }
+        ]
       },
       {
         "anchor": "retail-ecommerce",
@@ -471,55 +539,93 @@
         "cases": [
           {
             "title": "Resi e rimborsi",
-            "body": "Un agente legge la richiesta di reso, la confronta con la policy e lo storico dell'ordine e prepara il rimborso. I casi fuori policy passano a una persona."
+            "body": "Un agente legge la richiesta di reso, la confronta con la policy e lo storico dell'ordine e prepara il rimborso. I casi fuori policy passano a una persona.",
+            "how": [
+              {
+                "step": "Leggere il messaggio e le foto del cliente",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Controllare i termini per il reso e creare l'etichetta",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Chiedere al cliente di compilare un secondo modulo con gli stessi dati",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Approvare un rimborso fuori dalle regole",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Dati prodotto dai fornitori",
-            "body": "I cataloghi dei fornitori arrivano in ogni formato. Un agente li porta nei tuoi campi prodotto, scrive le descrizioni mancanti in ogni lingua e segnala i buchi prima che un prodotto vada online."
+            "body": "I cataloghi dei fornitori arrivano in ogni formato. Un agente li porta nei tuoi campi prodotto, scrive le descrizioni mancanti in ogni lingua e segnala i buchi prima che un prodotto vada online.",
+            "how": [
+              {
+                "step": "Mappare il catalogo del fornitore sui tuoi campi prodotto",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Scrivere le descrizioni mancanti in ogni lingua",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Controllare che tutti i campi obbligatori siano compilati",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Approvare il prodotto prima che vada online",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Smistamento del servizio clienti",
-            "body": "Gli agenti smistano i messaggi in arrivo, cercano l'ordine nei tuoi sistemi e rispondono alle domande di routine, come dov'è un pacco. Il resto arriva al tuo team con l'ordine già trovato."
+            "body": "Gli agenti smistano i messaggi in arrivo, cercano l'ordine nei tuoi sistemi e rispondono alle domande di routine, come dov'è un pacco. Il resto arriva al tuo team con l'ordine già trovato.",
+            "how": [
+              {
+                "step": "Smistare ogni messaggio per argomento e urgenza",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Cercare l'ordine in tutti i tuoi sistemi",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Rispondere alle domande di routine, come dove si trova un pacco",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Gestire i reclami e le richieste insolite",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Pagamenti dei marketplace",
-            "body": "Il codice semplice abbina ogni pagamento di un marketplace ai suoi ordini, commissioni e rimborsi. Un agente indaga sui pagamenti che non tornano."
+            "body": "Il codice semplice abbina ogni pagamento di un marketplace ai suoi ordini, commissioni e rimborsi. Un agente indaga sui pagamenti che non tornano.",
+            "how": [
+              {
+                "step": "Abbinare ogni accredito ai suoi ordini, commissioni e rimborsi",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Rifare a mano lo stesso abbinamento in un foglio di calcolo",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Indagare sugli accrediti che non tornano",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Decidere quali differenze reclamare al marketplace",
+                "bucket": "Una persona"
+              }
+            ]
           }
-        ],
-        "example": {
-          "title": "Una richiesta di reso",
-          "lead": "Come il metodo ordina un reso in un negozio online.",
-          "steps": [
-            {
-              "step": "Chiedere al cliente di compilare un secondo modulo con gli stessi dati",
-              "bucket": "Eliminare"
-            },
-            {
-              "step": "Leggere il messaggio e le foto del cliente",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Trovare l'ordine e controllare i termini di reso",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Confrontare il motivo e le foto con la policy sui resi",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Generare l'etichetta di reso",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Emettere il rimborso quando l'articolo rientra in magazzino",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Approvare un rimborso fuori policy per un cliente di lunga data",
-              "bucket": "Una persona"
-            }
-          ]
-        }
+        ]
       },
       {
         "anchor": "servizi-finanziari-assicurazioni",
@@ -528,59 +634,93 @@
         "cases": [
           {
             "title": "Apertura clienti e KYC",
-            "body": "Un agente raccoglie i documenti, controlla che siano completi e coerenti, avvia lo screening con i tuoi fornitori e prepara la pratica per il responsabile compliance."
+            "body": "Un agente raccoglie i documenti, controlla che siano completi e coerenti, avvia lo screening con i tuoi fornitori e prepara la pratica per il responsabile compliance.",
+            "how": [
+              {
+                "step": "Raccogliere i documenti e controllare che siano completi",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Eseguire i controlli tramite i tuoi fornitori",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Stampare la pratica per firmarla su carta",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Approvare o respingere il cliente",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Apertura dei sinistri",
-            "body": "Gli agenti leggono la prima denuncia del sinistro, recuperano la polizza, chiedono i documenti mancanti e preparano la pratica per un liquidatore, che decide."
+            "body": "Gli agenti leggono la prima denuncia del sinistro, recuperano la polizza, chiedono i documenti mancanti e preparano la pratica per un liquidatore, che decide.",
+            "how": [
+              {
+                "step": "Leggere l'email del sinistro e registrarlo",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Controllare che la polizza fosse attiva alla data del sinistro",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Chiedere al cliente i documenti mancanti",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Decidere se accettare il sinistro, e per quale importo",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Variazioni di polizza e di conto",
-            "body": "Cambi di indirizzo, di beneficiari e richieste simili arrivano via email. Un agente completa i controlli di identità che richiedi e aggiorna il sistema centrale."
+            "body": "Cambi di indirizzo, di beneficiari e richieste simili arrivano via email. Un agente completa i controlli di identità che richiedi e aggiorna il sistema centrale.",
+            "how": [
+              {
+                "step": "Leggere la richiesta e capire cosa va cambiato",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Eseguire i controlli d'identità che richiedi",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Aggiornare il sistema centrale",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Approvare le modifiche che toccano un pagamento, come un nuovo beneficiario",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Prove per le segnalazioni di vigilanza",
-            "body": "Un agente raccoglie le estrazioni e le prove a supporto di ogni segnalazione, e una persona le rivede prima di qualsiasi invio."
+            "body": "Un agente raccoglie le estrazioni e le prove a supporto di ogni segnalazione, e una persona le rivede prima di qualsiasi invio.",
+            "how": [
+              {
+                "step": "Estrarre i dati che servono a ogni segnalazione",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Raccogliere la documentazione a supporto e segnalare cosa manca",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Far girare la bozza per email perché tutti la controllino",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Rivedere e approvare prima di inviare qualsiasi cosa",
+                "bucket": "Una persona"
+              }
+            ]
           }
-        ],
-        "example": {
-          "title": "Un sinistro auto",
-          "lead": "Come il metodo ordina i primi giorni di un sinistro presso una compagnia assicurativa.",
-          "steps": [
-            {
-              "step": "Leggere l'email del sinistro e gli allegati e registrare la pratica",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Stampare i documenti per un fascicolo cartaceo",
-              "bucket": "Eliminare"
-            },
-            {
-              "step": "Controllare che la polizza fosse attiva il giorno dell'incidente",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Capire quali documenti mancano e chiederli al cliente",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Inviare promemoria finché i documenti non arrivano",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Confrontare le foto e il preventivo di riparazione con la descrizione",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Mandare al liquidatore un foglio settimanale dei sinistri aperti",
-              "bucket": "Eliminare"
-            },
-            {
-              "step": "Decidere se accettare il sinistro e per quale importo",
-              "bucket": "Una persona"
-            }
-          ]
-        }
+        ]
       },
       {
         "anchor": "servizi-professionali",
@@ -589,55 +729,93 @@
         "cases": [
           {
             "title": "Raccolta dei documenti dai clienti",
-            "body": "Un agente chiede a ogni cliente ciò che manca, controlla quello che arriva, lo archivia al posto giusto e sollecita il resto. Il tuo team lavora solo su pratiche complete."
+            "body": "Un agente chiede a ogni cliente ciò che manca, controlla quello che arriva, lo archivia al posto giusto e sollecita il resto. Il tuo team lavora solo su pratiche complete.",
+            "how": [
+              {
+                "step": "Ricordare a ogni cliente quali documenti mancano",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Controllare cosa arriva e archiviarlo al posto giusto",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Tenere una checklist per cliente in un foglio di calcolo a parte",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Telefonare ai clienti che non hanno ancora mandato nulla",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Contabilità dei clienti",
-            "body": "In uno studio commercialista, gli agenti classificano movimenti bancari e fatture passive, propongono le registrazioni e lasciano quelle dubbie al contabile."
+            "body": "In uno studio commercialista, gli agenti classificano movimenti bancari e fatture passive, propongono le registrazioni e lasciano quelle dubbie al contabile.",
+            "how": [
+              {
+                "step": "Leggere fatture e scontrini in qualsiasi formato",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Classificare ognuno e proporre la registrazione",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Riconciliare le registrazioni con l'estratto conto",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Rivedere le registrazioni su cui l'agente non era sicuro",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Verifica dei conflitti e lettere d'incarico",
-            "body": "Un agente cerca conflitti tra pratiche e contatti precedenti e prepara la lettera d'incarico dai tuoi modelli. Un socio approva entrambe."
+            "body": "Un agente cerca conflitti tra pratiche e contatti precedenti e prepara la lettera d'incarico dai tuoi modelli. Un socio approva entrambe.",
+            "how": [
+              {
+                "step": "Cercare conflitti nelle pratiche e nei contatti passati",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Preparare la lettera d'incarico dai tuoi modelli",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Far girare la lettera per email per raccogliere commenti",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Approvare il controllo dei conflitti e la lettera",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Registrazione delle ore e fatturazione",
-            "body": "Un agente propone le registrazioni delle ore da calendario, email e documenti, così ognuno rivede la propria settimana invece di ricostruirla, e prepara la fattura da approvare."
+            "body": "Un agente propone le registrazioni delle ore da calendario, email e documenti, così ognuno rivede la propria settimana invece di ricostruirla, e prepara la fattura da approvare.",
+            "how": [
+              {
+                "step": "Preparare le registrazioni delle ore da calendari, email e documenti",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Ricostruire la settimana a memoria il venerdì",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Preparare la fattura dalle registrazioni approvate",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Rivedere la settimana e approvare la fattura",
+                "bucket": "Una persona"
+              }
+            ]
           }
-        ],
-        "example": {
-          "title": "La liquidazione IVA trimestrale di un cliente",
-          "lead": "Come il metodo ordina la preparazione dell'IVA trimestrale in uno studio commercialista.",
-          "steps": [
-            {
-              "step": "Ricordare al cliente quali documenti mancano ancora",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Leggere le fatture e gli scontrini che invia il cliente, in qualsiasi formato",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Classificare ciascuno e proporre la registrazione contabile",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Riconciliare le registrazioni con l'estratto conto",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Copiare i totali in un foglio di controllo a parte",
-              "bucket": "Eliminare"
-            },
-            {
-              "step": "Rivedere le voci insolite e la liquidazione",
-              "bucket": "Una persona"
-            },
-            {
-              "step": "Inviare la comunicazione e mandare un riepilogo al cliente",
-              "bucket": "Codice semplice"
-            }
-          ]
-        }
+        ]
       },
       {
         "anchor": "immobiliare",
@@ -646,59 +824,93 @@
         "cases": [
           {
             "title": "Richieste di manutenzione",
-            "body": "Un agente legge il messaggio e le foto dell'inquilino, valuta l'urgenza e il tipo di intervento, prenota un fornitore dal tuo elenco approvato e tiene informato l'inquilino."
+            "body": "Un agente legge il messaggio e le foto dell'inquilino, valuta l'urgenza e il tipo di intervento, prenota un fornitore dal tuo elenco approvato e tiene informato l'inquilino.",
+            "how": [
+              {
+                "step": "Leggere il messaggio e le foto dell'inquilino",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Capire quanto è urgente e quale tecnico serve",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Prenotare un tecnico dall'elenco approvato e aggiornare l'inquilino",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Approvare i lavori sopra il limite di spesa",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Incasso affitti e morosità",
-            "body": "Il codice semplice abbina i pagamenti ai contratti. Un agente sollecita i pagamenti mancati con il tono previsto dalla tua policy, e una persona decide i piani di rientro."
+            "body": "Il codice semplice abbina i pagamenti ai contratti. Un agente sollecita i pagamenti mancati con il tono previsto dalla tua policy, e una persona decide i piani di rientro.",
+            "how": [
+              {
+                "step": "Abbinare i pagamenti ai contratti",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Sollecitare i pagamenti mancati con il tono che la tua policy prevede",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Mandare lo stesso sollecito per posta e per email",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Concordare un piano di rientro con l'inquilino",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Fatture dei fornitori",
-            "body": "Ogni fattura viene abbinata al suo ordine di lavoro e al prezzo concordato, e imputata all'edificio e al proprietario giusti."
+            "body": "Ogni fattura viene abbinata al suo ordine di lavoro e al prezzo concordato, e imputata all'edificio e al proprietario giusti.",
+            "how": [
+              {
+                "step": "Leggere la fattura e trovare il suo ordine di lavoro",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Controllarla sul prezzo concordato",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Addebitarla all'edificio e al proprietario giusti",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Approvare le fatture sopra il prezzo concordato",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Rendiconti ai proprietari",
-            "body": "Un agente prepara il rendiconto mensile di ogni proprietario e il riepilogo degli interventi, così il team li rivede invece di costruirli."
+            "body": "Un agente prepara il rendiconto mensile di ogni proprietario e il riepilogo degli interventi, così il team li rivede invece di costruirli.",
+            "how": [
+              {
+                "step": "Recuperare affitti, spese e lavori di ogni immobile",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Scrivere il riepilogo dei lavori del mese",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Scrivere al proprietario a parte per ogni piccola riparazione",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Rivedere il rendiconto prima che parta",
+                "bucket": "Una persona"
+              }
+            ]
           }
-        ],
-        "example": {
-          "title": "Una perdita d'acqua segnalata da un inquilino",
-          "lead": "Come il metodo ordina una riparazione presso un gestore immobiliare.",
-          "steps": [
-            {
-              "step": "Leggere il messaggio e le foto dell'inquilino",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Valutare l'urgenza e quale intervento serve",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Annotare la richiesta in un secondo foglio di monitoraggio",
-              "bucket": "Eliminare"
-            },
-            {
-              "step": "Prenotare un fornitore dall'elenco approvato",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Aggiornare l'inquilino sull'intervento",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Approvare una riparazione oltre il limite di spesa",
-              "bucket": "Una persona"
-            },
-            {
-              "step": "Abbinare la fattura del fornitore all'ordine di lavoro",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Scrivere al proprietario a parte per ogni piccola riparazione",
-              "bucket": "Eliminare"
-            }
-          ]
-        }
+        ]
       },
       {
         "anchor": "ospitalita-turismo",
@@ -707,55 +919,93 @@
         "cases": [
           {
             "title": "Richieste di gruppi ed eventi",
-            "body": "Un agente legge la richiesta, controlla disponibilità e tariffe e prepara la proposta che il team commerciale invierà."
+            "body": "Un agente legge la richiesta, controlla disponibilità e tariffe e prepara la proposta che il team commerciale invierà.",
+            "how": [
+              {
+                "step": "Leggere la richiesta ed estrarre date, camere ed esigenze",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Controllare la disponibilità e le regole tariffarie",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Preparare la proposta dai tuoi modelli",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Fissare il prezzo per un gruppo numeroso in alta stagione",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Modifiche e cancellazioni",
-            "body": "Gli agenti applicano le tue condizioni a ogni modifica, aggiornano la prenotazione nel channel manager e nel PMS e passano le eccezioni a una persona."
+            "body": "Gli agenti applicano le tue condizioni a ogni modifica, aggiornano la prenotazione nel channel manager e nel PMS e passano le eccezioni a una persona.",
+            "how": [
+              {
+                "step": "Leggere la richiesta e applicare le tue condizioni",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Aggiornare il channel manager e il gestionale dell'hotel",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Copiare la modifica in un foglio di calcolo condiviso",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Decidere le eccezioni, come un rimborso fuori dalle condizioni",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Riconciliazione di fornitori e commissioni",
-            "body": "Il codice semplice abbina le fatture dei fornitori e le commissioni dei canali di prenotazione alle prenotazioni. Un agente indaga sulle differenze."
+            "body": "Il codice semplice abbina le fatture dei fornitori e le commissioni dei canali di prenotazione alle prenotazioni. Un agente indaga sulle differenze.",
+            "how": [
+              {
+                "step": "Abbinare fatture e commissioni alle prenotazioni",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Indagare sulle differenze",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Spuntare ogni riga a mano su una stampa",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Decidere quali differenze contestare",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Recensioni e reclami",
-            "body": "Un agente classifica recensioni e reclami per tema e struttura, prepara le risposte e porta i problemi ricorrenti al responsabile che può risolverli."
+            "body": "Un agente classifica recensioni e reclami per tema e struttura, prepara le risposte e porta i problemi ricorrenti al responsabile che può risolverli.",
+            "how": [
+              {
+                "step": "Smistare recensioni e reclami per argomento e struttura",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Preparare le risposte",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Mandare i problemi ricorrenti al responsabile che può risolverli",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Rispondere di persona ai reclami gravi",
+                "bucket": "Una persona"
+              }
+            ]
           }
-        ],
-        "example": {
-          "title": "Una richiesta di prenotazione di gruppo",
-          "lead": "Come il metodo ordina una richiesta di gruppo in un hotel.",
-          "steps": [
-            {
-              "step": "Leggere la richiesta ed estrarre date, camere ed esigenze",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Controllare la disponibilità e le regole tariffarie",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Copiare la richiesta nel foglio di monitoraggio del team commerciale",
-              "bucket": "Eliminare"
-            },
-            {
-              "step": "Preparare la proposta dai tuoi modelli",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Fissare il prezzo per un gruppo numeroso in alta stagione",
-              "bucket": "Una persona"
-            },
-            {
-              "step": "Inviare promemoria finché il cliente non conferma",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Creare la prenotazione e la fattura dell'acconto",
-              "bucket": "Codice semplice"
-            }
-          ]
-        }
+        ]
       },
       {
         "anchor": "sanita",
@@ -764,55 +1014,93 @@
         "cases": [
           {
             "title": "Autorizzazioni delle assicurazioni",
-            "body": "Un agente prepara la richiesta di autorizzazione con i documenti che chiede l'assicurazione, la invia e ne segue l'esito. Una persona gestisce i dinieghi."
+            "body": "Un agente prepara la richiesta di autorizzazione con i documenti che chiede l'assicurazione, la invia e ne segue l'esito. Una persona gestisce i dinieghi.",
+            "how": [
+              {
+                "step": "Preparare la richiesta con i documenti che l'assicurazione chiede",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Inviarla e seguire la risposta",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Stampare la richiesta per la cartella cartacea del paziente",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Gestire i rifiuti con il paziente e l'assicurazione",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Impegnative e richieste di appuntamento",
-            "body": "Gli agenti leggono impegnative e richieste, controllano cosa serve a ciascuna e propongono uno slot, così l'accettazione conferma invece di digitare."
+            "body": "Gli agenti leggono impegnative e richieste, controllano cosa serve a ciascuna e propongono uno slot, così l'accettazione conferma invece di digitare.",
+            "how": [
+              {
+                "step": "Leggere l'impegnativa e capire cosa serve",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Proporre un orario adatto allo specialista e agli esami",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Ribattere l'impegnativa nel sistema di prenotazione",
+                "bucket": "Eliminare"
+              },
+              {
+                "step": "Confermare l'appuntamento con il paziente",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Fatturazione alle assicurazioni",
-            "body": "Il codice semplice genera le richieste di rimborso dagli appuntamenti. Quando un'assicurazione ne respinge una, un agente capisce il perché e prepara la correzione."
+            "body": "Il codice semplice genera le richieste di rimborso dagli appuntamenti. Quando un'assicurazione ne respinge una, un agente capisce il perché e prepara la correzione.",
+            "how": [
+              {
+                "step": "Generare le richieste di rimborso dagli appuntamenti",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Leggere un rifiuto e capirne il motivo",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Preparare la richiesta corretta",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Decidere se fare ricorso o rinunciare",
+                "bucket": "Una persona"
+              }
+            ]
           },
           {
             "title": "Messaggi amministrativi dei pazienti",
-            "body": "Gli agenti rispondono alle domande di routine su appuntamenti, documenti e fatture, e passano qualsiasi questione clinica direttamente al tuo team."
+            "body": "Gli agenti rispondono alle domande di routine su appuntamenti, documenti e fatture, e passano qualsiasi questione clinica direttamente al tuo team.",
+            "how": [
+              {
+                "step": "Smistare i messaggi per argomento e individuare quelli clinici",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Cercare appuntamenti e fatture nei tuoi sistemi",
+                "bucket": "Codice semplice"
+              },
+              {
+                "step": "Rispondere alle domande di routine su appuntamenti, documenti e fatture",
+                "bucket": "Un agente"
+              },
+              {
+                "step": "Rispondere a tutto ciò che è clinico",
+                "bucket": "Una persona"
+              }
+            ]
           }
-        ],
-        "example": {
-          "title": "Una richiesta di rimborso respinta da un'assicurazione",
-          "lead": "Come il metodo ordina un rifiuto in una clinica privata.",
-          "steps": [
-            {
-              "step": "Leggere l'avviso di rifiuto e il motivo",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Trovare l'appuntamento e i documenti della richiesta",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Stampare il rifiuto per il raccoglitore della fatturazione",
-              "bucket": "Eliminare"
-            },
-            {
-              "step": "Capire cosa manca o cosa è sbagliato",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Preparare la richiesta corretta",
-              "bucket": "Un agente"
-            },
-            {
-              "step": "Inviarla di nuovo e seguire il pagamento",
-              "bucket": "Codice semplice"
-            },
-            {
-              "step": "Decidere se fare ricorso o stralciarla",
-              "bucket": "Una persona"
-            }
-          ]
-        }
+        ]
       }
     ]
   },

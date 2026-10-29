@@ -980,12 +980,13 @@
 
 /* ═══════════ USE CASES ═══════════
    The industry page: an intro with an index of in-page anchors and the
-   bucket legend, then one band per industry. The industry's name, lead and
-   the use cases' label stay pinned on the left while its use cases and its
-   worked example card
-   (the homepage walkthrough's list and tags) scroll past on the right.
-   Below 900px it is one column and only the name stays pinned, as a band
-   under the header. Anchors land below the fixed header. */
+   bucket legend, then one band per industry. On the left, pinned, the
+   industry and its use cases; on the right, one "how the agent does it"
+   panel per use case (the homepage walkthrough's list and tags), in the
+   same order, each about a screen's height apart so they pass the middle of
+   the screen one at a time. Below 900px it is one column, the panels follow
+   the list and only the name stays pinned, as a band under the header.
+   Anchors land below the fixed header. */
 .mk-uc-intro { padding-bottom: 48px; }
 .mk-uc-intro .mk-section-head { margin-bottom: 36px; }
 .mk-uc-markets { font-size: 14.5px; color: var(--ink-2); margin-top: 14px; max-width: 58ch; }
@@ -995,11 +996,12 @@
 .mk-uc-industry { position: relative; z-index: 1; padding: 72px 0; border-top: 1px solid var(--line-2); scroll-margin-top: 68px; }
 .mk-uc-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: clamp(32px, 5vw, 72px);
   align-items: start;
 }
-.mk-uc-head { position: sticky; top: calc(68px + 40px); }
+.mk-uc-head { position: sticky; top: calc(68px + 24px); }
+.mk-uc-count { font-family: var(--font-mono); font-size: 12px; color: var(--mute); margin-bottom: 10px; }
 .mk-uc-name {
   font-family: var(--font-display);
   font-size: clamp(26px, 2.8vw, 36px);
@@ -1008,40 +1010,50 @@
   line-height: 1.1;
   text-wrap: balance;
 }
-.mk-uc-lead { font-size: 16px; color: var(--mute); line-height: 1.6; margin-top: 14px; max-width: 54ch; }
-.mk-uc-label { font-family: var(--font-mono); font-size: 11.5px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mute); margin-top: 36px; }
+.mk-uc-lead { font-size: 15.5px; color: var(--mute); line-height: 1.6; margin-top: 12px; max-width: 54ch; }
+.mk-uc-label { font-family: var(--font-mono); font-size: 11.5px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mute); margin-top: 28px; }
 .mk-uc-cases { list-style: none; padding: 0; }
-.mk-uc-cases li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line-2); }
+.mk-uc-cases li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line-2); }
 .mk-uc-glyph { display: block; margin-top: 1px; color: var(--mute); }
 .mk-uc-glyph .g-move { color: var(--accent); }
-.mk-uc-cases h4 { font-size: 16.5px; font-weight: 500; letter-spacing: -0.015em; }
-.mk-uc-cases p { font-size: 14.5px; color: var(--mute); line-height: 1.65; margin-top: 6px; }
-.mk-uc-example {
-  min-width: 0;
-  margin-top: 40px;
-  padding: 28px;
+.mk-uc-cases h4 { font-size: 16px; font-weight: 500; letter-spacing: -0.015em; }
+.mk-uc-cases p { font-size: 14px; color: var(--mute); line-height: 1.6; margin-top: 4px; }
+
+.mk-uc-how { min-width: 0; }
+.mk-uc-how-card {
+  padding: 26px 28px;
   border: 1px solid var(--line-2);
   border-radius: var(--r-lg);
   background: var(--surface);
   box-shadow: var(--elev-1);
 }
-.mk-uc-example h3 { font-size: 19px; font-weight: 500; letter-spacing: -0.02em; margin-top: 10px; }
-.mk-uc-example-lead { font-size: 14.5px; color: var(--mute); line-height: 1.6; margin: 6px 0 20px; }
-.mk-uc-example .mk-steps-list li { font-size: 14.5px; }
-
-.mk-uc-count { font-family: var(--font-mono); font-size: 12px; color: var(--mute); margin-bottom: 10px; }
+.mk-uc-how + .mk-uc-how { margin-top: 24px; }
+.mk-uc-how-card h4 { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; margin: 8px 0 16px; }
+.mk-uc-how-card .mk-steps-list li { font-size: 14.5px; }
+.mk-uc-hows .mk-illustration-note { margin-top: 16px; }
 .mk-uc-steps { position: relative; }
 .mk-uc-progress { display: none; }
 
+/* Two columns: each panel is most of a screen tall, its content centred, so
+   scrolling brings the panels past the middle of the screen one at a time
+   while the column on the left stays put. */
+@media (min-width: 901px) {
+  .mk-uc-how { display: flex; flex-direction: column; justify-content: center; min-height: 60svh; }
+  .mk-uc-how + .mk-uc-how { margin-top: 0; }
+}
+
 /* Reading one thing at a time: scroll-driven, CSS only (the page ships no
-   script). Each .mk-uc-focus is dim below the middle of the screen, full
-   strength as it crosses the middle and dims again, less, once read. A rail
-   beside the worked example's steps fills as the reader goes down them,
-   each bucket's icon moves with the scroll, and a bar under the header
-   shows how far down the page the reader is. Without support for
-   scroll-driven animations, or with reduced motion, none of it applies and
-   everything is fully visible. `animation-timeline` comes after the
-   `animation` shorthand on purpose: the shorthand resets it. */
+   script). In two columns, each "how" panel is full strength while it
+   crosses the middle of the screen and dim before and after; its use case
+   on the left lights up with it, on the panel's own timeline (named per
+   position and shared up to the section with timeline-scope), and draws
+   its glyph. In one column, each use case and each panel lights up as it
+   crosses the middle of the screen. A rail beside the steps fills as the
+   panel goes by, each bucket's icon moves, and a bar under the header shows
+   how far down the page the reader is. Without support for scroll-driven
+   animations, or with reduced motion, none of it applies and everything is
+   fully visible and drawn. `animation-timeline` comes after the `animation`
+   shorthand on purpose: the shorthand resets it. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .mk-uc-focus {
@@ -1056,12 +1068,12 @@
       100% { opacity: 0.14; }
     }
 
-    /* A use case's glyph draws itself and moves as the use case comes into
-       focus: one named timeline per use case, read by every part of it. */
-    .mk-uc-cases li { view-timeline: --mk-uc-case block; }
+    /* A use case's glyph draws itself and moves as the use case lights up.
+       Its timeline is the use case's own in one column, its panel's in two. */
+    .mk-uc-cases li { view-timeline: --mk-uc-case block; --uc-t: --mk-uc-case; }
     .mk-uc-glyph .g-draw, .mk-uc-glyph .g-move {
       animation: mk-uc-draw linear both;
-      animation-timeline: --mk-uc-case;
+      animation-timeline: var(--uc-t);
       animation-range: cover 15% cover 42%;
     }
     .mk-uc-glyph .g-draw { stroke-dasharray: 1; }
@@ -1085,6 +1097,34 @@
     @keyframes mk-uc-scan    { from { translate: -2px -2px; } to { translate: 0 0; } }
     @keyframes mk-uc-hand    { from { rotate: -300deg; } to { rotate: 0deg; } }
 
+    @media (min-width: 901px) {
+      .mk-uc-industry { timeline-scope: --mk-uc-how-1, --mk-uc-how-2, --mk-uc-how-3, --mk-uc-how-4; }
+      .mk-uc-how:nth-child(1) { view-timeline: --mk-uc-how-1 block; }
+      .mk-uc-how:nth-child(2) { view-timeline: --mk-uc-how-2 block; }
+      .mk-uc-how:nth-child(3) { view-timeline: --mk-uc-how-3 block; }
+      .mk-uc-how:nth-child(4) { view-timeline: --mk-uc-how-4 block; }
+      .mk-uc-cases li:nth-child(1) { --uc-t: --mk-uc-how-1; }
+      .mk-uc-cases li:nth-child(2) { --uc-t: --mk-uc-how-2; }
+      .mk-uc-cases li:nth-child(3) { --uc-t: --mk-uc-how-3; }
+      .mk-uc-cases li:nth-child(4) { --uc-t: --mk-uc-how-4; }
+      /* A panel 60svh tall is the one in the middle of the screen between
+         31% and 69% of its cover range; its use case follows the same curve. */
+      .mk-uc-how.mk-uc-focus, .mk-uc-cases .mk-uc-focus {
+        animation-name: mk-uc-lit;
+        animation-range: cover 25% cover 75%;
+      }
+      .mk-uc-cases .mk-uc-focus { animation-timeline: var(--uc-t); }
+      @keyframes mk-uc-lit {
+        0%   { opacity: 0.07; }
+        12%  { opacity: 1; }
+        88%  { opacity: 1; }
+        100% { opacity: 0.14; }
+      }
+      .mk-uc-glyph .g-draw, .mk-uc-glyph .g-move { animation-range: cover 25% cover 36%; }
+      .mk-uc-glyph .g-draw--2, .mk-uc-glyph .g-move--late { animation-range: cover 28% cover 39%; }
+      .mk-uc-glyph .g-draw--3, .mk-uc-glyph .g-move--later { animation-range: cover 31% cover 42%; }
+    }
+
     .mk-uc-steps::before, .mk-uc-steps::after {
       content: '';
       position: absolute;
@@ -1100,14 +1140,14 @@
       transform-origin: 50% 0;
       animation: mk-uc-rail linear both;
       animation-timeline: view();
-      animation-range: cover 30% cover 70%;
+      animation-range: cover 30% cover 60%;
     }
     @keyframes mk-uc-rail { from { scale: 1 0; } to { scale: 1 1; } }
 
     .mk-uc-steps .mk-tag-icon {
       animation: mk-uc-turn linear both;
       animation-timeline: view();
-      animation-range: cover 15% cover 55%;
+      animation-range: cover 15% cover 50%;
     }
     .mk-uc-steps .mk-tag--1 .mk-tag-icon { animation-name: mk-uc-drop; }
     .mk-uc-steps .mk-tag--2 .mk-tag-icon { animation-name: mk-uc-slide; }
@@ -1157,7 +1197,7 @@
   }
   .mk-uc-lead { margin-top: 6px; }
   .mk-uc-label { margin-top: 32px; }
-  .mk-uc-body { margin-top: 4px; }
+  .mk-uc-hows { margin-top: 40px; }
 }
 @media (max-width: 720px) {
   .mk-nav, .mk-header-actions { display: none; }
@@ -1170,10 +1210,10 @@
   /* Hero and final CTAs stack: full width comes from the column, NOT from
      <Button block> (a block button inside a flex row crushes its siblings). */
   .mk-hero-actions, .mk-final-actions, .mk-about-actions { flex-direction: column; align-items: stretch; }
-  .mk-uc-example { padding: 22px 18px; }
-  .mk-uc-example .mk-steps-list li { grid-template-columns: 28px minmax(0, 1fr); }
+  .mk-uc-how-card { padding: 22px 18px; }
+  .mk-uc-how-card .mk-steps-list li { grid-template-columns: 28px minmax(0, 1fr); }
   .mk-uc-steps::before, .mk-uc-steps::after { left: -10px; }
-  .mk-uc-example .mk-steps-list .mk-tag { grid-column: 2; justify-self: start; }
+  .mk-uc-how-card .mk-steps-list .mk-tag { grid-column: 2; justify-self: start; }
   .mk-about-inner { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .mk-about-photo { justify-self: start; width: min(100%, 420px); }
   /* The calendars become one day: the first column (Monday) on a wider axis. */

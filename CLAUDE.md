@@ -131,7 +131,7 @@ The landing page has motion (the hero crash, the calendar, the reveals), and
 all of it lives in ONE vanilla ES module, `apps/site/src/motion/`, loaded by a
 single bare `<script>` in `Home.astro`. Use cases, blog, contact and legal ship none. The
 e2e suite enforces both, and the CSP (`script-src 'self'`) blocks anything else.
-The use cases page's reading focus (pinned industry heads, dimming, the use cases' drawn glyphs, the steps' rail, the reading bar)
+The use cases page's reading focus (pinned use cases lit one at a time with their "how" panels, the drawn glyphs, the steps' rail, the reading bar)
 is CSS scroll-driven animation, so it needs no script: keep it that way.
 
 - **The CSS default is the final, no-JS state.** The HTML must read and look
