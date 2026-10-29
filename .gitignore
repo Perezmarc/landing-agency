@@ -29,3 +29,7 @@ design-system/ds-styles.css
 
 # Media pipeline downloads and intermediates (scripts/media/build-media.mjs).
 scripts/media/.cache/
+
+# The impeccable engine binary: its launcher fetches the right one per platform
+# (checked against scripts/engine-checksums.txt), so none is committed.
+.claude/skills/impeccable/scripts/bin/
