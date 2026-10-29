@@ -11,8 +11,17 @@
  *
  * Static HTML with no script: the industry index is in-page anchors, and
  * every CTA books a call. Every string comes from @forge/i18n.
+ *
+ * READING ONE THING AT A TIME. Where the browser has scroll-driven
+ * animations and the reader allows motion, CSS alone (marketing.css, USE
+ * CASES) dims what is above and below the middle of the screen, so the use
+ * case or step being read stands out; fills a rail beside the worked
+ * example's steps as the reader goes down them; turns each bucket's icon;
+ * and draws a reading bar under the header. Everywhere else the page is the
+ * same HTML, fully visible: these classes only hook the animation.
  */
 import Base from '../layouts/Base.astro'
+import BucketTag from '../components/BucketTag.astro'
 import { Button } from '@forge/ui'
 import forge from '@forge/manifest'
 import { useTranslations, useList } from '@forge/i18n'
@@ -27,8 +36,11 @@ const buckets = list('home.buckets')
 const industries = list('useCases.industries')
 // A step's tag is its bucket's position (1 Delete … 4 A person), as on the homepage.
 const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
+const pad = n => String(n).padStart(2, '0')
 ---
 <Base meta={meta} locale={locale} current="useCases">
+  <div class="mk-uc-progress" aria-hidden="true"></div>
+
   <section class="mk-section mk-uc-intro">
     <div class="mk-wrap">
       <div class="mk-section-head">
@@ -51,22 +63,23 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
       <div class="mk-uc-legend">
         <p>{t('useCases.legendLead')}</p>
         <ol class="mk-uc-buckets">
-          {buckets.map((bucket, i) => <li class={`mk-tag mk-tag--${i + 1}`}>{bucket.title}</li>)}
+          {buckets.map((bucket, i) => <BucketTag as="li" position={i + 1} label={bucket.title} />)}
         </ol>
       </div>
     </div>
   </section>
 
-  {industries.map(industry => (
+  {industries.map((industry, n) => (
     <section class="mk-uc-industry" id={industry.anchor} aria-labelledby={`${industry.anchor}-title`}>
       <div class="mk-wrap mk-uc-grid">
         <div class="mk-uc-copy">
-          <h2 class="mk-uc-name" id={`${industry.anchor}-title`}>{industry.name}</h2>
-          <p class="mk-uc-lead">{industry.lead}</p>
+          <p class="mk-uc-count" aria-hidden="true">{pad(n + 1)} / {pad(industries.length)}</p>
+          <h2 class="mk-uc-name mk-uc-focus" id={`${industry.anchor}-title`}>{industry.name}</h2>
+          <p class="mk-uc-lead mk-uc-focus">{industry.lead}</p>
           <h3 class="mk-uc-label">{t('useCases.casesHeading')}</h3>
           <ul class="mk-uc-cases">
             {industry.cases.map(item => (
-              <li>
+              <li class="mk-uc-focus">
                 <h4>{item.title}</h4>
                 <p>{item.body}</p>
               </li>
@@ -78,11 +91,11 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
           <span class="mk-eyebrow">{t('useCases.exampleEyebrow')}</span>
           <h3>{industry.example.title}</h3>
           <p class="mk-uc-example-lead">{industry.example.lead}</p>
-          <ol class="mk-steps-list">
+          <ol class="mk-steps-list mk-uc-steps">
             {industry.example.steps.map(item => (
-              <li>
+              <li class="mk-uc-focus">
                 <span>{item.step}</span>
-                <span class={`mk-tag mk-tag--${bucketOf[item.bucket] ?? 0}`}>{item.bucket}</span>
+                <BucketTag position={bucketOf[item.bucket]} label={item.bucket} />
               </li>
             ))}
           </ol>
