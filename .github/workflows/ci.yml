@@ -45,8 +45,8 @@ jobs:
 
   e2e:
     name: E2E tests (Playwright)
-    # Playwright 1.56 has no browser build for Ubuntu 26.04 (ubuntu-latest
-    # since late 2026); pinned until Playwright is bumped deliberately.
+    # Pinned, not ubuntu-latest: Playwright is pinned to 1.56.x, which ships no
+    # browsers for ubuntu 26.04. Move this with a deliberate Playwright bump.
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
