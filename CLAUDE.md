@@ -12,8 +12,8 @@ tools. The site's one job is to get a qualified visitor to **book a discovery
 call**. It is a landing page, a blog, a contact page and legal pages, in
 English, Spanish and Italian.
 
-The name and domain are still placeholders (`Agency`, `example.com`). Never
-type a name, domain or address anywhere but the manifest.
+The name and domain live in the manifest (`packages/manifest/forge.config.js`).
+Never type a name, domain or address anywhere else.
 
 **Layout:** a workspace monorepo with one app.
 
