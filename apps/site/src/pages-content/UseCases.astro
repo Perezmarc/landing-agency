@@ -12,16 +12,21 @@
  * Static HTML with no script: the industry index is in-page anchors, and
  * every CTA books a call. Every string comes from @forge/i18n.
  *
- * READING ONE THING AT A TIME. Where the browser has scroll-driven
- * animations and the reader allows motion, CSS alone (marketing.css, USE
- * CASES) dims what is above and below the middle of the screen, so the use
- * case or step being read stands out; fills a rail beside the worked
- * example's steps as the reader goes down them; turns each bucket's icon;
- * and draws a reading bar under the header. Everywhere else the page is the
- * same HTML, fully visible: these classes only hook the animation.
+ * READING ONE THING AT A TIME. Each industry's name and lead stay pinned
+ * beside its use cases while the reader goes through them. Where the browser
+ * has scroll-driven animations and the reader allows motion, CSS alone
+ * (marketing.css, USE CASES) dims what is above and below the middle of the
+ * screen, so the use case or step being read stands out; draws each use
+ * case's glyph (a small picture of what the agent does: reads, matches,
+ * routes, chases …) as it comes into focus; fills a rail beside the worked
+ * example's steps; turns each bucket's icon; and draws a reading bar under
+ * the header. Everywhere else the page is the same HTML, fully visible and
+ * fully drawn: these classes only hook the animation.
  */
 import Base from '../layouts/Base.astro'
 import BucketTag from '../components/BucketTag.astro'
+import CaseGlyph from '../components/CaseGlyph.astro'
+import { GLYPHS } from '../data/use-case-glyphs.js'
 import { Button } from '@forge/ui'
 import forge from '@forge/manifest'
 import { useTranslations, useList } from '@forge/i18n'
@@ -72,35 +77,41 @@ const pad = n => String(n).padStart(2, '0')
   {industries.map((industry, n) => (
     <section class="mk-uc-industry" id={industry.anchor} aria-labelledby={`${industry.anchor}-title`}>
       <div class="mk-wrap mk-uc-grid">
-        <div class="mk-uc-copy">
+        <div class="mk-uc-head">
           <p class="mk-uc-count" aria-hidden="true">{pad(n + 1)} / {pad(industries.length)}</p>
-          <h2 class="mk-uc-name mk-uc-focus" id={`${industry.anchor}-title`}>{industry.name}</h2>
-          <p class="mk-uc-lead mk-uc-focus">{industry.lead}</p>
+          <h2 class="mk-uc-name" id={`${industry.anchor}-title`}>{industry.name}</h2>
+          <p class="mk-uc-lead">{industry.lead}</p>
+        </div>
+
+        <div class="mk-uc-body">
           <h3 class="mk-uc-label">{t('useCases.casesHeading')}</h3>
           <ul class="mk-uc-cases">
-            {industry.cases.map(item => (
+            {industry.cases.map((item, i) => (
               <li class="mk-uc-focus">
-                <h4>{item.title}</h4>
-                <p>{item.body}</p>
+                <CaseGlyph name={GLYPHS[n][i]} />
+                <div>
+                  <h4>{item.title}</h4>
+                  <p>{item.body}</p>
+                </div>
               </li>
             ))}
           </ul>
-        </div>
 
-        <article class="mk-uc-example">
-          <span class="mk-eyebrow">{t('useCases.exampleEyebrow')}</span>
-          <h3>{industry.example.title}</h3>
-          <p class="mk-uc-example-lead">{industry.example.lead}</p>
-          <ol class="mk-steps-list mk-uc-steps">
-            {industry.example.steps.map(item => (
-              <li class="mk-uc-focus">
-                <span>{item.step}</span>
-                <BucketTag position={bucketOf[item.bucket]} label={item.bucket} />
-              </li>
-            ))}
-          </ol>
-          <p class="mk-illustration-note">{t('useCases.exampleNote')}</p>
-        </article>
+          <article class="mk-uc-example">
+            <span class="mk-eyebrow">{t('useCases.exampleEyebrow')}</span>
+            <h3>{industry.example.title}</h3>
+            <p class="mk-uc-example-lead">{industry.example.lead}</p>
+            <ol class="mk-steps-list mk-uc-steps">
+              {industry.example.steps.map(item => (
+                <li class="mk-uc-focus">
+                  <span>{item.step}</span>
+                  <BucketTag position={bucketOf[item.bucket]} label={item.bucket} />
+                </li>
+              ))}
+            </ol>
+            <p class="mk-illustration-note">{t('useCases.exampleNote')}</p>
+          </article>
+        </div>
       </div>
     </section>
   ))}

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { CATALOGS, DEFAULT_LOCALE } from '@forge/i18n'
+import { GLYPHS, GLYPH_NAMES } from './use-case-glyphs.js'
 
 /* The use cases page (pages-content/UseCases.astro) is all catalog copy. Its
    worked examples are illustrations, so these tests guard that the copy and
@@ -57,5 +58,11 @@ describe('the use cases', () => {
         expect(text, `${locale}: "${text}"`).not.toMatch(/\d/)
       }
     }
+  })
+
+  it('give every use case a glyph the page knows how to draw', () => {
+    const shape = SOURCE.useCases.industries.map(industry => industry.cases.length)
+    expect(GLYPHS.map(list => list.length)).toEqual(shape)
+    GLYPHS.flat().forEach(name => expect(GLYPH_NAMES).toContain(name))
   })
 })
