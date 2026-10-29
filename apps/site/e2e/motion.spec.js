@@ -40,6 +40,9 @@ const blackLine = page => page.evaluate(() => {
   return lead !== main ? (lead ? 'lead' : 'main') : null
 })
 
+/** The BEFORE layer's computed opacity: '1' shows the rough rock. */
+const beforeOpacity = page => page.locator('[data-hero-before]').evaluate(el => getComputedStyle(el).opacity)
+
 /** A video's playhead, twice, 300ms apart. */
 const playhead = (page, sel) => page.evaluate(async (sel) => {
   const v = document.querySelector(sel)
@@ -207,13 +210,26 @@ test.describe('Save-Data', () => {
   })
 })
 
+test('before the motion module runs, the hero shows the rough rock, never the polished pebble', async ({ page }) => {
+  // Hold the one script back: what is on screen then is the first paint.
+  await page.route(/\.js(\?|$)/, route => route.abort())
+  await page.goto(HOME, { waitUntil: 'load' })
+  await expect(page.locator('[data-hero]')).not.toHaveAttribute('data-hero-state')
+  expect(await beforeOpacity(page)).toBe('1')
+  expect(await blackLine(page)).toBe('lead')
+  // The pebble still loads underneath, ready for the crash.
+  await expect.poll(() => page.locator('.mk-hero-poster--after img').evaluate(img => img.complete && img.naturalWidth)).toBeGreaterThan(0)
+  await expect.poll(() => page.locator('.mk-hero-poster--before img').evaluate(img => img.complete && img.naturalWidth)).toBeGreaterThan(0)
+})
+
 test.describe('with JavaScript off', () => {
   test.use({ javaScriptEnabled: false })
   test('the hero poster loads, no video is in the HTML and the calendar shows its after state', async ({ page }) => {
     await page.goto(HOME, { waitUntil: 'load' })
     const poster = page.locator('.mk-hero-poster--after img')
     await expect.poll(() => poster.evaluate(img => img.naturalWidth)).toBeGreaterThan(0)
-    await expect(page.locator('[data-hero]')).toHaveAttribute('data-hero-state', 'after')
+    await expect(page.locator('[data-hero]')).not.toHaveAttribute('data-hero-state')
+    await expect.poll(() => beforeOpacity(page)).toBe('0')
     await expect.poll(() => blackLine(page)).toBe('main')
     // Every clip is created by motion/; the server HTML is posters only.
     await expect(page.locator('video')).toHaveCount(0)
