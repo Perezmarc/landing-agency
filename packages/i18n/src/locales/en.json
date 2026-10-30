@@ -20,7 +20,7 @@
     "headingLead": "Hand the repetitive work to AI agents.",
     "heading": "Free up more than half of your team's time.",
     "lead": "We map how the work actually moves through your team, delete the steps that shouldn't exist, and run AI agents inside the tools you already use. The decisions stay with your people.",
-    "founderNote": "Led by the founder of an AI company built before ChatGPT and acquired by a San Francisco firm.",
+    "founderNote": "Led by the founder of an AI company started before ChatGPT.",
     "ctaPrimary": "Book a discovery call",
     "ctaSecondary": "See how it works",
     "day": {
@@ -277,11 +277,11 @@
     "about": {
       "eyebrow": "Who we are",
       "headingLead": "More than 20 years in software.",
-      "heading": "Building AI since before ChatGPT.",
+      "heading": "Working with AI since before ChatGPT.",
       "body": [
-        "I lead the agency. Before ChatGPT, I founded an AI company that built models of every kind to automate fraud and security work. A company in San Francisco acquired it, and I went on to work there.",
-        "There we built AI, and the processes around it, where it had the most impact. We adopted new advances while they were still at an early stage and reached very high levels of automation.",
-        "The agency brings that experience to your operations. We've worked on processes of every kind, and each engagement starts the same way: finding out how the work really runs."
+        "Well before ChatGPT, we started an AI company that automated fraud and security work, and later kept building AI at a company in San Francisco.",
+        "Those years taught us most of what we know: how a process actually works once you look closely, which steps a person should keep, and what still works months after launch. We tried new things early, and plenty of them didn't work the first time.",
+        "That's what we bring to your team. We've seen processes of all kinds, and every project starts the same way: sitting down with the people who do the work and learning how it really runs."
       ],
       "photoAlt": "Portrait of the person who leads the agency"
     },
