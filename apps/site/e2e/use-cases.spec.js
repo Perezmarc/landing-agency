@@ -3,10 +3,10 @@ import { routePath } from '@forge/seo/routes'
 import forge from '@forge/manifest'
 
 /* The use cases page reads one thing at a time. In two columns, each
-   industry and its use cases stay pinned on the left while one "how the
-   agent does it" panel per use case scrolls past on the right; scroll-driven
-   CSS lights up the panel in the middle of the screen and its use case, and
-   draws that use case's glyph. It ships no script, so the things to hold are
+   industry and its use cases stay pinned on the left and a pinned stage on
+   the right swaps one "how the agent does it" card per use case as the
+   industry scrolls by; scroll-driven CSS lights up the use case whose card
+   is showing and draws its glyph. It ships no script, so the things to hold are
    that the effect follows the scroll where it applies, and that with
    reduced motion the page is the plain, fully visible HTML. */
 
@@ -26,37 +26,40 @@ const centre = locator => locator.evaluate(el => {
 test.describe('with motion, in two columns', () => {
   test.use({ viewport: { width: 1280, height: 800 } })
 
-  test('the panel in the middle of the screen and its use case are lit, the next use case is dim', async ({ page }) => {
+  /** Scroll to a fraction of the industry's pinned run (its right column's contain range). */
+  const through = (industry, fraction) => industry.locator('.mk-uc-hows').evaluate((el, fraction) => {
+    const box = el.getBoundingClientRect()
+    window.scrollBy({ top: box.top + fraction * (box.height - innerHeight), behavior: 'instant' })
+  }, fraction)
+
+  test('both columns stay put while the cards swap, one per use case', async ({ page }) => {
     await page.goto(PATH)
     const industry = page.locator('.mk-uc-industry').nth(1)
+    const cards = industry.locator('.mk-uc-how')
     const cases = industry.locator('.mk-uc-cases > li')
-    const panel = industry.locator('.mk-uc-how').nth(1)
-    await centre(panel)
-    await expect.poll(() => opacity(panel)).toBeGreaterThan(0.95)
-    await expect.poll(() => opacity(cases.nth(1))).toBeGreaterThan(0.95)
-    await expect.poll(() => opacity(cases.nth(2))).toBeLessThan(0.5)
+    const top = locator => locator.evaluate(el => Math.round(el.getBoundingClientRect().top))
+    await through(industry, 0.1)
+    await expect.poll(() => opacity(cards.first())).toBeGreaterThan(0.95)
+    const stageTop = await top(industry.locator('.mk-uc-stage'))
+    const headTop = await top(industry.locator('.mk-uc-head'))
+    await through(industry, 0.4)
+    await expect.poll(() => opacity(cards.nth(1))).toBeGreaterThan(0.95)
+    expect(await opacity(cards.first())).toBeLessThan(0.05)
+    expect(await opacity(cases.nth(1))).toBeGreaterThan(0.95)
+    expect(await opacity(cases.nth(2))).toBeLessThan(0.5)
+    expect(await top(industry.locator('.mk-uc-stage'))).toBe(stageTop)
+    expect(await top(industry.locator('.mk-uc-head'))).toBe(headTop)
   })
 
-  test("an industry's use cases stay pinned while its panels scroll past", async ({ page }) => {
-    await page.goto(PATH)
-    const industry = page.locator('.mk-uc-industry').first()
-    const head = industry.locator('.mk-uc-head')
-    const top = () => head.evaluate(el => Math.round(el.getBoundingClientRect().top))
-    await centre(industry.locator('.mk-uc-how').nth(1))
-    const before = await top()
-    await scrollBy(page, 200)
-    expect(await top()).toBe(before)
-  })
-
-  test("a use case's glyph draws itself as its panel reaches the middle of the screen", async ({ page }) => {
+  test("a use case's glyph draws itself when its card comes up", async ({ page }) => {
     await page.goto(PATH)
     const industry = page.locator('.mk-uc-industry').nth(1)
     // The second use case's glyph has strokes that draw in (not every glyph does).
     const stroke = industry.locator('.mk-uc-cases > li').nth(1).locator('.mk-uc-glyph .g-draw').first()
     const offset = () => stroke.evaluate(el => Number.parseFloat(getComputedStyle(el).strokeDashoffset))
-    await centre(industry.locator('.mk-uc-how').first())
+    await through(industry, 0.1)
     await expect.poll(offset).toBeGreaterThan(0.9)
-    await centre(industry.locator('.mk-uc-how').nth(1))
+    await through(industry, 0.4)
     await expect.poll(offset).toBeLessThan(0.05)
   })
 

@@ -15,16 +15,16 @@
  * call. Every string comes from @forge/i18n.
  *
  * READING ONE THING AT A TIME. In two columns, the industry and its use
- * cases stay pinned on the left while one "how the agent does it" panel per
- * use case, in the same order, scrolls past on the right. Where the browser
- * has scroll-driven animations and the reader allows motion, CSS alone
- * (marketing.css, USE CASES) lights up the panel in the middle of the
- * screen and, with it, its use case on the left, and draws that use case's
- * glyph (a small picture of what the agent does: reads, matches, routes,
- * chases …); fills a rail beside the panel's steps; turns each bucket's
- * icon; and draws a reading bar under the header. In one column, the panels
- * follow the list and each lights up as it crosses the middle of the
- * screen. Everywhere else the page is the same HTML, fully visible and fully
+ * cases stay pinned on the left, with one "how the agent does it" card per
+ * use case, in the same order, on the right. Where the browser has
+ * scroll-driven animations and the reader allows motion, CSS alone
+ * (marketing.css, USE CASES) pins the cards on a stage too and swaps them
+ * as the industry scrolls by, lighting up the matching use case on the left
+ * and drawing its glyph (a small picture of what the agent does: reads,
+ * matches, routes, chases …); fills a rail beside the card's steps; turns
+ * each bucket's icon; and draws a reading bar under the header. In one
+ * column, the cards follow the list and each lights up as it crosses the
+ * middle of the screen. Everywhere else the page is the same HTML, fully visible and fully
  * drawn: these classes only hook the animation.
  */
 import Base from '../layouts/Base.astro'
@@ -114,23 +114,25 @@ const pad = n => String(n).padStart(2, '0')
           </div>
 
           <div class="mk-uc-hows">
-            {industry.cases.map((item, i) => (
-              <article class="mk-uc-how mk-uc-focus" aria-labelledby={`${industry.anchor}-how-${i + 1}`}>
-                <div class="mk-uc-how-card">
-                  <span class="mk-eyebrow">{t('useCases.howEyebrow')}</span>
-                  <h4 id={`${industry.anchor}-how-${i + 1}`}>{item.title}</h4>
-                  <ol class="mk-steps-list mk-uc-steps">
-                    {item.how.map(step => (
-                      <li>
-                        <span>{step.step}</span>
-                        <BucketTag position={bucketOf[step.bucket]} label={step.bucket} />
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              </article>
-            ))}
-            <p class="mk-illustration-note">{t('useCases.exampleNote')}</p>
+            <div class="mk-uc-stage">
+              {industry.cases.map((item, i) => (
+                <article class="mk-uc-how mk-uc-focus" aria-labelledby={`${industry.anchor}-how-${i + 1}`}>
+                  <div class="mk-uc-how-card">
+                    <span class="mk-eyebrow">{t('useCases.howEyebrow')}</span>
+                    <h4 id={`${industry.anchor}-how-${i + 1}`}>{item.title}</h4>
+                    <ol class="mk-steps-list mk-uc-steps">
+                      {item.how.map(step => (
+                        <li>
+                          <span>{step.step}</span>
+                          <BucketTag position={bucketOf[step.bucket]} label={step.bucket} />
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                </article>
+              ))}
+              <p class="mk-illustration-note">{t('useCases.exampleNote')}</p>
+            </div>
           </div>
         </div>
       </section>

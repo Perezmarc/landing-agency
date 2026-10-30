@@ -982,10 +982,11 @@
    The industry page: an intro with an index of in-page anchors and the
    bucket legend, then one band per industry. On the left, pinned, the
    industry and its use cases; on the right, one "how the agent does it"
-   panel per use case (the homepage walkthrough's list and tags), in the
-   same order, each about a screen's height apart so they pass the middle of
-   the screen one at a time. Below 900px it is one column, the panels follow
-   the list and only the name stays pinned, as a band under the header.
+   card per use case (the homepage walkthrough's list and tags), in the same
+   order: stacked by default, and on a pinned stage that swaps them where
+   scroll-driven animation runs (below). Below 900px it is one column, the
+   cards follow the list and only the name stays pinned, as a band under
+   the header.
    Anchors land below the fixed header. */
 .mk-uc-intro { padding-bottom: 48px; }
 .mk-uc-intro .mk-section-head { margin-bottom: 36px; }
@@ -1030,17 +1031,9 @@
 .mk-uc-how + .mk-uc-how { margin-top: 24px; }
 .mk-uc-how-card h4 { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; margin: 8px 0 16px; }
 .mk-uc-how-card .mk-steps-list li { font-size: 14.5px; }
-.mk-uc-hows .mk-illustration-note { margin-top: 16px; }
+.mk-uc-stage .mk-illustration-note { margin-top: 16px; }
 .mk-uc-steps { position: relative; }
 .mk-uc-progress { display: none; }
-
-/* Two columns: each panel is most of a screen tall, its content centred, so
-   scrolling brings the panels past the middle of the screen one at a time
-   while the column on the left stays put. */
-@media (min-width: 901px) {
-  .mk-uc-how { display: flex; flex-direction: column; justify-content: center; min-height: 60svh; }
-  .mk-uc-how + .mk-uc-how { margin-top: 0; }
-}
 
 /* The side menu: one row per industry, in the left gutter, where the gutter
    is wide enough to hold it (from 1300px). A tick and the industry's number;
@@ -1078,13 +1071,12 @@
 }
 
 /* Reading one thing at a time: scroll-driven, CSS only (the page ships no
-   script). In two columns, each "how" panel is full strength while it
-   crosses the middle of the screen and dim before and after; its use case
-   on the left lights up with it, on the panel's own timeline (named per
-   position and shared up to the section with timeline-scope), and draws
-   its glyph. In one column, each use case and each panel lights up as it
-   crosses the middle of the screen. A rail beside the steps fills as the
-   panel goes by, each bucket's icon moves, and a bar under the header shows
+   script). In two columns, both columns stay pinned while the "how" cards
+   swap in place, one per use case, and the use case whose card is showing
+   lights up on the left and draws its glyph. In one column, each use case
+   and each card lights up as it crosses the middle of the screen. A rail
+   beside a card's steps fills as it comes up, each bucket's icon moves, and
+   a bar under the header shows
    how far down the page the reader is. Without support for scroll-driven
    animations, or with reduced motion, none of it applies and everything is
    fully visible and drawn. `animation-timeline` comes after the `animation`
@@ -1132,32 +1124,64 @@
     @keyframes mk-uc-scan    { from { translate: -2px -2px; } to { translate: 0 0; } }
     @keyframes mk-uc-hand    { from { rotate: -300deg; } to { rotate: 0deg; } }
 
+    /* Two columns: both columns stay put while the industry scrolls by. The
+       "how" cards sit on top of each other in a pinned stage, and the
+       industry's scroll is cut into four equal windows: in window n, card n
+       is shown (it fades and slides in, then out at the window's end) and
+       use case n on the left is lit and draws its glyph. The first card is
+       there from the start and the last stays until the industry scrolls
+       away. The timeline is the right column's, a runway two screens long,
+       shared up to the section with timeline-scope. */
     @media (min-width: 901px) {
-      .mk-uc-industry { timeline-scope: --mk-uc-how-1, --mk-uc-how-2, --mk-uc-how-3, --mk-uc-how-4; }
-      .mk-uc-how:nth-child(1) { view-timeline: --mk-uc-how-1 block; }
-      .mk-uc-how:nth-child(2) { view-timeline: --mk-uc-how-2 block; }
-      .mk-uc-how:nth-child(3) { view-timeline: --mk-uc-how-3 block; }
-      .mk-uc-how:nth-child(4) { view-timeline: --mk-uc-how-4 block; }
-      .mk-uc-cases li:nth-child(1) { --uc-t: --mk-uc-how-1; }
-      .mk-uc-cases li:nth-child(2) { --uc-t: --mk-uc-how-2; }
-      .mk-uc-cases li:nth-child(3) { --uc-t: --mk-uc-how-3; }
-      .mk-uc-cases li:nth-child(4) { --uc-t: --mk-uc-how-4; }
-      /* A panel 60svh tall is the one in the middle of the screen between
-         31% and 69% of its cover range; its use case follows the same curve. */
+      .mk-uc-industry { timeline-scope: --mk-uc-hows; }
+      .mk-uc-hows { view-timeline: --mk-uc-hows block; min-height: 220svh; }
+      .mk-uc-stage { position: sticky; top: calc(68px + 24px); display: grid; }
+      .mk-uc-stage > .mk-uc-how { grid-area: 1 / 1; }
+      .mk-uc-stage > .mk-uc-how + .mk-uc-how { margin-top: 0; }
+      .mk-uc-stage > .mk-illustration-note { grid-row: 2; }
+      .mk-uc-how:nth-child(2), .mk-uc-cases li:nth-child(2) { --w0: 25%; }
+      .mk-uc-how:nth-child(3), .mk-uc-cases li:nth-child(3) { --w0: 50%; }
+      .mk-uc-how:nth-child(4), .mk-uc-cases li:nth-child(4) { --w0: 75%; }
+      .mk-uc-cases li { --uc-t: --mk-uc-hows; }
+
       .mk-uc-how.mk-uc-focus, .mk-uc-cases .mk-uc-focus {
-        animation-name: mk-uc-lit;
-        animation-range: cover 25% cover 75%;
+        animation-timeline: --mk-uc-hows;
+        animation-range: contain var(--w0, 0%) contain calc(var(--w0, 0%) + 25%);
       }
-      .mk-uc-cases .mk-uc-focus { animation-timeline: var(--uc-t); }
-      @keyframes mk-uc-lit {
-        0%   { opacity: 0.07; }
-        12%  { opacity: 1; }
-        88%  { opacity: 1; }
-        100% { opacity: 0.14; }
+      .mk-uc-how.mk-uc-focus { animation-name: mk-uc-swap; }
+      .mk-uc-how.mk-uc-focus:first-child { animation-name: mk-uc-swap-first; }
+      .mk-uc-how.mk-uc-focus:nth-child(4) { animation-name: mk-uc-swap-last; }
+      @keyframes mk-uc-swap {
+        0%       { opacity: 0; translate: 0 14px; }
+        12%, 88% { opacity: 1; translate: 0 0; }
+        100%     { opacity: 0; translate: 0 -14px; }
       }
-      .mk-uc-glyph .g-draw, .mk-uc-glyph .g-move { animation-range: cover 25% cover 36%; }
-      .mk-uc-glyph .g-draw--2, .mk-uc-glyph .g-move--late { animation-range: cover 28% cover 39%; }
-      .mk-uc-glyph .g-draw--3, .mk-uc-glyph .g-move--later { animation-range: cover 31% cover 42%; }
+      @keyframes mk-uc-swap-first {
+        0%, 88%  { opacity: 1; translate: 0 0; }
+        100%     { opacity: 0; translate: 0 -14px; }
+      }
+      @keyframes mk-uc-swap-last {
+        0%       { opacity: 0; translate: 0 14px; }
+        12%, 100% { opacity: 1; translate: 0 0; }
+      }
+      .mk-uc-cases .mk-uc-focus { animation-name: mk-uc-lit; }
+      .mk-uc-cases .mk-uc-focus:first-child { animation-name: mk-uc-lit-first; }
+      .mk-uc-cases .mk-uc-focus:nth-child(4) { animation-name: mk-uc-lit-last; }
+      @keyframes mk-uc-lit       { 0% { opacity: 0.07; } 12%, 88% { opacity: 1; } 100% { opacity: 0.14; } }
+      @keyframes mk-uc-lit-first { 0%, 88% { opacity: 1; } 100% { opacity: 0.14; } }
+      @keyframes mk-uc-lit-last  { 0% { opacity: 0.07; } 12%, 100% { opacity: 1; } }
+
+      .mk-uc-glyph .g-draw, .mk-uc-glyph .g-move { animation-range: contain var(--w0, 0%) contain calc(var(--w0, 0%) + 8%); }
+      .mk-uc-glyph .g-draw--2, .mk-uc-glyph .g-move--late { animation-range: contain calc(var(--w0, 0%) + 2%) contain calc(var(--w0, 0%) + 10%); }
+      .mk-uc-glyph .g-draw--3, .mk-uc-glyph .g-move--later { animation-range: contain calc(var(--w0, 0%) + 4%) contain calc(var(--w0, 0%) + 12%); }
+      .mk-uc-stage .mk-uc-steps::after {
+        animation-timeline: --mk-uc-hows;
+        animation-range: contain calc(var(--w0, 0%) + 2%) contain calc(var(--w0, 0%) + 18%);
+      }
+      .mk-uc-stage .mk-uc-steps .mk-tag-icon {
+        animation-timeline: --mk-uc-hows;
+        animation-range: contain var(--w0, 0%) contain calc(var(--w0, 0%) + 10%);
+      }
     }
 
     /* The side menu shows only while the industries are on screen, and marks
