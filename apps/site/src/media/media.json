@@ -4,15 +4,15 @@
     "16x9": {
       "transition": 3.75,
       "stream": {
-        "x": 0.6632,
-        "width": 0.0132
+        "x": 0.6634,
+        "width": 0.0135
       }
     },
     "9x16": {
       "transition": 3.75,
       "stream": {
-        "x": 0.494,
-        "width": 0.0213
+        "x": 0.4937,
+        "width": 0.0219
       },
       "extend": 0.4
     }
