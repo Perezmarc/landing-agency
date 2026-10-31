@@ -658,8 +658,8 @@ stream below the hero, per rendition).
 | Crash cut in / out, 16:9 | as close as the BEFORE loop to itself (about 31–33 dB frame to frame, the rain moving) | 29.7 / 32.7 dB |
 | Crash cut in / out, 9:16 (whole frame, extension included) | the same | 33.4 / 33.3 dB |
 | Crash clip | starts at the shatter | 3.75 s (first 6 source frames dropped) |
-| Desktop hero media (BEFORE, transition and AFTER, WebM) | ≤ 2.5 MB | about 1.2 MB (661 + 420 + 163 KB; MP4 1.8 MB) |
-| Mobile hero media (WebM, 720×1792 with the extension) | ≤ 1.2 MB | about 0.63 MB (339 + 228 + 76 KB; MP4 0.86 MB) |
+| Desktop hero media (BEFORE, transition and AFTER, WebM) | ≤ 2.5 MB | about 1.3 MB (661 + 420 + 230 KB; MP4 2.0 MB) |
+| Mobile hero media (WebM, 720×1792 with the extension) | ≤ 1.2 MB | about 0.71 MB (339 + 228 + 139 KB; MP4 0.96 MB) |
 | Calendar water (WebM, every tier with media) | ≤ 960 wide | splash 960×64, 50 KB (MP4 70 KB); rim atlas 640×304, 25 KB (MP4 35 KB), twelve `<video>`s of it on the AFTER card, 2.3 MP decoded a frame in all |
 | Stream below the hero (WebM) | one copy reaches the AFTER card in every layout | 16:9 128×3200, 85 KB (MP4 99 KB), 0.41 MP a frame; 9:16 64×3600, 50 KB (MP4 51 KB), 0.23 MP; posters AVIF 2-3 KB, WebP 4-5 KB |
 | Footer pool: void luma (the white above the line) / seam | ≥ 234 / no worse than the steps either side less 1 dB | 236 / 42.3 dB (steps 42.1 dB) |
@@ -679,18 +679,21 @@ and the AFTER card's rim are image-to-video from their own stills:
   elliptical polished pebble in the same place; one thin stream falls onto
   its top, spreads into a smooth glassy film and leaves from its lowest point
   as one stream. No rain, no drops in the air, no beads on the pebble.
-- **The hero loops:** image-to-video with the same still as both start and
+- **The hero loops:** image-to-video with the same frame as both start and
   end frame, the camera locked off and only the water moving. The AFTER loop
-  (`1295d48a`) builds its flow for its first 2.5 s, so the loop is cut from
-  frame 60 (`AFTER_HEAD`); from there both streams run and keep moving. It
-  plays on to the source's last frame (the still) and wraps back to frame 60
-  through 12 motion-interpolated frames (`AFTER_BRIDGE`, ffmpeg
-  `minterpolate`): 96 frames, 4 s. A cross-fade there blended two streams in
-  different places into one doubled, ghosted stream for a whole second; the
-  bridge moves the one stream instead (seam 42.4 dB against 35.8 dB frame
-  steps). Two regenerations with the still as both ends and a prompt for a
+  (`ab1e0c9d`, 8 s) starts and ends on frame 60 of the first AFTER source
+  (`1295d48a`), a frame where both streams already run, so the water flows
+  steadily from its first frame to its last. The model lands near that frame
+  but not on it, so the loop's last half second is cross-faded into its
+  first (`AFTER_FADE`); the two ends are the same picture, so the blend shows
+  no doubled stream. Its second take of the same request (`94ebebe4`)
+  spent its first second building the flow and is not used. The first AFTER
+  source (`1295d48a`) built its flow for 2.5 s and thinned it in its last
+  second; the loop cut from it was under 3 s, bridged back to its start by 12
+  motion-interpolated frames, and the bridge warped the stream visibly on
+  every pass. Two regenerations from the AFTER still with a prompt for a
   flow already running (`591c091c`, `f14dce69`) built the flow up again from
-  nothing and then all but froze, so neither is used.
+  nothing and then all but froze: starting on a mid-flow frame is what fixed it.
 - **The transition** (`b60be4ea`): image-to-video from the BEFORE still to
   the AFTER still: the rock bursts, the pebble is left, the rain stops and
   the water draws together into the two thin streams.

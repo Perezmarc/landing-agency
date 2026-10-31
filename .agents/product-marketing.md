@@ -1,7 +1,7 @@
 # Product Marketing Context
 
-**Document version:** v10
-**Last updated:** 2026-10-29
+**Document version:** v12
+**Last updated:** 2026-10-31
 
 > Auto-drafted from the founder's brief ("an AI consulting agency, almost exactly
 > like varickagents.com") before the agency had a name, customers or proof.
@@ -105,12 +105,12 @@
 From the owner (2026-10-16), and on the homepage as "Who we are":
 - Leads the agency; more than 20 years in the software industry.
 - Before ChatGPT, founded an AI company that built models of every kind to automate fraud and security work.
-- That company was acquired by a San Francisco company, where the owner then worked: building AI and the processes around it where it had the most impact, adopting new advances at a very early stage, and reaching very high levels of automation.
+- That company merged with a San Francisco company, where the owner then worked: building AI and the processes around it where it had the most impact, adopting new advances at a very early stage, and reaching very high levels of automation.
 - The agency has worked on processes of every kind.
-- Say "since before ChatGPT"; never a number of years in AI. The acquirer is not named on the page. The portrait (`apps/site/src/media/founder.webp`) was generated with Nano Banana Pro from three of the owner's own photos, at the owner's request: looking through a small quartz crystal, a nod to the hero's crystal. It is a cutout on a transparent background.
+- Say "since before ChatGPT"; never a number of years in AI. Say the company "merged with" a San Francisco company, never "acquired", and don't name it. The owner's own story is the selling point for now (2026-10-30): the section tells it in the first person ("I founded…", "I learned…"), strong but humble, and turns to "we" for what the agency does today. The portrait (`apps/site/src/media/founder.webp`) was generated with Nano Banana Pro from three of the owner's own photos, at the owner's request: looking through a small quartz crystal, a nod to the hero's crystal. It is a cutout on a transparent background.
 
 ## Proof Points
-**Metrics:** The final CTA says agents free up "more than half of your team's time". That is the owner's claim (2026-10-17), from the automation levels reached at the company they worked for after the acquisition; it is not yet a client result. [NEED: a measured time-saved figure from an engagement to back it.] No other numbers until a client result exists.
+**Metrics:** The final CTA says agents free up "more than half of your team's time". That is the owner's claim (2026-10-17), from the automation levels reached at the San Francisco company they worked for; it is not yet a client result. [NEED: a measured time-saved figure from an engagement to back it.] No other numbers until a client result exists.
 **Illustrations on the page (not proof):** "A week, before and after" (six team weeks: every task today, then the same week with only the decisions left) and "Supplier invoices, step by step" are labelled illustrations of the method, with no totals, hours or results. Replace or support them with real ones when a client result exists.
 **Customers:** [NEED]
 **Testimonials:** [NEED]
@@ -128,7 +128,9 @@ From the owner (2026-10-16), and on the homepage as "Who we are":
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
-- v10 (2026-10-29): A use cases page (`/use-cases`, `/es/casos-de-uso`, `/it/casi-d-uso`), in the nav and footer and linked from the homepage's week and invoice walkthrough: eight industries, each with the processes we look at first and one worked example sorted into the four buckets, labelled as illustrations. Geography recorded: Spain, Italy, UK, US.
+- v12 (2026-10-31): A use cases page (`/use-cases`, `/es/casos-de-uso`, `/it/casi-d-uso`), in the nav and footer and linked from the homepage's week and invoice walkthrough: eight industries, each with the processes we look at first and one worked example sorted into the four buckets, labelled as illustrations. Geography recorded: Spain, Italy, UK, US.
+- v11 (2026-10-30): "Who we are" gets the owner's personal story back, at their request, since their track record is the main selling point: first person for the founding and what it taught, "we" for the agency today. The company "merged with" a San Francisco company (the owner's word), in the section and in the hero's founder line.
+- v10 (2026-10-29): "Who we are" and the hero's founder line are humbler and more casual, at the owner's request: the background is mentioned lightly and in "we" (no "I run the agency"), the acquisition is no longer mentioned, and the section dwells on what the experience taught (how processes really run, what a person should keep, early ideas that didn't work first time).
 - v9 (2026-10-29): The agency has its name and domain, set in the manifest. A coined word (the "lev" of lift and lighten, with "AI" inside), screened for sound and meaning in English, Spanish and Italian; the .com is held by someone else, so the site lives on the .ai. Booking stays by email, now to the hello@ address on that domain.
 - v8 (2026-10-17): After a CRO comparison with varickagents.com and Varick's talk: the hero leads with the value, "Hand the repetitive work to AI agents." / "Free up more than half of your team's time." (the method moves to the lead paragraph), a line under the hero buttons says the agency is led by the founder of an AI company built before ChatGPT and acquired in San Francisco (linking to "Who we are"), and every booking button now reads "Book a discovery call" (the "Book a demo" label is gone: there is no demo to show).
 - v7 (2026-10-17): The final CTA leads with the value instead of the method: "Free up more than half of your team's time.", agents taking the repetitive work and people keeping the decisions. The figure is the owner's claim, chosen knowingly over a number-free version; see Proof Points.
