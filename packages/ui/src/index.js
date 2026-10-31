@@ -44,7 +44,6 @@ export { default as Chip } from './Chip.jsx'
 export { default as Modal } from './Modal.jsx'
 export { default as EmptyState } from './EmptyState.jsx'
 export { default as Spinner } from './Spinner.jsx'
-export { default as BrandMark } from './BrandMark.jsx'
 
 export { Ico, ICONS } from './Icons.jsx'
 export { default as Toast, useToast } from './Toast.jsx'

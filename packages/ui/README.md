@@ -20,8 +20,7 @@ import '@forge/ui/button.css'
 `Button` · `IconButton` · `TextInput` · `Select` · `Switch` ·
 `SegmentedControl` · `Tabs` · `Card` · `Chip` · `Modal` · `EmptyState` · `Spinner` ·
 `Skeleton` (+ `SkeletonText`, `SkeletonCircle`, `SkeletonButton`,
-`SkeletonGroup`) · `Toast` (+ `useToast`) · `Ico` / `ICONS` ·
-`BrandMark`.
+`SkeletonGroup`) · `Toast` (+ `useToast`) · `Ico` / `ICONS`.
 
 ## One barrel
 

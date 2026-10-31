@@ -9,12 +9,14 @@
 
    The SVG below is written from the manifest and rasterised with the
    headless Chromium already installed for Playwright — no image library, no
-   font downloads, no additional dependency.
+   font downloads, no additional dependency. The name is the logo, so it is set
+   in the logo face, embedded from @forge/tokens as a data URI.
 
      npm run gen:og
 */
 
-import { writeFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import forge from '@forge/manifest'
@@ -23,12 +25,16 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const WIDTH = 1200
 const HEIGHT = 630
 
+const logoFace = readFileSync(
+  createRequire(import.meta.url).resolve('@forge/tokens/fonts/red-hat-display-latin-900-normal.woff2'),
+).toString('base64')
+
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
 /* Wrap the tagline by character count. Crude, but SVG has no text flow and the
    alternative is measuring glyphs with a font library. */
-function wrap(text, max = 42) {
+function wrap(text, max = 28) {
   const lines = []
   let line = ''
   for (const word of String(text).split(/\s+/)) {
@@ -41,6 +47,7 @@ function wrap(text, max = 42) {
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
   <defs>
+    <style>@font-face { font-family: 'Red Hat Display'; font-weight: 900; src: url(data:font/woff2;base64,${logoFace}) format('woff2'); }</style>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#1c1e28"/>
       <stop offset="100%" stop-color="#14151c"/>
@@ -53,13 +60,8 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${
   <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#bg)"/>
   <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#glow)"/>
 
-  <g transform="translate(88, 96)" stroke="#f3f3f5" fill="none">
-    <rect x="1.5" y="1.5" width="45" height="45" rx="13" stroke-width="2.4"/>
-    <path d="M13 33 L24 14 L35 33" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M17 26 h14" stroke-width="3.2" stroke-linecap="round"/>
-  </g>
-  <text x="152" y="130" fill="#f3f3f5" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
-        font-size="30" font-weight="600" letter-spacing="-0.5">${esc(forge.brand.name)}</text>
+  <text x="88" y="136" fill="#f3f3f5" font-family="'Red Hat Display', system-ui, sans-serif"
+        font-size="52" font-weight="900" letter-spacing="-1.8">${esc(forge.brand.name.toLowerCase())}</text>
 
   ${wrap(forge.brand.tagline).map((line, i) => `<text x="88" y="${330 + i * 78}" fill="#f3f3f5"
         font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
@@ -87,6 +89,7 @@ try {
 const browser = await chromium.launch()
 const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT } })
 await page.setContent(`<body style="margin:0">${svg}</body>`)
+await page.evaluate(() => document.fonts.ready)
 await page.screenshot({ path: join(root, 'public', 'og-image.png') })
 await browser.close()
 

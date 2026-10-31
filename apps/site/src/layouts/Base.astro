@@ -18,6 +18,8 @@ import '../styles/marketing.css'
 // from the fallback stack is rarely seen. Vite hashes it to the same URL the
 // @font-face rule in tokens.css resolves to.
 import interTight400 from '@forge/tokens/fonts/inter-tight-latin-400-normal.woff2?url'
+// The logo face is in the header on every page too.
+import redHat900 from '@forge/tokens/fonts/red-hat-display-latin-900-normal.woff2?url'
 
 import Seo from '../components/Seo.astro'
 import Nav from '../components/Nav.astro'
@@ -34,6 +36,7 @@ const t = useTranslations(locale)
 <html lang={meta.lang}>
   <head>
     <link rel="preload" href={interTight400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={redHat900} as="font" type="font/woff2" crossorigin />
     <Seo meta={meta} />
   </head>
   <body>
