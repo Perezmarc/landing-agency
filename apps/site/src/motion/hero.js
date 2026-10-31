@@ -9,7 +9,8 @@
    transition clip (the raw rock shatters and a polished pebble is left with
    one stream), then the BEFORE layer (poster and loop). The transition's first
    frame is the BEFORE rock and its last is the AFTER pebble, so each swap is
-   invisible. The server HTML is the AFTER state; this module boots into the
+   invisible. The server HTML has no state: with no JS it reads as AFTER, and
+   where scripts run the CSS shows BEFORE until this module boots into the
    state for the current scroll position and plays from there.
 
    iOS Safari ignores `preload` (above all on cellular) and decodes nothing

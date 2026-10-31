@@ -180,6 +180,14 @@
 .mk-hero-before { opacity: 0; transition: opacity var(--dur-hero-fade) var(--ease-out); }
 .mk-hero[data-hero-state="before"] .mk-hero-before,
 .mk-hero[data-hero-state="reassembling"] .mk-hero-before { opacity: 1; }
+/* Before motion/ has picked a state, a page that will run it starts on the
+   rough rock: the AFTER poster loads underneath but is never seen first. With
+   scripting off there is no state either, and the page stays on AFTER. */
+@media (scripting: enabled) {
+  .mk-hero:not([data-hero-state]) .mk-hero-before { opacity: 1; }
+  .mk-hero:not([data-hero-state]) .mk-hero-line--lead { color: var(--ink); }
+  .mk-hero:not([data-hero-state]) .mk-hero-line--main { color: var(--title-off); }
+}
 /* The crash clip. Its first frame is the BEFORE rock, so the BEFORE layer is
    cut at once; it is hidden again as the AFTER loop takes over under it.
    While the clip is asked to start (`is-arming`), the BEFORE layer stays. */
