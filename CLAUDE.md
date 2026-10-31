@@ -125,11 +125,14 @@ Every command runs from the repository root; `npm test` is `turbo run test`.
 The site is static HTML. Astro renders the kit's React components at build
 time, so they ship no JavaScript; never add a `client:` directive.
 
-### JavaScript: one module, home only
+### JavaScript: the home page's motion, and the footer's pool
 
 The landing page has motion (the hero crash, the calendar, the reveals), and
 all of it lives in ONE vanilla ES module, `apps/site/src/motion/`, loaded by a
-single bare `<script>` in `Home.astro`. Use cases, blog, contact and legal ship none. The
+single bare `<script>` in `Home.astro`. The one exception is the footer's pool:
+`motion/footer.js`, loaded by a bare `<script>` in `Footer.astro`, so every
+page's footer water moves (lazily, on the media tier only). Use cases, blog,
+contact and legal ship nothing else. The
 e2e suite enforces both, and the CSP (`script-src 'self'`) blocks anything else.
 The use cases page's reading focus (pinned use cases lit one at a time while their "how" cards swap on a pinned stage, the side menu, the drawn glyphs, the steps' rail, the reading bar)
 is CSS scroll-driven animation, so it needs no script: keep it that way.
@@ -168,7 +171,7 @@ The engine binary is not committed (`scripts/bin/` is ignored): the launcher
 fetches the one for the platform and checks it against `engine-checksums.txt`.
 Its hooks live in each machine's own `.claude/settings.local.json`. Like the
 taste skill, **this file wins wherever they disagree**: the kit, the tokens,
-no script outside the homepage, no invented proof.
+no script outside the homepage but the footer's, no invented proof.
 
 ### Always use the UI kit (`@forge/ui`) — hard rule
 

@@ -442,7 +442,7 @@ drifting through the water. It is the shared footer, so every page has it.
 
 - **The poster is CSS** (`.mk-footer` in `marketing.css`): AVIF through
   `image-set()`, WebP for the rest, `cover`, anchored at the top
-  (`--pool-at: 50% 0%`). Blog, contact and legal get it with no JavaScript.
+  (`--pool-at: 50% 0%`), so every page has it with no JavaScript.
   Two renditions, both at the source's own scale (1 source pixel per pixel,
   nothing upscaled): the full band, 1920x532, and at 720px wide and under
   `footer-pool-narrow`, its centre 1080x532, which is all a phone's footer
@@ -478,9 +478,10 @@ drifting through the water. It is the shared footer, so every page has it.
   it, without the halo: the lowest is 10.8:1 on the poster at 1440 (2x) and
   11.2:1 at 390 (3x), and 11.0:1 / 10.9:1 over the clip there (it was
   8.9 and 9.4 on the poster, 8.9 and 8.8 on the clip, with the green water).
-- **Motion** (`motion/pool.js`, the media tier only, home page only). The
-  home page hands the footer the clip's URLs (`data-pool`, from
-  `Home.astro` through `Base.astro`). Once the footer is within half a
+- **Motion** (`motion/pool.js`, the media tier only, on every page). The
+  footer carries the clip's URLs (`data-pool`, in `Footer.astro`) and loads
+  its own small script, `motion/footer.js`, the only one outside the home
+  page. Once the footer is within half a
   screen (and after `load`), one looping `<video>` is created in the footer,
   `position: absolute; inset: 0`, `object-fit: cover` with the same
   `--pool-at` as the background, under the copy (`z-index: -1`), in the
@@ -498,7 +499,7 @@ drifting through the water. It is the shared footer, so every page has it.
 
 | Case | What the visitor sees |
 |---|---|
-| No JS (and every page but home) | The AFTER poster, the stream below it as its still (home), the stones (their float is CSS), the final calendar (side by side, stacked weeks or one day, by width) with no water on it; the footer's pool as its still poster. |
+| No JS | The AFTER poster, the stream below it as its still (home), the stones (their float is CSS), the final calendar (side by side, stacked weeks or one day, by width) with no water on it; the footer's pool as its still poster. |
 | Reduced motion | Posters with a crossfade instead of the crash, still stones, no videos (the stream's still, no water on the calendar, the pool's poster in the footer), no reveals. |
 | Save-Data, 2g, or a device that reports under 4 GB (`deviceMemory`) | Motion, but posters only: no video requests; the crash is a poster crossfade and the footer is the pool's poster. A browser that reports no memory (Safari, Firefox) gets the clips. |
 | `play()` refused (iOS Low Power Mode) | The posters crossfade; the state and the headline still change. |

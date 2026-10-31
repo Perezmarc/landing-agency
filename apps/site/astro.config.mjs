@@ -5,9 +5,9 @@ import forge from '@forge/manifest'
 /* The site: landing, blog, contact, legal.
  *
  * STATIC, ON THE APEX DOMAIN. Every page is HTML on disk before a request
- * arrives and nothing talks to a backend. The landing page ships ONE script,
- * its motion module (src/motion/), as a hashed file under /_astro/; every
- * other page ships none.
+ * arrives and nothing talks to a backend. Every page ships one script, the
+ * footer's pool (src/motion/footer.js), and the landing page adds its motion
+ * module (src/motion/), each as a hashed file under /_astro/.
  *
  * Two build settings keep that script and the CSS out of the HTML, because
  * the Content-Security-Policy (vercel.json) allows `script-src 'self'` only:

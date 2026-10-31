@@ -1,4 +1,4 @@
-/* How much motion this device gets. Pure, so it is unit-tested; index.js
+/* How much motion this device gets. Pure, so it is unit-tested; device.js
    gathers the inputs from the browser.
 
    reduced motion  → no videos, no reveal or calendar animation; the hero's

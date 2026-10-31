@@ -6,7 +6,8 @@ import forge from '@forge/manifest'
    industry and its use cases stay pinned on the left and a pinned stage on
    the right swaps one "how the agent does it" card per use case as the
    industry scrolls by; scroll-driven CSS lights up the use case whose card
-   is showing and draws its glyph. It ships no script, so the things to hold are
+   is showing and draws its glyph. No script drives it (the only one here is the
+   footer's pool), so the things to hold are
    that the effect follows the scroll where it applies, and that with
    reduced motion the page is the plain, fully visible HTML. */
 

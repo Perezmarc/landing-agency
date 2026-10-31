@@ -1,8 +1,8 @@
 /* The footer's pool: the water that has fallen down the page, as one looping
    clip over the footer's poster.
 
-   Every page has the poster, as the footer's CSS background (marketing.css);
-   only the home page loads this. Media tier only (index.js), and only once
+   Every page has the poster, as the footer's CSS background (marketing.css),
+   and every page loads this, through footer.js. Media tier only, and only once
    the footer is within half a screen of the viewport, after `load`: nothing
    is requested before. The clip is the poster's own source, cropped and
    placed the same way (object-fit and object-position match the background),

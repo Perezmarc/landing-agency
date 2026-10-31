@@ -55,26 +55,36 @@ test.describe('what a crawler reads', () => {
     expect(html).toContain('application/ld+json')
   })
 
-  test('every page except the homepages ships no script but its JSON-LD', async ({ page }) => {
+  // The footer's pool (motion/footer.js) is the one script every page loads;
+  // the home page adds its motion module. External, hashed, modules, empty:
+  // the CSP allows 'self' only.
+  const FOOTER = /^<script type="module" src="\/_astro\/Footer\.astro[^"]*\.js"><\/script>$/
+  const MODULE = /^<script type="module" src="\/_astro\/[^"]+\.js"><\/script>$/
+  const codeOf = (html) => {
+    const scripts = html.match(/<script[^>]*>[\s\S]*?<\/script>/g) ?? []
+    return { jsonLd: scripts.filter(s => s.includes('application/ld+json')), code: scripts.filter(s => !s.includes('application/ld+json')) }
+  }
+
+  test('every page except the homepages ships only the footer\'s script and its JSON-LD', async ({ page }) => {
     const homes = new Set(forge.locales.published.map(locale => routePath('home', locale)))
     for (const route of publishedRoutes().filter(route => !homes.has(route.path))) {
       const html = await (await page.request.get(route.path)).text()
-      // The one allowed <script> is the JSON-LD block: data, not code.
-      const scripts = html.match(/<script[^>]*>/g) ?? []
-      scripts.forEach(tag => expect(tag, route.path).toContain('application/ld+json'))
+      const { code } = codeOf(html)
+      expect(code, route.path).toHaveLength(1)
+      expect(code[0], route.path).toMatch(FOOTER)
+      expect(html, route.path).not.toMatch(/\son[a-z]+=/i)
+      expect(html, route.path).not.toMatch(/javascript:/i)
     }
   })
 
   for (const locale of forge.locales.published) {
-    test(`the ${locale} homepage ships exactly one module script and no inline code`, async ({ page }) => {
+    test(`the ${locale} homepage ships its motion module, the footer's script and no inline code`, async ({ page }) => {
       const html = await (await page.request.get(routePath('home', locale))).text()
-      const scripts = html.match(/<script[^>]*>[\s\S]*?<\/script>/g) ?? []
-      const jsonLd = scripts.filter(s => s.includes('application/ld+json'))
-      const code = scripts.filter(s => !s.includes('application/ld+json'))
+      const { jsonLd, code } = codeOf(html)
       expect(jsonLd).toHaveLength(1)
-      expect(code).toHaveLength(1)
-      // External, hashed, a module, and empty: the CSP allows 'self' only.
-      expect(code[0]).toMatch(/^<script type="module" src="\/_astro\/[^"]+\.js"><\/script>$/)
+      expect(code).toHaveLength(2)
+      code.forEach(tag => expect(tag).toMatch(MODULE))
+      expect(code.filter(tag => FOOTER.test(tag))).toHaveLength(1)
       // No inline event handlers and no javascript: URLs anywhere.
       expect(html).not.toMatch(/\son[a-z]+=/i)
       expect(html).not.toMatch(/javascript:/i)

@@ -14,7 +14,8 @@
  * picks the water up on its two cards, and the footer is the pool it has
  * filled. See docs/LANDING-DESIGN.md.
  * The server HTML is the final, no-JS state: the AFTER poster and the calendar
- * after, with no video. The one <script> at the bottom adds the motion on top.
+ * after, with no video. The <script> at the bottom adds the motion on top (the
+ * footer brings its own, for the pool).
  *
  * There are no case studies, logos, testimonials or numbers here because
  * none exist yet. The calendar and the invoice walkthrough are illustrations
@@ -64,10 +65,6 @@ import streamPWebm from '../media/day-stream-9x16.webm?url'
 import streamPMp4 from '../media/day-stream-9x16.mp4?url'
 import streamPAvif from '../media/day-stream-9x16.avif?url'
 import streamPWebp from '../media/day-stream-9x16.webp?url'
-import poolWebm from '../media/footer-pool.webm?url'
-import poolMp4 from '../media/footer-pool.mp4?url'
-import poolNarrowWebm from '../media/footer-pool-narrow.webm?url'
-import poolNarrowMp4 from '../media/footer-pool-narrow.mp4?url'
 import founderPhoto from '../media/founder.webp'
 
 const stoneFiles = import.meta.glob('../media/stones/*.webp', { eager: true, import: 'default' })
@@ -127,14 +124,6 @@ const [streamL, streamP] = [media.hero['16x9'].stream, media.hero['9x16'].stream
 const dayStyle = `--stream-lx: ${streamL.x}; --stream-lw: ${streamL.width}; --stream-px: ${streamP.x}; --stream-pw: ${streamP.width}; ` +
   `--cx: ${media.stream.x}; --cw: ${media.stream.width}; --clip-lar: ${media.stream['16x9'].aspect}; --clip-par: ${media.stream['9x16'].aspect}`
 
-// The footer's pool (motion/pool.js): the looping clip over its poster, in
-// its two renditions (the full band, and its centre for phones), each with
-// its WebM's codec string (10-bit AV1).
-const poolData = JSON.stringify({
-  wide: { webm: poolWebm, mp4: poolMp4, av1: media.footer.pool.av1 },
-  narrow: { webm: poolNarrowWebm, mp4: poolNarrowMp4, av1: media.footer.pool.narrow.av1 },
-})
-
 const stone = async (name) => (await getImage({ src: stoneFiles[`../media/stones/${name}.webp`], format: 'webp', width: 160 })).src
 const rawStones = await Promise.all([1, 2, 3, 4, 5, 6, 7].map(i => stone(`raw-${i}`)))
 const pebbleStones = await Promise.all([1, 2, 3, 4].map(i => stone(`pebble-${i}`)))
@@ -143,7 +132,7 @@ const founder = await getImage({ src: founderPhoto, format: 'avif', widths: [480
 
 const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
 ---
-<Base meta={meta} locale={locale} current="home" overlay pool={poolData}>
+<Base meta={meta} locale={locale} current="home" overlay>
   <section class="mk-hero" data-hero data-hero-state="after" data-media={heroData} style={heroStyle}>
     <div class="mk-hero-stage">
       <div class="mk-hero-media" aria-hidden="true">

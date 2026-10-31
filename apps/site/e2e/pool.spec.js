@@ -4,15 +4,14 @@ import { publishedRoutes, routePath } from '@forge/seo/routes'
 import forge from '@forge/manifest'
 
 /* The footer's pool: the water that has fallen down the page. Every page has
-   its still poster as the footer's CSS background, with no JavaScript; the
-   home page lays the looping clip over it (motion/pool.js), on the media
-   tier only, once the footer is near. Asserted by state and geometry, and by
+   its still poster as the footer's CSS background, with no JavaScript, and
+   every page lays the looping clip over it (motion/footer.js), on the media
+   tier only, once the footer is near: phones included. Asserted by state and geometry, and by
    the pixels under the footer's text: its contrast is measured on what is
    actually painted there. */
 
 const media = JSON.parse(readFileSync(new URL('../src/media/media.json', import.meta.url), 'utf8'))
 const HOME = routePath('home', forge.locales.default)
-const HOMES = new Set(forge.locales.published.map(locale => routePath('home', locale)))
 const isPoolClip = url => /footer-pool[^/]*\.(webm|mp4)(\?|$)/.test(url)
 const isNarrow = url => /footer-pool-narrow[^/]*\.(avif|webp|webm|mp4)/.test(url)
 // The footer's phone rendition (marketing.css) is served at this width and under.
@@ -94,8 +93,8 @@ test.describe('the poster, with JavaScript off', () => {
         await expect.poll(() => posters.length, { message: route.path }).toBeGreaterThan(0)
         expect(posters.every(s => s === 200), route.path).toBe(true)
         await expect(page.locator('video'), route.path).toHaveCount(0)
-        // Only the home page hands the motion module the clip.
-        await expect(page.locator('[data-pool]'), route.path).toHaveCount(HOMES.has(route.path) ? 1 : 0)
+        // Every page hands the footer's script the clip.
+        await expect(page.locator('[data-pool]'), route.path).toHaveCount(1)
         await context.close()
       }
     })
@@ -222,6 +221,23 @@ test('on a phone the clip is the band\'s centre, like the poster, and a resize a
   await toFooter(page)
   await expect.poll(() => page.locator('.mk-footer > video.mk-footer-pool').evaluate(v => v.currentSrc)).toMatch(/footer-pool\.[^/]*\.(webm|mp4)/)
   await expect(page.locator('.mk-footer-pool')).toHaveCount(1)
+})
+
+/* Not only the home page: every page's footer moves, on a phone too. */
+test.describe('on every page, on a phone', () => {
+  test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 3 })
+  for (const kind of ['useCases', 'blog', 'contact', 'privacy']) {
+    test(`the ${kind} page's footer plays the phone clip`, async ({ page }) => {
+      // A short page has its footer near from the start, so the clip may
+      // load at once; the home page's test holds the laziness.
+      await page.goto(routePath(kind, forge.locales.default), { waitUntil: 'load' })
+      await toFooter(page)
+      const clip = page.locator('.mk-footer > video.mk-footer-pool')
+      await expect.poll(() => clip.evaluate(v => !v.paused && v.currentTime > 0.5 && v.classList.contains('is-ready'))).toBe(true)
+      expect(isNarrow(await clip.evaluate(v => v.currentSrc))).toBe(true)
+      await expect(page.locator('.mk-footer-pool')).toHaveCount(1)
+    })
+  }
 })
 
 test.describe('reduced motion', () => {
