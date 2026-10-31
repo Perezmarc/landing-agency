@@ -9,7 +9,8 @@ The website of an AI consulting agency: we design, build and run custom AI
 agents that take over repetitive back-office workflows (finance, revenue ops,
 procurement, compliance, customer ops, logistics) inside the client's existing
 tools. The site's one job is to get a qualified visitor to **book a discovery
-call**. It is a landing page, a blog, a contact page and legal pages, in
+call**. It is a landing page, a use cases page (by industry), a blog, a contact
+page and legal pages, in
 English, Spanish and Italian.
 
 The name and domain live in the manifest (`packages/manifest/forge.config.js`).
@@ -22,7 +23,7 @@ Never type a name, domain or address anywhere else.
 | `apps/site/…` | the site (Astro, static, no backend) |
 | `packages/…` | what it is built from: `config`, `manifest`, `i18n`, `seo`, `tokens`, `ui` |
 | `.agents/product-marketing.md` | positioning, audience, objections — the brief every copy change starts from |
-| `.claude/skills/` | the marketingskills library (copywriting, cro, seo-audit, …) and `design-taste-frontend` |
+| `.claude/skills/` | the marketingskills library (copywriting, cro, seo-audit, …), `design-taste-frontend` and `impeccable` |
 
 ---
 
@@ -124,12 +125,17 @@ Every command runs from the repository root; `npm test` is `turbo run test`.
 The site is static HTML. Astro renders the kit's React components at build
 time, so they ship no JavaScript; never add a `client:` directive.
 
-### JavaScript: one module, home only
+### JavaScript: the home page's motion, and the footer's pool
 
 The landing page has motion (the hero crash, the calendar, the reveals), and
 all of it lives in ONE vanilla ES module, `apps/site/src/motion/`, loaded by a
-single bare `<script>` in `Home.astro`. Blog, contact and legal ship none. The
+single bare `<script>` in `Home.astro`. The one exception is the footer's pool:
+`motion/footer.js`, loaded by a bare `<script>` in `Footer.astro`, so every
+page's footer water moves (lazily, on the media tier only). Use cases, blog,
+contact and legal ship nothing else. The
 e2e suite enforces both, and the CSP (`script-src 'self'`) blocks anything else.
+The use cases page's reading focus (pinned use cases lit one at a time while their "how" cards swap on a pinned stage, the side menu, the drawn glyphs, the steps' rail, the reading bar)
+is CSS scroll-driven animation, so it needs no script: keep it that way.
 
 - **The CSS default is the final, no-JS state.** The HTML must read and look
   finished with JavaScript off (the AFTER poster, the calendar after). JS only adds motion on top, through data attributes and classes.
@@ -153,6 +159,19 @@ stylesheets, never Tailwind, Next.js or a third-party design system; no
 placeholder photography (picsum or otherwise) or sample content without asking,
 per the mock-data rule; and no client-side animation library (motion is the
 one vanilla module, see below). Take its judgement, not its stack.
+
+### Impeccable — `.claude/skills/impeccable`
+
+Installed with `npx impeccable install --providers=claude --scope=project`
+(v4.8.0). Use it for design review and refinement (`/impeccable audit`,
+`critique`, `polish`, `animate` …) and run its detector on the built HTML
+before handing over UI work:
+`.claude/skills/impeccable/scripts/impeccable detect apps/site/dist/<page>/index.html`.
+The engine binary is not committed (`scripts/bin/` is ignored): the launcher
+fetches the one for the platform and checks it against `engine-checksums.txt`.
+Its hooks live in each machine's own `.claude/settings.local.json`. Like the
+taste skill, **this file wins wherever they disagree**: the kit, the tokens,
+no script outside the homepage but the footer's, no invented proof.
 
 ### Always use the UI kit (`@forge/ui`) — hard rule
 

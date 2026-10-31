@@ -21,7 +21,7 @@ const t = useTranslations(locale)
 
 // No module markers here: the filter below already drops any link whose route
 // is not in the table, so removing the blog route removes the blog link.
-const links = ['blog', 'contact']
+const links = ['useCases', 'blog', 'contact']
   .map(key => ({ key, href: routePath(key, locale), label: t(`nav.${key}`) }))
   .filter(link => link.href)
 ---

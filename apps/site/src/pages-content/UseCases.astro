@@ -1,0 +1,155 @@
+---
+/* Use cases, industry by industry.
+ *
+ * The long form of what the homepage only sketches (a week per team, one
+ * invoice walkthrough): for each industry, where the repetitive work piles
+ * up, the processes we look at first and, for each process, how an agent
+ * handles it, sorted into the four buckets with the same tags as the
+ * homepage's walkthrough.
+ *
+ * The "how" panels are illustrations of the method and say so on the page.
+ * No client, result or figure appears here until a real one exists.
+ *
+ * Static HTML with no script: the industry index at the top and the slim
+ * side menu (wide screens only) are in-page anchors, and every CTA books a
+ * call. Every string comes from @forge/i18n.
+ *
+ * READING ONE THING AT A TIME. In two columns, the industry and its use
+ * cases stay pinned on the left, with one "how the agent does it" card per
+ * use case, in the same order, on the right. Where the browser has
+ * scroll-driven animations and the reader allows motion, CSS alone
+ * (marketing.css, USE CASES) pins the cards on a stage too and swaps them
+ * as the industry scrolls by, lighting up the matching use case on the left
+ * and drawing its glyph (a small picture of what the agent does: reads,
+ * matches, routes, chases …); fills a rail beside the card's steps; turns
+ * each bucket's icon; and draws a reading bar under the header. In one
+ * column, the cards follow the list and each lights up as it crosses the
+ * middle of the screen. Everywhere else the page is the same HTML, fully visible and fully
+ * drawn: these classes only hook the animation.
+ */
+import Base from '../layouts/Base.astro'
+import BucketTag from '../components/BucketTag.astro'
+import CaseGlyph from '../components/CaseGlyph.astro'
+import { GLYPHS } from '../data/use-case-glyphs.js'
+import { Button } from '@forge/ui'
+import forge from '@forge/manifest'
+import { useTranslations, useList } from '@forge/i18n'
+import { pageMeta } from '@forge/seo/meta'
+
+const { locale } = Astro.props
+const t = useTranslations(locale)
+const list = useList(locale)
+const meta = pageMeta('useCases', locale)
+
+const buckets = list('home.buckets')
+const industries = list('useCases.industries')
+// A step's tag is its bucket's position (1 Delete … 4 A person), as on the homepage.
+const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
+const pad = n => String(n).padStart(2, '0')
+---
+<Base meta={meta} locale={locale} current="useCases">
+  <div class="mk-uc-progress" aria-hidden="true"></div>
+
+  <section class="mk-section mk-uc-intro">
+    <div class="mk-wrap">
+      <div class="mk-section-head">
+        <span class="mk-eyebrow">{t('useCases.eyebrow')}</span>
+        <h1 class="mk-h2">
+          <span class="mk-line mk-line--grey">{t('useCases.headingLead')}</span>
+          {' '}
+          <span class="mk-line">{t('useCases.heading')}</span>
+        </h1>
+        <p class="mk-lead">{t('useCases.lead')}</p>
+        <p class="mk-uc-markets">{t('useCases.markets')}</p>
+      </div>
+
+      <nav class="mk-uc-index" aria-label={t('useCases.indexLabel')}>
+        {industries.map(industry => (
+          <Button as="a" href={`#${industry.anchor}`} variant="glass" size="compact" pill>{industry.name}</Button>
+        ))}
+      </nav>
+
+      <div class="mk-uc-legend">
+        <p>{t('useCases.legendLead')}</p>
+        <ol class="mk-uc-buckets">
+          {buckets.map((bucket, i) => <BucketTag as="li" position={i + 1} label={bucket.title} />)}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <div class="mk-uc-industries">
+    <nav class="mk-uc-side" aria-label={t('useCases.sideLabel')}>
+      <ol>
+        {industries.map((industry, n) => (
+          <li>
+            <a href={`#${industry.anchor}`}>
+              <span class="mk-uc-side-n" aria-hidden="true">{pad(n + 1)}</span>
+              <span class="mk-uc-side-name">{industry.name}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    {industries.map((industry, n) => (
+      <section class="mk-uc-industry" id={industry.anchor} aria-labelledby={`${industry.anchor}-title`}>
+        <div class="mk-wrap mk-uc-grid">
+          <div class="mk-uc-head">
+            <p class="mk-uc-count" aria-hidden="true">{pad(n + 1)} / {pad(industries.length)}</p>
+            <h2 class="mk-uc-name" id={`${industry.anchor}-title`}>{industry.name}</h2>
+            <p class="mk-uc-lead">{industry.lead}</p>
+            <h3 class="mk-uc-label">{t('useCases.casesHeading')}</h3>
+            <ul class="mk-uc-cases">
+              {industry.cases.map((item, i) => (
+                <li class="mk-uc-focus">
+                  <CaseGlyph name={GLYPHS[n][i]} />
+                  <div>
+                    <h4>{item.title}</h4>
+                    <p>{item.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="mk-uc-hows">
+            <div class="mk-uc-stage">
+              {industry.cases.map((item, i) => (
+                <article class="mk-uc-how mk-uc-focus" aria-labelledby={`${industry.anchor}-how-${i + 1}`}>
+                  <div class="mk-uc-how-card">
+                    <span class="mk-eyebrow">{t('useCases.howEyebrow')}</span>
+                    <h4 id={`${industry.anchor}-how-${i + 1}`}>{item.title}</h4>
+                    <ol class="mk-steps-list mk-uc-steps">
+                      {item.how.map(step => (
+                        <li>
+                          <span>{step.step}</span>
+                          <BucketTag position={bucketOf[step.bucket]} label={step.bucket} />
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                </article>
+              ))}
+              <p class="mk-illustration-note">{t('useCases.exampleNote')}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <section class="mk-final">
+    <div class="mk-wrap mk-final-inner">
+      <div class="mk-final-copy">
+        <h2>{t('useCases.ctaHeading')}</h2>
+        <p>{t('useCases.ctaLead')}</p>
+        <div class="mk-final-actions">
+          <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill iconRightName="arrowRight">
+            {t('home.ctaPrimary')}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

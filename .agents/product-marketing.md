@@ -1,7 +1,7 @@
 # Product Marketing Context
 
-**Document version:** v11
-**Last updated:** 2026-10-30
+**Document version:** v12
+**Last updated:** 2026-10-31
 
 > Auto-drafted from the founder's brief ("an AI consulting agency, almost exactly
 > like varickagents.com") before the agency had a name, customers or proof.
@@ -15,7 +15,9 @@
 **Business model:** Per-engagement proposal priced on workflow complexity, systems involved and deployment scope; ongoing optimisation after launch. [NEED: retainer vs. fixed fee, typical engagement size]
 
 ## Target Audience
-**Target companies:** Mid-sized and enterprise companies with finance, revenue, procurement, compliance or customer-operations teams doing repetitive, rule-based work across several systems. [NEED: size band, industries, geography — the site ships in EN/ES/IT]
+**Target companies:** Mid-sized and enterprise companies with finance, revenue, procurement, compliance or customer-operations teams doing repetitive, rule-based work across several systems. [NEED: size band]
+**Geography:** Spain, Italy, the United Kingdom and the United States, in that order of priority (from the owner), then the rest of Europe. The site ships in EN/ES/IT.
+**Industries on the use cases page:** manufacturing, distribution and logistics, retail and e-commerce, financial services and insurance, professional services, real estate and property management, hospitality and travel, private healthcare (administrative work only). Chosen for the four markets, not from client work. [NEED: which industries the first engagements come from]
 **Decision-makers:** COO, CFO, VP/Head of Operations, RevOps and Finance Ops leads; IT/security as technical influencer.
 **Primary use case:** Hand an end-to-end operational workflow (e.g. AP exceptions, deal approvals, vendor onboarding) to AI agents.
 **Jobs to be done:**
@@ -126,6 +128,7 @@ From the owner (2026-10-16), and on the homepage as "Who we are":
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v12 (2026-10-31): A use cases page (`/use-cases`, `/es/casos-de-uso`, `/it/casi-d-uso`), in the nav and footer and linked from the homepage's week and invoice walkthrough: eight industries, each with the processes we look at first and one worked example sorted into the four buckets, labelled as illustrations. Geography recorded: Spain, Italy, UK, US.
 - v11 (2026-10-30): "Who we are" gets the owner's personal story back, at their request, since their track record is the main selling point: first person for the founding and what it taught, "we" for the agency today. The company "merged with" a San Francisco company (the owner's word), in the section and in the hero's founder line.
 - v10 (2026-10-29): "Who we are" and the hero's founder line are humbler and more casual, at the owner's request: the background is mentioned lightly and in "we" (no "I run the agency"), the acquisition is no longer mentioned, and the section dwells on what the experience taught (how processes really run, what a person should keep, early ideas that didn't work first time).
 - v9 (2026-10-29): The agency has its name and domain, set in the manifest. A coined word (the "lev" of lift and lighten, with "AI" inside), screened for sound and meaning in English, Spanish and Italian; the .com is held by someone else, so the site lives on the .ai. Booking stays by email, now to the hello@ address on that domain.

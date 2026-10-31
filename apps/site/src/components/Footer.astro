@@ -9,15 +9,22 @@
  *
  * THE POOL. The footer's background is the water that has fallen down the
  * page: a calm pool, the still poster as CSS on every page (marketing.css),
- * so blog, contact and legal get it with no JavaScript. On the home page,
- * `pool` carries the looping clip's URLs (data, no strings) for
- * motion/pool.js, which lays the clip over the poster on the media tier.
+ * so it reads finished with no JavaScript. `data-pool` carries the looping
+ * clip's URLs (data, no strings), in its two renditions (the full band, and
+ * its centre for phones), each with its WebM's codec string (10-bit AV1). The
+ * footer's script (motion/footer.js, the only one outside the home page)
+ * lays the clip over the poster, on the media tier, once the footer is near.
  */
 import forge from '@forge/manifest'
 import { useTranslations, HTML_LANG } from '@forge/i18n'
 import { routePath, alternates } from '@forge/seo/routes'
+import media from '../media/media.json'
+import poolWebm from '../media/footer-pool.webm?url'
+import poolMp4 from '../media/footer-pool.mp4?url'
+import poolNarrowWebm from '../media/footer-pool-narrow.webm?url'
+import poolNarrowMp4 from '../media/footer-pool-narrow.mp4?url'
 
-const { locale, current, pool = null } = Astro.props
+const { locale, current } = Astro.props
 const t = useTranslations(locale)
 
 const year = new Date().getUTCFullYear()
@@ -29,6 +36,11 @@ const legalLink = (key) => ({ href: routePath(key, locale), label: t(`footer.${k
 
 const languages = alternates(current)
   .filter(alt => alt.locale !== 'x-default' && alt.locale !== locale)
+
+const pool = JSON.stringify({
+  wide: { webm: poolWebm, mp4: poolMp4, av1: media.footer.pool.av1 },
+  narrow: { webm: poolNarrowWebm, mp4: poolNarrowMp4, av1: media.footer.pool.narrow.av1 },
+})
 
 const socials = Object.entries(forge.brand.social).filter(([, handle]) => handle)
 ---
@@ -42,6 +54,7 @@ const socials = Object.entries(forge.brand.social).filter(([, handle]) => handle
 
       <div class="mk-footer-col">
         <strong>{t('footer.company')}</strong>
+        <a href={link('useCases').href}>{link('useCases').label}</a>
         <a href={link('blog').href}>{link('blog').label}</a>
         <a href={link('contact').href}>{link('contact').label}</a>
         <a href={forge.brand.bookingUrl}>{t('nav.bookCall')}</a>
@@ -75,3 +88,7 @@ const socials = Object.entries(forge.brand.social).filter(([, handle]) => handle
     </div>
   </div>
 </footer>
+
+<script>
+  import '../motion/footer.js'
+</script>

@@ -1,0 +1,14 @@
+---
+/* One of the four buckets as a tag: Delete, Plain code, An agent, A person.
+ *
+ * `position` is the bucket's place in `home.buckets` (1–4). It picks the
+ * tag's colour (mk-tag--n) and its icon, which the use cases page turns as
+ * the reader scrolls (marketing.css, USE CASES). The label is the catalog's
+ * bucket title, passed in. `as="li"` for the legend, a <span> elsewhere.
+ */
+import { Ico } from '@forge/ui'
+
+const ICON = { 1: 'trash', 2: 'code', 3: 'sparkle', 4: 'user' }
+const { position, label, as: Tag = 'span' } = Astro.props
+---
+<Tag class={`mk-tag mk-tag--${position}`}><Ico name={ICON[position]} size={13} className="mk-tag-icon" />{label}</Tag>

@@ -4,7 +4,8 @@
  * Section order is the argument: the hero (hand the repetitive work to AI
  * agents, free up more than half of the team's time) → a week, before and after → the
  * problem (the documented process is not the real one) → how we find the real
- * process → sort every step → one process sorted, as an illustration → how an
+ * process → sort every step → one process sorted, as an illustration (both
+ * the week and the walkthrough link on to the use cases page) → how an
  * engagement works → built on your systems → who we are (the person who
  * leads the agency) → FAQ → final CTA. Every CTA books a call.
  *
@@ -13,7 +14,8 @@
  * picks the water up on its two cards, and the footer is the pool it has
  * filled. See docs/LANDING-DESIGN.md.
  * The server HTML is the final, no-JS state: the AFTER poster and the calendar
- * after, with no video. The one <script> at the bottom adds the motion on top.
+ * after, with no video. The <script> at the bottom adds the motion on top (the
+ * footer brings its own, for the pool).
  * Where scripts run, the hero's CSS starts on the BEFORE rock instead, so the
  * polished pebble (loading underneath) is never seen before the rough rock.
  *
@@ -29,10 +31,12 @@
 import { getImage } from 'astro:assets'
 import Base from '../layouts/Base.astro'
 import WeekCompare from '../components/WeekCompare.jsx'
+import BucketTag from '../components/BucketTag.astro'
 import { Button, Ico } from '@forge/ui'
 import forge from '@forge/manifest'
 import { CATALOGS, useTranslations, useList } from '@forge/i18n'
 import { pageMeta } from '@forge/seo/meta'
+import { routePath } from '@forge/seo/routes'
 import media from '../media/media.json'
 
 import beforeL from '../media/hero-before-16x9.jpg'
@@ -63,10 +67,6 @@ import streamPWebm from '../media/day-stream-9x16.webm?url'
 import streamPMp4 from '../media/day-stream-9x16.mp4?url'
 import streamPAvif from '../media/day-stream-9x16.avif?url'
 import streamPWebp from '../media/day-stream-9x16.webp?url'
-import poolWebm from '../media/footer-pool.webm?url'
-import poolMp4 from '../media/footer-pool.mp4?url'
-import poolNarrowWebm from '../media/footer-pool-narrow.webm?url'
-import poolNarrowMp4 from '../media/footer-pool-narrow.mp4?url'
 import founderPhoto from '../media/founder.webp'
 
 const stoneFiles = import.meta.glob('../media/stones/*.webp', { eager: true, import: 'default' })
@@ -86,6 +86,7 @@ const day = (CATALOGS[locale] ?? CATALOGS.en).home.day
 // The FAQ nodes are built from the SAME list the page renders. Emitting FAQ
 // markup for questions a visitor cannot see is a search policy violation.
 const meta = pageMeta('home', locale, { faqs })
+const useCasesPath = routePath('useCases', locale)
 
 /* ── Media ──
    Posters are art-directed: the 9:16 rendition below 1:1 aspect, 16:9 above,
@@ -125,14 +126,6 @@ const [streamL, streamP] = [media.hero['16x9'].stream, media.hero['9x16'].stream
 const dayStyle = `--stream-lx: ${streamL.x}; --stream-lw: ${streamL.width}; --stream-px: ${streamP.x}; --stream-pw: ${streamP.width}; ` +
   `--cx: ${media.stream.x}; --cw: ${media.stream.width}; --clip-lar: ${media.stream['16x9'].aspect}; --clip-par: ${media.stream['9x16'].aspect}`
 
-// The footer's pool (motion/pool.js): the looping clip over its poster, in
-// its two renditions (the full band, and its centre for phones), each with
-// its WebM's codec string (10-bit AV1).
-const poolData = JSON.stringify({
-  wide: { webm: poolWebm, mp4: poolMp4, av1: media.footer.pool.av1 },
-  narrow: { webm: poolNarrowWebm, mp4: poolNarrowMp4, av1: media.footer.pool.narrow.av1 },
-})
-
 const stone = async (name) => (await getImage({ src: stoneFiles[`../media/stones/${name}.webp`], format: 'webp', width: 160 })).src
 const rawStones = await Promise.all([1, 2, 3, 4, 5, 6, 7].map(i => stone(`raw-${i}`)))
 const pebbleStones = await Promise.all([1, 2, 3, 4].map(i => stone(`pebble-${i}`)))
@@ -141,7 +134,7 @@ const founder = await getImage({ src: founderPhoto, format: 'avif', widths: [480
 
 const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
 ---
-<Base meta={meta} locale={locale} current="home" overlay pool={poolData}>
+<Base meta={meta} locale={locale} current="home" overlay>
   <section class="mk-hero" data-hero data-media={heroData} style={heroStyle}>
     <div class="mk-hero-stage">
       <div class="mk-hero-media" aria-hidden="true">
@@ -197,6 +190,7 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
           <span class="mk-line">{day.heading}</span>
         </h2>
         <p class="mk-lead">{day.lead}</p>
+        <a class="mk-more-link" href={useCasesPath}>{t('home.useCasesLink')}<Ico name="arrowRight" size={16} /></a>
       </div>
       <div data-day data-water={waterData}>
         <WeekCompare copy={day} locale={locale} />
@@ -266,11 +260,12 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
           {exampleSteps.map(item => (
             <li>
               <span>{item.step}</span>
-              <span class={`mk-tag mk-tag--${bucketOf[item.bucket] ?? 0}`}>{item.bucket}</span>
+              <BucketTag position={bucketOf[item.bucket]} label={item.bucket} />
             </li>
           ))}
         </ol>
         <p class="mk-illustration-note">{t('home.exampleNote')}</p>
+        <a class="mk-more-link" href={useCasesPath}>{t('home.exampleMoreLink')}<Ico name="arrowRight" size={16} /></a>
       </div>
     </div>
   </section>
