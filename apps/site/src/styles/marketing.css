@@ -63,7 +63,9 @@
   border-bottom: 1px solid var(--line-2);
 }
 .mk-header-inner { display: flex; align-items: center; gap: 28px; width: min(1160px, 100% - 40px); margin-inline: auto; }
-.mk-brand { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 16px; letter-spacing: -0.02em; }
+/* The logo: the brand name in the logo face, lowercase. The manifest keeps the
+   capitalised name for titles and legal copy; only its look changes here. */
+.mk-brand { display: flex; align-items: center; font-family: var(--font-brand); font-weight: 900; font-size: 22px; line-height: 1; letter-spacing: -0.035em; text-transform: lowercase; color: var(--ink); }
 .mk-nav { display: flex; align-items: center; gap: 26px; margin-left: 12px; }
 .mk-nav a {
   font-size: 14px;
@@ -895,6 +897,8 @@
   grid-template-columns: 1.6fr repeat(3, minmax(0, 1fr));
   gap: 40px;
 }
+.mk-footer .mk-brand { display: inline-flex; font-size: 26px; padding: 0; }
+.mk-footer .mk-brand:hover { text-decoration: none; }
 .mk-footer-blurb { font-size: 13.5px; color: var(--ink-2); line-height: 1.65; max-width: 34ch; margin-top: 14px; }
 .mk-footer-col a { display: block; font-size: 14px; color: var(--ink-2); padding: 5px 0; }
 .mk-footer a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
