@@ -2,17 +2,17 @@
   "$comment": "Written by scripts/media/build-media.mjs. Do not edit by hand.",
   "hero": {
     "16x9": {
-      "transition": 4.71,
+      "transition": 4.25,
       "stream": {
-        "x": 0.7064,
-        "width": 0.0051
+        "x": 0.6731,
+        "width": 0.009
       }
     },
     "9x16": {
-      "transition": 4.71,
+      "transition": 4.25,
       "stream": {
-        "x": 0.5507,
-        "width": 0.0357
+        "x": 0.5105,
+        "width": 0.0161
       },
       "extend": 0.4
     }
