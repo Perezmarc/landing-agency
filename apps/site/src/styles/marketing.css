@@ -289,8 +289,7 @@
 }
 
 /* ═══════════ STONES ═══════════
-   Small raw fragments beside the problem section, polished pebbles at later
-   section edges. Placed by custom properties on the class, so each breakpoint
+   Polished pebbles at section edges. Placed by custom properties on the class, so each breakpoint
    can move them; a slow idle float, switched off for reduced motion. */
 .mk-stone {
   position: absolute;
@@ -306,15 +305,7 @@
   from { translate: 0 -4px; }
   to   { translate: 0 4px; }
 }
-/* Positions: a fragment cluster beside the problem copy, pebbles beside the
-   section heads, clear of the text. */
-.mk-stone--r1 { --x: 74%; --y: 8%;  --s: 74px; --float: 8s; }
-.mk-stone--r2 { --x: 82%; --y: 30%; --s: 52px; --float: 10s; }
-.mk-stone--r3 { --x: 61%; --y: 52%; --s: 44px; --float: 7s; }
-.mk-stone--r4 { --x: 88%; --y: 64%; --s: 62px; --float: 11s; }
-.mk-stone--r5 { --x: 72%; --y: 82%; --s: 38px; --float: 9s; }
-.mk-stone--r6 { --x: 93%; --y: 12%; --s: 34px; --float: 10.5s; }
-.mk-stone--r7 { --x: 64%; --y: 22%; --s: 30px; --float: 8.5s; }
+/* Positions: pebbles beside the section heads, clear of the text. */
 .mk-stone--p1 { --x: 80%; --y: 18%; --s: 64px; --float: 9.5s; }
 .mk-stone--p2 { --x: 70%; --y: 34%; --s: 48px; --float: 11s; }
 .mk-stone--p3 { --x: 84%; --y: 40%; --s: 56px; --float: 8s; }
@@ -323,21 +314,10 @@
   /* Portrait: copy is full width, so a few small stones sit in the section's
      top padding, at the right, above the text. */
   .mk-stone { --s: 30px; }
-  .mk-stone--r1, .mk-stone--r3, .mk-stone--r5, .mk-stone--p2, .mk-stone--p4 { display: none; }
-  .mk-stone--r2, .mk-stone--p1, .mk-stone--p3 { --x: calc(100% - 52px); --y: 26px; }
-  .mk-stone--r4 { --x: calc(100% - 96px); --y: 38px; --s: 24px; }
-  .mk-stone--r6 { --x: calc(100% - 134px); --y: 20px; --s: 20px; }
-}
+  .mk-stone--p2, .mk-stone--p4 { display: none; }
+  .mk-stone--p1, .mk-stone--p3 { --x: calc(100% - 52px); --y: 26px; }
+    }
 
-/* ═══════════ PROBLEM ═══════════ */
-.mk-problem-copy { max-width: 640px; }
-.mk-kicker {
-  margin-top: 32px;
-  font-size: clamp(20px, 2vw, 26px);
-  letter-spacing: -0.03em;
-  line-height: 1.25;
-  text-wrap: balance;
-}
 
 /* ═══════════ NUMBERED COLUMNS — [1] [2] [3] ═══════════
    For lists whose order is the content (the three sources, the four buckets,
