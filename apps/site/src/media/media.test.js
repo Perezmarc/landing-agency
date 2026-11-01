@@ -130,7 +130,6 @@ describe('media.json', () => {
     for (const r of ['16x9', '9x16']) files.push(...['webm', 'mp4', 'avif', 'webp'].map(e => `day-stream-${r}.${e}`))
     // The pool, in both renditions: its clip, and its poster ready to serve as the footer's background.
     for (const name of ['footer-pool', 'footer-pool-narrow']) files.push(`${name}.webm`, `${name}.mp4`, `${name}.avif`, `${name}.webp`)
-    for (let i = 1; i <= media.stones.raw; i++) files.push(`stones/raw-${i}.webp`)
     for (let i = 1; i <= media.stones.pebble; i++) files.push(`stones/pebble-${i}.webp`)
     files.forEach(f => expect(existsSync(here(f)), f).toBe(true))
     // The BEFORE card's old full-frame clip was replaced by the splash strip.

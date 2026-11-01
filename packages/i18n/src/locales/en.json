@@ -153,9 +153,6 @@
         }
       }
     },
-    "problemHeading": "Your process document is not your process.",
-    "problemLead": "The real one has rework loops, people chasing each other for answers, and long stretches where a case just waits. A request can sit in a queue for days and need only minutes of actual work. Automate the documented version and you automate the wrong thing.",
-    "problemKicker": "The waiting is the process. The work is minutes.",
     "discoveryHeading": "How we find the real process",
     "discoveryLead": "We look at the work from three sides, because each one shows something the others miss.",
     "discovery": [

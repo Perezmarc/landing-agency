@@ -153,9 +153,6 @@
         }
       }
     },
-    "problemHeading": "Tu proceso documentado no es tu proceso.",
-    "problemLead": "El real tiene trabajo que se rehace una y otra vez, gente que se persigue para conseguir respuestas y largos ratos en los que un caso simplemente espera. Una solicitud puede pasar días en una cola y necesitar solo minutos de trabajo real. Si automatizas la versión documentada, automatizas lo que no es.",
-    "problemKicker": "La espera es el proceso. El trabajo, minutos.",
     "discoveryHeading": "Cómo encontramos el proceso real",
     "discoveryLead": "Miramos el trabajo desde tres ángulos, porque cada uno muestra algo que los otros no ven.",
     "discovery": [

@@ -1483,14 +1483,13 @@ async function main() {
     doc.cards = { before: doc.cards.before, rim: doc.cards.rim }
     doc = order(doc)
   } else {
-    const raw = await stones(await src('stills', 'fragments-cutout'), 'raw', 7)
     const pebbles = await stones(await src('stills', 'pebbles-cutout'), 'pebble', 4)
     doc = order({
       hero: { '16x9': hero('16x9'), '9x16': hero('9x16') },
       stream: dayStream(),
       cards: { before: splash(), rim: built['card-rim'].rim },
       footer: { pool: pool() },
-      stones: { raw, pebble: pebbles },
+      stones: { pebble: pebbles },
     })
   }
   writeFileSync(join(OUT, 'media.json'), JSON.stringify(doc, null, 2) + '\n')

@@ -153,9 +153,6 @@
         }
       }
     },
-    "problemHeading": "Il tuo processo documentato non è il tuo processo.",
-    "problemLead": "Quello reale ha cicli di rilavorazione, persone che si rincorrono per avere risposte e lunghi tratti in cui una pratica resta semplicemente ferma. Una richiesta può restare in coda per giorni e richiedere solo pochi minuti di lavoro effettivo. Se automatizzi la versione documentata, automatizzi la cosa sbagliata.",
-    "problemKicker": "L'attesa è il processo. Il lavoro, pochi minuti.",
     "discoveryHeading": "Come troviamo il processo reale",
     "discoveryLead": "Guardiamo il lavoro da tre lati, perché ognuno mostra qualcosa che agli altri sfugge.",
     "discovery": [

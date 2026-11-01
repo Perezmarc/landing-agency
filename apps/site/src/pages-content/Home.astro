@@ -3,9 +3,8 @@
  *
  * Section order is the argument: the hero (the problem, a team's days spent
  * on repetitive work, then the promise, AI agents built around its processes)
- * → a week, before and after → the
- * problem (the documented process is not the real one) → how we find the real
- * process → sort every step → one process sorted, as an illustration (both
+ * → a week, before and after → how we find the real process → sort every
+ * step → one process sorted, as an illustration (both
  * the week and the walkthrough link on to the use cases page) → how an
  * engagement works → built on your systems → who we are (the person who
  * leads the agency) → FAQ → final CTA. Every CTA books a call.
@@ -128,7 +127,6 @@ const dayStyle = `--stream-lx: ${streamL.x}; --stream-lw: ${streamL.width}; --st
   `--cx: ${media.stream.x}; --cw: ${media.stream.width}; --clip-lar: ${media.stream['16x9'].aspect}; --clip-par: ${media.stream['9x16'].aspect}`
 
 const stone = async (name) => (await getImage({ src: stoneFiles[`../media/stones/${name}.webp`], format: 'webp', width: 160 })).src
-const rawStones = await Promise.all([1, 2, 3, 4, 5, 6, 7].map(i => stone(`raw-${i}`)))
 const pebbleStones = await Promise.all([1, 2, 3, 4].map(i => stone(`pebble-${i}`)))
 // The portrait in "who we are": a cutout on a transparent background.
 const founder = await getImage({ src: founderPhoto, format: 'avif', widths: [480, 960], quality: 70 })
@@ -193,21 +191,6 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
       </div>
       <div data-day data-water={waterData}>
         <WeekCompare copy={day} locale={locale} />
-      </div>
-    </div>
-  </section>
-
-  <section class="mk-section mk-problem">
-    {rawStones.map((src, i) => (
-      <span class={`mk-stone mk-stone--r${i + 1}`} aria-hidden="true">
-        <img src={src} alt="" width={160} height={160} loading="lazy" decoding="async" />
-      </span>
-    ))}
-    <div class="mk-wrap">
-      <div class="mk-problem-copy" data-reveal>
-        <h2 class="mk-h2">{t('home.problemHeading')}</h2>
-        <p class="mk-lead">{t('home.problemLead')}</p>
-        <p class="mk-kicker">{t('home.problemKicker')}</p>
       </div>
     </div>
   </section>

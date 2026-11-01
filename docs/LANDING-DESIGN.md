@@ -20,10 +20,10 @@ waterline edge to edge and the body of water below it.
 - **Light:** soft, neutral, from above. No colour.
 - **Page:** pure white. Every image and clip is graded to it, so nothing reads
   as a box, and every section is transparent.
-- **Material discipline:** crystal and water only. Small raw fragments appear
-  beside the problem copy; polished pebbles beside later section heads. Stones
-  never sit under text: on landscape they keep to the empty right side of a
-  section, on portrait a few small ones sit in the section's top padding.
+- **Material discipline:** crystal and water only. Polished pebbles appear
+  beside later section heads. Stones never sit under text: on landscape they
+  keep to the empty right side of a section, on portrait a few small ones sit
+  in the section's top padding.
 - **Palette:** white and warm grey, near-black ink, one sage accent. Headlines
   are light and tight: a grey line, then a black line.
 
@@ -31,15 +31,14 @@ waterline edge to edge and the body of water below it.
 
 1. Hero: the crash.
 2. A week, before and after: six team tabs.
-3. The problem: "Your process document is not your process."
-4. How we find the real process.
-5. Sort every step.
-6. Supplier invoices, step by step (an illustration, labelled as one).
-7. How an engagement works.
-8. Built on your systems.
-9. FAQ.
-10. Final CTA.
-11. The footer: the pool (on every page).
+3. How we find the real process.
+4. Sort every step.
+5. Supplier invoices, step by step (an illustration, labelled as one).
+6. How an engagement works.
+7. Built on your systems.
+8. FAQ.
+9. Final CTA.
+10. The footer: the pool (on every page).
 
 ## Two clocks
 
