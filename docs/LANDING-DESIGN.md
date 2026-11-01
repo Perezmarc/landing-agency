@@ -95,7 +95,7 @@ from about 2.7 s to the end. It runs on this timeline:
 |---|---|
 | trigger | `play()` is called on the clip; the BEFORE layer stays up (`is-arming`). |
 | first presented frame | BEFORE is cut and the clip shows (`is-transitioning`). |
-| + 1250 ms (`--delay-hero-crystal`) | The pebble is clear of the fragments: the headline's black line moves from the first to the second. |
+| + 150 ms (`--delay-hero-burst`) | The rock bursts: the headline's problem claim drops away downwards and the promise falls into its place from above (`--dur-hero-claim`). |
 | 250 ms before the end | The AFTER loop starts underneath. |
 | end | The transition fades out over the AFTER loop. |
 
@@ -107,10 +107,14 @@ crossfade instead. Every way into a rest state (after the clip, after the
 poster crossfade, a snap, a hash link, a page restored from the cache) plays
 that state's loop, so the AFTER is never left a still when a video exists.
 
-The headline follows the image: over the raw rock (BEFORE, and on the way
-back) its first line ("Understand your processes.") is black and the second
-("Then automate them with AI agents.") grey; once the polished pebble shows,
-the second line is black and the first grey. The server HTML, like the poster, is the AFTER.
+The headline follows the image and shows one claim at a time, the two
+stacked in one grid cell so nothing below them moves. Over the raw rock
+(BEFORE, and on the way back) it is the problem ("Your team spends its days
+copying, pasting and chasing replies."); when the rock bursts, that claim
+drops away downwards and the promise ("Hand the repetitive work to AI agents
+built around your processes.") falls into its place from above. Reduced
+motion crossfades them without the move. The server HTML, like the poster,
+is the AFTER: the promise.
 
 Going back fades the BEFORE layer in over `--dur-hero-fade` (400 ms). Devices
 that get no video crossfade the two posters instead.

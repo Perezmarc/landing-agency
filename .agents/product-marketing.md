@@ -1,7 +1,7 @@
 # Product Marketing Context
 
-**Document version:** v12
-**Last updated:** 2026-10-31
+**Document version:** v14
+**Last updated:** 2026-11-01
 
 > Auto-drafted from the founder's brief ("an AI consulting agency, almost exactly
 > like varickagents.com") before the agency had a name, customers or proof.
@@ -128,6 +128,8 @@ From the owner (2026-10-16), and on the homepage as "Who we are":
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v14 (2026-11-01): The hero is the claim and the buttons only, at the owner's request: the lead paragraph (the method in one sentence) and the founder line under the buttons are gone. The method is still told in the sections below, and the founder's story in "Who we are".
+- v13 (2026-11-01): The hero shows one claim at a time, at the owner's request. Over the raw rock it names the problem, "Your team spends its days copying, pasting and chasing replies."; when the rock bursts it gives way to the promise, "Hand the repetitive work to AI agents built around your processes." (the owner's brief was "Streamline processes with personalized AI agents"; "streamline" is on our avoid list, so it says what the agents are built around instead). "More than half of your team's time" leaves the hero and stays in the final CTA.
 - v12 (2026-10-31): A use cases page (`/use-cases`, `/es/casos-de-uso`, `/it/casi-d-uso`), in the nav and footer and linked from the homepage's week and invoice walkthrough: eight industries, each with the processes we look at first and one worked example sorted into the four buckets, labelled as illustrations. Geography recorded: Spain, Italy, UK, US.
 - v11 (2026-10-30): "Who we are" gets the owner's personal story back, at their request, since their track record is the main selling point: first person for the founding and what it taught, "we" for the agency today. The company "merged with" a San Francisco company (the owner's word), in the section and in the hero's founder line.
 - v10 (2026-10-29): "Who we are" and the hero's founder line are humbler and more casual, at the owner's request: the background is mentioned lightly and in "we" (no "I run the agency"), the acquisition is no longer mentioned, and the section dwells on what the experience taught (how processes really run, what a person should keep, early ideas that didn't work first time).

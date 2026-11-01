@@ -1,9 +1,10 @@
 ---
 /* The landing page.
  *
- * Section order is the argument: the hero (hand the repetitive work to AI
- * agents, free up more than half of the team's time) → a week, before and after →
- * how we find the real process → sort every step → one process sorted, as an illustration (both
+ * Section order is the argument: the hero (the problem, a team's days spent
+ * on repetitive work, then the promise, AI agents built around its processes)
+ * → a week, before and after → how we find the real process → sort every
+ * step → one process sorted, as an illustration (both
  * the week and the walkthrough link on to the use cases page) → how an
  * engagement works → built on your systems → who we are (the person who
  * leads the agency) → FAQ → final CTA. Every CTA books a call.
@@ -152,12 +153,11 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
 
       <div class="mk-wrap mk-hero-copy">
         <span class="mk-eyebrow">{t('home.eyebrow')}</span>
-        <h1>
-          <span class="mk-line mk-hero-line mk-hero-line--lead">{t('home.headingLead')}</span>
+        <h1 class="mk-hero-claims">
+          <span class="mk-hero-claim mk-hero-claim--problem">{t('home.claimProblem')}</span>
           {' '}
-          <span class="mk-line mk-hero-line mk-hero-line--main">{t('home.heading')}</span>
+          <span class="mk-hero-claim mk-hero-claim--promise">{t('home.claimPromise')}</span>
         </h1>
-        <p class="mk-hero-lead">{t('home.lead')}</p>
         <div class="mk-hero-actions">
           <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill iconRightName="arrowRight">
             {t('home.ctaPrimary')}
@@ -166,7 +166,6 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
             {t('home.ctaSecondary')}
           </Button>
         </div>
-        <a class="mk-hero-note" href="#about">{t('home.founderNote')}</a>
       </div>
     </div>
   </section>

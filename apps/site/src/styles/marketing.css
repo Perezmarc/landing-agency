@@ -187,8 +187,8 @@
    scripting off there is no state either, and the page stays on AFTER. */
 @media (scripting: enabled) {
   .mk-hero:not([data-hero-state]) .mk-hero-before { opacity: 1; }
-  .mk-hero:not([data-hero-state]) .mk-hero-line--lead { color: var(--ink); }
-  .mk-hero:not([data-hero-state]) .mk-hero-line--main { color: var(--title-off); }
+  .mk-hero:not([data-hero-state]) .mk-hero-claim--problem { opacity: 1; translate: 0 0; }
+  .mk-hero:not([data-hero-state]) .mk-hero-claim--promise { opacity: 0; translate: 0 var(--hero-claim-shift-in); }
 }
 /* The crash clip. Its first frame is the BEFORE rock, so the BEFORE layer is
    cut at once; it is hidden again as the AFTER loop takes over under it.
@@ -219,37 +219,24 @@
   margin-top: 18px;
   text-wrap: balance;
 }
-/* The headline follows the image: over the raw rock the first line (the
-   action: hand the repetitive work to agents) is black; once the polished
-   pebble shows, the second (the result: more than half of the team's time
-   back) is. The default is the AFTER, like the poster. During the clip the
-   switch waits for the pebble to appear. */
-.mk-hero-line { transition: color var(--dur-hero-fade) var(--ease-out); }
-.mk-hero-line--lead { color: var(--title-off); }
-.mk-hero-line--main { color: var(--ink); }
-.mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-line--lead { color: var(--ink); }
-.mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-line--main { color: var(--title-off); }
-.mk-hero.is-transitioning .mk-hero-line { transition-delay: var(--delay-hero-crystal); }
-.mk-hero-lead {
-  font-size: clamp(16px, 1.35vw, 18.5px);
-  color: var(--mute);
-  line-height: 1.6;
-  margin-top: 24px;
+/* The headline follows the image, one claim at a time, stacked in one grid
+   cell so the copy below never moves. Over the raw rock it is the problem;
+   when the rock bursts, the problem drops away downwards and the promise
+   falls into its place from above. The default is the AFTER (the promise),
+   like the poster. On the way back the same move runs in reverse. */
+.mk-hero-claims { display: grid; }
+.mk-hero-claim {
+  grid-area: 1 / 1;
+  transition: opacity var(--dur-hero-claim) var(--ease-out), translate var(--dur-hero-claim) var(--ease-out);
 }
+.mk-hero { --hero-claim-shift-in: -0.45em; --hero-claim-shift-out: 0.45em; }
+.mk-hero-claim--problem { opacity: 0; translate: 0 var(--hero-claim-shift-out); }
+.mk-hero-claim--promise { opacity: 1; translate: 0 0; }
+.mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-claim--problem { opacity: 1; translate: 0 0; }
+.mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-claim--promise { opacity: 0; translate: 0 var(--hero-claim-shift-in); }
+.mk-hero.is-transitioning .mk-hero-claim { transition-delay: var(--delay-hero-burst); }
+.mk-hero.is-transitioning .mk-hero-claim--promise { transition-delay: calc(var(--delay-hero-burst) + var(--dur-hero-claim) / 3); }
 .mk-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 34px; }
-/* Who leads the agency, in one line under the buttons; it links to "who we
-   are". Dropped where the stage is too short to hold it. */
-.mk-hero-note {
-  display: block;
-  margin-top: 22px;
-  font-size: 13.5px;
-  line-height: 1.5;
-  color: var(--mute);
-  text-decoration: underline;
-  text-decoration-color: var(--line);
-  text-underline-offset: 3px;
-}
-.mk-hero-note:hover { color: var(--ink); text-decoration-color: currentColor; }
 
 @media (max-aspect-ratio: 1/1) {
   /* Portrait: the copy sits in the white upper part of the stage, the pebble
@@ -257,34 +244,26 @@
   .mk-hero-copy { justify-content: flex-start; padding-top: calc(68px + 3svh); }
   .mk-hero-copy > * { max-width: none; }
   .mk-hero h1 { font-size: clamp(30px, 7.6vw, 52px); margin-top: 14px; }
-  .mk-hero-lead { font-size: 15.5px; margin-top: 16px; }
   .mk-hero-actions { margin-top: 22px; }
-  /* On portrait the line reaches the top of the rock: a halo of the page's
-     white keeps it legible over the rain, like the calendar's head. */
-  .mk-hero-note { margin-top: 16px; text-shadow: 0 0 2px var(--bg), 0 0 4px var(--bg), 0 0 8px var(--bg); }
 }
 /* Short phones (iPhone SE and the like): tighten the copy so the pebble
    still shows below the buttons. */
 @media (max-aspect-ratio: 1/1) and (max-height: 700px) {
   .mk-hero-copy { padding-top: calc(60px + 2svh); }
   .mk-hero h1 { font-size: clamp(26px, 6.6vw, 40px); margin-top: 10px; }
-  .mk-hero-lead { font-size: 14.5px; line-height: 1.5; margin-top: 12px; }
   .mk-hero-actions { margin-top: 16px; }
-  .mk-hero-note { display: none; }
 }
 /* Short landscape screens (a phone on its side, a small laptop window): the
    stage is sticky and clips, so the copy must fit between the header and the
-   stage bottom. A wider column and smaller type; the lead goes on the very
-   shortest, where it cannot fit with the buttons. */
+   stage bottom. A wider column and smaller type, smaller still on the very
+   shortest. */
 @media (min-aspect-ratio: 1/1) and (max-height: 720px) {
   .mk-hero-copy { padding-top: 76px; padding-bottom: 12px; }
   .mk-hero-copy > * { max-width: min(600px, 54%); }
   .mk-hero h1 { font-size: clamp(24px, 3.4vw, 42px); margin-top: 10px; }
-  .mk-hero-lead { font-size: 14.5px; line-height: 1.5; margin-top: 12px; }
   .mk-hero-actions { margin-top: 18px; }
 }
 @media (min-aspect-ratio: 1/1) and (max-height: 440px) {
-  .mk-hero-lead, .mk-hero-note { display: none; }
   .mk-hero h1 { font-size: clamp(22px, 3vw, 30px); }
 }
 
@@ -1330,6 +1309,7 @@
    posters' crossfade. */
 @media (prefers-reduced-motion: reduce) {
   .mk-stone { animation: none; }
-  .mk-hero-line { transition: none; }
+  .mk-hero { --hero-claim-shift-in: 0em; --hero-claim-shift-out: 0em; }
+  .mk-hero-claim { transition: opacity var(--dur-hero-fade) linear; }
   .mk-reveal-pending { opacity: 1; translate: none; }
 }

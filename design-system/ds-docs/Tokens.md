@@ -18,14 +18,14 @@ matter.
 | Group | Tokens | Use for |
 |---|---|---|
 | Surfaces | `--bg` · `--surface` · `--surface-2` | the page · a card on it · a recessed area (rail, table header) |
-| Ink | `--ink` · `--ink-2` · `--mute` · `--mute-2` · `--title-off` | body text · dense UI · secondary copy · labels and placeholders · the hero headline's inactive line |
+| Ink | `--ink` · `--ink-2` · `--mute` · `--mute-2` | body text · dense UI · secondary copy · labels and placeholders |
 | Lines | `--line` · `--line-2` | separators · quieter internal dividers |
 | Accent | `--accent` · `--accent-soft` · `--accent-ink` · `--accent-line` | the one brand colour: links, focus, the active nav tick |
 | Status | `--good` · `--warn` · `--bad` | each with `-soft` (fill), `-ink` (text on that fill), `-line` (border) |
 | Dark pair | `--mk-dark` · `--mk-light` | near-black buttons and code blocks, and the light ink on them |
 | Glass | `--glass-bg` · `--glass-bg-solid` · `--glass-line` · `--glass-blur` | frosted cards ("built on your systems"); `-solid` is the no-blur fallback |
 | Calendar | `--task-chip` · `--task-chip-ink` · `--cat-work` · `--cat-chase` · `--cat-wait` · `--cat-decide` | the week calendar's near-black task chips and their category bars |
-| Landing motion | `--dur-hero-fade` · `--delay-hero-crystal` · `--dur-reveal` | the hero's crossfades and headline switch, reveals |
+| Landing motion | `--dur-hero-fade` · `--delay-hero-burst` · `--dur-hero-claim` · `--dur-reveal` | the hero's crossfades, its headline's claim swap, reveals |
 
 The status families come as a set of four for a reason: a status pill needs a
 fill, text that passes contrast **on that fill**, and a border. Picking a
