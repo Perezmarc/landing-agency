@@ -160,7 +160,6 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
           {' '}
           <span class="mk-hero-claim mk-hero-claim--promise">{t('home.claimPromise')}</span>
         </h1>
-        <p class="mk-hero-lead">{t('home.lead')}</p>
         <div class="mk-hero-actions">
           <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill iconRightName="arrowRight">
             {t('home.ctaPrimary')}
@@ -169,7 +168,6 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
             {t('home.ctaSecondary')}
           </Button>
         </div>
-        <a class="mk-hero-note" href="#about">{t('home.founderNote')}</a>
       </div>
     </div>
   </section>

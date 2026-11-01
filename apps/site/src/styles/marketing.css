@@ -236,26 +236,7 @@
 .mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-claim--promise { opacity: 0; translate: 0 var(--hero-claim-shift-in); }
 .mk-hero.is-transitioning .mk-hero-claim { transition-delay: var(--delay-hero-burst); }
 .mk-hero.is-transitioning .mk-hero-claim--promise { transition-delay: calc(var(--delay-hero-burst) + var(--dur-hero-claim) / 3); }
-.mk-hero-lead {
-  font-size: clamp(16px, 1.35vw, 18.5px);
-  color: var(--mute);
-  line-height: 1.6;
-  margin-top: 24px;
-}
 .mk-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 34px; }
-/* Who leads the agency, in one line under the buttons; it links to "who we
-   are". Dropped where the stage is too short to hold it. */
-.mk-hero-note {
-  display: block;
-  margin-top: 22px;
-  font-size: 13.5px;
-  line-height: 1.5;
-  color: var(--mute);
-  text-decoration: underline;
-  text-decoration-color: var(--line);
-  text-underline-offset: 3px;
-}
-.mk-hero-note:hover { color: var(--ink); text-decoration-color: currentColor; }
 
 @media (max-aspect-ratio: 1/1) {
   /* Portrait: the copy sits in the white upper part of the stage, the pebble
@@ -263,34 +244,26 @@
   .mk-hero-copy { justify-content: flex-start; padding-top: calc(68px + 3svh); }
   .mk-hero-copy > * { max-width: none; }
   .mk-hero h1 { font-size: clamp(30px, 7.6vw, 52px); margin-top: 14px; }
-  .mk-hero-lead { font-size: 15.5px; margin-top: 16px; }
   .mk-hero-actions { margin-top: 22px; }
-  /* On portrait the line reaches the top of the rock: a halo of the page's
-     white keeps it legible over the rain, like the calendar's head. */
-  .mk-hero-note { margin-top: 16px; text-shadow: 0 0 2px var(--bg), 0 0 4px var(--bg), 0 0 8px var(--bg); }
 }
 /* Short phones (iPhone SE and the like): tighten the copy so the pebble
    still shows below the buttons. */
 @media (max-aspect-ratio: 1/1) and (max-height: 700px) {
   .mk-hero-copy { padding-top: calc(60px + 2svh); }
   .mk-hero h1 { font-size: clamp(26px, 6.6vw, 40px); margin-top: 10px; }
-  .mk-hero-lead { font-size: 14.5px; line-height: 1.5; margin-top: 12px; }
   .mk-hero-actions { margin-top: 16px; }
-  .mk-hero-note { display: none; }
 }
 /* Short landscape screens (a phone on its side, a small laptop window): the
    stage is sticky and clips, so the copy must fit between the header and the
-   stage bottom. A wider column and smaller type; the lead goes on the very
-   shortest, where it cannot fit with the buttons. */
+   stage bottom. A wider column and smaller type, smaller still on the very
+   shortest. */
 @media (min-aspect-ratio: 1/1) and (max-height: 720px) {
   .mk-hero-copy { padding-top: 76px; padding-bottom: 12px; }
   .mk-hero-copy > * { max-width: min(600px, 54%); }
   .mk-hero h1 { font-size: clamp(24px, 3.4vw, 42px); margin-top: 10px; }
-  .mk-hero-lead { font-size: 14.5px; line-height: 1.5; margin-top: 12px; }
   .mk-hero-actions { margin-top: 18px; }
 }
 @media (min-aspect-ratio: 1/1) and (max-height: 440px) {
-  .mk-hero-lead, .mk-hero-note { display: none; }
   .mk-hero h1 { font-size: clamp(22px, 3vw, 30px); }
 }
 
