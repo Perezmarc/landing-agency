@@ -82,7 +82,6 @@
   --ink:         #16161a;
   --ink-2:       #26262c;
   --mute:        #5f5c57;   /* 6.6:1 on white: the grey headline line and secondary copy */
-  --title-off:   #8f8d89;   /* --mute 30% lighter, 3.4:1 on white (AA for large text): the hero headline's inactive line */
   --mute-2:      #8f8b84;   /* labels and placeholders only, never running text */
 
   /* Hairlines. --line separates, --line-2 is the quieter internal divider. */
@@ -169,11 +168,12 @@
 
   /* The landing page's motion: the hero's crossfades (back to BEFORE, and the
      crash on devices without video) and content reveals. The crash itself
-     is a video clip, timed by its file; --delay-hero-crystal is when, into
-     that clip, the polished pebble shows clear of the flying fragments (the
-     hero headline switches its black line then). */
+     is a video clip, timed by its file; --delay-hero-burst is when, into
+     that clip, the rock bursts (the hero headline swaps its claim then, over
+     --dur-hero-claim). */
   --dur-hero-fade: 400ms;
-  --delay-hero-crystal: 1250ms;
+  --delay-hero-burst: 150ms;
+  --dur-hero-claim: 700ms;
   --dur-reveal:    600ms;
 
   /* ═══════════ TYPE ═══════════

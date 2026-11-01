@@ -18,8 +18,8 @@
   },
   "home": {
     "eyebrow": "AI agents for business operations",
-    "headingLead": "Hand the repetitive work to AI agents.",
-    "heading": "Free up more than half of your team's time.",
+    "claimProblem": "Your team spends its days copying, pasting and chasing replies.",
+    "claimPromise": "Hand the repetitive work to AI agents built around your processes.",
     "lead": "We map how the work actually moves through your team, delete the steps that shouldn't exist, and run AI agents inside the tools you already use. The decisions stay with your people.",
     "founderNote": "Led by the founder of an AI company started before ChatGPT, which later merged with a San Francisco company.",
     "ctaPrimary": "Book a discovery call",

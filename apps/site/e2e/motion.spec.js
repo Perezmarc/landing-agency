@@ -31,13 +31,11 @@ async function withCsp(page) {
 
 const heroState = page => page.locator('[data-hero]').getAttribute('data-hero-state')
 
-/** Which hero headline line is black: 'lead', 'main', or null mid-fade. */
-const blackLine = page => page.evaluate(() => {
-  const probe = document.createElement('i'); probe.style.color = 'var(--ink)'; document.body.append(probe)
-  const ink = getComputedStyle(probe).color; probe.remove()
-  const color = sel => getComputedStyle(document.querySelector(sel)).color
-  const lead = color('.mk-hero-line--lead') === ink, main = color('.mk-hero-line--main') === ink
-  return lead !== main ? (lead ? 'lead' : 'main') : null
+/** Which hero claim shows: 'problem', 'promise', or null mid-swap. */
+const shownClaim = page => page.evaluate(() => {
+  const shown = sel => getComputedStyle(document.querySelector(sel)).opacity === '1'
+  const problem = shown('.mk-hero-claim--problem'), promise = shown('.mk-hero-claim--promise')
+  return problem !== promise ? (problem ? 'problem' : 'promise') : null
 })
 
 /** The BEFORE layer's computed opacity: '1' shows the rough rock. */
@@ -86,15 +84,15 @@ test.describe('motion, with the production CSP', () => {
     await expect.poll(() => heroState(page)).toBe('after')
   })
 
-  test('the headline line that is black follows the image: the first over the rock, the second over the crystal', async ({ page }) => {
+  test('the headline shows one claim and follows the image: the problem over the rock, the promise once it bursts', async ({ page }) => {
     await page.goto(HOME, { waitUntil: 'load' })
     await expect.poll(() => heroState(page)).toBe('before')
-    await expect.poll(() => blackLine(page)).toBe('lead')
+    await expect.poll(() => shownClaim(page)).toBe('problem')
     await page.evaluate(() => window.scrollTo(0, 100))
     await expect.poll(() => heroState(page), { timeout: 8000 }).toBe('after')
-    await expect.poll(() => blackLine(page)).toBe('main')
+    await expect.poll(() => shownClaim(page)).toBe('promise')
     await page.evaluate(() => window.scrollTo(0, 0))
-    await expect.poll(() => blackLine(page), { timeout: 4000 }).toBe('lead')
+    await expect.poll(() => shownClaim(page), { timeout: 4000 }).toBe('problem')
   })
 
   test('the stage stays pinned for a screen and a half, so the crash plays in view', async ({ page }) => {
@@ -216,7 +214,7 @@ test('before the motion module runs, the hero shows the rough rock, never the po
   await page.goto(HOME, { waitUntil: 'load' })
   await expect(page.locator('[data-hero]')).not.toHaveAttribute('data-hero-state')
   expect(await beforeOpacity(page)).toBe('1')
-  expect(await blackLine(page)).toBe('lead')
+  expect(await shownClaim(page)).toBe('problem')
   // The pebble still loads underneath, ready for the crash.
   await expect.poll(() => page.locator('.mk-hero-poster--after img').evaluate(img => img.complete && img.naturalWidth)).toBeGreaterThan(0)
   await expect.poll(() => page.locator('.mk-hero-poster--before img').evaluate(img => img.complete && img.naturalWidth)).toBeGreaterThan(0)
@@ -230,7 +228,7 @@ test.describe('with JavaScript off', () => {
     await expect.poll(() => poster.evaluate(img => img.naturalWidth)).toBeGreaterThan(0)
     await expect(page.locator('[data-hero]')).not.toHaveAttribute('data-hero-state')
     await expect.poll(() => beforeOpacity(page)).toBe('0')
-    await expect.poll(() => blackLine(page)).toBe('main')
+    await expect.poll(() => shownClaim(page)).toBe('promise')
     // Every clip is created by motion/; the server HTML is posters only.
     await expect(page.locator('video')).toHaveCount(0)
     const after = page.locator('.ui-tabs-panel:visible [data-cal="after"]')
