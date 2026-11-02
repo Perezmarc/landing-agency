@@ -190,10 +190,9 @@
         "body": "Decisiones con consecuencias: aprobaciones, excepciones y negociaciones. El agente las entrega con el contexto adjunto y una persona decide."
       }
     ],
-    "bucketsFoot": "Cada proceso tiene un único responsable en tu equipo. Cuando ya funciona, volvemos a medir las mismas cifras y, si el proceso se sostiene, pasamos al siguiente.",
-    "exampleHeading": "Un ejemplo: facturas de proveedores, paso a paso",
+    "exampleHeadingLead": "Un ejemplo",
+    "exampleHeading": "Facturas de proveedores, paso a paso",
     "exampleLead": "Así clasificaríamos un proceso típico de cuentas a pagar.",
-    "exampleNote": "Ejemplo ilustrativo del método, no un proyecto con un cliente.",
     "exampleSteps": [
       {
         "step": "Imprimir cada factura para un archivo de aprobación en papel",

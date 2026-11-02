@@ -209,19 +209,15 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
         <h2 class="mk-h2">{t('home.discoveryHeading')}</h2>
         <p class="mk-lead">{t('home.discoveryLead')}</p>
       </div>
-      <ol class="mk-cols" data-reveal>
+      <ul class="mk-cards" data-reveal>
         {discovery.map((item, i) => (
-          <li>
-            <div class="mk-col-mark" aria-hidden="true">
-              <span class="mk-col-icon"><Ico name={DISCOVERY_ICON[i]} size={20} /></span>
-              <span class="mk-num">[{i + 1}]</span>
-            </div>
-            <h3>{item.title}</h3>
+          <li class="mk-card">
+            <h3 class="mk-card-head"><span class="mk-card-icon" aria-hidden="true"><Ico name={DISCOVERY_ICON[i]} size={18} /></span>{item.title}</h3>
             <p>{item.body}</p>
           </li>
         ))}
-      </ol>
-      <p class="mk-cols-foot" data-reveal>{t('home.discoveryFoot')}</p>
+      </ul>
+      <p class="mk-cards-foot" data-reveal>{t('home.discoveryFoot')}</p>
     </div>
   </section>
 
@@ -231,19 +227,14 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
         <h2 class="mk-h2">{t('home.bucketsHeading')}</h2>
         <p class="mk-lead">{t('home.bucketsLead')}</p>
       </div>
-      <ol class="mk-cols" data-reveal>
+      <ol class="mk-cards" data-reveal>
         {buckets.map((bucket, i) => (
-          <li>
-            <div class="mk-col-mark" aria-hidden="true">
-              <span class={`mk-col-icon mk-col-icon--${i + 1}`}><Ico name={BUCKET_ICON[i + 1]} size={20} /></span>
-              <span class="mk-num">[{i + 1}]</span>
-            </div>
-            <h3>{bucket.title}</h3>
+          <li class="mk-card">
+            <h3 class="mk-card-head"><span class={`mk-card-icon mk-card-icon--${i + 1}`} aria-hidden="true"><Ico name={BUCKET_ICON[i + 1]} size={18} /></span>{bucket.title}</h3>
             <p>{bucket.body}</p>
           </li>
         ))}
       </ol>
-      <p class="mk-cols-foot" data-reveal>{t('home.bucketsFoot')}</p>
     </div>
   </section>
 
@@ -251,7 +242,11 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
     <div class="mk-wrap">
       <div class="mk-walkthrough">
         <div class="mk-section-head" data-reveal>
-          <h2 class="mk-h2">{t('home.exampleHeading')}</h2>
+          <h2 class="mk-h2">
+            <span class="mk-line mk-line--warm">{t('home.exampleHeadingLead')}</span>
+            {' '}
+            <span class="mk-line">{t('home.exampleHeading')}</span>
+          </h2>
           <p class="mk-lead">{t('home.exampleLead')}</p>
         </div>
         <ol class="mk-steps-list" data-reveal>
@@ -262,7 +257,6 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
             </li>
           ))}
         </ol>
-        <p class="mk-illustration-note">{t('home.exampleNote')}</p>
         <a class="mk-more-link" href={useCasesPath}>{t('home.exampleMoreLink')}<Ico name="arrowRight" size={16} /></a>
       </div>
     </div>
@@ -279,10 +273,9 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
         <h2 class="mk-h2">{t('home.systemsHeading')}</h2>
         <p class="mk-lead">{t('home.systemsLead')}</p>
       </div>
-      <ul class="mk-glass-grid">
-        {systems.map((point, i) => (
-          <li class="mk-glass-card">
-            <span class="mk-num" aria-hidden="true">[{i + 1}]</span>
+      <ul class="mk-cards">
+        {systems.map(point => (
+          <li class="mk-card">
             <h3>{point.title}</h3>
             <p>{point.body}</p>
           </li>

@@ -190,10 +190,9 @@
         "body": "Decisioni con conseguenze: approvazioni, eccezioni e negoziazioni. L'agente le passa con il contesto allegato e decide una persona."
       }
     ],
-    "bucketsFoot": "Ogni processo ha un solo responsabile nel tuo team. Una volta in funzione, misuriamo di nuovo gli stessi numeri e, quando il processo regge, passiamo al successivo.",
-    "exampleHeading": "Un esempio: fatture fornitori, passaggio per passaggio",
+    "exampleHeadingLead": "Un esempio",
+    "exampleHeading": "Fatture fornitori, passaggio per passaggio",
     "exampleLead": "Ecco come smisteremmo un tipico processo di contabilità fornitori.",
-    "exampleNote": "Esempio illustrativo del metodo, non un progetto per un cliente.",
     "exampleSteps": [
       {
         "step": "Stampare ogni fattura per un fascicolo di approvazione cartaceo",

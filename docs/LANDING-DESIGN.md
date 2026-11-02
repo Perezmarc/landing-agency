@@ -32,8 +32,8 @@ waterline edge to edge and the body of water below it.
 1. Hero: the crash.
 2. A week, before and after: six team tabs.
 3. First, we discover how you work: the three sources and the baseline.
-4. Second, we build software and agents: the four buckets, the owner and the re-measure.
-5. An example: supplier invoices, step by step (labelled as one).
+4. Second, we build software and agents: the four buckets.
+5. An example / Supplier invoices, step by step.
 6. Built on your systems.
 7. FAQ.
 8. Final CTA.

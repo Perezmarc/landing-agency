@@ -190,10 +190,9 @@
         "body": "Decisions with consequences: approvals, exceptions and negotiations. The agent hands them over with the context attached, and a person makes the call."
       }
     ],
-    "bucketsFoot": "Each process has one owner on your side. Once it's live, we measure the same numbers again, and when the process holds we move on to the next one.",
-    "exampleHeading": "An example: supplier invoices, step by step",
+    "exampleHeadingLead": "An example",
+    "exampleHeading": "Supplier invoices, step by step",
     "exampleLead": "Here's how we'd sort a typical accounts-payable process.",
-    "exampleNote": "Illustration of the method, not a client engagement.",
     "exampleSteps": [
       {
         "step": "Print each invoice for a paper approval file",
