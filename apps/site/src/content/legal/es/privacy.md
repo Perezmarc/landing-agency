@@ -51,8 +51,11 @@ control ante la que se puede reclamar.]
 
 ## Cookies
 
-[Describe lo que la web instala realmente. Tal como está construida, no instala
-cookies ni carga scripts de terceros. Actualiza esta sección si eso cambia.]
+La web instala una sola cookie, `lang`, que recuerda el idioma en el que la
+leíste por última vez, para que la página de inicio se abra en ese idioma la
+próxima vez. En tu primera visita, ese idioma sale de la configuración de idioma
+de tu navegador. Solo guarda el código del idioma, dura un año, no se comparte
+con nadie y no se usa para seguirte. La web no carga scripts de terceros.
 
 ## Cambios
 
