@@ -115,15 +115,17 @@ const waterData = JSON.stringify({
   rim: { webm: cardRimWebm, mp4: cardRimMp4, ...media.cards.rim },
   stream: { l: { webm: streamLWebm, mp4: streamLMp4 }, p: { webm: streamPWebm, mp4: streamPMp4 }, x: media.stream.x, width: media.stream.width },
 })
-// How far the portrait clips run on below their 9:16 frame (marketing.css).
-const heroStyle = `--hero-extend: ${media.hero['9x16'].extend}`
 // Where the hero's stream leaves each rendition (its centre and width, as
-// fractions of the hero's media box), and where the stream clip below the
-// hero has its stream (fractions of its column) and each rendition's
-// aspect, so the clip (.mk-day-stream, marketing.css) takes up exactly
-// where the hero's stream is cut off.
+// fractions of the hero's media box): the hero scales its clip about it,
+// and the stream clip below the hero (.mk-day-stream, marketing.css) takes
+// up exactly where the hero's stream is cut off.
 const [streamL, streamP] = [media.hero['16x9'].stream, media.hero['9x16'].stream]
-const dayStyle = `--stream-lx: ${streamL.x}; --stream-lw: ${streamL.width}; --stream-px: ${streamP.x}; --stream-pw: ${streamP.width}; ` +
+const streamVars = `--stream-lx: ${streamL.x}; --stream-lw: ${streamL.width}; --stream-px: ${streamP.x}; --stream-pw: ${streamP.width}`
+// How far the portrait clips run on below their 9:16 frame (marketing.css).
+const heroStyle = `--hero-extend: ${media.hero['9x16'].extend}; ${streamVars}`
+// Where the stream clip has its stream (fractions of its column), and each
+// rendition's aspect.
+const dayStyle = `${streamVars}; ` +
   `--cx: ${media.stream.x}; --cw: ${media.stream.width}; --clip-lar: ${media.stream['16x9'].aspect}; --clip-par: ${media.stream['9x16'].aspect}`
 
 const stone = async (name) => (await getImage({ src: stoneFiles[`../media/stones/${name}.webp`], format: 'webp', width: 160 })).src

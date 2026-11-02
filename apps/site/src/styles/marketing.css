@@ -124,8 +124,12 @@
    layout. The stage is the size container the portrait box is sized from.
    --hero-w is the media box's width, also read by the calendar section
    below, where the stream is carried on from the hero's bottom edge
-   (.mk-day-stream): % is the full-width parent's width in both. */
-.mk-hero, .mk-day { --hero-w: max(100%, 177.78lvh); }
+   (.mk-day-stream): % is the full-width parent's width in both.
+   --hero-scale shrinks the clip about the point where its stream leaves the
+   stage (the stream's x, the stage's bottom edge), so the stream still runs
+   out through the bottom edge and the calendar's stream, scaled with it,
+   carries on from there. */
+.mk-hero, .mk-day { --hero-w: max(100%, 177.78lvh); --hero-scale: 0.8; }
 @media (max-aspect-ratio: 1/1) {
   .mk-hero, .mk-day { --hero-w: max(100%, 56.25svh); }
 }
@@ -147,6 +151,15 @@
   width: var(--hero-w);
   aspect-ratio: 16 / 9;
   translate: -50% -50%;
+  scale: var(--hero-scale);
+  transform-origin: calc(var(--stream-lx) * 100%) calc(50% + 50lvh);
+  /* Scaled down, the frame no longer covers the stage: its top and sides
+     fade into the page, so its off-white never shows as a box. Its bottom
+     is where the stream leaves, at the stage's edge. */
+  mask-image:
+    linear-gradient(to right, transparent, #000 10%, #000 90%, transparent),
+    linear-gradient(to bottom, transparent, #000 14%);
+  mask-composite: intersect;
 }
 @media (max-aspect-ratio: 1/1) {
   /* Portrait: the 9:16 rendition, its 9:16 frame anchored to the bottom of
@@ -163,6 +176,7 @@
     aspect-ratio: auto;
     top: calc(100svh - var(--frame-h));
     translate: -50% 0;
+    transform-origin: calc(var(--stream-px) * 100%) calc(var(--frame-h) + 100lvh - 100svh);
   }
 }
 /* Layers, bottom to top: the AFTER poster and loop, the transition clip (the
@@ -234,8 +248,8 @@
 .mk-hero-claim--promise { opacity: 1; translate: 0 0; }
 .mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-claim--problem { opacity: 1; translate: 0 0; }
 .mk-hero:is([data-hero-state="before"], [data-hero-state="reassembling"], .is-arming) .mk-hero-claim--promise { opacity: 0; translate: 0 var(--hero-claim-shift-in); }
-.mk-hero.is-transitioning .mk-hero-claim { transition-delay: var(--delay-hero-burst); }
-.mk-hero.is-transitioning .mk-hero-claim--promise { transition-delay: calc(var(--delay-hero-burst) + var(--dur-hero-claim) / 3); }
+.mk-hero.is-transitioning .mk-hero-claim { transition-delay: var(--delay-hero-claim); }
+.mk-hero.is-transitioning .mk-hero-claim--promise { transition-delay: calc(var(--delay-hero-claim) + var(--dur-hero-claim) / 3); }
 .mk-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 34px; }
 
 @media (max-aspect-ratio: 1/1) {
@@ -681,7 +695,7 @@
   --sx: var(--stream-lx);
   --sw: var(--stream-lw);
   --car: var(--clip-lar);
-  --half: calc(var(--sw) * var(--hero-w) / 2);
+  --half: calc(var(--sw) * var(--hero-scale) * var(--hero-w) / 2);
   --at: 50% + (var(--sx) - 0.5) * var(--hero-w);   /* the hero stream's centre */
   --mid: clamp(50% - var(--wrap-w) / 2 + var(--edge) + var(--half), var(--at), 50% + var(--wrap-w) / 2 - var(--edge) - var(--half));
   --w: calc(2 * var(--half) / var(--cw));
@@ -707,7 +721,9 @@
   width: 100%;
   height: auto;
   max-width: none;
-  aspect-ratio: var(--car);
+  /* As long as at full size: narrowed with the hero, the clip is drawn out
+     lengthways rather than cut short, so it still reaches the card. */
+  aspect-ratio: calc(var(--car) * var(--hero-scale));
 }
 .mk-day-stream-video { object-fit: fill; opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); }
 .mk-day-stream-video.is-ready { opacity: 1; }

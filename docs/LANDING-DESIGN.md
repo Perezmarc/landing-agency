@@ -95,7 +95,7 @@ from about 2.7 s to the end. It runs on this timeline:
 |---|---|
 | trigger | `play()` is called on the clip; the BEFORE layer stays up (`is-arming`). |
 | first presented frame | BEFORE is cut and the clip shows (`is-transitioning`). |
-| + 150 ms (`--delay-hero-burst`) | The rock bursts: the headline's problem claim drops away downwards and the promise falls into its place from above (`--dur-hero-claim`). |
+| + 1.5 s (`--delay-hero-claim`) | The rock has burst and the explosion has played out: the headline's problem claim drops away downwards and the promise falls into its place from above (`--dur-hero-claim`). |
 | 250 ms before the end | The AFTER loop starts underneath. |
 | end | The transition fades out over the AFTER loop. |
 
