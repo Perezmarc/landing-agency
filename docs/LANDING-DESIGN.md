@@ -109,8 +109,8 @@ that state's loop, so the AFTER is never left a still when a video exists.
 
 The headline follows the image and shows one claim at a time, the two
 stacked in one grid cell so nothing below them moves. Over the raw rock
-(BEFORE, and on the way back) it is the problem ("Your team spends its days
-copying, pasting and chasing replies."); when the rock bursts, that claim
+(BEFORE, and on the way back) it is the problem ("Your team's days are full of
+repetitive work."); when the rock bursts, that claim
 drops away downwards and the promise ("Hand the repetitive work to AI agents
 built around your processes.") falls into its place from above. Reduced
 motion crossfades them without the move. The server HTML, like the poster,
