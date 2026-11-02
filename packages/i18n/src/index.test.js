@@ -59,9 +59,9 @@ describe('useTranslations', () => {
 
 describe('useList', () => {
   it('returns array values', () => {
-    const steps = useList('en')('home.steps')
-    expect(steps.length).toBeGreaterThan(0)
-    expect(steps[0]).toHaveProperty('title')
+    const buckets = useList('en')('home.buckets')
+    expect(buckets.length).toBeGreaterThan(0)
+    expect(buckets[0]).toHaveProperty('title')
   })
 
   it('returns an empty array for a key that is not a list', () => {

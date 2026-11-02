@@ -153,8 +153,8 @@
         }
       }
     },
-    "discoveryHeading": "Come troviamo il processo reale",
-    "discoveryLead": "Guardiamo il lavoro da tre lati, perché ognuno mostra qualcosa che agli altri sfugge.",
+    "discoveryHeading": "Prima, scopriamo come lavorate",
+    "discoveryLead": "Tu ci dai accesso al lavoro e alle persone che lo svolgono. Lo guardiamo da tre lati, perché ognuno mostra qualcosa che agli altri sfugge.",
     "discovery": [
       {
         "title": "Interviste: il perché",
@@ -169,16 +169,17 @@
         "body": "Procedure, fogli di calcolo, thread di email e chat contengono le eccezioni e le regole che i tuoi sistemi non hanno mai registrato."
       }
     ],
-    "bucketsHeading": "Smista ogni passaggio",
-    "bucketsLead": "In quest'ordine. La maggior parte dei team parte dal modello.",
+    "discoveryFoot": "Prima di sviluppare qualsiasi cosa misuriamo volumi, tempi di ciclo, tempi di attesa ed eccezioni, così il risultato si può confrontare con la situazione di oggi.",
+    "bucketsHeading": "Poi, creiamo software e agenti per automatizzarlo",
+    "bucketsLead": "Smistiamo ogni passaggio, in quest'ordine. La maggior parte dei team parte dal modello.",
     "buckets": [
       {
         "title": "Eliminare",
         "body": "Passaggi che esistono per un vecchio ripiego, un controllo doppio o un report che nessuno legge. Un passaggio eliminato non costa nulla."
       },
       {
-        "title": "Codice semplice",
-        "body": "Passaggi con regole fisse: copiare questo campo, inviare quel promemoria, far quadrare questi due importi. Un software tradizionale li esegue in modo affidabile ed economico."
+        "title": "Software su misura",
+        "body": "Passaggi con regole fisse: copiare questo campo, inviare quel promemoria, far quadrare questi due importi. Un software costruito sulle tue regole li esegue in modo affidabile ed economico."
       },
       {
         "title": "Un agente",
@@ -189,9 +190,9 @@
         "body": "Decisioni con conseguenze: approvazioni, eccezioni e negoziazioni. L'agente le passa con il contesto allegato e decide una persona."
       }
     ],
+    "exampleHeadingLead": "Un esempio",
     "exampleHeading": "Fatture fornitori, passaggio per passaggio",
-    "exampleLead": "Come il metodo smista un tipico processo di contabilità fornitori.",
-    "exampleNote": "Esempio illustrativo del metodo, non un progetto per un cliente.",
+    "exampleLead": "Ecco come smisteremmo un tipico processo di contabilità fornitori.",
     "exampleSteps": [
       {
         "step": "Stampare ogni fattura per un fascicolo di approvazione cartaceo",
@@ -211,7 +212,7 @@
       },
       {
         "step": "Riconciliare la fattura con l'ordine e la bolla di entrata",
-        "bucket": "Codice semplice"
+        "bucket": "Software su misura"
       },
       {
         "step": "Capire perché la riconciliazione non è riuscita e raccogliere le evidenze",
@@ -219,7 +220,7 @@
       },
       {
         "step": "Inviare un promemoria agli approvatori",
-        "bucket": "Codice semplice"
+        "bucket": "Software su misura"
       },
       {
         "step": "Approvare un'eccezione oltre la tolleranza",
@@ -227,31 +228,11 @@
       },
       {
         "step": "Preparare il file della distinta di pagamento",
-        "bucket": "Codice semplice"
+        "bucket": "Software su misura"
       },
       {
         "step": "Approvare la distinta di pagamento",
         "bucket": "Una persona"
-      }
-    ],
-    "stepsHeading": "Come funziona un progetto",
-    "stepsLead": "Tu ci dai accesso al lavoro e alle persone che lo svolgono. Noi ci occupiamo di mappatura, sviluppo e misurazione.",
-    "steps": [
-      {
-        "title": "Mappare il processo reale",
-        "body": "Interviste, log di sistema e documenti mostrano come si muove davvero il lavoro, compresi i cicli e le attese."
-      },
-      {
-        "title": "Fissare il punto di partenza",
-        "body": "Prima di sviluppare qualsiasi cosa misuriamo volumi, tempi di ciclo, tempi di attesa ed eccezioni, così il risultato si può confrontare con la situazione di oggi."
-      },
-      {
-        "title": "Smistare e sviluppare",
-        "body": "Eliminiamo ciò che non dovrebbe esistere, scriviamo codice semplice per le regole fisse e sviluppiamo agenti per i passaggi che richiedono giudizio. Ogni processo ha un solo responsabile nel tuo team."
-      },
-      {
-        "title": "Misurare ed estendere",
-        "body": "Misuriamo di nuovo gli stessi numeri. Quando il processo regge, passiamo al successivo."
       }
     ],
     "systemsHeading": "Sui sistemi che usi già",
@@ -353,7 +334,7 @@
               },
               {
                 "step": "Controllare prezzi, giacenze e tempi di consegna nell'ERP",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Chiedere a un collega di ricontrollare l'ordine a occhio",
@@ -375,7 +356,7 @@
               },
               {
                 "step": "Aggiornare le date previste nell'ERP",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Tenere un foglio di calcolo a parte con i fornitori in ritardo",
@@ -397,7 +378,7 @@
               },
               {
                 "step": "Recuperare dai tuoi sistemi i dati del lotto e dei collaudi",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Ribattere a mano il rapporto nel sistema qualità",
@@ -419,7 +400,7 @@
               },
               {
                 "step": "Abbinarla all'ordine e al documento di entrata merci",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Stampare la fattura per raccogliere le firme di approvazione",
@@ -444,7 +425,7 @@
             "how": [
               {
                 "step": "Recuperare lo stato della spedizione da ogni corriere",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Leggere il messaggio del corriere e capire la causa",
@@ -462,11 +443,11 @@
           },
           {
             "title": "Controllo delle fatture di trasporto",
-            "body": "Il codice semplice confronta ogni fattura del vettore con le tariffe concordate. Quando un addebito non torna, un agente capisce il perché e prepara la contestazione.",
+            "body": "Il software su misura confronta ogni fattura del vettore con le tariffe concordate. Quando un addebito non torna, un agente capisce il perché e prepara la contestazione.",
             "how": [
               {
                 "step": "Controllare ogni addebito sulle tariffe concordate",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Capire perché un addebito non torna",
@@ -510,7 +491,7 @@
             "how": [
               {
                 "step": "Recuperare dall'ERP le righe dell'ordine e i pesi",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Preparare la fattura commerciale e proporre i codici doganali",
@@ -543,7 +524,7 @@
               },
               {
                 "step": "Controllare i termini per il reso e creare l'etichetta",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Chiedere al cliente di compilare un secondo modulo con gli stessi dati",
@@ -569,7 +550,7 @@
               },
               {
                 "step": "Controllare che tutti i campi obbligatori siano compilati",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Approvare il prodotto prima che vada online",
@@ -587,7 +568,7 @@
               },
               {
                 "step": "Cercare l'ordine in tutti i tuoi sistemi",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Rispondere alle domande di routine, come dove si trova un pacco",
@@ -601,11 +582,11 @@
           },
           {
             "title": "Pagamenti dei marketplace",
-            "body": "Il codice semplice abbina ogni pagamento di un marketplace ai suoi ordini, commissioni e rimborsi. Un agente indaga sui pagamenti che non tornano.",
+            "body": "Il software su misura abbina ogni pagamento di un marketplace ai suoi ordini, commissioni e rimborsi. Un agente indaga sui pagamenti che non tornano.",
             "how": [
               {
                 "step": "Abbinare ogni accredito ai suoi ordini, commissioni e rimborsi",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Rifare a mano lo stesso abbinamento in un foglio di calcolo",
@@ -638,7 +619,7 @@
               },
               {
                 "step": "Eseguire i controlli tramite i tuoi fornitori",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Stampare la pratica per firmarla su carta",
@@ -660,7 +641,7 @@
               },
               {
                 "step": "Controllare che la polizza fosse attiva alla data del sinistro",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Chiedere al cliente i documenti mancanti",
@@ -682,11 +663,11 @@
               },
               {
                 "step": "Eseguire i controlli d'identità che richiedi",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Aggiornare il sistema centrale",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Approvare le modifiche che toccano un pagamento, come un nuovo beneficiario",
@@ -700,7 +681,7 @@
             "how": [
               {
                 "step": "Estrarre i dati che servono a ogni segnalazione",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Raccogliere la documentazione a supporto e segnalare cosa manca",
@@ -729,7 +710,7 @@
             "how": [
               {
                 "step": "Ricordare a ogni cliente quali documenti mancano",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Controllare cosa arriva e archiviarlo al posto giusto",
@@ -759,7 +740,7 @@
               },
               {
                 "step": "Riconciliare le registrazioni con l'estratto conto",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Rivedere le registrazioni su cui l'agente non era sicuro",
@@ -803,7 +784,7 @@
               },
               {
                 "step": "Preparare la fattura dalle registrazioni approvate",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Rivedere la settimana e approvare la fattura",
@@ -832,7 +813,7 @@
               },
               {
                 "step": "Prenotare un tecnico dall'elenco approvato e aggiornare l'inquilino",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Approvare i lavori sopra il limite di spesa",
@@ -842,11 +823,11 @@
           },
           {
             "title": "Incasso affitti e morosità",
-            "body": "Il codice semplice abbina i pagamenti ai contratti. Un agente sollecita i pagamenti mancati con il tono previsto dalla tua policy, e una persona decide i piani di rientro.",
+            "body": "Il software su misura abbina i pagamenti ai contratti. Un agente sollecita i pagamenti mancati con il tono previsto dalla tua policy, e una persona decide i piani di rientro.",
             "how": [
               {
                 "step": "Abbinare i pagamenti ai contratti",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Sollecitare i pagamenti mancati con il tono che la tua policy prevede",
@@ -872,11 +853,11 @@
               },
               {
                 "step": "Controllarla sul prezzo concordato",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Addebitarla all'edificio e al proprietario giusti",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Approvare le fatture sopra il prezzo concordato",
@@ -890,7 +871,7 @@
             "how": [
               {
                 "step": "Recuperare affitti, spese e lavori di ogni immobile",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Scrivere il riepilogo dei lavori del mese",
@@ -923,7 +904,7 @@
               },
               {
                 "step": "Controllare la disponibilità e le regole tariffarie",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Preparare la proposta dai tuoi modelli",
@@ -945,7 +926,7 @@
               },
               {
                 "step": "Aggiornare il channel manager e il gestionale dell'hotel",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Copiare la modifica in un foglio di calcolo condiviso",
@@ -959,11 +940,11 @@
           },
           {
             "title": "Riconciliazione di fornitori e commissioni",
-            "body": "Il codice semplice abbina le fatture dei fornitori e le commissioni dei canali di prenotazione alle prenotazioni. Un agente indaga sulle differenze.",
+            "body": "Il software su misura abbina le fatture dei fornitori e le commissioni dei canali di prenotazione alle prenotazioni. Un agente indaga sulle differenze.",
             "how": [
               {
                 "step": "Abbinare fatture e commissioni alle prenotazioni",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Indagare sulle differenze",
@@ -993,7 +974,7 @@
               },
               {
                 "step": "Mandare i problemi ricorrenti al responsabile che può risolverli",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Rispondere di persona ai reclami gravi",
@@ -1018,7 +999,7 @@
               },
               {
                 "step": "Inviarla e seguire la risposta",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Stampare la richiesta per la cartella cartacea del paziente",
@@ -1040,7 +1021,7 @@
               },
               {
                 "step": "Proporre un orario adatto allo specialista e agli esami",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Ribattere l'impegnativa nel sistema di prenotazione",
@@ -1054,11 +1035,11 @@
           },
           {
             "title": "Fatturazione alle assicurazioni",
-            "body": "Il codice semplice genera le richieste di rimborso dagli appuntamenti. Quando un'assicurazione ne respinge una, un agente capisce il perché e prepara la correzione.",
+            "body": "Il software su misura genera le richieste di rimborso dagli appuntamenti. Quando un'assicurazione ne respinge una, un agente capisce il perché e prepara la correzione.",
             "how": [
               {
                 "step": "Generare le richieste di rimborso dagli appuntamenti",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Leggere un rifiuto e capirne il motivo",
@@ -1084,7 +1065,7 @@
               },
               {
                 "step": "Cercare appuntamenti e fatture nei tuoi sistemi",
-                "bucket": "Codice semplice"
+                "bucket": "Software su misura"
               },
               {
                 "step": "Rispondere alle domande di routine su appuntamenti, documenti e fatture",

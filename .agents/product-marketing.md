@@ -1,7 +1,7 @@
 # Product Marketing Context
 
-**Document version:** v14
-**Last updated:** 2026-11-01
+**Document version:** v15
+**Last updated:** 2026-11-02
 
 > Auto-drafted from the founder's brief ("an AI consulting agency, almost exactly
 > like varickagents.com") before the agency had a name, customers or proof.
@@ -9,7 +9,7 @@
 
 ## Product Overview
 **One-liner:** We design, build and run custom AI agents that take over whole back-office workflows, inside the tools a company already uses.
-**What it does:** We find how a process really runs (interviews, the systems' logs, and everything else: SOPs, spreadsheets, email, chat), set a baseline, then sort every step in order: delete it, write plain code for it, give it to an agent, or keep it with a person. Agents prepare the work inside the existing tools and stop at decisions; a person makes the call. We measure the same baseline again after launch, then move to the next process.
+**What it does:** We find how a process really runs (interviews, the systems' logs, and everything else: SOPs, spreadsheets, email, chat), set a baseline, then sort every step in order: delete it, build custom software for it, give it to an agent, or keep it with a person. Agents prepare the work inside the existing tools and stop at decisions; a person makes the call. We measure the same baseline again after launch, then move to the next process.
 **Product category:** AI implementation / AI automation consultancy ("AI agents for operations").
 **Product type:** Service (done-for-you implementation, plus ongoing optimisation).
 **Business model:** Per-engagement proposal priced on workflow complexity, systems involved and deployment scope; ongoing optimisation after launch. [NEED: retainer vs. fixed fee, typical engagement size]
@@ -57,11 +57,11 @@
 ## Differentiation
 **Key differentiators:**
 - Process first: we map the real process (rework loops, chasing, waiting) before choosing any technology. "The waiting is the process. The work is minutes."
-- Delete before you automate: every step is sorted in order (delete → plain code → agent → person). Most teams start with the model.
+- Delete before you automate: every step is sorted in order (delete → custom software → agent → person). Most teams start with the model.
 - The agent prepares, a person decides. Agents stop at decisions.
 - A baseline before building and the same measures after. One process, one owner.
 - Runs on the client's existing systems and permissions.
-**How we do it differently:** Four stages: map the real process → set the baseline → sort and build → measure and expand.
+**How we do it differently:** Two stages on the page: first we discover how the team works (interviews, logs, everything else, and a baseline), then we build custom software and agents (sort every step, one owner, measure again, move on).
 **Why that's better:** The documented process is not the real one; automating the documented version automates the wrong thing.
 **Why customers choose us:** [NEED: from first customers]
 
@@ -93,7 +93,7 @@
 | Agent | An AI system that reads, decides and acts in the client's tools within set rules and permissions |
 | Discovery call | First working session: map one process as it really runs |
 | The real process | How work actually moves (loops, chasing, waiting), as opposed to the documented one |
-| The four buckets | Delete · Plain code · An agent · A person, in that order |
+| The four buckets | Delete · Custom software · An agent · A person, in that order |
 | Baseline | Volume, cycle time, waiting time and exceptions, measured before building |
 
 ## Brand Voice
@@ -128,6 +128,7 @@ From the owner (2026-10-16), and on the homepage as "Who we are":
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v15 (2026-11-02): The second bucket is "Custom software" (ES "Software a medida", IT "Software su misura"), not "Plain code", at the owner's request: it says what the buyer gets, not how it's made. The sources and the buckets carry icons (people, a checklist board, a clock; trash, </>, "AI", a person), the same ones the walkthrough's tags use, and the supplier-invoices walkthrough says in its heading that it is an example. "How an engagement works" is folded into the two method sections, retitled "First, we discover how you work" (with the baseline) and "Second, we build software and agents to automate it"; the owner and re-measure line was then dropped at the owner's request. The first line of two-line headlines is a translucent warm brown instead of grey; the walkthrough's heading is "An example" over "Supplier invoices, step by step", and its "illustration, not a client engagement" note is gone from the homepage (the heading now says it). All homepage cards share one bordered glass style, without numbers.
 - v14 (2026-11-01): The hero is the claim and the buttons only, at the owner's request: the lead paragraph (the method in one sentence) and the founder line under the buttons are gone. The method is still told in the sections below, and the founder's story in "Who we are".
 - v13 (2026-11-01): The hero shows one claim at a time, at the owner's request. Over the raw rock it names the problem, "Your team spends its days copying, pasting and chasing replies."; when the rock bursts it gives way to the promise, "Hand the repetitive work to AI agents built around your processes." (the owner's brief was "Streamline processes with personalized AI agents"; "streamline" is on our avoid list, so it says what the agents are built around instead). "More than half of your team's time" leaves the hero and stays in the final CTA.
 - v12 (2026-10-31): A use cases page (`/use-cases`, `/es/casos-de-uso`, `/it/casi-d-uso`), in the nav and footer and linked from the homepage's week and invoice walkthrough: eight industries, each with the processes we look at first and one worked example sorted into the four buckets, labelled as illustrations. Geography recorded: Spain, Italy, UK, US.
