@@ -78,11 +78,13 @@
   --surface-2:   #f6f5f2;
 
   /* Ink, strongest to faintest. --ink is body text, --ink-2 is a shade softer
-     for dense UI, --mute is secondary copy, --mute-2 is labels and placeholders. */
+     for dense UI, --mute is secondary copy, --mute-2 is labels and
+     placeholders. --ink-warm is the brown first line of a two-line headline. */
   --ink:         #16161a;
   --ink-2:       #26262c;
   --mute:        #5f5c57;   /* 6.6:1 on white: the grey headline line and secondary copy */
   --mute-2:      #8f8b84;   /* labels and placeholders only, never running text */
+  --ink-warm:    #86664a;   /* 5.2:1 on white: the brown first line of a two-line headline */
 
   /* Hairlines. --line separates, --line-2 is the quieter internal divider. */
   --line:        #e6e3dd;

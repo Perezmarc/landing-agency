@@ -153,8 +153,8 @@
         }
       }
     },
-    "discoveryHeading": "How we find the real process",
-    "discoveryLead": "We look at the work from three sides, because each one shows something the others miss.",
+    "discoveryHeading": "First, we discover how you work",
+    "discoveryLead": "You give us access to the work and the people who do it. We look at it from three sides, because each one shows something the others miss.",
     "discovery": [
       {
         "title": "Interviews: the why",
@@ -169,16 +169,17 @@
         "body": "Procedures, spreadsheets, email threads and chat hold the exceptions and rules your systems never captured."
       }
     ],
-    "bucketsHeading": "Sort every step",
-    "bucketsLead": "In that order. Most teams start with the model.",
+    "discoveryFoot": "Before we build anything, we measure volume, cycle time, waiting time and exceptions, so the result can be compared with today.",
+    "bucketsHeading": "Second, we build software and agents to automate it",
+    "bucketsLead": "We sort every step, in this order. Most teams start with the model.",
     "buckets": [
       {
         "title": "Delete",
         "body": "Steps that exist because of an old workaround, a duplicate check or a report nobody reads. A deleted step costs nothing to run."
       },
       {
-        "title": "Plain code",
-        "body": "Steps with fixed rules: copy this field, send that reminder, match these two amounts. Ordinary software does them reliably and cheaply."
+        "title": "Custom software",
+        "body": "Steps with fixed rules: copy this field, send that reminder, match these two amounts. Software built around your rules does them reliably and cheaply."
       },
       {
         "title": "An agent",
@@ -189,8 +190,9 @@
         "body": "Decisions with consequences: approvals, exceptions and negotiations. The agent hands them over with the context attached, and a person makes the call."
       }
     ],
-    "exampleHeading": "Supplier invoices, step by step",
-    "exampleLead": "How the method sorts a typical accounts-payable process.",
+    "bucketsFoot": "Each process has one owner on your side. Once it's live, we measure the same numbers again, and when the process holds we move on to the next one.",
+    "exampleHeading": "An example: supplier invoices, step by step",
+    "exampleLead": "Here's how we'd sort a typical accounts-payable process.",
     "exampleNote": "Illustration of the method, not a client engagement.",
     "exampleSteps": [
       {
@@ -211,7 +213,7 @@
       },
       {
         "step": "Match the invoice to its PO and goods receipt",
-        "bucket": "Plain code"
+        "bucket": "Custom software"
       },
       {
         "step": "Work out why a match failed and gather the evidence",
@@ -219,7 +221,7 @@
       },
       {
         "step": "Send approvers a reminder",
-        "bucket": "Plain code"
+        "bucket": "Custom software"
       },
       {
         "step": "Approve an exception above the tolerance",
@@ -227,31 +229,11 @@
       },
       {
         "step": "Build the payment-run file",
-        "bucket": "Plain code"
+        "bucket": "Custom software"
       },
       {
         "step": "Approve the payment run",
         "bucket": "A person"
-      }
-    ],
-    "stepsHeading": "How an engagement works",
-    "stepsLead": "You give us access to the work and the people who do it. We do the mapping, the building and the measuring.",
-    "steps": [
-      {
-        "title": "Map the real process",
-        "body": "Interviews, system logs and documents show how the work really moves, including the loops and the waiting."
-      },
-      {
-        "title": "Set the baseline",
-        "body": "Before we build anything, we measure volume, cycle time, waiting time and exceptions, so the result can be compared with today."
-      },
-      {
-        "title": "Sort and build",
-        "body": "We delete what shouldn't exist, write plain code for the fixed rules and build agents for the steps that need judgement. Each process has one owner on your side."
-      },
-      {
-        "title": "Measure and expand",
-        "body": "We measure the same numbers again. Once the process holds, we move on to the next one."
       }
     ],
     "systemsHeading": "Built on the systems you already run",
@@ -353,7 +335,7 @@
               },
               {
                 "step": "Check prices, stock and lead times in the ERP",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Ask a colleague to re-check the order by eye",
@@ -375,7 +357,7 @@
               },
               {
                 "step": "Update the expected dates in the ERP",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Keep a separate spreadsheet of late suppliers",
@@ -397,7 +379,7 @@
               },
               {
                 "step": "Pull the batch and test records from your systems",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Retype the report into the quality system by hand",
@@ -419,7 +401,7 @@
               },
               {
                 "step": "Match it to the order and the goods receipt",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Print the invoice to collect approval signatures",
@@ -444,7 +426,7 @@
             "how": [
               {
                 "step": "Pull the tracking status from each carrier",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Read the carrier's message and work out the cause",
@@ -462,11 +444,11 @@
           },
           {
             "title": "Freight invoice checks",
-            "body": "Plain code checks every carrier invoice against the agreed rates. When a charge differs, an agent works out why and prepares the dispute.",
+            "body": "Custom software checks every carrier invoice against the agreed rates. When a charge differs, an agent works out why and prepares the dispute.",
             "how": [
               {
                 "step": "Check every charge against the agreed rates",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Work out why a charge differs",
@@ -510,7 +492,7 @@
             "how": [
               {
                 "step": "Pull the order lines and weights from the ERP",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Prepare the commercial invoice and propose the commodity codes",
@@ -543,7 +525,7 @@
               },
               {
                 "step": "Check the return window and create the label",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Ask the customer to fill in a second form with the same details",
@@ -569,7 +551,7 @@
               },
               {
                 "step": "Check that every required field is filled in",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Approve the product before it goes live",
@@ -587,7 +569,7 @@
               },
               {
                 "step": "Look up the order across your systems",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Answer the routine questions, such as where a parcel is",
@@ -601,11 +583,11 @@
           },
           {
             "title": "Marketplace payouts",
-            "body": "Plain code matches each marketplace payout to its orders, fees and refunds. An agent investigates the payouts that don't add up.",
+            "body": "Custom software matches each marketplace payout to its orders, fees and refunds. An agent investigates the payouts that don't add up.",
             "how": [
               {
                 "step": "Match each payout to its orders, fees and refunds",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Rebuild the same match by hand in a spreadsheet",
@@ -638,7 +620,7 @@
               },
               {
                 "step": "Run the screening through your providers",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Print the file to sign it on paper",
@@ -660,7 +642,7 @@
               },
               {
                 "step": "Check that the policy was active on the date of the loss",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Ask the customer for the missing documents",
@@ -682,11 +664,11 @@
               },
               {
                 "step": "Run the identity checks you require",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Update the core system",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Approve changes that affect a payout, such as a new beneficiary",
@@ -700,7 +682,7 @@
             "how": [
               {
                 "step": "Pull the extracts each report needs",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Gather the supporting evidence and note any gaps",
@@ -729,7 +711,7 @@
             "how": [
               {
                 "step": "Remind each client which documents are still missing",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Check what arrives and file it in the right place",
@@ -759,7 +741,7 @@
               },
               {
                 "step": "Reconcile the entries with the bank statement",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Review the entries the agent wasn't sure about",
@@ -803,7 +785,7 @@
               },
               {
                 "step": "Prepare the invoice from the approved entries",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Review the week and approve the invoice",
@@ -832,7 +814,7 @@
               },
               {
                 "step": "Book a contractor from the approved list and update the tenant",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Approve work above the spending limit",
@@ -842,11 +824,11 @@
           },
           {
             "title": "Rent collection and arrears",
-            "body": "Plain code matches payments to leases. An agent follows up on missed payments in the tone your policy sets, and a person decides on payment plans.",
+            "body": "Custom software matches payments to leases. An agent follows up on missed payments in the tone your policy sets, and a person decides on payment plans.",
             "how": [
               {
                 "step": "Match payments to leases",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Follow up on missed payments in the tone your policy sets",
@@ -872,11 +854,11 @@
               },
               {
                 "step": "Check it against the agreed price",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Charge it to the right building and owner",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Approve the invoices above the agreed price",
@@ -890,7 +872,7 @@
             "how": [
               {
                 "step": "Pull the rents, costs and works for each property",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Write the month's summary of works",
@@ -923,7 +905,7 @@
               },
               {
                 "step": "Check availability and the rate rules",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Draft the proposal from your templates",
@@ -945,7 +927,7 @@
               },
               {
                 "step": "Update the channel manager and the property system",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Copy the change into a shared spreadsheet",
@@ -959,11 +941,11 @@
           },
           {
             "title": "Supplier and commission reconciliation",
-            "body": "Plain code matches supplier invoices and booking-channel commissions to the bookings. An agent investigates the differences.",
+            "body": "Custom software matches supplier invoices and booking-channel commissions to the bookings. An agent investigates the differences.",
             "how": [
               {
                 "step": "Match invoices and commissions to the bookings",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Investigate the differences",
@@ -993,7 +975,7 @@
               },
               {
                 "step": "Send recurring problems to the manager who can fix them",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Answer serious complaints personally",
@@ -1018,7 +1000,7 @@
               },
               {
                 "step": "Submit it and track the answer",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Print the request for the patient's paper file",
@@ -1040,7 +1022,7 @@
               },
               {
                 "step": "Propose a slot that fits the specialist and the tests",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Retype the referral into the scheduling system",
@@ -1054,11 +1036,11 @@
           },
           {
             "title": "Billing to insurers",
-            "body": "Plain code builds the claims from the appointments. When an insurer rejects one, an agent works out why and prepares the correction.",
+            "body": "Custom software builds the claims from the appointments. When an insurer rejects one, an agent works out why and prepares the correction.",
             "how": [
               {
                 "step": "Build the claims from the appointments",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Read a rejection and work out the reason",
@@ -1084,7 +1066,7 @@
               },
               {
                 "step": "Look up appointments and invoices in your systems",
-                "bucket": "Plain code"
+                "bucket": "Custom software"
               },
               {
                 "step": "Answer routine questions about appointments, documents and invoices",

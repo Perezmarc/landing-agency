@@ -32,6 +32,7 @@ import { getImage } from 'astro:assets'
 import Base from '../layouts/Base.astro'
 import WeekCompare from '../components/WeekCompare.jsx'
 import BucketTag from '../components/BucketTag.astro'
+import { BUCKET_ICON } from '../components/bucket-icons.js'
 import { Button, Ico } from '@forge/ui'
 import forge from '@forge/manifest'
 import { CATALOGS, useTranslations, useList } from '@forge/i18n'
@@ -75,9 +76,11 @@ const { locale } = Astro.props
 const t = useTranslations(locale)
 const list = useList(locale)
 const discovery = list('home.discovery')
+// The three sources, in catalog order: interviews (people), the systems' logs
+// (a checklist board of every case) and everything else (clock).
+const DISCOVERY_ICON = ['users', 'checklist', 'clock']
 const buckets = list('home.buckets')
 const exampleSteps = list('home.exampleSteps')
-const steps = list('home.steps')
 const systems = list('home.systems')
 const faqs = list('home.faqs')
 const aboutBody = list('home.about.body')
@@ -182,7 +185,7 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
     <div class="mk-wrap">
       <div class="mk-section-head" data-reveal>
         <h2 class="mk-h2">
-          <span class="mk-line mk-line--grey">{day.headingLead}</span>
+          <span class="mk-line mk-line--warm">{day.headingLead}</span>
           {' '}
           <span class="mk-line">{day.heading}</span>
         </h2>
@@ -196,6 +199,11 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
   </section>
 
   <section class="mk-section" id="how">
+    {pebbleStones.slice(0, 2).map((src, i) => (
+      <span class={`mk-stone mk-stone--p${i + 1}`} aria-hidden="true">
+        <img src={src} alt="" width={160} height={160} loading="lazy" decoding="async" />
+      </span>
+    ))}
     <div class="mk-wrap">
       <div class="mk-section-head" data-reveal>
         <h2 class="mk-h2">{t('home.discoveryHeading')}</h2>
@@ -204,12 +212,16 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
       <ol class="mk-cols" data-reveal>
         {discovery.map((item, i) => (
           <li>
-            <span class="mk-num" aria-hidden="true">[{i + 1}]</span>
+            <div class="mk-col-mark" aria-hidden="true">
+              <span class="mk-col-icon"><Ico name={DISCOVERY_ICON[i]} size={20} /></span>
+              <span class="mk-num">[{i + 1}]</span>
+            </div>
             <h3>{item.title}</h3>
             <p>{item.body}</p>
           </li>
         ))}
       </ol>
+      <p class="mk-cols-foot" data-reveal>{t('home.discoveryFoot')}</p>
     </div>
   </section>
 
@@ -222,12 +234,16 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
       <ol class="mk-cols" data-reveal>
         {buckets.map((bucket, i) => (
           <li>
-            <span class="mk-num" aria-hidden="true">[{i + 1}]</span>
+            <div class="mk-col-mark" aria-hidden="true">
+              <span class={`mk-col-icon mk-col-icon--${i + 1}`}><Ico name={BUCKET_ICON[i + 1]} size={20} /></span>
+              <span class="mk-num">[{i + 1}]</span>
+            </div>
             <h3>{bucket.title}</h3>
             <p>{bucket.body}</p>
           </li>
         ))}
       </ol>
+      <p class="mk-cols-foot" data-reveal>{t('home.bucketsFoot')}</p>
     </div>
   </section>
 
@@ -249,29 +265,6 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
         <p class="mk-illustration-note">{t('home.exampleNote')}</p>
         <a class="mk-more-link" href={useCasesPath}>{t('home.exampleMoreLink')}<Ico name="arrowRight" size={16} /></a>
       </div>
-    </div>
-  </section>
-
-  <section class="mk-section">
-    {pebbleStones.slice(0, 2).map((src, i) => (
-      <span class={`mk-stone mk-stone--p${i + 1}`} aria-hidden="true">
-        <img src={src} alt="" width={160} height={160} loading="lazy" decoding="async" />
-      </span>
-    ))}
-    <div class="mk-wrap">
-      <div class="mk-section-head" data-reveal>
-        <h2 class="mk-h2">{t('home.stepsHeading')}</h2>
-        <p class="mk-lead">{t('home.stepsLead')}</p>
-      </div>
-      <ol class="mk-cols" data-reveal>
-        {steps.map((step, i) => (
-          <li>
-            <span class="mk-num" aria-hidden="true">[{i + 1}]</span>
-            <h3>{step.title}</h3>
-            <p>{step.body}</p>
-          </li>
-        ))}
-      </ol>
     </div>
   </section>
 
@@ -307,7 +300,7 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
       <div class="mk-about-copy" data-reveal>
         <span class="mk-eyebrow">{t('home.about.eyebrow')}</span>
         <h2 class="mk-h2">
-          <span class="mk-line mk-line--grey">{t('home.about.headingLead')}</span>
+          <span class="mk-line mk-line--warm">{t('home.about.headingLead')}</span>
           {' '}
           <span class="mk-line">{t('home.about.heading')}</span>
         </h2>

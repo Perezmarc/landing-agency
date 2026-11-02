@@ -25,20 +25,19 @@ waterline edge to edge and the body of water below it.
   keep to the empty right side of a section, on portrait a few small ones sit
   in the section's top padding.
 - **Palette:** white and warm grey, near-black ink, one sage accent. Headlines
-  are light and tight: a grey line, then a black line.
+  are light and tight: a warm brown line, then a black line.
 
 ## Page order
 
 1. Hero: the crash.
 2. A week, before and after: six team tabs.
-3. How we find the real process.
-4. Sort every step.
-5. Supplier invoices, step by step (an illustration, labelled as one).
-6. How an engagement works.
-7. Built on your systems.
-8. FAQ.
-9. Final CTA.
-10. The footer: the pool (on every page).
+3. First, we discover how you work: the three sources and the baseline.
+4. Second, we build software and agents: the four buckets, the owner and the re-measure.
+5. An example: supplier invoices, step by step (labelled as one).
+6. Built on your systems.
+7. FAQ.
+8. Final CTA.
+9. The footer: the pool (on every page).
 
 ## Two clocks
 

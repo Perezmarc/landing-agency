@@ -30,10 +30,12 @@ export const ICONS = {
   logout:    <path d="M15 4h3.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H15M10 8l-4 4 4 4M6 12h10" />,
   info:      <><circle cx="12" cy="12" r="8.5" /><path d="M12 11v5.5M12 7.8v.2" /></>,
   alert:     <><path d="M12 4.5 21 19.5H3z" /><path d="M12 10v4M12 17v.2" /></>,
-  sparkle:   <path d="M12 3.5l2 5.5 5.5 2-5.5 2-2 5.5-2-5.5L4.5 11 10 9z" />,
   moon:      <path d="M20 14.2A8.2 8.2 0 0 1 9.8 4 8.5 8.5 0 1 0 20 14.2z" />,
   bolt:      <path d="M13.5 3 5 13.5h5.5L10 21l8.5-10.5H13z" />,
   code:      <path d="M8.5 7 3.5 12l5 5M15.5 7l5 5-5 5M13.5 5l-3 14" />,
+  ai:        <path d="M3.5 19 8.5 5l5 14M5.4 14h6.2M17 5h4M17 19h4M19 5v14" />,
+  checklist: <><rect x="4.5" y="4.5" width="15" height="16.5" rx="2" /><path d="M9 3h6v3H9zM7.8 11.2l1.4 1.4 2.6-2.6M14 11.6h2.5M7.8 16.2l1.4 1.4 2.6-2.6M14 16.6h2.5" /></>,
+  clock:     <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>,
 }
 
 /**
