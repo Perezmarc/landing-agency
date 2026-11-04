@@ -142,7 +142,7 @@ test.describe('the tools each use case connects', () => {
       const agent = col.closest('.mk-flow').querySelector('.mk-flow-agent').getBoundingClientRect()
       const busTop = box.top + Number.parseFloat(bus.top)
       const busBottom = box.bottom - Number.parseFloat(bus.bottom)
-      const linkY = box.top + Number.parseFloat(link.top)
+      const linkY = box.top + Number.parseFloat(link.top) + Number.parseFloat(link.height) / 2
       const out = []
       if (Math.abs(busTop - (tiles[0].top + tiles[0].height / 2)) > 1) out.push('bus top')
       if (Math.abs(busBottom - (tiles.at(-1).top + tiles.at(-1).height / 2)) > 1) out.push('bus bottom')
