@@ -153,8 +153,8 @@
         }
       }
     },
-    "discoveryHeading": "Cómo encontramos el proceso real",
-    "discoveryLead": "Miramos el trabajo desde tres ángulos, porque cada uno muestra algo que los otros no ven.",
+    "discoveryHeading": "Primero, descubrimos cómo trabajáis",
+    "discoveryLead": "Tú nos das acceso al trabajo y a las personas que lo hacen. Lo miramos desde tres ángulos, porque cada uno muestra algo que los otros no ven.",
     "discovery": [
       {
         "title": "Entrevistas: el porqué",
@@ -169,16 +169,17 @@
         "body": "Los procedimientos, las hojas de cálculo, los hilos de correo y los chats guardan las excepciones y reglas que tus sistemas nunca recogieron."
       }
     ],
-    "bucketsHeading": "Clasifica cada paso",
-    "bucketsLead": "En este orden. La mayoría de los equipos empieza por el modelo.",
+    "discoveryFoot": "Antes de construir nada, medimos el volumen, el tiempo de ciclo, el tiempo de espera y las excepciones, para poder comparar el resultado con la situación actual.",
+    "bucketsHeading": "Después, creamos software y agentes para automatizarlo",
+    "bucketsLead": "Clasificamos cada paso, en este orden. La mayoría de los equipos empieza por el modelo.",
     "buckets": [
       {
         "title": "Eliminar",
         "body": "Pasos que existen por un apaño antiguo, una comprobación duplicada o un informe que nadie lee. Un paso eliminado no cuesta nada."
       },
       {
-        "title": "Código simple",
-        "body": "Pasos con reglas fijas: copiar este campo, enviar ese recordatorio, cuadrar estos dos importes. El software de siempre los hace de forma fiable y barata."
+        "title": "Software a medida",
+        "body": "Pasos con reglas fijas: copiar este campo, enviar ese recordatorio, cuadrar estos dos importes. Un software hecho a la medida de tus reglas los hace de forma fiable y barata."
       },
       {
         "title": "Un agente",
@@ -189,9 +190,9 @@
         "body": "Decisiones con consecuencias: aprobaciones, excepciones y negociaciones. El agente las entrega con el contexto adjunto y una persona decide."
       }
     ],
+    "exampleHeadingLead": "Un ejemplo",
     "exampleHeading": "Facturas de proveedores, paso a paso",
-    "exampleLead": "Cómo clasifica el método un proceso típico de cuentas a pagar.",
-    "exampleNote": "Ejemplo ilustrativo del método, no un proyecto con un cliente.",
+    "exampleLead": "Así clasificaríamos un proceso típico de cuentas a pagar.",
     "exampleSteps": [
       {
         "step": "Imprimir cada factura para un archivo de aprobación en papel",
@@ -211,7 +212,7 @@
       },
       {
         "step": "Cuadrar la factura con su pedido y su albarán",
-        "bucket": "Código simple"
+        "bucket": "Software a medida"
       },
       {
         "step": "Averiguar por qué no ha cuadrado y reunir las pruebas",
@@ -219,7 +220,7 @@
       },
       {
         "step": "Enviar un recordatorio a los aprobadores",
-        "bucket": "Código simple"
+        "bucket": "Software a medida"
       },
       {
         "step": "Aprobar una excepción que supera la tolerancia",
@@ -227,31 +228,11 @@
       },
       {
         "step": "Preparar el fichero de la remesa de pagos",
-        "bucket": "Código simple"
+        "bucket": "Software a medida"
       },
       {
         "step": "Aprobar la remesa de pagos",
         "bucket": "Una persona"
-      }
-    ],
-    "stepsHeading": "Cómo es un proyecto con nosotros",
-    "stepsLead": "Tú nos das acceso al trabajo y a las personas que lo hacen. Nosotros nos ocupamos de mapear, construir y medir.",
-    "steps": [
-      {
-        "title": "Mapear el proceso real",
-        "body": "Las entrevistas, los registros de los sistemas y los documentos muestran cómo avanza de verdad el trabajo, con sus bucles y sus esperas."
-      },
-      {
-        "title": "Fijar el punto de partida",
-        "body": "Antes de construir nada, medimos el volumen, el tiempo de ciclo, el tiempo de espera y las excepciones, para poder comparar el resultado con la situación actual."
-      },
-      {
-        "title": "Clasificar y construir",
-        "body": "Eliminamos lo que no debería existir, escribimos código simple para las reglas fijas y construimos agentes para los pasos que requieren criterio. Cada proceso tiene un único responsable en tu equipo."
-      },
-      {
-        "title": "Medir y ampliar",
-        "body": "Volvemos a medir las mismas cifras. Cuando el proceso se sostiene, pasamos al siguiente."
       }
     ],
     "systemsHeading": "Sobre los sistemas que ya utilizas",
@@ -335,8 +316,11 @@
     "casesHeading": "Dónde ayudan los agentes",
     "howEyebrow": "Cómo lo hace el agente",
     "exampleNote": "Ejemplo ilustrativo del método, no un proyecto con un cliente.",
-    "ctaHeading": "Trae un proceso de tu propia empresa.",
-    "ctaLead": "¿Tu sector no aparece en esta página? El método es el mismo. En la llamada de diagnóstico mapeamos uno de tus procesos y te mostramos qué pasos eliminar, cuáles puede asumir un agente y cuáles se quedan con tu equipo.",
+    "yours": {
+      "anchor": "tu-proceso",
+      "name": "Tu proceso",
+      "lead": "Cuéntanos qué trabajo repite tu equipo cada semana. Te enseñamos qué puede asumir un agente, para que esas horas vuelvan a los clientes, a las ventas y al trabajo que hace crecer el negocio."
+    },
     "industries": [
       {
         "anchor": "industria",
@@ -353,7 +337,7 @@
               },
               {
                 "step": "Comprobar precios, stock y plazos en el ERP",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Pedir a un compañero que revise el pedido a ojo",
@@ -375,7 +359,7 @@
               },
               {
                 "step": "Actualizar las fechas previstas en el ERP",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Llevar una hoja de cálculo aparte con los proveedores que se retrasan",
@@ -397,7 +381,7 @@
               },
               {
                 "step": "Sacar de tus sistemas los registros del lote y de las pruebas",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Volver a teclear el informe en el sistema de calidad",
@@ -419,7 +403,7 @@
               },
               {
                 "step": "Cuadrarla con el pedido y el albarán de entrada",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Imprimir la factura para recoger firmas de aprobación",
@@ -444,7 +428,7 @@
             "how": [
               {
                 "step": "Consultar el estado del seguimiento en cada transportista",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Leer el mensaje del transportista y averiguar la causa",
@@ -462,11 +446,11 @@
           },
           {
             "title": "Revisión de facturas de transporte",
-            "body": "Código simple comprueba cada factura del transportista con las tarifas pactadas. Cuando un cargo no coincide, un agente averigua por qué y prepara la reclamación.",
+            "body": "El software a medida comprueba cada factura del transportista con las tarifas pactadas. Cuando un cargo no coincide, un agente averigua por qué y prepara la reclamación.",
             "how": [
               {
                 "step": "Comprobar cada cargo con las tarifas pactadas",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Averiguar por qué un cargo no coincide",
@@ -510,7 +494,7 @@
             "how": [
               {
                 "step": "Sacar del ERP las líneas del pedido y los pesos",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Preparar la factura comercial y proponer los códigos arancelarios",
@@ -543,7 +527,7 @@
               },
               {
                 "step": "Comprobar el plazo de devolución y crear la etiqueta",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Pedir al cliente que rellene un segundo formulario con los mismos datos",
@@ -569,7 +553,7 @@
               },
               {
                 "step": "Comprobar que todos los campos obligatorios están rellenos",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Aprobar el producto antes de publicarlo",
@@ -587,7 +571,7 @@
               },
               {
                 "step": "Buscar el pedido en todos tus sistemas",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Responder a las preguntas habituales, como dónde está un paquete",
@@ -601,11 +585,11 @@
           },
           {
             "title": "Liquidaciones de marketplaces",
-            "body": "Código simple cruza cada liquidación de un marketplace con sus pedidos, comisiones y reembolsos. Un agente investiga las que no cuadran.",
+            "body": "El software a medida cruza cada liquidación de un marketplace con sus pedidos, comisiones y reembolsos. Un agente investiga las que no cuadran.",
             "how": [
               {
                 "step": "Cuadrar cada liquidación con sus pedidos, comisiones y reembolsos",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Repetir el mismo cuadre a mano en una hoja de cálculo",
@@ -638,7 +622,7 @@
               },
               {
                 "step": "Pasar el control a través de tus proveedores",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Imprimir el expediente para firmarlo en papel",
@@ -660,7 +644,7 @@
               },
               {
                 "step": "Comprobar que la póliza estaba en vigor en la fecha del siniestro",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Pedir al cliente los documentos que faltan",
@@ -682,11 +666,11 @@
               },
               {
                 "step": "Hacer las comprobaciones de identidad que exiges",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Actualizar el sistema central",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Aprobar los cambios que afectan a un pago, como un nuevo beneficiario",
@@ -700,7 +684,7 @@
             "how": [
               {
                 "step": "Sacar los extractos que necesita cada informe",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Reunir la documentación de soporte y señalar lo que falta",
@@ -729,7 +713,7 @@
             "how": [
               {
                 "step": "Recordar a cada cliente qué documentos faltan",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Revisar lo que llega y archivarlo en su sitio",
@@ -759,7 +743,7 @@
               },
               {
                 "step": "Conciliar los asientos con el extracto bancario",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Revisar los asientos de los que el agente no estaba seguro",
@@ -803,7 +787,7 @@
               },
               {
                 "step": "Preparar la factura con los registros aprobados",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Revisar la semana y aprobar la factura",
@@ -832,7 +816,7 @@
               },
               {
                 "step": "Reservar un profesional de la lista aprobada y avisar al inquilino",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Aprobar las obras que superan el límite de gasto",
@@ -842,11 +826,11 @@
           },
           {
             "title": "Cobro de alquileres e impagos",
-            "body": "Código simple cruza los pagos con los contratos. Un agente hace el seguimiento de los impagos con el tono que marca tu política, y una persona decide los planes de pago.",
+            "body": "El software a medida cruza los pagos con los contratos. Un agente hace el seguimiento de los impagos con el tono que marca tu política, y una persona decide los planes de pago.",
             "how": [
               {
                 "step": "Cuadrar los cobros con los contratos",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Reclamar los impagos con el tono que marca tu política",
@@ -872,11 +856,11 @@
               },
               {
                 "step": "Comprobarla con el precio acordado",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Imputarla al edificio y al propietario correctos",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Aprobar las facturas que superan el precio acordado",
@@ -890,7 +874,7 @@
             "how": [
               {
                 "step": "Sacar las rentas, los gastos y las obras de cada inmueble",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Redactar el resumen de obras del mes",
@@ -923,7 +907,7 @@
               },
               {
                 "step": "Comprobar la disponibilidad y las reglas de tarifas",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Redactar la propuesta con tus plantillas",
@@ -945,7 +929,7 @@
               },
               {
                 "step": "Actualizar el channel manager y el PMS",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Copiar el cambio en una hoja de cálculo compartida",
@@ -959,11 +943,11 @@
           },
           {
             "title": "Conciliación de proveedores y comisiones",
-            "body": "Código simple cruza las facturas de proveedores y las comisiones de los canales de reserva con las reservas. Un agente investiga las diferencias.",
+            "body": "El software a medida cruza las facturas de proveedores y las comisiones de los canales de reserva con las reservas. Un agente investiga las diferencias.",
             "how": [
               {
                 "step": "Cuadrar facturas y comisiones con las reservas",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Investigar las diferencias",
@@ -993,7 +977,7 @@
               },
               {
                 "step": "Enviar los problemas que se repiten al responsable que puede resolverlos",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Responder en persona a las quejas graves",
@@ -1018,7 +1002,7 @@
               },
               {
                 "step": "Enviarla y seguir la respuesta",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Imprimir la solicitud para el expediente en papel del paciente",
@@ -1040,7 +1024,7 @@
               },
               {
                 "step": "Proponer una cita que encaje con el especialista y las pruebas",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Volver a teclear el volante en el sistema de citas",
@@ -1054,11 +1038,11 @@
           },
           {
             "title": "Facturación a aseguradoras",
-            "body": "Código simple genera las facturas a partir de las citas. Cuando una aseguradora rechaza una, un agente averigua por qué y prepara la corrección.",
+            "body": "El software a medida genera las facturas a partir de las citas. Cuando una aseguradora rechaza una, un agente averigua por qué y prepara la corrección.",
             "how": [
               {
                 "step": "Generar las facturas a partir de las citas",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Leer un rechazo y averiguar el motivo",
@@ -1084,7 +1068,7 @@
               },
               {
                 "step": "Buscar citas y facturas en tus sistemas",
-                "bucket": "Código simple"
+                "bucket": "Software a medida"
               },
               {
                 "step": "Responder a las preguntas habituales sobre citas, documentos y facturas",

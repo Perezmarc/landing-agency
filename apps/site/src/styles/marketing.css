@@ -27,8 +27,8 @@
   letter-spacing: 0.1em;
   color: var(--mute);
 }
-/* Headlines are light and tight. A two-line headline is a grey line, then a
-   black line: two spans, each a whole sentence from the catalog. */
+/* Headlines are light and tight. A two-line headline is a warm brown line,
+   then a black line: two spans, each a whole sentence from the catalog. */
 .mk-h2 {
   font-family: var(--font-display);
   font-size: clamp(30px, 3.6vw, 46px);
@@ -39,7 +39,7 @@
   text-wrap: balance;
 }
 .mk-line { display: block; }
-.mk-line--grey { color: var(--mute); }
+.mk-line--warm { color: var(--ink-warm); }
 .mk-lead {
   font-size: clamp(15.5px, 1.4vw, 17px);
   color: var(--mute);
@@ -312,20 +312,45 @@
     }
 
 
-/* ═══════════ NUMBERED COLUMNS — [1] [2] [3] ═══════════
-   For lists whose order is the content (the three sources, the four buckets,
-   the four engagement steps). The bracketed number is the only accent. */
-.mk-cols {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 32px 28px;
+/* ═══════════ CARDS — the sources, the buckets, "built on your systems" ═══════════
+   One card for every set of cards on the page: frosted glass with a hairline on
+   all four sides, so a stone drifting behind one blurs instead of cutting
+   through the text. No numbers: none of these sets is a sequence of steps. */
+.mk-cards { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+.mk-card {
+  min-width: 0;
+  padding: 26px;
+  border-radius: var(--r-lg);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
 }
-.mk-cols > li { min-width: 0; padding-top: 16px; border-top: 1px solid var(--line); }
-.mk-num { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent-ink); }
-.mk-cols h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; margin-top: 12px; }
-.mk-cols p { font-size: 14.5px; color: var(--mute); line-height: 1.65; margin-top: 8px; }
+.mk-card h3 { font-size: 17px; font-weight: 500; letter-spacing: -0.015em; }
+.mk-card p { font-size: 14.5px; color: var(--mute); line-height: 1.65; margin-top: 8px; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .mk-card { background: var(--glass-bg-solid); }
+}
+/* A card's icon sits beside its title. A bucket's icon wears its tag's
+   colours (mk-tag--n), so the cards and the invoice walkthrough below read
+   as one key. */
+.mk-card-head { display: flex; align-items: center; gap: 12px; }
+.mk-card-head + p { margin-top: 14px; }
+.mk-card-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+.mk-card-icon--1 { color: var(--mute); }
+.mk-card-icon--3 { background: var(--accent-soft); border-color: var(--accent-line); color: var(--accent-ink); }
+.mk-card-icon--4 { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+/* One closing line under a set of cards: the baseline we take first. */
+.mk-cards-foot { max-width: 62ch; margin-top: 32px; font-size: 15px; color: var(--ink-2); line-height: 1.6; }
 
 /* ═══════════ THE INVOICE WALKTHROUGH ═══════════ */
 .mk-walkthrough { max-width: 760px; }
@@ -358,23 +383,6 @@
 .mk-tag--1 { text-decoration: line-through; text-decoration-color: var(--mute-2); }
 .mk-tag-icon { flex: none; }
 .mk-illustration-note { font-family: var(--font-mono); font-size: 12px; color: var(--mute); margin-top: 16px; }
-
-/* ═══════════ GLASS CARDS — "built on your systems" ═══════════ */
-.mk-glass-grid { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-.mk-glass-card {
-  min-width: 0;
-  padding: 26px;
-  border-radius: var(--r-lg);
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-line);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-}
-.mk-glass-card h3 { font-size: 17px; font-weight: 500; letter-spacing: -0.015em; margin-top: 12px; }
-.mk-glass-card p { font-size: 14.5px; color: var(--mute); line-height: 1.65; margin-top: 8px; }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .mk-glass-card { background: var(--glass-bg-solid); }
-}
 
 /* ═══════════ WHO WE ARE ═══════════
    A portrait beside the copy; stacked on phones, photo first. The photo is a
@@ -1022,6 +1030,33 @@
 .mk-uc-steps { position: relative; }
 .mk-uc-progress { display: none; }
 
+/* "Your process": the last entry, and the page's CTA. One light brown card
+   with a name, one sentence and the booking button, so it reads as one more
+   use case that is the reader's own. Side by side when there is room,
+   stacked on phones. */
+.mk-uc-industry.mk-uc-yours { border-top: 0; padding: 8px 0 120px; }
+.mk-uc-yours-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 28px clamp(32px, 5vw, 72px);
+  padding: 48px 56px;
+  background: var(--warm-soft);
+  border: 1px solid var(--warm-line);
+  border-radius: var(--r-lg);
+}
+.mk-uc-yours-card h2 {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 3.6vw, 46px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+.mk-uc-yours-card p { font-size: 17px; color: var(--ink-2); line-height: 1.6; margin-top: 14px; max-width: 52ch; }
+@media (max-width: 720px) {
+  .mk-uc-yours-card { grid-template-columns: minmax(0, 1fr); align-items: start; padding: 32px 24px; }
+}
+
 /* The side menu: one row per industry, in the left gutter, where the gutter
    is wide enough to hold it (from 1300px). A tick and the industry's number;
    the name shows on hover and focus, and always from 1760px, where it fits.
@@ -1177,7 +1212,7 @@
     @media (min-width: 1300px) {
       .mk-uc-industries {
         view-timeline: --mk-uc-all block;
-        timeline-scope: --mk-uc-ind-1, --mk-uc-ind-2, --mk-uc-ind-3, --mk-uc-ind-4, --mk-uc-ind-5, --mk-uc-ind-6, --mk-uc-ind-7, --mk-uc-ind-8;
+        timeline-scope: --mk-uc-ind-1, --mk-uc-ind-2, --mk-uc-ind-3, --mk-uc-ind-4, --mk-uc-ind-5, --mk-uc-ind-6, --mk-uc-ind-7, --mk-uc-ind-8, --mk-uc-ind-9;
       }
       .mk-uc-side {
         animation: mk-uc-side-show linear both;
@@ -1198,6 +1233,7 @@
       .mk-uc-industry:nth-of-type(6) { view-timeline: --mk-uc-ind-6 block; }
       .mk-uc-industry:nth-of-type(7) { view-timeline: --mk-uc-ind-7 block; }
       .mk-uc-industry:nth-of-type(8) { view-timeline: --mk-uc-ind-8 block; }
+      .mk-uc-industry:nth-of-type(9) { view-timeline: --mk-uc-ind-9 block; }
       .mk-uc-side li:nth-child(1) a { animation-timeline: --mk-uc-ind-1; }
       .mk-uc-side li:nth-child(2) a { animation-timeline: --mk-uc-ind-2; }
       .mk-uc-side li:nth-child(3) a { animation-timeline: --mk-uc-ind-3; }
@@ -1206,6 +1242,7 @@
       .mk-uc-side li:nth-child(6) a { animation-timeline: --mk-uc-ind-6; }
       .mk-uc-side li:nth-child(7) a { animation-timeline: --mk-uc-ind-7; }
       .mk-uc-side li:nth-child(8) a { animation-timeline: --mk-uc-ind-8; }
+      .mk-uc-side li:nth-child(9) a { animation-timeline: --mk-uc-ind-9; }
       /* From the industry's top to its bottom crossing the middle of the screen. */
       .mk-uc-side a, .mk-uc-side a::before {
         animation-name: mk-uc-here;
@@ -1239,14 +1276,12 @@
     @keyframes mk-uc-rail { from { scale: 1 0; } to { scale: 1 1; } }
 
     .mk-uc-steps .mk-tag-icon {
-      animation: mk-uc-turn linear both;
+      animation: mk-uc-pop linear both;
       animation-timeline: view();
       animation-range: cover 15% cover 50%;
     }
     .mk-uc-steps .mk-tag--1 .mk-tag-icon { animation-name: mk-uc-drop; }
     .mk-uc-steps .mk-tag--2 .mk-tag-icon { animation-name: mk-uc-slide; }
-    .mk-uc-steps .mk-tag--4 .mk-tag-icon { animation-name: mk-uc-pop; }
-    @keyframes mk-uc-turn  { from { rotate: -120deg; scale: 0.6; } to { rotate: 0deg; scale: 1; } }
     @keyframes mk-uc-drop  { from { rotate: -18deg; translate: 0 -3px; } to { rotate: 0deg; translate: 0 0; } }
     @keyframes mk-uc-slide { from { translate: -4px 0; opacity: 0.3; } to { translate: 0 0; opacity: 1; } }
     @keyframes mk-uc-pop   { from { scale: 0.5; } to { scale: 1; } }
