@@ -86,6 +86,12 @@
   --mute-2:      #8f8b84;   /* labels and placeholders only, never running text */
   --ink-warm:    rgb(134 102 74 / 0.75);   /* 3.2:1 on white, for headline sizes only (AA large text) */
 
+  /* The light brown panel that stands apart from the white page (the use
+     cases page's "your process" card), and its hairline. --ink and --mute
+     both read on it (--mute at 5.5:1). */
+  --warm-soft:   #f1e8dc;
+  --warm-line:   #e4d6c4;
+
   /* Hairlines. --line separates, --line-2 is the quieter internal divider. */
   --line:        #e6e3dd;
   --line-2:      #efede8;
