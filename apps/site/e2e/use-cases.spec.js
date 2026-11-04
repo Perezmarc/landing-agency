@@ -140,4 +140,3 @@ test.describe('with reduced motion', () => {
     await expect(page.locator('.mk-uc-progress')).toBeHidden()
   })
 })
-
