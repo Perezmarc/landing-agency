@@ -111,20 +111,6 @@ test.describe('with motion, in one column', () => {
   })
 })
 
-test.describe('with reduced motion', () => {
-  test.use({ contextOptions: { reducedMotion: 'reduce' } })
-
-  test('everything is fully visible and drawn, and there is no reading bar', async ({ page }) => {
-    await page.goto(PATH)
-    const all = await page.locator('.mk-uc-focus').evaluateAll(els => els.map(el => Number(getComputedStyle(el).opacity)))
-    expect(all.length).toBeGreaterThan(0)
-    all.forEach(value => expect(value).toBe(1))
-    const offsets = await page.locator('.mk-uc-glyph .g-draw').evaluateAll(els => els.map(el => Number.parseFloat(getComputedStyle(el).strokeDashoffset)))
-    offsets.forEach(value => expect(value).toBe(0))
-    await expect(page.locator('.mk-uc-progress')).toBeHidden()
-  })
-})
-
 test.describe('"your process", the last entry', () => {
   test('closes the list like one more use case and books a call', async ({ page }) => {
     await page.goto(PATH)
@@ -140,3 +126,18 @@ test.describe('"your process", the last entry', () => {
     expect(bg).not.toBe(await page.evaluate(() => getComputedStyle(document.body).backgroundColor))
   })
 })
+
+test.describe('with reduced motion', () => {
+  test.use({ contextOptions: { reducedMotion: 'reduce' } })
+
+  test('everything is fully visible and drawn, and there is no reading bar', async ({ page }) => {
+    await page.goto(PATH)
+    const all = await page.locator('.mk-uc-focus').evaluateAll(els => els.map(el => Number(getComputedStyle(el).opacity)))
+    expect(all.length).toBeGreaterThan(0)
+    all.forEach(value => expect(value).toBe(1))
+    const offsets = await page.locator('.mk-uc-glyph .g-draw').evaluateAll(els => els.map(el => Number.parseFloat(getComputedStyle(el).strokeDashoffset)))
+    offsets.forEach(value => expect(value).toBe(0))
+    await expect(page.locator('.mk-uc-progress')).toBeHidden()
+  })
+})
+
