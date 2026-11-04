@@ -94,7 +94,7 @@ from about 2.7 s to the end. It runs on this timeline:
 |---|---|
 | trigger | `play()` is called on the clip; the BEFORE layer stays up (`is-arming`). |
 | first presented frame | BEFORE is cut and the clip shows (`is-transitioning`). |
-| + 150 ms (`--delay-hero-burst`) | The rock bursts: the headline's problem claim drops away downwards and the promise falls into its place from above (`--dur-hero-claim`). |
+| + 1.5 s (`--delay-hero-claim`) | The rock has burst and the explosion has played out: the headline's problem claim drops away downwards and the promise falls into its place from above (`--dur-hero-claim`). |
 | 250 ms before the end | The AFTER loop starts underneath. |
 | end | The transition fades out over the AFTER loop. |
 
@@ -108,8 +108,8 @@ that state's loop, so the AFTER is never left a still when a video exists.
 
 The headline follows the image and shows one claim at a time, the two
 stacked in one grid cell so nothing below them moves. Over the raw rock
-(BEFORE, and on the way back) it is the problem ("Your team spends its days
-copying, pasting and chasing replies."); when the rock bursts, that claim
+(BEFORE, and on the way back) it is the problem ("Your team's days are full of
+repetitive work."); when the rock bursts, that claim
 drops away downwards and the promise ("Hand the repetitive work to AI agents
 built around your processes.") falls into its place from above. Reduced
 motion crossfades them without the move. The server HTML, like the poster,
