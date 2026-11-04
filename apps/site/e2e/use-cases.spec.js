@@ -124,3 +124,19 @@ test.describe('with reduced motion', () => {
     await expect(page.locator('.mk-uc-progress')).toBeHidden()
   })
 })
+
+test.describe('"your process", the last entry', () => {
+  test('closes the list like one more use case and books a call', async ({ page }) => {
+    await page.goto(PATH)
+    const last = page.locator('.mk-uc-industry').last()
+    await expect(last).toHaveClass(/mk-uc-yours/)
+    const anchor = `#${await last.getAttribute('id')}`
+    await expect(page.locator('.mk-uc-index a').last()).toHaveAttribute('href', anchor)
+    await expect(page.locator('.mk-uc-side a').last()).toHaveAttribute('href', anchor)
+    await expect(last.locator('h2')).toBeVisible()
+    await expect(last.locator('a')).toHaveAttribute('href', forge.brand.bookingUrl)
+    // It stands apart from the white page.
+    const bg = await last.locator('.mk-uc-yours-card').evaluate(el => getComputedStyle(el).backgroundColor)
+    expect(bg).not.toBe(await page.evaluate(() => getComputedStyle(document.body).backgroundColor))
+  })
+})

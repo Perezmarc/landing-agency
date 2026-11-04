@@ -1014,6 +1014,33 @@
 .mk-uc-steps { position: relative; }
 .mk-uc-progress { display: none; }
 
+/* "Your process": the last entry, and the page's CTA. One light brown card
+   with a name, one sentence and the booking button, so it reads as one more
+   use case that is the reader's own. Side by side when there is room,
+   stacked on phones. */
+.mk-uc-industry.mk-uc-yours { border-top: 0; padding: 8px 0 120px; }
+.mk-uc-yours-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 28px clamp(32px, 5vw, 72px);
+  padding: 48px 56px;
+  background: var(--warm-soft);
+  border: 1px solid var(--warm-line);
+  border-radius: var(--r-lg);
+}
+.mk-uc-yours-card h2 {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 3.6vw, 46px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+.mk-uc-yours-card p { font-size: 17px; color: var(--ink-2); line-height: 1.6; margin-top: 14px; max-width: 52ch; }
+@media (max-width: 720px) {
+  .mk-uc-yours-card { grid-template-columns: minmax(0, 1fr); align-items: start; padding: 32px 24px; }
+}
+
 /* The side menu: one row per industry, in the left gutter, where the gutter
    is wide enough to hold it (from 1300px). A tick and the industry's number;
    the name shows on hover and focus, and always from 1760px, where it fits.
@@ -1169,7 +1196,7 @@
     @media (min-width: 1300px) {
       .mk-uc-industries {
         view-timeline: --mk-uc-all block;
-        timeline-scope: --mk-uc-ind-1, --mk-uc-ind-2, --mk-uc-ind-3, --mk-uc-ind-4, --mk-uc-ind-5, --mk-uc-ind-6, --mk-uc-ind-7, --mk-uc-ind-8;
+        timeline-scope: --mk-uc-ind-1, --mk-uc-ind-2, --mk-uc-ind-3, --mk-uc-ind-4, --mk-uc-ind-5, --mk-uc-ind-6, --mk-uc-ind-7, --mk-uc-ind-8, --mk-uc-ind-9;
       }
       .mk-uc-side {
         animation: mk-uc-side-show linear both;
@@ -1190,6 +1217,7 @@
       .mk-uc-industry:nth-of-type(6) { view-timeline: --mk-uc-ind-6 block; }
       .mk-uc-industry:nth-of-type(7) { view-timeline: --mk-uc-ind-7 block; }
       .mk-uc-industry:nth-of-type(8) { view-timeline: --mk-uc-ind-8 block; }
+      .mk-uc-industry:nth-of-type(9) { view-timeline: --mk-uc-ind-9 block; }
       .mk-uc-side li:nth-child(1) a { animation-timeline: --mk-uc-ind-1; }
       .mk-uc-side li:nth-child(2) a { animation-timeline: --mk-uc-ind-2; }
       .mk-uc-side li:nth-child(3) a { animation-timeline: --mk-uc-ind-3; }
@@ -1198,6 +1226,7 @@
       .mk-uc-side li:nth-child(6) a { animation-timeline: --mk-uc-ind-6; }
       .mk-uc-side li:nth-child(7) a { animation-timeline: --mk-uc-ind-7; }
       .mk-uc-side li:nth-child(8) a { animation-timeline: --mk-uc-ind-8; }
+      .mk-uc-side li:nth-child(9) a { animation-timeline: --mk-uc-ind-9; }
       /* From the industry's top to its bottom crossing the middle of the screen. */
       .mk-uc-side a, .mk-uc-side a::before {
         animation-name: mk-uc-here;

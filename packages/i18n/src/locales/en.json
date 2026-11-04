@@ -316,8 +316,11 @@
     "casesHeading": "Where agents help",
     "howEyebrow": "How the agent does it",
     "exampleNote": "Illustration of the method, not a client engagement.",
-    "ctaHeading": "Bring one process from your own business.",
-    "ctaLead": "Your industry isn't on this page? The method is the same. On the discovery call we map one of your processes and show you which steps to delete, which an agent can take and which stay with your team.",
+    "yours": {
+      "anchor": "your-process",
+      "name": "Your process",
+      "lead": "Tell us which work your team repeats every week. We'll show you what an agent can take over, so those hours go back to customers, sales and the work that grows the business."
+    },
     "industries": [
       {
         "anchor": "manufacturing",
