@@ -101,7 +101,7 @@ for (const [width, height] of [[390, 844], [375, 667]]) {
     const svh = Math.round(height * 0.75)
     await page.evaluate((css) => { const s = document.createElement('style'); s.textContent = css; document.head.append(s) }, `
       .mk-hero-copy { height: ${svh}px; }
-      .mk-hero-media { --frame-h: max(177.78cqw, ${svh}px); width: max(100%, ${0.5625 * svh}px); top: calc(${svh}px - var(--frame-h)); }`)
+      .mk-hero-media { --frame-h: max(177.78cqw, ${svh}px); width: max(100%, ${0.5625 * svh}px); top: calc(${svh}px - var(--frame-h)); translate: -50% calc(${height - svh}px + (0.2 - var(--pebble-y)) * var(--frame-h)); }`)
     await expect.poll(() => page.locator('.mk-hero-poster--after img').evaluate(img => img.complete && img.naturalWidth)).toBeGreaterThan(0)
     const box = await page.locator('.mk-hero-media').boundingBox()
     expect(box.y + box.height).toBeGreaterThanOrEqual(height)
