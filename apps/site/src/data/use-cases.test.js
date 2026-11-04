@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { CATALOGS, DEFAULT_LOCALE } from '@forge/i18n'
 import { GLYPHS, GLYPH_NAMES } from './use-case-glyphs.js'
+import { TOOLS, TOOL_ICON, EXAMPLE_TOOLS } from './use-case-tools.js'
+import { ICONS } from '@forge/ui'
 
 /* The use cases page (pages-content/UseCases.astro) is all catalog copy. Each
    use case carries a short "how the agent does it", an illustration of the
@@ -72,5 +74,31 @@ describe('the use cases', () => {
     const shape = SOURCE.useCases.industries.map(industry => industry.cases.length)
     expect(GLYPHS.map(list => list.length)).toEqual(shape)
     GLYPHS.flat().forEach(name => expect(GLYPH_NAMES).toContain(name))
+  })
+
+  it('give every use case a flow diagram that starts somewhere and ends somewhere', () => {
+    const shape = SOURCE.useCases.industries.map(industry => industry.cases.length)
+    expect(TOOLS.map(list => list.length)).toEqual(shape)
+    for (const flow of [...TOOLS.flat(), EXAMPLE_TOOLS]) {
+      expect(flow.from.length).toBeGreaterThan(0)
+      expect(flow.to.length).toBeGreaterThan(0)
+      // The connectors are drawn for at most three tiles a column (marketing.css, TOOL FLOW).
+      expect(flow.from.length).toBeLessThanOrEqual(3)
+      expect(flow.to.length).toBeLessThanOrEqual(3)
+    }
+  })
+
+  it('name every tool in every language, with an icon the kit draws, and no tool nobody uses', () => {
+    const used = new Set([...TOOLS.flat(), EXAMPLE_TOOLS].flatMap(flow => [...flow.from, ...flow.to]))
+    expect([...used].sort()).toEqual(Object.keys(TOOL_ICON).sort())
+    for (const [id, icon] of Object.entries(TOOL_ICON)) {
+      expect(Object.keys(ICONS), id).toContain(icon)
+      for (const [locale, catalog] of Object.entries(CATALOGS)) {
+        expect(catalog.flow.tools[id], `${locale}: flow.tools.${id}`).toBeTruthy()
+      }
+    }
+    for (const catalog of Object.values(CATALOGS)) {
+      expect(Object.keys(catalog.flow.tools).sort()).toEqual(Object.keys(TOOL_ICON).sort())
+    }
   })
 })

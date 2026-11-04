@@ -1,0 +1,48 @@
+---
+/* A use case's tools, as a flow diagram: where the work arrives on the left,
+ * the agent in the middle, the systems it works in on the right, and a line
+ * down to the team, who keep the decisions. The lines are the connections we
+ * build; the caption says so (`caption={false}` where the page says it once
+ * for every diagram in its own words, as the use cases page's legend does).
+ *
+ * `flow` is { from: [toolId], to: [toolId] } from data/use-case-tools.js;
+ * each tool's name is copy (`flow.tools.<id>`) and its icon is the kit's.
+ *
+ * Drawn in HTML and CSS (marketing.css, TOOL FLOW), so the names wrap and
+ * translate like any text, and the figure reads as two labelled lists to a
+ * screen reader. The connectors are CSS lines; each column's --n (how many
+ * tools it holds) is the one value they need to find the first and last
+ * tile's centres. Where motion is allowed, a dot runs along each line in the
+ * direction the work flows. Below 440px of its own width it stacks.
+ */
+import { Ico } from '@forge/ui'
+import { useTranslations } from '@forge/i18n'
+import { TOOL_ICON } from '../data/use-case-tools.js'
+
+const { flow, locale, size = 'card', caption = true } = Astro.props
+const t = useTranslations(locale)
+const column = (side, label, tools) => ({ side, label, tools })
+const from = column('in', t('flow.from'), flow.from)
+const to = column('out', t('flow.to'), flow.to)
+---
+<figure class={`mk-flow mk-flow--${size}`} aria-label={t('flow.label')}>
+  <div class="mk-flow-map">
+    {[from, to].map(col => <p class={`mk-flow-label mk-flow-label--${col.side}`} aria-hidden="true">{col.label}</p>)}
+    {[from, null, to].map(col => col ? (
+      <ul class={`mk-flow-col mk-flow-col--${col.side}`} style={`--n: ${col.tools.length}`} aria-label={col.label}>
+        {col.tools.map(id => (
+          <li class="mk-flow-tool">
+            <span class="mk-flow-icon" aria-hidden="true"><Ico name={TOOL_ICON[id]} size={15} /></span>
+            <span class="mk-flow-name">{t(`flow.tools.${id}`)}</span>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div class="mk-flow-hub">
+        <span class="mk-flow-agent"><Ico name="ai" size={15} />{t('flow.agent')}</span>
+      </div>
+    ))}
+    <p class="mk-flow-person"><Ico name="user" size={15} />{t('flow.person')}</p>
+  </div>
+  {caption && <figcaption class="mk-flow-caption">{t('flow.caption')}</figcaption>}
+</figure>

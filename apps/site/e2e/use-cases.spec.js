@@ -124,3 +124,31 @@ test.describe('with reduced motion', () => {
     await expect(page.locator('.mk-uc-progress')).toBeHidden()
   })
 })
+
+test.describe('the tools each use case connects', () => {
+  test.use({ viewport: { width: 1280, height: 800 }, contextOptions: { reducedMotion: 'reduce' } })
+
+  test('open every "how" card, with the lines meeting the tiles and the agent', async ({ page }) => {
+    await page.goto(PATH)
+    const cards = page.locator('.mk-uc-how')
+    await expect(cards.locator('.mk-flow')).toHaveCount(await cards.count())
+    // Each column's bus (::before) runs from its first tile's centre to its last
+    // one's, and its link to the agent (::after) is level with the agent.
+    const misses = await page.locator('.mk-flow-col').evaluateAll(cols => cols.flatMap(col => {
+      const box = col.getBoundingClientRect()
+      const tiles = [...col.children].map(li => li.getBoundingClientRect())
+      const bus = getComputedStyle(col, '::before')
+      const link = getComputedStyle(col, '::after')
+      const agent = col.closest('.mk-flow').querySelector('.mk-flow-agent').getBoundingClientRect()
+      const busTop = box.top + Number.parseFloat(bus.top)
+      const busBottom = box.bottom - Number.parseFloat(bus.bottom)
+      const linkY = box.top + Number.parseFloat(link.top)
+      const out = []
+      if (Math.abs(busTop - (tiles[0].top + tiles[0].height / 2)) > 1) out.push('bus top')
+      if (Math.abs(busBottom - (tiles.at(-1).top + tiles.at(-1).height / 2)) > 1) out.push('bus bottom')
+      if (Math.abs(linkY - (agent.top + agent.height / 2)) > 1) out.push('link')
+      return out
+    }))
+    expect(misses).toEqual([])
+  })
+})
