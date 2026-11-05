@@ -391,11 +391,13 @@ added, moved or condensed; the empty grid is the message.
       is in its column, measured the same way. `Home.astro` hands both to
       the section as custom properties, and the CSS scales the column so
       its stream is the hero stream's width and places it on the same x,
-      from the hero media box's width (`--hero-w`, shared with
-      `.mk-hero-media`), centred on the page like the section: right with
-      no JavaScript and with nothing to re-measure on a layout shift. It is
-      held 24px inside the wrap (the AFTER card's sides in every layout);
-      only a screen over about 3400 CSS px wide needs that. The clip is
+      from the drawn clip's width and its stream's x (`--hero-rw`,
+      `--hero-x`, shared with `.mk-hero-media`): right with no JavaScript
+      and with nothing to re-measure on a layout shift. The hero clip is
+      drawn at 80% of the size that would cover the stage, never wider than
+      1200px (64% on a portrait screen), and its stream leaves the stage
+      where the cover-sized clip's would, held 24px inside the wrap (the
+      AFTER card's sides in every layout). The clip is
       graded to the hero's tone (`DAY_STREAM.clear`), so its edges are as
       dark as the hero's where they meet.
     - **Down**: the clip starts 64px over the hero's bottom edge (`--join`)

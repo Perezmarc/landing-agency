@@ -379,3 +379,20 @@ test('on the media tier the clip is the layout\'s rendition, plays only near the
   await expect(page.locator(`${STREAM} video.is-ready`)).toHaveCount(1, { timeout: 15000 })
   expectPlaced(await geometry(page, 600, 900))
 })
+
+/* A big screen: the hero clip is never drawn wider than 1200px, and the
+   stream below the hero is still on its stream's x at its width. */
+test('on a big screen the hero clip is at most 1200px wide, and the stream below carries on its stream', async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 2560, height: 1440 }, baseURL: test.info().project.use.baseURL })
+  const page = await context.newPage()
+  await page.goto(HOME, { waitUntil: 'load' })
+  const { box, stream } = await page.evaluate(() => {
+    const r = el => { const b = el.getBoundingClientRect(); return { left: b.left, width: b.width, bottom: b.bottom + scrollY } }
+    return { box: r(document.querySelector('.mk-hero-media')), stream: r(document.querySelector('.mk-day-stream')) }
+  })
+  expect(box.width).toBeLessThanOrEqual(1200.5)
+  const s = media.hero['16x9'].stream, c = media.stream
+  expect(Math.abs((stream.left + c.x * stream.width) - (box.left + s.x * box.width))).toBeLessThanOrEqual(TOLERANCE)
+  expect(Math.abs(c.width * stream.width - s.width * box.width)).toBeLessThanOrEqual(TOLERANCE)
+  await context.close()
+})
