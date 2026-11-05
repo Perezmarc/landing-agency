@@ -59,8 +59,11 @@ person can complain to.]
 
 ## Cookies
 
-[Describe what the site actually sets. As built, it sets no cookies and loads
-no third-party scripts. Update this section if that changes.]
+The site sets one cookie, `lang`, which remembers the language you last read
+it in, so the home page opens in that language next time. On your first visit
+that language comes from your browser's language settings. It holds only the
+language code, lasts a year, is never shared and is not used to track you. The
+site loads no third-party scripts.
 
 ## Changes
 

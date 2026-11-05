@@ -311,6 +311,12 @@ JSX or CSS:
   any generation.** `docs/LANDING-DESIGN.md` has the art direction and the
   pipeline's rules; `media.test.js` holds the pipeline's output to what the
   page imports.
+- **Language on arrival.** `apps/site/middleware.js` (Vercel Routing
+  Middleware) is the one thing that runs per request: on `/` only, a first
+  visit goes to the browser's preferred published language, and the `lang`
+  cookie brings a returning visitor back to the language they last read.
+  The rules live in `src/edge/locale.js` with its tests; the privacy page
+  describes the cookie, so change both together. It ships no JavaScript.
 - **Blog.** Markdown files under `apps/site/src/content/blog/<locale>/`,
   typed by `content.config.js`. See `docs/BLOG.md`. Don't write articles
   without being asked.

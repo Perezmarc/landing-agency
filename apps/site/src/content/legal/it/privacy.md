@@ -52,9 +52,12 @@ a cui è possibile presentare reclamo.]
 
 ## Cookie
 
-[Descrivi ciò che il sito installa realmente. Così com'è costruito, non
-installa cookie e non carica script di terze parti. Aggiorna questa sezione se
-le cose cambiano.]
+Il sito installa un solo cookie, `lang`, che ricorda la lingua in cui l'hai
+letto l'ultima volta, così la home page si apre in quella lingua la volta
+successiva. Alla prima visita, la lingua viene dalle impostazioni di lingua del
+tuo browser. Contiene solo il codice della lingua, dura un anno, non viene
+condiviso con nessuno e non serve a tracciarti. Il sito non carica script di
+terze parti.
 
 ## Modifiche
 
