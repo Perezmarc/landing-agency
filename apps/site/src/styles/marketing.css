@@ -382,6 +382,7 @@
 
 /* ═══════════ THE INVOICE WALKTHROUGH ═══════════ */
 .mk-walkthrough { max-width: 760px; }
+.mk-walkthrough-flow { margin-bottom: 36px; }
 .mk-steps-list { list-style: none; padding: 0; counter-reset: step; border-top: 1px solid var(--line); }
 .mk-steps-list li {
   counter-increment: step;
@@ -411,6 +412,171 @@
 .mk-tag--1 { text-decoration: line-through; text-decoration-color: var(--mute-2); }
 .mk-tag-icon { flex: none; }
 .mk-illustration-note { font-family: var(--font-mono); font-size: 12px; color: var(--mute); margin-top: 16px; }
+
+/* ═══════════ TOOL FLOW — what a use case connects ═══════════
+   components/ToolFlow.astro: the tools the work arrives from, the agent, the
+   systems it works in, and the line down to the team. Three columns joined
+   by hairlines that run through the column gaps: each tile's stub reaches a
+   bus halfway across the gap, and the bus's middle meets the agent. A
+   column's tiles share one row height (grid-auto-rows: 1fr), so its --n is
+   enough to put the bus's ends on the first and last tile's centres.
+   The tiles and the agent wear the walkthrough's colours: the agent is "An
+   agent" (mk-tag--3), the team is "A person" (mk-tag--4).
+   The static drawing is the final state, dashed lines with arrowheads; with
+   motion allowed the dashes march in the direction the work flows. Below 440px of its own
+   width the figure stacks: tools, agent, systems, team. */
+.mk-flow {
+  --flow-gap: 40px;
+  --flow-row: 8px;
+  --flow-w: 2px;
+  --flow-period: 10px;
+  --flow-dash-x: repeating-linear-gradient(90deg, var(--accent) 0 5px, transparent 5px var(--flow-period));
+  --flow-dash-y: repeating-linear-gradient(180deg, var(--accent) 0 5px, transparent 5px var(--flow-period));
+  container-type: inline-size;
+  margin: 0;
+}
+.mk-flow--wide { --flow-gap: 64px; --flow-row: 10px; }
+.mk-flow-map {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-areas: "lin . lout" "in hub out" "person person person";
+  column-gap: var(--flow-gap);
+  row-gap: 8px;
+}
+.mk-flow-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mute); }
+.mk-flow-label--in { grid-area: lin; }
+.mk-flow-label--out { grid-area: lout; }
+.mk-flow-col {
+  position: relative;
+  align-self: center;
+  display: grid;
+  grid-auto-rows: 1fr;
+  gap: var(--flow-row);
+  list-style: none;
+  padding: 0;
+}
+.mk-flow-col--in { grid-area: in; }
+.mk-flow-col--out { grid-area: out; }
+.mk-flow-tool {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 6px 10px 6px 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+.mk-flow--wide .mk-flow-tool { padding: 8px 12px 8px 8px; font-size: 14px; }
+.mk-flow-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+.mk-flow--wide .mk-flow-icon { width: 30px; height: 30px; }
+.mk-flow-name { min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
+
+/* The lines: a tile's stub, the column's bus and the bus's link to the
+   agent, each a dashed --flow-w line of the accent (the dash is a repeating
+   gradient, so it can move: below). An arrowhead marks where the work goes
+   in: into the agent, into each system, and down into the team. */
+.mk-flow-tool::before,
+.mk-flow-col::before,
+.mk-flow-col::after { content: ''; position: absolute; background: var(--flow-dash-x); }
+.mk-flow-col::before { background: var(--flow-dash-y); }
+.mk-flow-tool::before { top: calc(50% - var(--flow-w) / 2); width: calc(var(--flow-gap) / 2 + var(--flow-w)); height: var(--flow-w); }
+.mk-flow-col--in .mk-flow-tool::before { left: 100%; }
+.mk-flow-col--out .mk-flow-tool::before { right: 100%; }
+.mk-flow-col::before {
+  width: var(--flow-w);
+  top: calc((100% - (var(--n) - 1) * var(--flow-row)) / (2 * var(--n)));
+  bottom: calc((100% - (var(--n) - 1) * var(--flow-row)) / (2 * var(--n)));
+}
+.mk-flow-col--in::before { left: calc(100% + var(--flow-gap) / 2); }
+.mk-flow-col--out::before { right: calc(100% + var(--flow-gap) / 2); }
+.mk-flow-col::after { top: calc(50% - var(--flow-w) / 2); width: calc(var(--flow-gap) / 2); height: var(--flow-w); }
+.mk-flow-col--in::after { left: calc(100% + var(--flow-gap) / 2); }
+.mk-flow-col--out::after { right: calc(100% + var(--flow-gap) / 2); }
+.mk-flow-agent::before,
+.mk-flow-col--out .mk-flow-tool::after,
+.mk-flow-person::after { content: ''; position: absolute; background: var(--accent); }
+.mk-flow-agent::before,
+.mk-flow-col--out .mk-flow-tool::after { right: 100%; top: 50%; width: 7px; height: 9px; translate: 1px -50%; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.mk-flow-person::after { left: 50%; bottom: 100%; width: 9px; height: 7px; translate: -50% 1px; clip-path: polygon(0 0, 100% 0, 50% 100%); }
+
+/* The agent, centred on its column, with the line down to the team below. */
+.mk-flow-hub { grid-area: hub; display: flex; flex-direction: column; align-items: center; }
+.mk-flow-hub::before, .mk-flow-hub::after { content: ''; flex: 1 1 0; width: var(--flow-w); }
+.mk-flow-hub::after { background: var(--flow-dash-y); }
+.mk-flow-agent {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px 8px 11px;
+  border: 1px solid var(--accent-line);
+  border-radius: var(--r-pill);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.mk-flow-person {
+  grid-area: person;
+  justify-self: center;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 7px 14px 7px 11px;
+  border-radius: var(--r-pill);
+  background: var(--ink);
+  color: var(--surface);
+  font-size: 13px;
+  text-align: center;
+}
+.mk-flow-person .ico, .mk-flow-agent .ico { flex: none; }
+.mk-flow-person::before { content: ''; position: absolute; left: calc(50% - var(--flow-w) / 2); bottom: 100%; width: var(--flow-w); height: 22px; background: var(--flow-dash-y); }
+.mk-flow-caption { margin-top: 14px; font-size: 12.5px; line-height: 1.5; color: var(--mute); text-align: center; text-wrap: balance; }
+
+@container (max-width: 439px) {
+  .mk-flow-map { grid-template-columns: minmax(0, 1fr); grid-template-areas: "lin" "in" "hub" "lout" "out" "person"; row-gap: 0; }
+  .mk-flow-label { text-align: center; margin-bottom: 8px; }
+  .mk-flow-col { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .mk-flow-tool::before, .mk-flow-col::before, .mk-flow-col::after, .mk-flow-col--out .mk-flow-tool::after { content: none; }
+  .mk-flow-hub::before, .mk-flow-hub::after { flex: none; height: 18px; background: var(--flow-dash-y); }
+  .mk-flow-hub::after { margin-bottom: 4px; }
+  /* The agent's arrowhead turns to point down, into its top edge. */
+  .mk-flow-agent::before { right: auto; top: auto; left: 50%; bottom: 100%; width: 9px; height: 7px; translate: -50% 1px; clip-path: polygon(0 0, 100% 0, 50% 100%); }
+  .mk-flow-person { margin-top: 22px; }
+}
+
+/* The work flowing: where the reader allows motion, the dashes march
+   along every line the way the work goes, left to right and down. The buses
+   (the vertical joins in a column) stay still: their work runs both ways. */
+@media (prefers-reduced-motion: no-preference) {
+  .mk-flow-tool::before, .mk-flow-col::after { animation: mk-flow-x 0.7s linear infinite; }
+  .mk-flow-hub::after, .mk-flow-person::before { animation: mk-flow-y 0.7s linear infinite; }
+}
+@container (max-width: 439px) {
+  @media (prefers-reduced-motion: no-preference) {
+    .mk-flow-hub::before { animation: mk-flow-y 0.7s linear infinite; }
+  }
+}
+@keyframes mk-flow-x { from { background-position: 0 0; } to { background-position: var(--flow-period) 0; } }
+@keyframes mk-flow-y { from { background-position: 0 0; } to { background-position: 0 var(--flow-period); } }
 
 /* ═══════════ WHO WE ARE ═══════════
    A portrait beside the copy; stacked on phones, photo first. The photo is a
@@ -1007,6 +1173,7 @@
 .mk-uc-markets { font-size: 14.5px; color: var(--ink-2); margin-top: 14px; max-width: 58ch; }
 .mk-uc-index { display: flex; flex-wrap: wrap; gap: 8px; }
 .mk-uc-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 36px; font-size: 14px; color: var(--mute); }
+.mk-uc-legend-flow { flex-basis: 100%; }
 .mk-uc-buckets { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .mk-uc-industry { position: relative; z-index: 1; padding: 72px 0; border-top: 1px solid var(--line-2); scroll-margin-top: 68px; }
 .mk-uc-grid {
@@ -1044,6 +1211,7 @@
 }
 .mk-uc-how + .mk-uc-how { margin-top: 24px; }
 .mk-uc-how-card h4 { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; margin: 8px 0 16px; }
+.mk-uc-how-card .mk-flow { margin: 4px 0 20px; }
 .mk-uc-how-card .mk-steps-list li { font-size: 14.5px; }
 .mk-uc-stage .mk-illustration-note { margin-top: 16px; }
 .mk-uc-steps { position: relative; }

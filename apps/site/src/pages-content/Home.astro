@@ -4,7 +4,7 @@
  * Section order is the argument: the hero (the problem, a team's days spent
  * on repetitive work, then the promise, AI agents built around its processes)
  * → a week, before and after → how we find the real process → sort every
- * step → one process sorted, as an illustration (both
+ * step → one process sorted, as an illustration, with the tools it connects (both
  * the week and the walkthrough link on to the use cases page) → how an
  * engagement works → built on your systems → who we are (the person who
  * leads the agency) → FAQ → final CTA. Every CTA books a call.
@@ -32,6 +32,8 @@ import { getImage } from 'astro:assets'
 import Base from '../layouts/Base.astro'
 import WeekCompare from '../components/WeekCompare.jsx'
 import BucketTag from '../components/BucketTag.astro'
+import ToolFlow from '../components/ToolFlow.astro'
+import { EXAMPLE_TOOLS } from '../data/use-case-tools.js'
 import { BUCKET_ICON } from '../components/bucket-icons.js'
 import { Button, Ico } from '@forge/ui'
 import forge from '@forge/manifest'
@@ -250,6 +252,9 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
             <span class="mk-line">{t('home.exampleHeading')}</span>
           </h2>
           <p class="mk-lead">{t('home.exampleLead')}</p>
+        </div>
+        <div class="mk-walkthrough-flow" data-reveal>
+          <ToolFlow flow={EXAMPLE_TOOLS} locale={locale} size="wide" />
         </div>
         <ol class="mk-steps-list" data-reveal>
           {exampleSteps.map(item => (

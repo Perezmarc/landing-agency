@@ -36,6 +36,20 @@ export const ICONS = {
   ai:        <path d="M3.5 19 8.5 5l5 14M5.4 14h6.2M17 5h4M17 19h4M19 5v14" />,
   checklist: <><rect x="4.5" y="4.5" width="15" height="16.5" rx="2" /><path d="M9 3h6v3H9zM7.8 11.2l1.4 1.4 2.6-2.6M14 11.6h2.5M7.8 16.2l1.4 1.4 2.6-2.6M14 16.6h2.5" /></>,
   clock:     <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>,
+  // The kinds of tool a use case's flow diagram connects (the site's ToolFlow).
+  mail:      <><rect x="3" y="5.5" width="18" height="13" rx="2" /><path d="M3.5 7.5 12 13l8.5-5.5" /></>,
+  file:      <><path d="M6.5 3.5h7.5l4 4v13h-11.5z" /><path d="M14 3.5v4h4M9.5 13h5M9.5 16.5h5" /></>,
+  folder:    <path d="M3.5 7a1.5 1.5 0 0 1 1.5-1.5h4.5l2 2.5h7.5A1.5 1.5 0 0 1 20.5 9.5v8.5a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 18z" />,
+  image:     <><rect x="3.5" y="4.5" width="17" height="15" rx="2" /><circle cx="9" cy="9.5" r="1.6" /><path d="M4 17.5 9 13l4 3.5 3-2.5 4 3.5" /></>,
+  database:  <><ellipse cx="12" cy="6" rx="7" ry="2.5" /><path d="M5 6v12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5" /></>,
+  globe:     <><circle cx="12" cy="12" r="8.5" /><path d="M3.5 12h17M12 3.5c2.3 2.4 3.5 5.2 3.5 8.5s-1.2 6.1-3.5 8.5c-2.3-2.4-3.5-5.2-3.5-8.5s1.2-6.1 3.5-8.5z" /></>,
+  chat:      <path d="M4 5.5h16v10.5h-9.5L6 19.5V16H4z" />,
+  calendar:  <><rect x="3.5" y="5" width="17" height="15.5" rx="2" /><path d="M3.5 10h17M8 3v4M16 3v4" /></>,
+  bank:      <path d="M3.5 9.5 12 4l8.5 5.5M5 9.5h14M6.5 10v7M10 10v7M14 10v7M17.5 10v7M4 20h16" />,
+  shield:    <><path d="M12 3.5 19 6.3v5.2c0 4.3-2.9 7.6-7 9-4.1-1.4-7-4.7-7-9V6.3z" /><path d="M9 12l2.2 2.2 3.8-4" /></>,
+  truck:     <><path d="M3 6.5h11V16H3zM14 9.5h4l3 3.5V16h-7" /><circle cx="7" cy="17.5" r="1.8" /><circle cx="17" cy="17.5" r="1.8" /></>,
+  store:     <path d="M4 10v10h16V10M3 10l2-5.5h14L21 10zM9.5 20v-5.5h5V20" />,
+  chart:     <path d="M4 20h16M7 20v-6M12 20V9M17 20V5" />,
 }
 
 /**

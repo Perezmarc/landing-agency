@@ -7,7 +7,10 @@
  * handles it, sorted into the four buckets with the same tags as the
  * homepage's walkthrough.
  *
- * The "how" panels are illustrations of the method and say so on the page.
+ * Each "how" card opens on the use case's tools (components/ToolFlow.astro:
+ * where the work arrives, the agent, the systems it works in, the team) and
+ * then lists the steps. The "how" panels are illustrations of the method and
+ * say so on the page.
  * No client, result or figure appears here until a real one exists.
  *
  * The last entry is not an industry: "your process", a light brown card that
@@ -34,7 +37,9 @@
 import Base from '../layouts/Base.astro'
 import BucketTag from '../components/BucketTag.astro'
 import CaseGlyph from '../components/CaseGlyph.astro'
+import ToolFlow from '../components/ToolFlow.astro'
 import { GLYPHS } from '../data/use-case-glyphs.js'
+import { TOOLS } from '../data/use-case-tools.js'
 import { Button } from '@forge/ui'
 import forge from '@forge/manifest'
 import { useTranslations, useList } from '@forge/i18n'
@@ -80,6 +85,7 @@ const pad = n => String(n).padStart(2, '0')
         <ol class="mk-uc-buckets">
           {buckets.map((bucket, i) => <BucketTag as="li" position={i + 1} label={bucket.title} />)}
         </ol>
+        <p class="mk-uc-legend-flow">{t('useCases.legendFlow')}</p>
       </div>
     </div>
   </section>
@@ -132,6 +138,7 @@ const pad = n => String(n).padStart(2, '0')
                   <div class="mk-uc-how-card">
                     <span class="mk-eyebrow">{t('useCases.howEyebrow')}</span>
                     <h4 id={`${industry.anchor}-how-${i + 1}`}>{item.title}</h4>
+                    <ToolFlow flow={TOOLS[n][i]} locale={locale} caption={false} />
                     <ol class="mk-steps-list mk-uc-steps">
                       {item.how.map(step => (
                         <li>
