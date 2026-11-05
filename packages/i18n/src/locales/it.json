@@ -18,7 +18,7 @@
   },
   "home": {
     "eyebrow": "Agenti AI per le operations aziendali",
-    "claimProblem": "Il tuo team passa le giornate a copiare, incollare e rincorrere risposte.",
+    "claimProblem": "Le giornate del tuo team sono piene di lavoro ripetitivo.",
     "claimPromise": "Affida il lavoro ripetitivo ad agenti AI costruiti sui tuoi processi.",
     "ctaPrimary": "Prenota una call conoscitiva",
     "ctaSecondary": "Scopri come lavoriamo",
@@ -316,8 +316,11 @@
     "casesHeading": "Dove aiutano gli agenti",
     "howEyebrow": "Come lo fa l'agente",
     "exampleNote": "Esempio illustrativo del metodo, non un progetto per un cliente.",
-    "ctaHeading": "Porta un processo della tua azienda.",
-    "ctaLead": "Il tuo settore non è in questa pagina? Il metodo è lo stesso. Nella call conoscitiva mappiamo uno dei tuoi processi e ti mostriamo quali passaggi eliminare, quali può prendere un agente e quali restano al tuo team.",
+    "yours": {
+      "anchor": "il-tuo-processo",
+      "name": "Il tuo processo",
+      "lead": "Raccontaci quale lavoro il tuo team ripete ogni settimana. Ti mostriamo cosa può prendere in carico un agente, così quelle ore tornano ai clienti, alle vendite e al lavoro che fa crescere l'azienda."
+    },
     "industries": [
       {
         "anchor": "manifattura",

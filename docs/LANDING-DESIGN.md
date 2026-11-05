@@ -94,7 +94,7 @@ from about 2.7 s to the end. It runs on this timeline:
 |---|---|
 | trigger | `play()` is called on the clip; the BEFORE layer stays up (`is-arming`). |
 | first presented frame | BEFORE is cut and the clip shows (`is-transitioning`). |
-| + 150 ms (`--delay-hero-burst`) | The rock bursts: the headline's problem claim drops away downwards and the promise falls into its place from above (`--dur-hero-claim`). |
+| + 1.5 s (`--delay-hero-claim`) | The rock has burst and the explosion has played out: the headline's problem claim drops away downwards and the promise falls into its place from above (`--dur-hero-claim`). |
 | 250 ms before the end | The AFTER loop starts underneath. |
 | end | The transition fades out over the AFTER loop. |
 
@@ -108,8 +108,8 @@ that state's loop, so the AFTER is never left a still when a video exists.
 
 The headline follows the image and shows one claim at a time, the two
 stacked in one grid cell so nothing below them moves. Over the raw rock
-(BEFORE, and on the way back) it is the problem ("Your team spends its days
-copying, pasting and chasing replies."); when the rock bursts, that claim
+(BEFORE, and on the way back) it is the problem ("Your team's days are full of
+repetitive work."); when the rock bursts, that claim
 drops away downwards and the promise ("Hand the repetitive work to AI agents
 built around your processes.") falls into its place from above. Reduced
 motion crossfades them without the move. The server HTML, like the poster,
@@ -391,11 +391,13 @@ added, moved or condensed; the empty grid is the message.
       is in its column, measured the same way. `Home.astro` hands both to
       the section as custom properties, and the CSS scales the column so
       its stream is the hero stream's width and places it on the same x,
-      from the hero media box's width (`--hero-w`, shared with
-      `.mk-hero-media`), centred on the page like the section: right with
-      no JavaScript and with nothing to re-measure on a layout shift. It is
-      held 24px inside the wrap (the AFTER card's sides in every layout);
-      only a screen over about 3400 CSS px wide needs that. The clip is
+      from the drawn clip's width and its stream's x (`--hero-rw`,
+      `--hero-x`, shared with `.mk-hero-media`): right with no JavaScript
+      and with nothing to re-measure on a layout shift. The hero clip is
+      drawn at 80% of the size that would cover the stage, never wider than
+      1200px (64% on a portrait screen), and its stream leaves the stage
+      where the cover-sized clip's would, held 24px inside the wrap (the
+      AFTER card's sides in every layout). The clip is
       graded to the hero's tone (`DAY_STREAM.clear`), so its edges are as
       dark as the hero's where they meet.
     - **Down**: the clip starts 64px over the hero's bottom edge (`--join`)
