@@ -15,7 +15,7 @@
 /* --wrap-w and --section-pad are also read by the stream carried on below
    the hero (.mk-day-stream), which lands inside the wrap and ends in the
    section's last card. */
-.mk-wrap, .mk-day-stream { --wrap-w: min(1160px, 100% - 40px); }
+.mk-wrap, .mk-hero, .mk-day { --wrap-w: min(1160px, 100% - 40px); }
 .mk-wrap { width: var(--wrap-w); margin-inline: auto; }
 .mk-section { --section-pad: 112px; position: relative; z-index: 1; padding: var(--section-pad) 0; }
 /* Content paints above the stones in its section. */
@@ -122,16 +122,30 @@
    pebble, are laid out in the SMALL viewport (100svh), which is always on
    screen. The pebble's stream runs down to the stage's bottom edge in every
    layout. The stage is the size container the portrait box is sized from.
-   --hero-w is the media box's width, also read by the calendar section
-   below, where the stream is carried on from the hero's bottom edge
-   (.mk-day-stream): % is the full-width parent's width in both.
-   --hero-scale shrinks the clip about the point where its stream leaves the
-   stage (the stream's x, the stage's bottom edge), so the stream still runs
-   out through the bottom edge and the calendar's stream, scaled with it,
-   carries on from there. A phone shows it smaller still (see below). */
-.mk-hero, .mk-day { --hero-w: max(100%, 177.78lvh); --hero-scale: 0.8; }
+   --hero-w is the width that covers the stage (16:9 at least the stage's
+   width, or the portrait frame's). The clip is drawn smaller than that,
+   --hero-rw wide: 80% of it, never wider than 1200px (beyond that it would
+   only be upscaled), and 64% on a portrait screen. Its stream leaves the
+   stage's bottom edge at --hero-x, where the cover-sized clip's stream
+   would, kept inside the content column; it stays there at every size, and
+   the calendar's stream below (.mk-day-stream) carries it on from the same
+   x at the same width (--hero-sw of --hero-rw). Every % here is the
+   full-width section's width, wherever the property is used. */
+.mk-hero, .mk-day {
+  --hero-w: max(100%, 177.78lvh);
+  --hero-rw: min(var(--hero-w) * 0.8, 1200px);
+  --hero-sx: var(--stream-lx);
+  --hero-sw: var(--stream-lw);
+  --hero-x: clamp(50% - var(--wrap-w) / 2 + 24px, 50% + (var(--hero-sx) - 0.5) * var(--hero-w), 50% + var(--wrap-w) / 2 - 24px);
+}
 @media (max-aspect-ratio: 1/1) {
-  .mk-hero, .mk-day { --hero-w: max(100%, 56.25svh); --hero-scale: 0.64; }
+  .mk-hero, .mk-day {
+    --hero-w: max(100%, 56.25svh);
+    --hero-scale: 0.64;
+    --hero-rw: calc(var(--hero-w) * var(--hero-scale));
+    --hero-sx: var(--stream-px);
+    --hero-sw: var(--stream-pw);
+  }
 }
 .mk-hero { position: relative; height: calc(150svh + 100lvh); overflow: clip; }
 .mk-hero-stage {
@@ -143,17 +157,14 @@
 }
 .mk-hero-media {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  /* The clip covers the stage: 16:9, at least the stage's width, centred.
-     The stream runs out through the frame's bottom edge, so it leaves
-     through the stage's. */
-  width: var(--hero-w);
+  /* Landscape: the 16:9 frame, --hero-rw wide, standing on the stage's
+     bottom edge with its stream on --hero-x. The stream runs out through
+     the frame's bottom edge, so it leaves through the stage's. */
+  left: calc(var(--hero-x) - var(--hero-sx) * var(--hero-rw));
+  bottom: 0;
+  width: var(--hero-rw);
   aspect-ratio: 16 / 9;
-  translate: -50% -50%;
-  scale: var(--hero-scale);
-  transform-origin: calc(var(--stream-lx) * 100%) calc(50% + 50lvh);
-  /* Scaled down, the frame no longer covers the stage: its top and sides
+  /* Smaller than the stage, the frame does not cover it: its top and sides
      fade into the page, so its off-white never shows as a box. Its bottom
      is where the stream leaves, at the stage's edge. */
   mask-image:
@@ -172,6 +183,9 @@
      its bottom edge. --hero-extend comes from media.json (Home.astro). */
   .mk-hero-media {
     --frame-h: max(177.78cqw, 100svh);
+    left: 50%;
+    bottom: auto;
+    width: var(--hero-w);
     height: calc(var(--frame-h) * (1 + var(--hero-extend)));
     aspect-ratio: auto;
     top: calc(100svh - var(--frame-h));
@@ -186,6 +200,7 @@
        light, not a grey strip running off the screen. */
     --pebble-y: 0.36;
     translate: -50% calc(100lvh - 100svh + (0.2 - var(--pebble-y)) * var(--frame-h));
+    scale: var(--hero-scale);
     transform-origin: calc(var(--stream-px) * 100%) calc(var(--frame-h) * 0.8);
     mask-image:
       linear-gradient(to right, transparent, #000 14%, #000 86%, transparent),
@@ -689,15 +704,12 @@
    stream there; on the media tier motion/water.js lays the playing clip
    over it, which starts on that very frame.
    Across: on the hero stream's own x at its own width where it leaves the
-   hero (media.json hero.*.stream: its centre --sx and width --sw, fractions
-   of the hero's media box, --hero-w, centred on the page like this
-   full-width section). The clip is a column round its stream (its centre
-   --cx and width --cw, fractions of the column's width: media.json
-   `stream`), so the column is scaled to make the two streams the same
-   width and placed to put them on the same x, with no JavaScript and no
-   re-measuring on a layout shift. It is held --edge inside the wrap, where
-   the AFTER card is in every layout (only a screen over about 3400 CSS px
-   wide needs it).
+   hero (--hero-x, and --hero-sw of the drawn clip's width --hero-rw: see
+   .mk-hero). The clip is a column round its stream (its centre --cx and
+   width --cw, fractions of the column's width: media.json `stream`), so
+   the column is scaled to make the two streams the same width and placed
+   to put them on the same x, with no JavaScript and no re-measuring on a
+   layout shift.
    Down: from --join above the section's top (which is the hero's bottom
    edge) to 32px above the section's content bottom (the AFTER card's
    bottom), so it runs on behind the card (and behind the BEFORE card where
@@ -712,18 +724,12 @@
    (.mk-wrap is z-index 1), like the stones. */
 .mk-day-stream {
   --join: 64px;
-  --edge: 24px;
-  --sx: var(--stream-lx);
-  --sw: var(--stream-lw);
   --car: var(--clip-lar);
-  --half: calc(var(--sw) * var(--hero-scale) * var(--hero-w) / 2);
-  --at: 50% + (var(--sx) - 0.5) * var(--hero-w);   /* the hero stream's centre */
-  --mid: clamp(50% - var(--wrap-w) / 2 + var(--edge) + var(--half), var(--at), 50% + var(--wrap-w) / 2 - var(--edge) - var(--half));
-  --w: calc(2 * var(--half) / var(--cw));
+  --w: calc(var(--hero-sw) * var(--hero-rw) / var(--cw));
   position: absolute;
   top: calc(-1 * var(--join));
   bottom: calc(var(--section-pad) + 32px);
-  left: calc(var(--mid) - var(--cx) * var(--w));
+  left: calc(var(--hero-x) - var(--cx) * var(--w));
   width: var(--w);
   overflow: hidden;
   pointer-events: none;
@@ -733,7 +739,7 @@
   mask-composite: intersect;
 }
 @media (max-aspect-ratio: 1/1) {
-  .mk-day-stream { --sx: var(--stream-px); --sw: var(--stream-pw); --car: var(--clip-par); }
+  .mk-day-stream { --car: var(--clip-par); }
 }
 .mk-day-stream-poster img, .mk-day-stream-video {
   position: absolute;
@@ -742,9 +748,9 @@
   width: 100%;
   height: auto;
   max-width: none;
-  /* As long as at full size: narrowed with the hero, the clip is drawn out
-     lengthways rather than cut short, so it still reaches the card. */
-  aspect-ratio: calc(var(--car) * var(--hero-scale));
+  /* As long as at the cover size: narrowed with the hero, the clip is drawn
+     out lengthways rather than cut short, so it still reaches the card. */
+  height: calc(var(--hero-sw) * var(--hero-w) / var(--cw) / var(--car));
 }
 .mk-day-stream-video { object-fit: fill; opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); }
 .mk-day-stream-video.is-ready { opacity: 1; }
