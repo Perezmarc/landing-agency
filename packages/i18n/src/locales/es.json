@@ -23,9 +23,9 @@
     "ctaPrimary": "Reserva una llamada de diagnóstico",
     "ctaSecondary": "Cómo trabajamos",
     "day": {
-      "headingLead": "Una semana, antes y después.",
-      "heading": "El mismo trabajo, con la parte repetitiva en manos de un agente.",
-      "lead": "El primer calendario es una semana normal. En el segundo, un agente hace el trabajo repetitivo y a tu equipo solo le quedan las decisiones.",
+      "headingLead": "Buena parte de la semana se va en trabajo mecánico.",
+      "heading": "Pásaselo a un agente y solo quedan las decisiones.",
+      "lead": "Elige un equipo para ver una semana normal de uno de sus puestos, hoy y con un agente. Teclear datos a mano, perseguir respuestas y esperar salen del calendario.",
       "teamLegend": "Elige un equipo",
       "beforeTitle": "Hoy",
       "afterTitle": "Con un agente",
@@ -154,24 +154,24 @@
       }
     },
     "discoveryHeading": "Primero, descubrimos cómo trabajáis",
-    "discoveryLead": "Tú nos das acceso al trabajo y a las personas que lo hacen. Lo miramos desde tres ángulos, porque cada uno muestra algo que los otros no ven.",
+    "discoveryLead": "Miramos tres fuentes, porque el proceso que está por escrito casi nunca es el que sigue tu equipo.",
     "discovery": [
       {
-        "title": "Entrevistas: el porqué",
-        "body": "Hablamos con quienes hacen el trabajo: quién decide, de qué apaños dependen y qué umbrales nunca se pusieron por escrito."
+        "title": "Hablar con tu equipo",
+        "body": "Nos sentamos con quienes hacen el trabajo para entender quién decide, de qué apaños dependen y qué umbrales no ha apuntado nadie."
       },
       {
-        "title": "Los registros de tus sistemas: el qué",
+        "title": "Leer los registros de tus sistemas",
         "body": "Tu ERP, tu CRM y tu herramienta de soporte registran cada caso, así que vemos cuántos llegan, cuánto tarda cada paso, dónde esperan los casos y cuáles vuelven atrás."
       },
       {
-        "title": "Todo lo demás",
+        "title": "Repasar todo lo demás",
         "body": "Los procedimientos, las hojas de cálculo, los hilos de correo y los chats guardan las excepciones y reglas que tus sistemas nunca recogieron."
       }
     ],
-    "discoveryFoot": "Antes de construir nada, medimos el volumen, el tiempo de ciclo, el tiempo de espera y las excepciones, para poder comparar el resultado con la situación actual.",
+    "discoveryFoot": "Antes de construir nada, medimos el volumen, el tiempo de ciclo, el tiempo de espera y las excepciones, para que puedas comparar el resultado con lo de hoy.",
     "bucketsHeading": "Después, creamos software y agentes para automatizarlo",
-    "bucketsLead": "Clasificamos cada paso, en este orden. La mayoría de los equipos empieza por el modelo.",
+    "bucketsLead": "Ponemos cada paso en uno de estos cuatro grupos, en este orden. Muchos equipos empiezan por la IA, pero un paso que se puede eliminar sale más barato que cualquier agente.",
     "buckets": [
       {
         "title": "Eliminar",
@@ -257,7 +257,7 @@
       "heading": "Construyendo con IA desde antes de ChatGPT.",
       "body": [
         "Antes de ChatGPT fundé una empresa de IA que desarrollaba todo tipo de modelos para automatizar la detección de fraude y la seguridad. Con el tiempo se fusionó con una empresa de San Francisco, y me quedé para seguir construyendo allí.",
-        "Allí aprendí casi todo lo que usamos hoy: poner la IA donde más mueve el trabajo, diseñar el proceso a su alrededor, adoptar los nuevos modelos cuando aún están empezando y llevar la automatización tan lejos como se pueda con seguridad. Muchas cosas no salieron bien a la primera, y esas lecciones cuentan tanto como los aciertos.",
+        "Allí aprendí casi todo lo que usamos hoy: poner la IA donde más trabajo ahorra, diseñar el proceso a su alrededor, adoptar los nuevos modelos cuando aún están empezando y llevar la automatización tan lejos como se pueda con seguridad. Muchas cosas no salieron bien a la primera, y esas lecciones cuentan tanto como los aciertos.",
         "Ahora lo traemos a tu equipo. Hemos visto procesos de todo tipo, y cada proyecto empieza igual: sentarnos con quienes hacen el trabajo y entender cómo funciona de verdad."
       ],
       "photoAlt": "Retrato de la persona que dirige la agencia"

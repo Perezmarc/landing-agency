@@ -23,9 +23,9 @@
     "ctaPrimary": "Book a discovery call",
     "ctaSecondary": "See how it works",
     "day": {
-      "headingLead": "A week, before and after.",
-      "heading": "The same job, with the repetitive work handed to an agent.",
-      "lead": "The first calendar is a normal week. In the second, an agent does the repetitive work and your team keeps only the decisions.",
+      "headingLead": "A lot of the week is busywork.",
+      "heading": "Hand it to an agent and only the decisions are left.",
+      "lead": "Pick a team to see a typical week for one role, today and with an agent. The re-keying, chasing and waiting come off the calendar.",
       "teamLegend": "Choose a team",
       "beforeTitle": "Today",
       "afterTitle": "With an agent",
@@ -154,24 +154,24 @@
       }
     },
     "discoveryHeading": "First, we discover how you work",
-    "discoveryLead": "You give us access to the work and the people who do it. We look at it from three sides, because each one shows something the others miss.",
+    "discoveryLead": "We look at three sources, because the documented process is rarely the one your team follows.",
     "discovery": [
       {
-        "title": "Interviews: the why",
-        "body": "We talk to the people who do the work: who decides, which workarounds they rely on, and the thresholds nobody wrote down."
+        "title": "Talking to your team",
+        "body": "We sit down with the people who do the work to learn who decides, which workarounds they rely on and which thresholds nobody wrote down."
       },
       {
-        "title": "Your systems' logs: the what",
+        "title": "Reading your systems' logs",
         "body": "Your ERP, CRM and helpdesk record every case, so we can see how many arrive, how long each step takes, where cases wait and which ones loop back."
       },
       {
-        "title": "Everything else",
+        "title": "Going through everything else",
         "body": "Procedures, spreadsheets, email threads and chat hold the exceptions and rules your systems never captured."
       }
     ],
-    "discoveryFoot": "Before we build anything, we measure volume, cycle time, waiting time and exceptions, so the result can be compared with today.",
+    "discoveryFoot": "Before we build anything, we measure volume, cycle time, waiting time and exceptions, so you can compare the result with today.",
     "bucketsHeading": "Second, we build software and agents to automate it",
-    "bucketsLead": "We sort every step, in this order. Most teams start with the model.",
+    "bucketsLead": "We put every step into one of four groups, in this order. Plenty of teams start with AI, but a step you can delete is cheaper than any agent.",
     "buckets": [
       {
         "title": "Delete",
@@ -257,7 +257,7 @@
       "heading": "Building with AI since before ChatGPT.",
       "body": [
         "Before ChatGPT, I founded an AI company that built models of every kind to automate fraud and security work. In time it merged with a company in San Francisco, and I stayed on to keep building there.",
-        "That's where I learned most of what we use today: put AI where it moves the work most, design the process around it, adopt new models while they're still early, and push automation as far as it can safely go. Plenty of it didn't work the first time, and those lessons count as much as the wins.",
+        "That's where I learned most of what we use today: put AI where it saves the most work, design the process around it, adopt new models while they're still early, and push automation as far as it can safely go. Plenty of it didn't work the first time, and those lessons count as much as the wins.",
         "Now we bring that to your team. We've seen processes of all kinds, and every project starts the same way: sitting down with the people who do the work and learning how it really runs."
       ],
       "photoAlt": "Portrait of the person who leads the agency"

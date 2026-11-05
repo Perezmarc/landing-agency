@@ -1,6 +1,6 @@
 # Product Marketing Context
 
-**Document version:** v17
+**Document version:** v18
 **Last updated:** 2026-11-04
 
 > Auto-drafted from the founder's brief ("an AI consulting agency, almost exactly
@@ -128,6 +128,7 @@ From the owner (2026-10-16), and on the homepage as "Who we are":
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v18 (2026-11-04): Copy pass on the homepage after the owner called the week section's lead "AI slop". The week section now says its point ("A lot of the week is busywork." / "Hand it to an agent and only the decisions are left.") and its lead tells the reader what to do (pick a team) instead of describing the two calendars. The discovery lead names the reason for three sources (the documented process is rarely the real one), its card titles say what we do instead of "X: the why" labels, and the buckets lead explains "delete before you automate" instead of the cryptic "Most teams start with the model."
 - v17 (2026-11-04): The hero's problem claim is more general, at the owner's request: "Your team's days are full of repetitive work." (it was about copying, pasting and chasing replies, too narrow).
 - v16 (2026-11-04): The use cases page ends on "Your process" (ES "Tu proceso", IT "Il tuo processo"), a light brown card listed in the index and side menu like one more use case: one sentence (the work your team repeats every week goes to an agent, so the hours go back to customers, sales and growth) and the booking button. It replaces the page's old closing CTA ("Bring one process from your own business").
 - v15 (2026-11-02): The second bucket is "Custom software" (ES "Software a medida", IT "Software su misura"), not "Plain code", at the owner's request: it says what the buyer gets, not how it's made. The sources and the buckets carry icons (people, a checklist board, a clock; trash, </>, "AI", a person), the same ones the walkthrough's tags use, and the supplier-invoices walkthrough says in its heading that it is an example. "How an engagement works" is folded into the two method sections, retitled "First, we discover how you work" (with the baseline) and "Second, we build software and agents to automate it"; the owner and re-measure line was then dropped at the owner's request. The first line of two-line headlines is a translucent warm brown instead of grey; the walkthrough's heading is "An example" over "Supplier invoices, step by step", and its "illustration, not a client engagement" note is gone from the homepage (the heading now says it). All homepage cards share one bordered glass style, without numbers.
