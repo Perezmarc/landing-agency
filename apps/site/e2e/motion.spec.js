@@ -84,11 +84,14 @@ test.describe('motion, with the production CSP', () => {
     await expect.poll(() => heroState(page)).toBe('after')
   })
 
-  test('the headline shows one claim and follows the image: the problem over the rock, the promise once it bursts', async ({ page }) => {
+  test('the headline shows one claim and follows the image: the problem over the rock, the promise once it has burst', async ({ page }) => {
     await page.goto(HOME, { waitUntil: 'load' })
     await expect.poll(() => heroState(page)).toBe('before')
     await expect.poll(() => shownClaim(page)).toBe('problem')
     await page.evaluate(() => window.scrollTo(0, 100))
+    // The explosion plays first: as the clip starts, the problem is still the claim.
+    await expect.poll(() => page.locator('[data-hero]').getAttribute('class'), { timeout: 3000 }).toContain('is-transitioning')
+    expect(await shownClaim(page)).toBe('problem')
     await expect.poll(() => heroState(page), { timeout: 8000 }).toBe('after')
     await expect.poll(() => shownClaim(page)).toBe('promise')
     await page.evaluate(() => window.scrollTo(0, 0))

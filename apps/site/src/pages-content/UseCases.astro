@@ -13,6 +13,10 @@
  * say so on the page.
  * No client, result or figure appears here until a real one exists.
  *
+ * The last entry is not an industry: "your process", a light brown card that
+ * asks the reader to bring their own and books the call. It sits in the
+ * index and the side menu like one more use case, and it is the page's CTA.
+ *
  * Static HTML with no script: the industry index at the top and the slim
  * side menu (wide screens only) are in-page anchors, and every CTA books a
  * call. Every string comes from @forge/i18n.
@@ -48,6 +52,7 @@ const meta = pageMeta('useCases', locale)
 
 const buckets = list('home.buckets')
 const industries = list('useCases.industries')
+const yours = { anchor: t('useCases.yours.anchor'), name: t('useCases.yours.name') }
 // A step's tag is its bucket's position (1 Delete … 4 A person), as on the homepage.
 const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
 const pad = n => String(n).padStart(2, '0')
@@ -72,6 +77,7 @@ const pad = n => String(n).padStart(2, '0')
         {industries.map(industry => (
           <Button as="a" href={`#${industry.anchor}`} variant="glass" size="compact" pill>{industry.name}</Button>
         ))}
+        <Button as="a" href={`#${yours.anchor}`} variant="glass" size="compact" pill>{yours.name}</Button>
       </nav>
 
       <div class="mk-uc-legend">
@@ -95,6 +101,12 @@ const pad = n => String(n).padStart(2, '0')
             </a>
           </li>
         ))}
+        <li>
+          <a href={`#${yours.anchor}`}>
+            <span class="mk-uc-side-n" aria-hidden="true">+</span>
+            <span class="mk-uc-side-name">{yours.name}</span>
+          </a>
+        </li>
       </ol>
     </nav>
 
@@ -144,19 +156,19 @@ const pad = n => String(n).padStart(2, '0')
         </div>
       </section>
     ))}
-  </div>
 
-  <section class="mk-final">
-    <div class="mk-wrap mk-final-inner">
-      <div class="mk-final-copy">
-        <h2>{t('useCases.ctaHeading')}</h2>
-        <p>{t('useCases.ctaLead')}</p>
-        <div class="mk-final-actions">
+    <section class="mk-uc-industry mk-uc-yours" id={yours.anchor} aria-labelledby={`${yours.anchor}-title`}>
+      <div class="mk-wrap">
+        <div class="mk-uc-yours-card">
+          <div>
+            <h2 id={`${yours.anchor}-title`}>{yours.name}</h2>
+            <p>{t('useCases.yours.lead')}</p>
+          </div>
           <Button as="a" href={forge.brand.bookingUrl} variant="cta" size="lg" pill iconRightName="arrowRight">
             {t('home.ctaPrimary')}
           </Button>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </Base>

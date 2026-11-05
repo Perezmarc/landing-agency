@@ -18,7 +18,7 @@
   },
   "home": {
     "eyebrow": "Agentes de IA para las operaciones de tu empresa",
-    "claimProblem": "Tu equipo se pasa el día copiando, pegando y persiguiendo respuestas.",
+    "claimProblem": "Los días de tu equipo están llenos de trabajo repetitivo.",
     "claimPromise": "Deja el trabajo repetitivo a agentes de IA hechos a la medida de tus procesos.",
     "ctaPrimary": "Reserva una llamada de diagnóstico",
     "ctaSecondary": "Cómo trabajamos",
@@ -317,8 +317,11 @@
     "casesHeading": "Dónde ayudan los agentes",
     "howEyebrow": "Cómo lo hace el agente",
     "exampleNote": "Ejemplo ilustrativo del método, no un proyecto con un cliente.",
-    "ctaHeading": "Trae un proceso de tu propia empresa.",
-    "ctaLead": "¿Tu sector no aparece en esta página? El método es el mismo. En la llamada de diagnóstico mapeamos uno de tus procesos y te mostramos qué pasos eliminar, cuáles puede asumir un agente y cuáles se quedan con tu equipo.",
+    "yours": {
+      "anchor": "tu-proceso",
+      "name": "Tu proceso",
+      "lead": "Cuéntanos qué trabajo repite tu equipo cada semana. Te enseñamos qué puede asumir un agente, para que esas horas vuelvan a los clientes, a las ventas y al trabajo que hace crecer el negocio."
+    },
     "industries": [
       {
         "anchor": "industria",
