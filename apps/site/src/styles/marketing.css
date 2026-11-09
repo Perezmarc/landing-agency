@@ -147,6 +147,12 @@
     --hero-sw: var(--stream-pw);
   }
 }
+/* A phone: the rock is the first screen's subject, not a thumbnail under
+   the copy, so it is drawn nearly at its cover size (its sides still fade
+   out past the screen's edges). */
+@media (max-aspect-ratio: 1/1) and (max-width: 600px) {
+  .mk-hero, .mk-day { --hero-scale: 0.92; }
+}
 .mk-hero { position: relative; height: calc(150svh + 100lvh); overflow: clip; }
 .mk-hero-stage {
   position: sticky;
@@ -281,17 +287,29 @@
 .mk-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 34px; }
 
 @media (max-aspect-ratio: 1/1) {
-  /* Portrait: the copy sits in the white upper part of the stage, the pebble
-     centred below it (its frame was composed for this). */
-  .mk-hero-copy { justify-content: flex-start; padding-top: calc(68px + 3svh); }
-  .mk-hero-copy > * { max-width: none; }
-  .mk-hero h1 { font-size: clamp(30px, 7.6vw, 52px); margin-top: 14px; }
-  .mk-hero-actions { margin-top: 22px; }
+  /* Portrait: the copy sits in the white upper part of the stage, centred
+     on the rock's axis (the pebble and its stream fall down the middle),
+     a little below the header. */
+  .mk-hero-copy {
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    padding-top: calc(68px + 3svh);
+  }
+  .mk-hero-copy > * { max-width: 34rem; }
+  .mk-hero h1 { font-size: clamp(32px, 8.6vw, 52px); margin-top: 14px; }
+  .mk-hero-actions { justify-content: center; margin-top: 22px; }
+}
+/* A phone: the copy is let down from the header so it reads as the rock's
+   caption rather than a line hanging off the nav (the rock is drawn larger
+   here, see --hero-scale). */
+@media (max-aspect-ratio: 1/1) and (max-width: 600px) {
+  .mk-hero-copy { padding-top: calc(68px + 8svh); }
 }
 /* Short phones (iPhone SE and the like): tighten the copy so the pebble
    still shows below the buttons. */
 @media (max-aspect-ratio: 1/1) and (max-height: 700px) {
-  .mk-hero-copy { padding-top: calc(60px + 2svh); }
+  .mk-hero-copy { padding-top: calc(68px + 4svh); }
   .mk-hero h1 { font-size: clamp(26px, 6.6vw, 40px); margin-top: 10px; }
   .mk-hero-actions { margin-top: 16px; }
 }
