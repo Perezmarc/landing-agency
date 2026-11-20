@@ -1,7 +1,7 @@
 # Product Marketing Context
 
-**Document version:** v18
-**Last updated:** 2026-11-04
+**Document version:** v19
+**Last updated:** 2026-11-20
 
 > Auto-drafted from the founder's brief ("an AI consulting agency, almost exactly
 > like varickagents.com") before the agency had a name, customers or proof.
@@ -128,6 +128,7 @@ From the owner (2026-10-16), and on the homepage as "Who we are":
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v19 (2026-11-20): The hero's two claims are the owner's line, at their request: "Generic software builds gaps." over the rock, then "Personalized Agentic Software builds efficiency." once it has burst (ES "El software genérico crea brechas." / "El software agéntico a medida crea eficiencia."; IT "Il software generico crea lacune." / "Il software agentico su misura crea efficienza."). They replace "Your team's days are full of repetitive work." / "Hand the repetitive work to AI agents built around your processes." The owner's capitalisation of "Personalized Agentic Software" is kept in English; Spanish and Italian use sentence case, as those languages would.
 - v18 (2026-11-04): Copy pass on the homepage after the owner called the week section's lead "AI slop". The week section now says its point ("A lot of the week is busywork." / "Hand it to an agent and only the decisions are left.") and its lead tells the reader what to do (pick a team) instead of describing the two calendars. The discovery lead names the reason for three sources (the documented process is rarely the real one), its card titles say what we do instead of "X: the why" labels, and the buckets lead explains "delete before you automate" instead of the cryptic "Most teams start with the model."
 - v17 (2026-11-04): The hero's problem claim is more general, at the owner's request: "Your team's days are full of repetitive work." (it was about copying, pasting and chasing replies, too narrow).
 - v16 (2026-11-04): The use cases page ends on "Your process" (ES "Tu proceso", IT "Il tuo processo"), a light brown card listed in the index and side menu like one more use case: one sentence (the work your team repeats every week goes to an agent, so the hours go back to customers, sales and growth) and the booking button. It replaces the page's old closing CTA ("Bring one process from your own business").
