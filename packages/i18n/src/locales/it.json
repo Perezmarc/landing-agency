@@ -18,8 +18,8 @@
   },
   "home": {
     "eyebrow": "Agenti AI per le operations aziendali",
-    "claimProblem": "Il software generico crea lacune.",
-    "claimPromise": "Il software agentico su misura crea efficienza.",
+    "claimProblem": "Le giornate del tuo team sono piene di lavoro ripetitivo.",
+    "claimPromise": "Affida il lavoro ripetitivo ad agenti AI costruiti sui tuoi processi.",
     "ctaPrimary": "Prenota una call conoscitiva",
     "ctaSecondary": "Scopri come lavoriamo",
     "day": {
@@ -172,6 +172,8 @@
     "discoveryFoot": "Prima di sviluppare qualsiasi cosa misuriamo volumi, tempi di ciclo, tempi di attesa ed eccezioni, così puoi confrontare il risultato con la situazione di oggi.",
     "bucketsHeading": "Poi, creiamo software e agenti per automatizzarlo",
     "bucketsLead": "Mettiamo ogni passaggio in uno di questi quattro gruppi, in quest'ordine. Molti team partono dall'AI, ma un passaggio che si può eliminare costa meno di qualsiasi agente.",
+    "softwareClaimLead": "Il software generico crea lacune.",
+    "softwareClaim": "Il software agentico su misura crea efficienza.",
     "buckets": [
       {
         "title": "Eliminare",

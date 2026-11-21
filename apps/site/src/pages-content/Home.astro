@@ -1,8 +1,8 @@
 ---
 /* The landing page.
  *
- * Section order is the argument: the hero (the problem, generic software
- * leaves gaps, then the promise, agentic software built for you is efficient)
+ * Section order is the argument: the hero (the problem, a team's days spent
+ * on repetitive work, then the promise, AI agents built around its processes)
  * → a week, before and after → how we find the real process → sort every
  * step → one process sorted, as an illustration, with the tools it connects (both
  * the week and the walkthrough link on to the use cases page) → how an
@@ -239,6 +239,11 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
           </li>
         ))}
       </ol>
+      <p class="mk-claim" data-reveal>
+        <span class="mk-line mk-line--warm">{t('home.softwareClaimLead')}</span>
+        {' '}
+        <span class="mk-line">{t('home.softwareClaim')}</span>
+      </p>
     </div>
   </section>
 

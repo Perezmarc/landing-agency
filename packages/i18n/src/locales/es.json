@@ -18,8 +18,8 @@
   },
   "home": {
     "eyebrow": "Agentes de IA para las operaciones de tu empresa",
-    "claimProblem": "El software genérico crea brechas.",
-    "claimPromise": "El software agéntico a medida crea eficiencia.",
+    "claimProblem": "Los días de tu equipo están llenos de trabajo repetitivo.",
+    "claimPromise": "Deja el trabajo repetitivo a agentes de IA hechos a la medida de tus procesos.",
     "ctaPrimary": "Reserva una llamada de diagnóstico",
     "ctaSecondary": "Cómo trabajamos",
     "day": {
@@ -172,6 +172,8 @@
     "discoveryFoot": "Antes de construir nada, medimos el volumen, el tiempo de ciclo, el tiempo de espera y las excepciones, para que puedas comparar el resultado con lo de hoy.",
     "bucketsHeading": "Después, creamos software y agentes para automatizarlo",
     "bucketsLead": "Ponemos cada paso en uno de estos cuatro grupos, en este orden. Muchos equipos empiezan por la IA, pero un paso que se puede eliminar sale más barato que cualquier agente.",
+    "softwareClaimLead": "El software genérico crea brechas.",
+    "softwareClaim": "El software agéntico a medida crea eficiencia.",
     "buckets": [
       {
         "title": "Eliminar",
