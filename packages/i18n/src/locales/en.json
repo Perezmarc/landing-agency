@@ -172,6 +172,8 @@
     "discoveryFoot": "Before we build anything, we measure volume, cycle time, waiting time and exceptions, so you can compare the result with today.",
     "bucketsHeading": "Second, we build software and agents to automate it",
     "bucketsLead": "We put every step into one of four groups, in this order. Plenty of teams start with AI, but a step you can delete is cheaper than any agent.",
+    "softwareClaimLead": "Generic software builds gaps.",
+    "softwareClaim": "Personalized Agentic Software builds efficiency.",
     "buckets": [
       {
         "title": "Delete",

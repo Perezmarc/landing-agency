@@ -395,6 +395,18 @@
 .mk-card-icon--1 { color: var(--mute); }
 .mk-card-icon--3 { background: var(--accent-soft); border-color: var(--accent-line); color: var(--accent-ink); }
 .mk-card-icon--4 { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+/* The closing claim under the four groups: why the software is built for
+   the client. Set like a two-line headline, warm line first. */
+.mk-claim {
+  max-width: 24ch;
+  margin-top: 72px;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.2vw, 40px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
 /* One closing line under a set of cards: the baseline we take first. */
 .mk-cards-foot { max-width: 62ch; margin-top: 32px; font-size: 15px; color: var(--ink-2); line-height: 1.6; }
 
