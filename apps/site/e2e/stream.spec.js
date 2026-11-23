@@ -158,7 +158,7 @@ for (const [width, height, layout] of [[1440, 900, 'side by side'], [1920, 1080,
   test(`${layout} at ${width}x${height}: one stream clip, on the hero stream's x at its width, into the AFTER card`, async ({ page }) => {
     await page.setViewportSize({ width, height })
     await page.goto(HOME, { waitUntil: 'load' })
-    await page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start' }))
+    await page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }))
     // One copy: one still, and on the media tier one clip, over it, the same box.
     await expect(page.locator(STREAM)).toHaveCount(1)
     await expect(page.locator(`${STREAM} img`)).toHaveCount(1)
@@ -291,7 +291,7 @@ for (const [width, height, layout] of [[1440, 900, 'side by side'], [1024, 768, 
   test(`${layout} at ${width}x${height}: the stream is continuous from the hero's bottom to the AFTER card`, async ({ page }) => {
     await page.setViewportSize({ width, height })
     await page.goto(HOME, { waitUntil: 'load' })
-    await page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start' }))
+    await page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }))
     await expect(page.locator(`${STREAM} video.is-ready`)).toHaveCount(1, { timeout: 15000 })
     const { wrapper, clip, hero, card } = await geometry(page, width, height)
     // Geometry: nothing between the hero and the card is left uncovered.
@@ -351,7 +351,7 @@ for (const [name, setup] of [
     page.on('request', r => { if (isStreamMedia(r.url())) requests.push(r.url()) })
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto(HOME, { waitUntil: 'load' })
-    await page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start' }))
+    await page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }))
     await page.waitForTimeout(1200)
     await expect(page.locator(`${STREAM} video`)).toHaveCount(0)
     expect(requests).toEqual([])
@@ -366,14 +366,14 @@ test('on the media tier the clip is the layout\'s rendition, plays only near the
   await page.goto(HOME, { waitUntil: 'load' })
   await page.waitForTimeout(600)
   expect(requests).toEqual([])
-  await page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start' }))
+  await page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }))
   const video = page.locator(`${STREAM} video`)
   await expect.poll(() => video.evaluate(v => !v.paused && v.currentTime > 0 && v.currentSrc)).toMatch(/day-stream-16x9/)
   await page.evaluate(() => window.scrollTo(0, 0))
   await expect.poll(() => video.evaluate(v => v.paused)).toBe(true)
   // Portrait: the 9:16 rendition, still placed on the hero's stream.
   await page.setViewportSize({ width: 600, height: 900 })
-  await page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start' }))
+  await page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }))
   await expect.poll(() => video.evaluate(v => !v.paused && v.currentSrc)).toMatch(/day-stream-9x16/)
   await expect(video).toHaveCount(1)
   await expect(page.locator(`${STREAM} video.is-ready`)).toHaveCount(1, { timeout: 15000 })

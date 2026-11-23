@@ -3,10 +3,11 @@
  *
  * Section order is the argument: the hero (the problem, a team's days spent
  * on repetitive work, then the promise, AI agents built around its processes)
- * → a week, before and after → how we find the real process → sort every
- * step → one process sorted, as an illustration, with the tools it connects (both
- * the week and the walkthrough link on to the use cases page) → how an
- * engagement works → built on your systems → who we are (the person who
+ * → nearly every company uses AI, very few get the most out of it, and we
+ * bring AI to the business → a week, before and after → how we find the real
+ * process → sort every step → one process sorted, as an illustration, with
+ * the tools it connects (both the week and the walkthrough link on to the use
+ * cases page) → how an engagement works → built on your systems → who we are (the person who
  * leads the agency) → FAQ → final CTA. Every CTA books a call.
  *
  * The art direction is one image: rain on a raw crystal that shatters into a
@@ -19,8 +20,8 @@
  * Where scripts run, the hero's CSS starts on the BEFORE rock instead, so the
  * polished pebble (loading underneath) is never seen before the rough rock.
  *
- * There are no case studies, logos, testimonials or numbers here because
- * none exist yet. The calendar and the invoice walkthrough are illustrations
+ * There are no case studies, logos, testimonials or numbers of ours here
+ * because none exist yet; the one number on the page is McKinsey's, cited. The calendar and the invoice walkthrough are illustrations
  * and say so on the page.
  *
  * Every string comes from @forge/i18n. Nothing on this page is written here.
@@ -92,6 +93,8 @@ const day = (CATALOGS[locale] ?? CATALOGS.en).home.day
 // markup for questions a visitor cannot see is a search policy violation.
 const meta = pageMeta('home', locale, { faqs })
 const useCasesPath = routePath('useCases', locale)
+// Where the adoption claim's numbers come from (McKinsey's annual survey).
+const ADOPTION_SOURCE = 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai'
 
 /* ── Media ──
    Posters are art-directed: the 9:16 rendition below 1:1 aspect, 16:9 above,
@@ -187,6 +190,19 @@ const bucketOf = Object.fromEntries(buckets.map((b, i) => [b.title, i + 1]))
       </picture>
     </div>
     <div class="mk-wrap">
+      {/* The first claim, in the water's fall from the hero: nearly every
+          company uses AI, very few get the most out of it, and what we do
+          about that. Three beats, each revealed as it enters view. The
+          number is McKinsey's, and the page says so. */}
+      <div class="mk-adoption">
+        <h2 class="mk-adoption-claim">
+          <span class="mk-adoption-beat" data-reveal>{t('home.adoption.used')}</span>
+          {' '}
+          <span class="mk-adoption-beat mk-adoption-beat--turn" data-reveal>{t('home.adoption.few')}</span>
+        </h2>
+        <p class="mk-adoption-answer" data-reveal>{t('home.adoption.answer')}</p>
+        <p class="mk-adoption-source" data-reveal><a href={ADOPTION_SOURCE} rel="noopener">{t('home.adoption.source')}</a></p>
+      </div>
       <div class="mk-section-head" data-reveal>
         <h2 class="mk-h2">
           <span class="mk-line mk-line--warm">{day.headingLead}</span>

@@ -634,6 +634,44 @@
 .mk-about-copy .mk-h2 + .mk-about-p { margin-top: 24px; }
 .mk-about-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
 
+/* ═══════════ THE FIRST CLAIM ═══════════
+   Before the week: three beats set in the water's fall
+   from the hero, to its left on a wide screen (the stream passes through it
+   on a phone, behind the same white halo as the week's intro). Larger than a
+   section headline, because it is the page's first argument: the fact in
+   ink, the turn in warm brown, then what we do about it at reading size,
+   and the source in the page's note voice. Each beat reveals on its own as
+   it comes into view, so it reads in order. */
+.mk-adoption { max-width: 760px; margin-bottom: 176px; }
+.mk-adoption-claim {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4.6vw, 62px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+.mk-adoption-beat { display: block; }
+.mk-adoption-beat + .mk-adoption-beat { margin-top: 0.5em; }
+.mk-adoption-beat--turn { color: var(--ink-warm); }
+.mk-adoption-answer {
+  max-width: 34ch;
+  margin-top: 48px;
+  font-family: var(--font-display);
+  font-size: clamp(19px, 1.8vw, 24px);
+  letter-spacing: -0.02em;
+  line-height: 1.38;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.mk-adoption-source { margin-top: 20px; font-family: var(--font-mono); font-size: 12px; color: var(--mute); }
+.mk-adoption-source a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.mk-adoption-source a:hover { text-decoration-color: currentColor; }
+@media (max-width: 720px) {
+  .mk-adoption { margin-bottom: 120px; }
+  .mk-adoption-answer { margin-top: 32px; }
+}
+
 /* ═══════════ A WEEK, BEFORE AND AFTER ═══════════
    Two calendars on one time scale: BEFORE with every task, AFTER with the
    kept ones in the same slots and empty space where the rest were.
@@ -945,15 +983,18 @@
   height: auto;
   max-width: none;
   /* As long as at the cover size: narrowed with the hero, the clip is drawn
-     out lengthways rather than cut short, so it still reaches the card. */
-  height: calc(var(--hero-sw) * var(--hero-w) / var(--cw) / var(--car));
+     out lengthways rather than cut short, so it still reaches the card.
+     Where the section is longer than that (a phone, with the claim above
+     the week), it is drawn out to the column's length: a falling stream
+     stretched along its fall looks the same. */
+  height: max(calc(var(--hero-sw) * var(--hero-w) / var(--cw) / var(--car)), 100%);
 }
 .mk-day-stream-video { object-fit: fill; opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); }
 .mk-day-stream-video.is-ready { opacity: 1; }
-/* The stream passes behind the section's intro and the note and legend
-   (on a phone, through the middle of the paragraph): a halo of the page's
+/* The stream passes behind the claim, the section's intro and the note and
+   legend (on a phone, through the middle of each): a halo of the page's
    white keeps every glyph clear of it, and is invisible anywhere else. */
-.mk-day .mk-section-head, .mk-day-meta { text-shadow: 0 0 2px var(--bg), 0 0 4px var(--bg); }
+.mk-adoption, .mk-day .mk-section-head, .mk-day-meta { text-shadow: 0 0 2px var(--bg), 0 0 4px var(--bg); }
 /* Stacked (below 1180px) the BEFORE card is right above the AFTER one, so
    the stream coming into the AFTER card shows only between them: a wider
    gap lets it be seen falling onto the card. */

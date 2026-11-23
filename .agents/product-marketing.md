@@ -1,7 +1,7 @@
 # Product Marketing Context
 
-**Document version:** v19
-**Last updated:** 2026-11-21
+**Document version:** v20
+**Last updated:** 2026-11-23
 
 > Auto-drafted from the founder's brief ("an AI consulting agency, almost exactly
 > like varickagents.com") before the agency had a name, customers or proof.
@@ -110,7 +110,7 @@ From the owner (2026-10-16), and on the homepage as "Who we are":
 - Say "since before ChatGPT"; never a number of years in AI. Say the company "merged with" a San Francisco company, never "acquired", and don't name it. The owner's own story is the selling point for now (2026-10-30): the section tells it in the first person ("I founded…", "I learned…"), strong but humble, and turns to "we" for what the agency does today. The portrait (`apps/site/src/media/founder.webp`) was generated with Nano Banana Pro from three of the owner's own photos, at the owner's request: looking through a small quartz crystal, a nod to the hero's crystal. It is a cutout on a transparent background.
 
 ## Proof Points
-**Metrics:** The final CTA says agents free up "more than half of your team's time". That is the owner's claim (2026-10-17), from the automation levels reached at the San Francisco company they worked for; it is not yet a client result. [NEED: a measured time-saved figure from an engagement to back it.] No other numbers until a client result exists.
+**Metrics:** The final CTA says agents free up "more than half of your team's time". That is the owner's claim (2026-10-17), from the automation levels reached at the San Francisco company they worked for; it is not yet a client result. [NEED: a measured time-saved figure from an engagement to back it.] The page's first claim, "Nearly 9 in 10 companies use AI. Very few get the most out of it.", is a market fact, not our result: McKinsey, *The state of AI in 2026: On the road to ROI* (August 2026) says "nearly nine in ten respondents report regular use of AI in at least one business function", and AI high performers are "just 6 percent" of respondents. The page cites it under the claim. Refresh both when McKinsey publishes the next survey. No other numbers until a client result exists.
 **Illustrations on the page (not proof):** "A week, before and after" (six team weeks: every task today, then the same week with only the decisions left) and "Supplier invoices, step by step" are labelled illustrations of the method, with no totals, hours or results. Replace or support them with real ones when a client result exists.
 **Customers:** [NEED]
 **Testimonials:** [NEED]
