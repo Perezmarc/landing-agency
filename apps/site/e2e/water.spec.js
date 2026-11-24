@@ -23,7 +23,9 @@ const isCardMedia = url => /card-(splash|rim)[^/]*\.(webm|mp4)(\?|$)/.test(url)
 const visible = '.mk-day .ui-tabs-panel:visible'
 const strips = page => page.locator(`${visible} [data-cal="before"] > .mk-cal-water--before`)
 const rim = page => page.locator(`${visible} [data-cal="after"] > .mk-rim`)
-const toCalendar = page => page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start' }))
+// Instant: the page scrolls smoothly by default, and a smooth scroll still
+// running under a measurement moves the card between it and the screenshot.
+const toCalendar = page => page.locator('[data-day]').evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }))
 const ready = page => expect.poll(() => page.evaluate(() => {
   const r = document.querySelector('.mk-rim'), s = [...document.querySelectorAll('.mk-cal-water--before')]
   return Boolean(r?.classList.contains('is-ready') && s.length && s.every(v => v.classList.contains('is-ready')))

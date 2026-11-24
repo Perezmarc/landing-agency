@@ -20,6 +20,12 @@
     "eyebrow": "Agenti AI per le operations aziendali",
     "claimProblem": "Le giornate del tuo team sono piene di lavoro ripetitivo.",
     "claimPromise": "Affida il lavoro ripetitivo ad agenti AI costruiti sui tuoi processi.",
+    "adoption": {
+      "used": "Quasi 9 aziende su 10 usano l'AI.",
+      "few": "Pochissime ne sfruttano davvero il potenziale.",
+      "answer": "Impariamo come funziona la tua azienda e ci mettiamo la nostra esperienza nell'AI, così ottieni il massimo dall'AI e dalla tua attività.",
+      "source": "Fonte: McKinsey, The state of AI in 2026"
+    },
     "ctaPrimary": "Prenota una call conoscitiva",
     "ctaSecondary": "Scopri come lavoriamo",
     "day": {

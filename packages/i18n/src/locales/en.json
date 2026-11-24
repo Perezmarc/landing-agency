@@ -20,6 +20,12 @@
     "eyebrow": "AI agents for business operations",
     "claimProblem": "Your team's days are full of repetitive work.",
     "claimPromise": "Hand the repetitive work to AI agents built around your processes.",
+    "adoption": {
+      "used": "Nearly 9 in 10 companies use AI.",
+      "few": "Very few get the most out of it.",
+      "answer": "We learn how your business works and bring our AI expertise to it, so you get the most out of AI and out of your business.",
+      "source": "Source: McKinsey, The state of AI in 2026"
+    },
     "ctaPrimary": "Book a discovery call",
     "ctaSecondary": "See how it works",
     "day": {

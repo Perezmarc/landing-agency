@@ -20,6 +20,12 @@
     "eyebrow": "Agentes de IA para las operaciones de tu empresa",
     "claimProblem": "Los días de tu equipo están llenos de trabajo repetitivo.",
     "claimPromise": "Deja el trabajo repetitivo a agentes de IA hechos a la medida de tus procesos.",
+    "adoption": {
+      "used": "Casi 9 de cada 10 empresas usan IA.",
+      "few": "Muy pocas le sacan todo el partido.",
+      "answer": "Aprendemos cómo funciona tu negocio y le aplicamos nuestra experiencia en IA, para que saques todo el partido a la IA y a tu negocio.",
+      "source": "Fuente: McKinsey, The state of AI in 2026"
+    },
     "ctaPrimary": "Reserva una llamada de diagnóstico",
     "ctaSecondary": "Cómo trabajamos",
     "day": {
